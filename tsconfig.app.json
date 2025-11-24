@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["App.tsx", "index.ts", "index.tsx", "src/**/*"],
+  "exclude": [
+    "node_modules",
+    "supabase",            // ← Deno 함수 전체 제외
+    "babel.config.js",
+    "metro.config.js"
+  ]
+}

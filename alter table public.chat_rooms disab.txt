@@ -1,0 +1,34 @@
+alter table public.chat_rooms disable row level security;
+alter table public.chat_members disable row level security;
+alter table public.chat_messages disable row level security;
+alter table public.profiles disable row level security;
+
+
+운영할때는 다시 막을것. 
+
+그리고 상단제목은 개인인경우 상대방 닉네임(상대방이 설정한 닉네임이 있지만 친구목록에서 꾹눌러서 설정할수있다. 하지만 가이드로 친구가 설정한 닉네임은 닉네임 수정칸에 보여준다.) 그룹인경우에는 각자 그 채팅방을 리스트에서 꾹누르며ㄴ 수저ㅇ할수있게하자.(기보ㄴ값은 그냥 참여자들 닉네임 ex. 영진, 동수, 영호 ...) 그 채팅방을 위한 아이디도 쓸수있고. 
+오픈톡은 방만드는사람이 사진과 이름ㅇㅡㄹ ㅅㅜ정ㅎㅏㄹ수있ㄱㅔ 해야해. 
+
+
+
+supabase secrets set `
+  R2_ACCOUNT_ID=1f124b195679fd682354d38bddfcdb4e `
+  R2_BUCKET=coonn-chat `
+  R2_ACCESS_KEY_ID=762d130c6a79ee3e2c78092e8dc01fa0 `
+  R2_SECRET_ACCESS_KEY=c8c401347e5765f961af44c17cd30c45302f29e5ea6a78c1cf458a2a8bab95b3 `
+  R2_PUBLIC_BASE=https://pub-6ab255ed9520d498aedb5093727677d5.r2.dev
+
+
+supabase secrets set R2_ACCOUNT_ID=1f124b195679fd682354d38bddfcdb4e R2_BUCKET=coonn-chat R2_ACCESS_KEY_ID=762d130c6a79ee3e2c78092e8dc01fa0 R2_SECRET_ACCESS_KEY=c8c401347e5765f961af44c17cd30c45302f29e5ea6a78c1cf458a2a8bab95b3 R2_PUBLIC_BASE=https://1f124b195679fd682354d38bddfcdb4e.r2.cloudflarestorage.com
+
+
+Token value
+V250NwdL-vH1BxW2MvVpzrtp1G0_4aoj2ooFWJv5
+
+Access Key ID
+762d130c6a79ee3e2c78092e8dc01fa0
+
+Secret Access Key
+c8c401347e5765f961af44c17cd30c45302f29e5ea6a78c1cf458a2a8bab95b3
+
+https://1f124b195679fd682354d38bddfcdb4e.r2.cloudflarestorage.com

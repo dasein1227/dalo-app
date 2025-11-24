@@ -1,0 +1,173 @@
+{
+  "labels": {
+    "visibility": {
+      "friends": "Friends",
+      "labels": "Groups",
+      "public_filtered": "Everyone",
+      "custom": "Custom"
+    },
+    "gender": {
+      "all": "All",
+      "male": "Only men",
+      "female": "Only women"
+    },
+    "public": "Public",
+    "private": "Private",
+    "on": "On",
+    "off": "Off",
+    "male": "Male",
+    "female": "Female",
+    "mixed": "Mixed"
+  },
+
+  "screen": {
+    "createBeacon": {
+      "title": "Create Beacon",
+      "status": {
+        "label": "Status message",
+        "placeholder": "e.g., Shall we grab a drink?"
+      },
+      "visibility": {
+        "label": "Visible to"
+      },
+      "profile": {
+        "label": "Show my profile"
+      },
+      "gender": {
+        "label": "Audience gender"
+      },
+      "club": {
+        "label": "Club / Group beacon"
+      },
+      "quota": {
+        "title": "Current headcount",
+        "hint": "Adjust with the buttons"
+      },
+      "age": {
+        "title": "Age range",
+        "value": "{{min}} - {{max}}"
+      },
+      "duration": {
+        "title": "Duration (min)",
+        "value": "{{minutes}} min",
+        "hint": "Slide to adjust if needed."
+      },
+      "memo": {
+        "label": "Memo",
+        "placeholder": "Write a short intro (e.g., Need 2 more ☕)",
+        "noColumn": "Memo will not be saved because the server has no memo column."
+      },
+      "invite": {
+        "button": "Invite friends",
+        "buttonCount": "Invite friends ({{n}})",
+        "title": "Invite friends",
+        "searchPlaceholder": "Search in my friends",
+        "empty": "No friends found.",
+        "done": "Done"
+      },
+      "create": {
+        "button": "Create beacon",
+        "success": "Beacon has been created."
+      }
+    }
+  },
+
+  "modals": {
+    "visibility": {
+      "title": "Visible to"
+    },
+    "profile": {
+      "title": "Show my profile"
+    },
+    "gender": {
+      "title": "Audience gender"
+    },
+    "club": {
+      "title": "Club / Group beacon"
+    }
+  },
+
+  "errors": {
+    "validation": {
+      "durationMin": "Duration must be at least 5 minutes.",
+      "labelsRequired": "Please select at least one group (label)."
+    },
+    "auth": {
+      "loginRequired": "Login is required."
+    },
+    "location": {
+      "permissionRequired": "Location permission is required."
+    },
+    "friends": {
+      "loadFailed": "Failed to load friends list."
+    },
+    "labels": {
+      "loadFailed": "Failed to load labels."
+    },
+    "create": {
+      "failedTitle": "Creation failed",
+      "failed": "Failed to create."
+    },
+    "common": "Error"
+  },
+
+  "notices": {
+    "memoOmittedTitle": "Notice",
+    "memoOmitted": "Created without memo because the server schema has no memo column."
+  },
+
+  "common": {
+    "back": "Back",
+    "loading": "Loading…",
+    "selected": "Selected"
+  },
+
+  "language": {
+    "english": "English",
+    "korean": "Korean"
+  },
+
+  "settings": {
+    "title": "Settings",
+    "change": "Change",
+    "open": "Open",
+    "run": "Run",
+    "logout": "Log out",
+    "logoutDone": "You have been logged out.",
+    "version": "App version",
+    "display": {
+      "title": "Display & Language"
+    },
+    "account": {
+      "title": "Account & Security",
+      "profilePublicDefault": "Default: show my profile in Beacons",
+      "profilePublicHint": "Used as the default when creating a Beacon. Can be changed per Beacon."
+    },
+    "notification": {
+      "title": "Notifications",
+      "caption": "Push, sound, vibration"
+    },
+    "theme": {
+      "title": "Theme",
+      "light": "Light mode"
+    },
+    "storage": {
+      "title": "Data & Storage",
+      "clearCache": "Clear cache",
+      "clearCacheHint": "Remove temporary files"
+    },
+    "support": {
+      "title": "Support",
+      "cs": "Help Center / Policies"
+    },
+    "me": {
+      "noName": "(No name)"
+    },
+    "tabs": {
+    "map": "Map",
+    "chat": "Chat",
+    "friends": "Friends",
+    "explore": "Explore"
+  }
+  }
+}

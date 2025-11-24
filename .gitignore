@@ -1,0 +1,102 @@
+# =========================================================
+# 🌐 General Git Ignore Template for Expo + React Native
+# =========================================================
+
+# Node dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+pnpm-lock.yaml
+
+# =========================================================
+# ⚙️ Expo / React Native local state
+# =========================================================
+.expo/
+.expo-shared/
+.expo-env.d.ts
+
+# Build outputs
+dist/
+web-build/
+build/
+android/app/build/
+ios/build/
+ios/Pods/
+*.apk
+*.aab
+
+# =========================================================
+# ⚙️ Native project folders (use EAS build instead)
+# =========================================================
+android/
+ios/
+
+# =========================================================
+# 🌿 Environment & Config
+# =========================================================
+.env
+.env*.local
+
+# =========================================================
+# 🧠 IDEs & Editors
+# =========================================================
+.vscode/
+.idea/
+*.iml
+
+# =========================================================
+# 💻 OS-specific files
+# =========================================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# =========================================================
+# 🧩 TypeScript / Metro
+# =========================================================
+*.tsbuildinfo
+.metro-cache/
+.metro-health-check*
+
+# =========================================================
+# 🛠️ Gradle / Kotlin / CMake
+# =========================================================
+.gradle/
+.kts/
+.kotlin/
+*.orig.*
+*.keystore
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+.cxx/
+**/CMakeFiles/
+**/cmake-build*/
+
+# =========================================================
+# 🧾 Logs & Temp files
+# =========================================================
+*.log
+tmp/
+temp/
+
+# =========================================================
+# 📦 EAS / Pods / Worklets
+# =========================================================
+.eas/
+react-native-worklets/derived/
+Podfile.lock
+
+# =========================================================
+# ✅ Keep These Tracked (if manually customized)
+# =========================================================
+# /android/gradle.properties
+# /android/settings.gradle
+# /android/app/build.gradle
+# /ios/Podfile

@@ -1,0 +1,98 @@
+{
+  "expo": {
+    "name": "dalo",
+    "slug": "dalo",
+    "owner": "youngjin1",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "dalo",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.youngjin1.daloapp",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "채팅에서 사진을 선택하여 전송하기 위해 사진 보관함 접근이 필요합니다.",
+        "NSPhotoLibraryAddUsageDescription": "사진을 저장하거나 전송 이력을 저장하기 위해 사진 보관함에 쓰기 권한이 필요합니다.",
+        "NSLocationWhenInUseUsageDescription": "내 주변 기능을 위해 현재 위치 정보가 필요합니다."
+      },
+      "config": {
+        "googleMapsApiKey": "AIzaSyA-kHB5zvLqWLhqsvOjAnxaAbAU6cYCkHI"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "softwareKeyboardLayoutMode": "resize",
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "VIBRATE",
+        "POST_NOTIFICATIONS"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ],
+          "data": [
+            {
+              "scheme": "dalo",
+              "host": "",
+              "pathPrefix": "/auth"
+            }
+          ]
+        }
+      ],
+      "package": "com.youngjin1.daloapp",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyA-kHB5zvLqWLhqsvOjAnxaAbAU6cYCkHI"
+        }
+      }
+    },
+    "plugins": [
+      "expo-web-browser",
+      "expo-font",
+      "expo-location",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#111827",
+          "mode": "production"
+        }
+      ],
+      "expo-splash-screen",
+      "expo-dev-client",
+      "expo-localization",
+      "expo-audio",
+      "expo-video"
+    ],
+    "newArchEnabled": true,
+    "extra": {
+      "EXPO_PUBLIC_SUPABASE_URL": "https://yyvjwgnajosvapptbhwi.supabase.co",
+      "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5dmp3Z25ham9zdmFwcHRiaHdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzODE0NzUsImV4cCI6MjA3NDk1NzQ3NX0.hzwIzJAAlzFsaiygV6sxgS4k7gzFIQGHF92Tb1WQ6PU",
+      "EXPO_PUBLIC_GOOGLE_EXPO_CLIENT_ID": "848105897985-0riu77j4s3o5odjclvplkb65tjjl3ac5.apps.googleusercontent.com",
+      "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "848105897985-k0b5r4dica6tunjfjgl5df9refn4ojnd.apps.googleusercontent.com",
+      "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "848105897985-flfdqdlda55h77mp9c5fics5k7v1m59d.apps.googleusercontent.com",
+      "eas": {
+        "projectId": "8367c5c3-a4d9-47fe-9079-9164c8894a26"
+      }
+    }
+  }
+}
