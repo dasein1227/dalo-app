@@ -1,5 +1,4 @@
-﻿// src/navigation/types.ts
-export type RootStackParamList = {
+﻿export type RootStackParamList = {
   // 시스템
   SplashGate: undefined;
   Offline: undefined;
@@ -44,6 +43,22 @@ export type RootStackParamList = {
   ChatManage: { roomId: number } | undefined;
   ChatMembers: { roomId: number } | undefined;
   MediaViewer: { uri: string } | undefined;
+  ChatSetting:
+  | {
+      roomId: string;
+      roomName?: string;
+
+      memo?: string;
+      maleCount?: number;
+      femaleCount?: number;
+      mixedCount?: number;
+      totalCount?: number | null;
+
+      publicGender?: 'all' | 'male' | 'female';
+      minAge?: number | null;
+      maxAge?: number | null;
+    }
+  | undefined;
 
   // 프로필
   ProfileView:
@@ -56,9 +71,18 @@ export type RootStackParamList = {
     | undefined;
   ProfileEdit: undefined;
 
-  // 게시물 (상세 보기 + 작성)
+  // 게시물
   PostDetail: { postId: string; user_id?: string };
   CreatePost: undefined;
+
+  /** ✅ 추가 */
+  EditPost: { postId: string };
+
+  /** ✅ 팔로우 리스트 (팔로잉/팔로워/요청 탭) */
+  ProfileFollowList: undefined;
+
+  // 친구
+  FriendAdd: undefined;
 
   // 법무
   TermsPrivacy: undefined;
@@ -68,8 +92,12 @@ export type RootStackParamList = {
   SettingsHome: undefined;
   SettingsNotification: undefined;
   SettingsPrivacy: undefined;
-  AccountSettings: {
-    user_id: string;
-    isMe?: boolean;
-  };
+  AccountSettings: {user_id: string; isMe?: boolean; };
+  ThemeSettings: undefined;
+
+  // 비즈니스
+  BusinessRegister: undefined;
+  BusinessUnregister: undefined;
+  BusinessCreate: undefined;
+  BusinessDetail: { businessId: string };
 };

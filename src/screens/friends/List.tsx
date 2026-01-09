@@ -18,16 +18,18 @@ import {
   ActivityIndicator,
   Image,
   Modal,
-  StatusBar,
+  StatusBar as RNStatusBar,
   ScrollView,
   PanResponder,
   GestureResponderEvent,
   PanResponderGestureState,
   Linking,
+  Platform,
+  Animated,
+  Easing,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import { Swipeable } from 'react-native-gesture-handler';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import {
   Search,
   UserPlus2,
@@ -37,6 +39,8 @@ import {
   Phone,
   ChevronUp,
   ChevronDown,
+  Plus,
+  MoreHorizontal,
 } from 'lucide-react-native';
 import { supabase } from '../../lib/supabase';
 
@@ -60,8 +64,162 @@ const getInitial = (name?: string | null) =>
 
 type GroupSection = { label: Label; members: FriendRow[] };
 
+const ACTION_W = 112;
+
+const clamp = (v: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, v));
+
+type SwipeRevealRowProps = {
+  openCloserRef: React.MutableRefObject<null | (() => void)>;
+  onPress: () => void;
+  onLongPress?: () => void;
+  renderActions: (close: () => void) => React.ReactNode;
+  children: React.ReactNode;
+};
+
+function SwipeRevealRow({
+  openCloserRef,
+  onPress,
+  onLongPress,
+  renderActions,
+  children,
+}: SwipeRevealRowProps) {
+  const x = useRef(new Animated.Value(0)).current; // 0..ACTION_W
+  const xVal = useRef(0);
+  const isOpen = useRef(false);
+
+  useEffect(() => {
+    const id = x.addListener(({ value }) => {
+      xVal.current = value;
+    });
+    return () => x.removeListener(id);
+  }, [x]);
+
+  const animateTo = useCallback(
+    (to: number, closeFn: () => void) => {
+      Animated.timing(x, {
+        toValue: to,
+        duration: 170,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }).start(() => {
+        isOpen.current = to >= ACTION_W - 1;
+        if (!isOpen.current && openCloserRef.current === closeFn) {
+          openCloserRef.current = null;
+        }
+      });
+    },
+    [x, openCloserRef],
+  );
+
+  const close = useCallback(() => {
+    animateTo(0, close);
+  }, [animateTo]);
+
+  const open = useCallback(() => {
+    if (openCloserRef.current && openCloserRef.current !== close) {
+      openCloserRef.current();
+    }
+    openCloserRef.current = close;
+    animateTo(ACTION_W, close);
+  }, [animateTo, close, openCloserRef]);
+
+  const actionsTx = x.interpolate({
+    inputRange: [0, ACTION_W],
+    outputRange: [ACTION_W, 0],
+    extrapolate: 'clamp',
+  });
+
+  const pan = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_evt, g) => {
+        const absDx = Math.abs(g.dx);
+        const absDy = Math.abs(g.dy);
+        if (absDx < 8) return false;
+        if (absDy > absDx) return false;
+
+        // 왼쪽 스와이프: 열기
+        if (g.dx < 0) return true;
+
+        // 열려있을 때만 오른쪽 스와이프: 닫기
+        if (isOpen.current && g.dx > 0) return true;
+
+        return false;
+      },
+      onPanResponderMove: (_evt, g) => {
+        if (g.dx < 0) {
+          const next = clamp(-g.dx, 0, ACTION_W);
+          x.setValue(next);
+          return;
+        }
+        if (isOpen.current && g.dx > 0) {
+          const next = clamp(ACTION_W - g.dx, 0, ACTION_W);
+          x.setValue(next);
+        }
+      },
+      onPanResponderRelease: (_evt, g) => {
+        const v = xVal.current;
+
+        const fastOpen = g.vx < -0.35;
+        const fastClose = g.vx > 0.35;
+
+        if (fastOpen) {
+          open();
+          return;
+        }
+        if (fastClose) {
+          close();
+          return;
+        }
+
+        if (v > ACTION_W * 0.45) open();
+        else close();
+      },
+      onPanResponderTerminate: () => {
+        if (xVal.current > ACTION_W * 0.45) open();
+        else close();
+      },
+    }),
+  ).current;
+
+  const handlePress = () => {
+    if (xVal.current > 2) {
+      close();
+      return;
+    }
+    onPress();
+  };
+
+  const handleLongPress = () => {
+    if (xVal.current > 2) {
+      close();
+      return;
+    }
+    onLongPress?.();
+  };
+
+  return (
+    <View style={s.revealHost} {...pan.panHandlers}>
+      <Animated.View
+        style={[s.revealActions, { transform: [{ translateX: actionsTx }] }]}
+      >
+        {renderActions(close)}
+      </Animated.View>
+
+      <Pressable
+        style={s.revealContent}
+        onPress={handlePress}
+        onLongPress={handleLongPress}
+      >
+        {children}
+      </Pressable>
+    </View>
+  );
+}
+
 export default function FriendsScreen() {
   const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
 
   const [me, setMe] = useState<string>('');
   const [rows, setRows] = useState<FriendRow[]>([]);
@@ -79,11 +237,11 @@ export default function FriendsScreen() {
     useState<Record<number, string[]>>({});
 
   // 검색
-  const [q, setQ] = useState('');
+  const [q, setQ] = useState(''); // 검색어
   const [searchVisible, setSearchVisible] = useState(false);
   const searchRef = useRef<TextInput>(null);
 
-  // 옵션 시트 상태
+  // 옵션 시트 상태 (친구 롱프레스)
   const [sheetOpen, setSheetOpen] = useState(false);
   const [target, setTarget] = useState<FriendRow | null>(null);
 
@@ -91,17 +249,12 @@ export default function FriendsScreen() {
   const [aliasOpen, setAliasOpen] = useState(false);
   const [alias, setAlias] = useState('');
 
-  // 그룹 관리 모달 (개별 친구용)
+  // 그룹 관리 모달 (특정 친구의 그룹 멤버십)
   const [groupsOpen, setGroupsOpen] = useState(false);
   const [memberOf, setMemberOf] = useState<number[]>([]);
   const [savingGroups, setSavingGroups] = useState(false);
 
-  // 친구 추가 모달
-  const [addFriendOpen, setAddFriendOpen] = useState(false);
-  const [addFriendId, setAddFriendId] = useState('');
-  const [addFriendLoading, setAddFriendLoading] = useState(false);
-
-  // 그룹 추가 모달
+  // 새 그룹 추가 모달
   const [addGroupOpen, setAddGroupOpen] = useState(false);
   const [addGroupName, setAddGroupName] = useState('');
   const [addGroupLoading, setAddGroupLoading] = useState(false);
@@ -110,18 +263,78 @@ export default function FriendsScreen() {
   const [callOpen, setCallOpen] = useState(false);
   const [callTarget, setCallTarget] = useState<FriendRow | null>(null);
 
+  // “그룹에 추가하기”용 빠른 선택 모달 (친구 → 그룹)
+  const [quickGroupOpen, setQuickGroupOpen] = useState(false);
+
+  // 그룹 편집(이름 수정/삭제) 모달
+  const [editGroupOpen, setEditGroupOpen] = useState(false);
+  const [editingGroup, setEditingGroup] = useState<Label | null>(null);
+  const [editGroupName, setEditGroupName] = useState('');
+  const [editGroupLoading, setEditGroupLoading] = useState(false);
+
+  // 그룹에 멤버 추가/제거 모달 (그룹 → 친구)
+  const [editMembersOpen, setEditMembersOpen] = useState(false);
+  const [editingMembersGroup, setEditingMembersGroup] =
+    useState<Label | null>(null);
+  const [membersSelection, setMembersSelection] = useState<string[]>([]);
+  const [savingMembers, setSavingMembers] = useState(false);
+  const [memberSearch, setMemberSearch] = useState(''); // 그룹 멤버 추가 모달용 검색어
+
   // 섹션 접기/펴기 상태
-  const [openBirthdaySection, setOpenBirthdaySection] =
-    useState(true);
+  const [openBirthdaySection, setOpenBirthdaySection] = useState(true);
   const [openFavoriteFriendsSection, setOpenFavoriteFriendsSection] =
     useState(true);
-  const [openFriendsSection, setOpenFriendsSection] =
-    useState(true);
+  const [openFriendsSection, setOpenFriendsSection] = useState(true);
 
   const [openFavoriteGroupsSection, setOpenFavoriteGroupsSection] =
     useState(true);
-  const [openGroupsSection, setOpenGroupsSection] =
-    useState(true);
+  const [openGroupsSection, setOpenGroupsSection] = useState(true);
+
+  const openCloserRef = useRef<null | (() => void)>(null);
+
+  // =========================
+  // ✅ StatusBar: 투명 + 헤더가 StatusBar 영역까지 확장 (채팅리스트 정책 동일)
+  // =========================
+  const applyStatusBar = useCallback(() => {
+    try {
+      (navigation as any).setOptions?.({
+        statusBarColor: 'transparent',
+        statusBarStyle: 'dark',
+        statusBarTranslucent: true,
+      });
+    } catch {}
+
+    if (Platform.OS !== 'android') return;
+    try {
+      RNStatusBar.setTranslucent(true);
+      RNStatusBar.setBackgroundColor('transparent', true);
+      RNStatusBar.setBarStyle('dark-content', true);
+    } catch {}
+  }, [navigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      applyStatusBar();
+      let t1: any = null;
+      let t2: any = null;
+
+      try {
+        requestAnimationFrame(() => applyStatusBar());
+      } catch {}
+
+      t1 = setTimeout(() => applyStatusBar(), 0);
+      t2 = setTimeout(() => applyStatusBar(), 60);
+
+      return () => {
+        if (t1) clearTimeout(t1);
+        if (t2) clearTimeout(t2);
+      };
+    }, [applyStatusBar]),
+  );
+
+  useEffect(() => {
+    applyStatusBar();
+  }, [applyStatusBar]);
 
   // ── 세션 보장 ─────────────────────────────────────────────
   const ensureSession = useCallback(async () => {
@@ -160,9 +373,9 @@ export default function FriendsScreen() {
             f.requester === myId ? f.addressee : f.requester,
           ),
         ),
-      );
+      ).filter((id) => id !== myId);
 
-      // 5) 그룹(레이블) + 멤버 구조 (그룹 화면용) — 친구가 없어도 로드
+      // 2) 그룹(레이블) + 멤버 구조 (그룹 화면용) — 친구가 없어도 로드
       try {
         const [gRes, mRes] = await Promise.all([
           supabase
@@ -191,9 +404,7 @@ export default function FriendsScreen() {
 
         setGroups(labels);
         setGroupMembersByLabel(map);
-      } catch {
-        // 그룹 구조는 없어도 화면은 동작하므로 조용히 무시
-      }
+      } catch {}
 
       if (otherIds.length === 0) {
         setRows([]);
@@ -201,28 +412,24 @@ export default function FriendsScreen() {
         return;
       }
 
-      // 2) 프로필
+      // 3) 프로필
       const { data: profs, error: pErr } = await supabase
         .from('profiles')
-        .select(
-          'id,nickname,email,avatar_url,status_message,birthdate',
-        )
-        .in('id', otherIds);
+        .select('user_id,nickname,email,avatar_url,status_message,birthdate')
+        .in('user_id', otherIds);
       if (pErr) throw pErr;
 
-      // 3) 즐겨찾기
+      // 4) 즐겨찾기
       let fav: string[] = [];
       try {
         const { data: favRows } = await supabase
           .from('friend_favorites')
           .select('favorite_user_id')
           .eq('user_id', myId);
-        fav = (favRows ?? []).map(
-          (r: any) => r.favorite_user_id as string,
-        );
+        fav = (favRows ?? []).map((r: any) => r.favorite_user_id as string);
       } catch {}
 
-      // 4) 별명(내가 붙인 alias)
+      // 5) 별명(내가 붙인 alias)
       let aliasMap: Record<string, string> = {};
       try {
         const { data: aliasRows } = await supabase
@@ -236,27 +443,24 @@ export default function FriendsScreen() {
       } catch {}
 
       const merged: FriendRow[] = (profs ?? [])
-        .map((p: any) => ({
-          user_id: p.id as string,
-          nickname:
-            (aliasMap[p.id] ?? p.nickname ?? '') || '(이름 없음)',
-          email: p.email ?? null,
-          avatar_url: p.avatar_url ?? null,
-          status_message: p.status_message ?? null,
-          is_favorite: fav.includes(p.id),
-          birthdate: p.birthdate ?? null,
-        }))
-        .sort((a, b) =>
-          a.nickname.localeCompare(b.nickname, 'ko'),
-        );
+        .map((p: any) => {
+          const uid = p.user_id as string; // ✅ auth.users.id
+          return {
+            user_id: uid,
+            nickname: (aliasMap[uid] ?? p.nickname ?? '') || '(이름 없음)',
+            email: p.email ?? null,
+            avatar_url: p.avatar_url ?? null,
+            status_message: p.status_message ?? null,
+            is_favorite: fav.includes(uid),
+            birthdate: p.birthdate ?? null,
+          };
+        })
+        .sort((a, b) => a.nickname.localeCompare(b.nickname, 'ko'));
 
       setFavorites(fav);
       setRows(merged);
     } catch (e: any) {
-      Alert.alert(
-        '불러오기 실패',
-        (e?.message ?? String(e)).slice(0, 200),
-      );
+      Alert.alert('불러오기 실패', (e?.message ?? String(e)).slice(0, 200));
     } finally {
       setRefreshing(false);
       setLoading(false);
@@ -287,30 +491,30 @@ export default function FriendsScreen() {
       try {
         const on = favorites.includes(friendId);
         if (on) {
-          await supabase
+          const { error } = await supabase
             .from('friend_favorites')
             .delete()
             .eq('user_id', me)
             .eq('favorite_user_id', friendId);
+          if (error) throw error;
           setFavorites((p) => p.filter((x) => x !== friendId));
         } else {
-          await supabase
-            .from('friend_favorites')
-            .upsert(
-              { user_id: me, favorite_user_id: friendId },
-              { onConflict: 'user_id,favorite_user_id' },
-            );
+          const { error } = await supabase.from('friend_favorites').upsert(
+            { user_id: me, favorite_user_id: friendId },
+            { onConflict: 'user_id,favorite_user_id' },
+          );
+          if (error) throw error;
           setFavorites((p) => [...p, friendId]);
         }
 
         setRows((p) =>
           p.map((r) =>
-            r.user_id === friendId
-              ? { ...r, is_favorite: !r.is_favorite }
-              : r,
+            r.user_id === friendId ? { ...r, is_favorite: !r.is_favorite } : r,
           ),
         );
-      } catch {}
+      } catch (e: any) {
+        Alert.alert('즐겨찾기 실패', (e?.message ?? String(e)).slice(0, 200));
+      }
     },
     [me, favorites],
   );
@@ -319,18 +523,16 @@ export default function FriendsScreen() {
   const removeFriend = useCallback(
     async (friendId: string) => {
       try {
-        await supabase
+        const { error } = await supabase
           .from('friendships')
           .delete()
           .or(
             `and(requester.eq.${me},addressee.eq.${friendId}),and(requester.eq.${friendId},addressee.eq.${me})`,
           );
+        if (error) throw error;
         setRows((p) => p.filter((r) => r.user_id !== friendId));
       } catch (e: any) {
-        Alert.alert(
-          '삭제 실패',
-          (e.message ?? String(e)).slice(0, 200),
-        );
+        Alert.alert('삭제 실패', (e.message ?? String(e)).slice(0, 200));
       }
     },
     [me],
@@ -339,7 +541,7 @@ export default function FriendsScreen() {
   const blockFriend = useCallback(
     async (friendId: string) => {
       try {
-        const { data: rel } = await supabase
+        const { data: rel, error: relErr } = await supabase
           .from('friendships')
           .select('id,requester,addressee,status')
           .or(
@@ -348,25 +550,25 @@ export default function FriendsScreen() {
           .order('id', { ascending: false })
           .limit(1)
           .maybeSingle();
+        if (relErr) throw relErr;
 
         if (rel?.id) {
-          await supabase
+          const { error } = await supabase
             .from('friendships')
             .update({ status: 'blocked' })
             .eq('id', rel.id);
+          if (error) throw error;
         } else {
-          await supabase.from('friendships').insert({
+          const { error } = await supabase.from('friendships').insert({
             requester: me,
             addressee: friendId,
             status: 'blocked',
           });
+          if (error) throw error;
         }
         setRows((p) => p.filter((r) => r.user_id !== friendId));
       } catch (e: any) {
-        Alert.alert(
-          '차단 실패',
-          (e.message ?? String(e)).slice(0, 200),
-        );
+        Alert.alert('차단 실패', (e.message ?? String(e)).slice(0, 200));
       }
     },
     [me],
@@ -384,14 +586,17 @@ export default function FriendsScreen() {
         setAlias('');
         setAliasOpen(true);
 
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('friend_aliases')
           .select('alias')
           .eq('user_id', me)
           .eq('friend_user_id', fr.user_id)
           .maybeSingle();
+        if (error) throw error;
         setAlias(data?.alias ?? '');
-      } catch {}
+      } catch (e: any) {
+        Alert.alert('별명 불러오기 실패', (e?.message ?? String(e)).slice(0, 200));
+      }
     },
     [me],
   );
@@ -401,7 +606,7 @@ export default function FriendsScreen() {
       if (!target) return;
       const trimmed = alias.trim();
       if (trimmed) {
-        await supabase.from('friend_aliases').upsert(
+        const { error } = await supabase.from('friend_aliases').upsert(
           {
             user_id: me,
             friend_user_id: target.user_id,
@@ -409,12 +614,14 @@ export default function FriendsScreen() {
           },
           { onConflict: 'user_id,friend_user_id' },
         );
+        if (error) throw error;
       } else {
-        await supabase
+        const { error } = await supabase
           .from('friend_aliases')
           .delete()
           .eq('user_id', me)
           .eq('friend_user_id', target.user_id);
+        if (error) throw error;
       }
 
       setRows((p) =>
@@ -426,10 +633,7 @@ export default function FriendsScreen() {
       );
       setAliasOpen(false);
     } catch (e: any) {
-      Alert.alert(
-        '별명 저장 실패',
-        (e?.message ?? String(e)).slice(0, 200),
-      );
+      Alert.alert('별명 저장 실패', (e?.message ?? String(e)).slice(0, 200));
     }
   }, [alias, me, target]);
 
@@ -453,15 +657,13 @@ export default function FriendsScreen() {
             .eq('member_user_id', fr.user_id),
         ]);
 
+        if (g.error) throw g.error;
+        if (m.error) throw m.error;
+
         setGroups(g.data ?? []);
-        setMemberOf(
-          (m.data ?? []).map((r: any) => r.label_id as number),
-        );
+        setMemberOf((m.data ?? []).map((r: any) => r.label_id as number));
       } catch (e: any) {
-        Alert.alert(
-          '그룹 불러오기 실패',
-          (e?.message ?? String(e)).slice(0, 200),
-        );
+        Alert.alert('그룹 불러오기 실패', (e?.message ?? String(e)).slice(0, 200));
       }
     },
     [me],
@@ -479,141 +681,37 @@ export default function FriendsScreen() {
     if (!target) return;
     try {
       setSavingGroups(true);
-      await supabase
+
+      const { error: delErr } = await supabase
         .from('user_label_members')
         .delete()
         .eq('user_id', me)
         .eq('member_user_id', target.user_id);
+      if (delErr) throw delErr;
 
       if (memberOf.length > 0) {
-        const rowsInsert = memberOf.map((label_id) => ({
-          label_id,
+        const rowsInsert = memberOf.map((labelId) => ({
+          label_id: labelId,
           user_id: me,
           member_user_id: target.user_id,
         }));
-        await supabase
-          .from('user_label_members')
-          .upsert(rowsInsert, {
+        const { error: upErr } = await supabase.from('user_label_members').upsert(
+          rowsInsert,
+          {
             onConflict: 'user_id,label_id,member_user_id',
-          });
+          },
+        );
+        if (upErr) throw upErr;
       }
+
       setGroupsOpen(false);
-      // 전체 구조도 다시 불러오기
-      load();
+      await load();
     } catch (e: any) {
-      Alert.alert(
-        '그룹 저장 실패',
-        (e?.message ?? String(e)).slice(0, 200),
-      );
+      Alert.alert('그룹 저장 실패', (e?.message ?? String(e)).slice(0, 200));
     } finally {
       setSavingGroups(false);
     }
   }, [memberOf, target, me, load]);
-
-  // ── 친구 추가 로직 ───────────────────────────────────────
-  const openAddFriendModal = () => {
-    setAddFriendId('');
-    setAddFriendOpen(true);
-  };
-  const closeAddFriendModal = () => {
-    if (addFriendLoading) return;
-    setAddFriendOpen(false);
-  };
-
-  const handleAddFriend = useCallback(async () => {
-    const code = addFriendId.trim();
-    if (!code) {
-      Alert.alert('안내', '친구 아이디를 입력해 주세요.');
-      return;
-    }
-    try {
-      setAddFriendLoading(true);
-      const session = await ensureSession();
-      const myId = session?.user?.id;
-      if (!myId) throw new Error('로그인이 필요합니다.');
-
-      // profiles.follow_id 로 찾기
-      const { data: profile, error: pErr } = await supabase
-        .from('profiles')
-        .select('id, nickname, follow_id')
-        .eq('follow_id', code)
-        .maybeSingle();
-
-      if (pErr) throw pErr;
-      if (!profile) {
-        Alert.alert(
-          '안내',
-          '해당 아이디를 가진 사용자를 찾을 수 없습니다.',
-        );
-        return;
-      }
-
-      const targetId = profile.id as string;
-      if (targetId === myId) {
-        Alert.alert('안내', '자기 자신은 친구로 추가할 수 없습니다.');
-        return;
-      }
-
-      const { data: rel, error: rErr } = await supabase
-        .from('friendships')
-        .select('id, requester, addressee, status')
-        .or(
-          `and(requester.eq.${myId},addressee.eq.${targetId}),and(requester.eq.${targetId},addressee.eq.${myId})`,
-        )
-        .order('id', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (rErr && (rErr as any).code !== 'PGRST116') {
-        throw rErr;
-      }
-
-      if (rel) {
-        if (rel.status === 'accepted') {
-          Alert.alert('안내', '이미 친구입니다.');
-          return;
-        }
-        if (rel.status === 'pending') {
-          if (rel.requester === myId) {
-            Alert.alert('안내', '이미 친구 요청을 보낸 상태입니다.');
-          } else {
-            Alert.alert(
-              '안내',
-              '상대방이 이미 친구 요청을 보낸 상태입니다.\n알림/요청 화면에서 처리해 주세요.',
-            );
-          }
-          return;
-        }
-        if (rel.status === 'blocked') {
-          Alert.alert(
-            '안내',
-            '차단 상태의 관계가 있습니다. 먼저 차단을 해제해 주세요.',
-          );
-          return;
-        }
-      }
-
-      const { error: insErr } = await supabase
-        .from('friendships')
-        .insert({
-          requester: myId,
-          addressee: targetId,
-          status: 'pending',
-        });
-      if (insErr) throw insErr;
-
-      Alert.alert('친구 요청 전송', '상대방에게 친구 요청을 보냈습니다.');
-      setAddFriendOpen(false);
-      setAddFriendId('');
-    } catch (e: any) {
-      Alert.alert(
-        '친구 추가 실패',
-        (e?.message ?? String(e)).slice(0, 200),
-      );
-    } finally {
-      setAddFriendLoading(false);
-    }
-  }, [addFriendId, ensureSession]);
 
   // ── 그룹 추가 로직 ───────────────────────────────────────
   const openAddGroupModal = () => {
@@ -637,6 +735,11 @@ export default function FriendsScreen() {
       const myId = session?.user?.id;
       if (!myId) throw new Error('로그인이 필요합니다.');
 
+      if (groups.some((g) => g.name === name)) {
+        Alert.alert('안내', '이미 같은 이름의 그룹이 있습니다.');
+        return;
+      }
+
       const { error: gErr } = await supabase
         .from('user_labels')
         .insert({ user_id: myId, name });
@@ -647,26 +750,200 @@ export default function FriendsScreen() {
       setAddGroupName('');
       await load();
     } catch (e: any) {
-      Alert.alert(
-        '그룹 생성 실패',
-        (e?.message ?? String(e)).slice(0, 200),
-      );
+      Alert.alert('그룹 생성 실패', (e?.message ?? String(e)).slice(0, 200));
     } finally {
       setAddGroupLoading(false);
     }
-  }, [addGroupName, ensureSession, load]);
+  }, [addGroupName, ensureSession, load, groups]);
+
+  // ── “그룹에 추가하기” 빠른 선택 (친구 → 그룹) ─────────────────
+  const openQuickGroupModal = useCallback(
+    async (fr: FriendRow) => {
+      try {
+        setTarget(fr);
+
+        const { data, error } = await supabase
+          .from('user_labels')
+          .select('id,name')
+          .eq('user_id', me)
+          .order('name', { ascending: true });
+
+        if (error) throw error;
+
+        const labels = (data ?? []) as Label[];
+        if (!labels.length) {
+          Alert.alert(
+            '안내',
+            '만든 그룹이 없습니다.\n상단 태그 아이콘으로 그룹을 먼저 만들어 주세요.',
+          );
+          return;
+        }
+        setGroups(labels);
+        setQuickGroupOpen(true);
+      } catch (e: any) {
+        Alert.alert('그룹 목록 불러오기 실패', (e?.message ?? String(e)).slice(0, 200));
+      }
+    },
+    [me],
+  );
+
+  const handleQuickAddToGroup = useCallback(
+    async (labelId: number) => {
+      if (!target) return;
+      try {
+        const { error } = await supabase.from('user_label_members').upsert(
+          {
+            user_id: me,
+            label_id: labelId,
+            member_user_id: target.user_id,
+          },
+          {
+            onConflict: 'user_id,label_id,member_user_id',
+          },
+        );
+        if (error) throw error;
+
+        Alert.alert('완료', '그룹에 추가되었습니다.');
+        setQuickGroupOpen(false);
+        await load();
+      } catch (e: any) {
+        Alert.alert('그룹에 추가 실패', (e?.message ?? String(e)).slice(0, 200));
+      }
+    },
+    [me, target, load],
+  );
+
+  // ── 그룹 편집 (이름 수정 / 삭제) ─────────────────────────────
+  const openEditGroupModal = (label: Label) => {
+    setEditingGroup(label);
+    setEditGroupName(label.name);
+    setEditGroupOpen(true);
+  };
+
+  const saveGroupEdit = useCallback(async () => {
+    if (!editingGroup) return;
+    const name = editGroupName.trim();
+    if (!name) {
+      Alert.alert('안내', '그룹 이름을 입력해 주세요.');
+      return;
+    }
+    try {
+      setEditGroupLoading(true);
+      const { error } = await supabase
+        .from('user_labels')
+        .update({ name })
+        .eq('id', editingGroup.id)
+        .eq('user_id', me);
+      if (error) throw error;
+
+      setEditGroupOpen(false);
+      await load();
+    } catch (e: any) {
+      Alert.alert('그룹 수정 실패', (e?.message ?? String(e)).slice(0, 200));
+    } finally {
+      setEditGroupLoading(false);
+    }
+  }, [editingGroup, editGroupName, me, load]);
+
+  const deleteGroup = useCallback(async () => {
+    if (!editingGroup) return;
+    try {
+      setEditGroupLoading(true);
+      await supabase
+        .from('user_label_members')
+        .delete()
+        .eq('user_id', me)
+        .eq('label_id', editingGroup.id);
+
+      const { error } = await supabase
+        .from('user_labels')
+        .delete()
+        .eq('id', editingGroup.id)
+        .eq('user_id', me);
+      if (error) throw error;
+
+      setEditGroupOpen(false);
+      await load();
+    } catch (e: any) {
+      Alert.alert('그룹 삭제 실패', (e?.message ?? String(e)).slice(0, 200));
+    } finally {
+      setEditGroupLoading(false);
+    }
+  }, [editingGroup, me, load]);
+
+  // ── 그룹 멤버 편집 (그룹 → 친구) ─────────────────────────────
+  const openEditMembersModal = (label: Label) => {
+    setEditingMembersGroup(label);
+    const memberIds = groupMembersByLabel[label.id] ?? [];
+    setMembersSelection(memberIds);
+    setMemberSearch('');
+    setEditMembersOpen(true);
+  };
+
+  const toggleMemberSelection = (userId: string) => {
+    setMembersSelection((prev) =>
+      prev.includes(userId) ? prev.filter((x) => x !== userId) : [...prev, userId],
+    );
+  };
+
+  const saveGroupMembers = useCallback(async () => {
+    if (!editingMembersGroup) return;
+    try {
+      setSavingMembers(true);
+
+      await supabase
+        .from('user_label_members')
+        .delete()
+        .eq('user_id', me)
+        .eq('label_id', editingMembersGroup.id);
+
+      if (membersSelection.length > 0) {
+        const insertRows = membersSelection.map((memberId) => ({
+          user_id: me,
+          label_id: editingMembersGroup.id,
+          member_user_id: memberId,
+        }));
+        await supabase.from('user_label_members').upsert(insertRows, {
+          onConflict: 'user_id,label_id,member_user_id',
+        });
+      }
+
+      setEditMembersOpen(false);
+      await load();
+    } catch (e: any) {
+      Alert.alert('그룹 멤버 저장 실패', (e?.message ?? String(e)).slice(0, 200));
+    } finally {
+      setSavingMembers(false);
+    }
+  }, [editingMembersGroup, membersSelection, me, load]);
+
+  // ── 그룹에서 멤버 제거 (맴버 롱프레스) ────────────────────────
+  const removeFromGroup = useCallback(
+    async (labelId: number, memberUserId: string) => {
+      try {
+        const { error } = await supabase
+          .from('user_label_members')
+          .delete()
+          .eq('user_id', me)
+          .eq('label_id', labelId)
+          .eq('member_user_id', memberUserId);
+        if (error) throw error;
+
+        await load();
+      } catch (e: any) {
+        Alert.alert('제거 실패', (e?.message ?? String(e)).slice(0, 200));
+      }
+    },
+    [me, load],
+  );
 
   // ── 검색/숨김 필터 ───────────────────────────────────────
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
-    const base = rows.filter(
-      (r) => !hiddenIds.includes(r.user_id),
-    );
+    const base = rows.filter((r) => !hiddenIds.includes(r.user_id));
     if (!term) return base;
     return base.filter((r) =>
-      `${r.nickname} ${r.email ?? ''}`
-        .toLowerCase()
-        .includes(term),
+      `${r.nickname} ${r.email ?? ''}`.toLowerCase().includes(term),
     );
   }, [q, rows, hiddenIds]);
 
@@ -677,11 +954,7 @@ export default function FriendsScreen() {
   const birthdayList: FriendRow[] = useMemo(() => {
     if (!rows.length) return [];
     const now = new Date();
-    const todayStart = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-    );
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const year = todayStart.getFullYear();
 
     return rows
@@ -690,18 +963,13 @@ export default function FriendsScreen() {
         const d = new Date(r.birthdate);
         if (Number.isNaN(d.getTime())) return false;
 
-        // 올해 생일
         let next = new Date(year, d.getMonth(), d.getDate());
         if (next < todayStart) {
-          // 이미 지났으면 내년
           next = new Date(year + 1, d.getMonth(), d.getDate());
         }
         const diffMs = next.getTime() - todayStart.getTime();
-        const diffDays = Math.floor(
-          diffMs / (1000 * 60 * 60 * 24),
-        );
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-        // 오늘(D-day) ~ 5일 전 (D-5) 까지 표시
         return diffDays >= 0 && diffDays <= 5;
       })
       .sort((a, b) => {
@@ -724,34 +992,24 @@ export default function FriendsScreen() {
       const memberIds = groupMembersByLabel[g.id] ?? [];
       let members = memberIds
         .map((id) => friendMap.get(id))
-        .filter(
-          (r): r is FriendRow =>
-            !!r && !hiddenIds.includes(r.user_id),
-        );
+        .filter((r): r is FriendRow => !!r && !hiddenIds.includes(r.user_id));
 
       if (term) {
         members = members.filter((r) =>
-          `${r.nickname} ${r.email ?? ''}`
-            .toLowerCase()
-            .includes(term),
+          `${r.nickname} ${r.email ?? ''}`.toLowerCase().includes(term),
         );
       }
 
-      members.sort((a, b) =>
-        a.nickname.localeCompare(b.nickname, 'ko'),
-      );
+      members.sort((a, b) => a.nickname.localeCompare(b.nickname, 'ko'));
 
       return { label: g, members };
     });
 
-    return sections.filter((sec) => sec.members.length > 0);
+    return sections;
   }, [groups, groupMembersByLabel, rows, hiddenIds, q]);
 
   // 즐겨찾는 그룹: 해당 그룹 안에 즐겨찾는 친구가 한 명이라도 있는 경우
-  const {
-    favoriteGroupSections,
-    normalGroupSections,
-  } = useMemo(() => {
+  const { favoriteGroupSections, normalGroupSections } = useMemo(() => {
     const fav: GroupSection[] = [];
     const normal: GroupSection[] = [];
 
@@ -761,13 +1019,46 @@ export default function FriendsScreen() {
       else normal.push(sec);
     });
 
-    return { favoriteGroupSections: fav, normalGroupSections: normal };
+    return {
+      favoriteGroupSections: fav,
+      normalGroupSections: normal,
+    };
   }, [groupSections]);
+
+  // 그룹 멤버 추가 모달에서 사용할 검색 필터
+  const memberFilteredRows = useMemo(() => {
+    const term = memberSearch.trim().toLowerCase();
+    if (!term) return rows;
+    return rows.filter((fr) =>
+      `${fr.nickname} ${fr.email ?? ''}`.toLowerCase().includes(term),
+    );
+  }, [rows, memberSearch]);
 
   // ── 공통 액션들 ─────────────────────────────────────────
   const onPressFriend = (f: FriendRow) => {
-    navigation.navigate('ChatRoom', { peer_id: f.user_id });
+    if (f.user_id === me) {
+      Alert.alert('오류', '내 자신과의 1:1 채팅은 만들 수 없습니다.');
+      return;
+    }
+    navigation.navigate('Chat', {
+      peer_id: f.user_id,
+      roomType: 'dm',
+      fromFriends: true,
+    });
   };
+
+  // ✅ 1) 친구 탭 → 프로필로 이동
+  const goProfile = useCallback(
+    (f: FriendRow) => {
+      if (!f?.user_id) return;
+      navigation.navigate('ProfileView', {
+        userId: f.user_id,
+        user_id: f.user_id,
+        fromFriends: true,
+      });
+    },
+    [navigation],
+  );
 
   const openSheet = (item: FriendRow) => {
     setTarget(item);
@@ -805,6 +1096,11 @@ export default function FriendsScreen() {
     closeSheet();
     await blockFriend(target.user_id);
   };
+  const doQuickAddGroup = async () => {
+    if (!target) return;
+    closeSheet();
+    await openQuickGroupModal(target);
+  };
 
   // 통화 옵션
   const openCallOptions = (fr: FriendRow) => {
@@ -826,10 +1122,7 @@ export default function FriendsScreen() {
     try {
       Linking.openURL(`tel:${phoneNumber}`);
     } catch (e: any) {
-      Alert.alert(
-        '통화 실패',
-        (e?.message ?? String(e)).slice(0, 200),
-      );
+      Alert.alert('통화 실패', (e?.message ?? String(e)).slice(0, 200));
     } finally {
       setCallOpen(false);
     }
@@ -840,118 +1133,203 @@ export default function FriendsScreen() {
   };
 
   // ── 스와이프 가능한 친구 행 컴포넌트 ─────────────────────
-  const FriendListRow = ({ item }: { item: FriendRow }) => (
-    <Swipeable
-      renderRightActions={() => (
-        <View style={s.swipeActions}>
-          <Pressable
-            style={[s.swipeBtn, s.swipeChatBtn]}
-            onPress={() => onPressFriend(item)}
-          >
-            <MessageCircle size={20} color="#ffffff" />
-          </Pressable>
-          <Pressable
-            style={[s.swipeBtn, s.swipeCallBtn]}
-            onPress={() => openCallOptions(item)}
-          >
-            <Phone size={20} color="#ffffff" />
-          </Pressable>
-        </View>
-      )}
-      overshootRight={false}
-    >
-      <Pressable
-        style={s.row}
-        onPress={() => onPressFriend(item)}
-        onLongPress={() => openSheet(item)}
-      >
-        <View style={s.rowLeft}>
+  const FriendListRow = ({ item }: { item: FriendRow }) => {
+    const handlePress = () => goProfile(item);
+    const handleLongPress = () => openSheet(item);
+
+    return (
+      <View style={s.friendRowContainer}>
+        {/* ✅ 좌측: 프로필(고정) */}
+        <Pressable
+          style={s.fixedProfileArea}
+          onPress={handlePress}
+          onLongPress={handleLongPress}
+        >
           {item.avatar_url ? (
-            <Image
-              source={{ uri: item.avatar_url }}
-              style={s.avatar as any}
-            />
+            <Image source={{ uri: item.avatar_url }} style={s.avatar as any} />
           ) : (
             <View style={[s.avatar, s.avatarFallback]}>
-              <Text style={s.avatarInitial}>
-                {getInitial(item.nickname)}
-              </Text>
+              <Text style={s.avatarInitial}>{getInitial(item.nickname)}</Text>
             </View>
           )}
-          <View style={{ flex: 1 }}>
-            <Text style={s.title} numberOfLines={1}>
-              {item.nickname}
-            </Text>
-            {!!item.status_message && (
-              <Text style={s.subtitle} numberOfLines={1}>
-                {item.status_message}
-              </Text>
-            )}
-          </View>
-        </View>
-        {item.is_favorite && (
-          <Text style={s.favBadge}>★</Text>
-        )}
-      </Pressable>
-    </Swipeable>
-  );
+        </Pressable>
 
-  const renderRow = ({ item }: { item: FriendRow }) => (
-    <FriendListRow item={item} />
-  );
+        {/* ✅ 우측: 고정 컨텐츠 + 액션만 슬라이드 인 (텍스트/닉네임 안 밀림) */}
+        <View style={s.swipeableWrap}>
+          <SwipeRevealRow
+            openCloserRef={openCloserRef}
+            onPress={handlePress}
+            onLongPress={handleLongPress}
+            renderActions={(close) => (
+              <View style={s.swipeActions}>
+                <Pressable
+                  style={[s.swipeBtn, s.swipeChatBtn]}
+                  onPress={() => {
+                    close();
+                    onPressFriend(item);
+                  }}
+                >
+                  <MessageCircle size={20} color="#111827" />
+                </Pressable>
+                <Pressable
+                  style={[s.swipeBtn, s.swipeCallBtn]}
+                  onPress={() => {
+                    close();
+                    openCallOptions(item);
+                  }}
+                >
+                  <Phone size={20} color="#10b981" />
+                </Pressable>
+              </View>
+            )}
+          >
+            <View style={s.rightInner}>
+              <View style={s.rightText}>
+                <Text style={s.title} numberOfLines={1}>
+                  {item.nickname}
+                </Text>
+                {!!item.status_message && (
+                  <Text style={s.subtitle} numberOfLines={1}>
+                    {item.status_message}
+                  </Text>
+                )}
+              </View>
+              {item.is_favorite && <Text style={s.favBadge}>★</Text>}
+            </View>
+          </SwipeRevealRow>
+        </View>
+      </View>
+    );
+  };
+
+  const GroupMemberRow = ({
+    item,
+    labelId,
+  }: {
+    item: FriendRow;
+    labelId: number;
+  }) => {
+    const handlePress = () => goProfile(item);
+    const handleLongPress = () => removeFromGroup(labelId, item.user_id);
+
+    return (
+      <View style={s.friendRowContainer}>
+        {/* ✅ 좌측: 프로필(고정) */}
+        <Pressable
+          style={s.fixedProfileArea}
+          onPress={handlePress}
+          onLongPress={handleLongPress}
+        >
+          {item.avatar_url ? (
+            <Image source={{ uri: item.avatar_url }} style={s.avatar as any} />
+          ) : (
+            <View style={[s.avatar, s.avatarFallback]}>
+              <Text style={s.avatarInitial}>{getInitial(item.nickname)}</Text>
+            </View>
+          )}
+        </Pressable>
+
+        {/* ✅ 우측: 고정 컨텐츠 + 액션만 슬라이드 인 (텍스트/닉네임 안 밀림) */}
+        <View style={s.swipeableWrap}>
+          <SwipeRevealRow
+            openCloserRef={openCloserRef}
+            onPress={handlePress}
+            onLongPress={handleLongPress}
+            renderActions={(close) => (
+              <View style={s.swipeActions}>
+                <Pressable
+                  style={[s.swipeBtn, s.swipeChatBtn]}
+                  onPress={() => {
+                    close();
+                    onPressFriend(item);
+                  }}
+                >
+                  <MessageCircle size={20} color="#111827" />
+                </Pressable>
+                <Pressable
+                  style={[s.swipeBtn, s.swipeCallBtn]}
+                  onPress={() => {
+                    close();
+                    openCallOptions(item);
+                  }}
+                >
+                  <Phone size={20} color="#10b981" />
+                </Pressable>
+              </View>
+            )}
+          >
+            <View style={s.rightInner}>
+              <View style={s.rightText}>
+                <Text style={s.title} numberOfLines={1}>
+                  {item.nickname}
+                </Text>
+                {!!item.status_message && (
+                  <Text style={s.subtitle} numberOfLines={1}>
+                    {item.status_message}
+                  </Text>
+                )}
+              </View>
+              {item.is_favorite && <Text style={s.favBadge}>★</Text>}
+            </View>
+          </SwipeRevealRow>
+        </View>
+      </View>
+    );
+  };
+
+  const renderRow = ({ item }: { item: FriendRow }) => <FriendListRow item={item} />;
 
   const keyExtractor = (i: FriendRow) => i.user_id;
 
-  const refreshCtrl = (
-    <RefreshControl refreshing={refreshing} onRefresh={load} />
-  );
+  const refreshCtrl = <RefreshControl refreshing={refreshing} onRefresh={load} />;
 
   // ── 모드 전환 (스와이프 + 탭) ────────────────────────────
   const toggleMode = () => {
     setMode((prev) => (prev === 'friends' ? 'groups' : 'friends'));
   };
 
-  const panResponder = React.useRef(
+  const modePanResponder = useRef(
     PanResponder.create({
-      onMoveShouldSetPanResponder: (
-        _: GestureResponderEvent,
-        g: PanResponderGestureState,
-      ) => {
+      onMoveShouldSetPanResponder: (_: GestureResponderEvent, g: PanResponderGestureState) => {
+        // ✅ 행 스와이프(아이콘 노출)가 열려있으면, 우선 닫는 제스처를 우선한다
+        if (openCloserRef.current) return false;
+
         const { dx, dy } = g;
         const absDx = Math.abs(dx);
         const absDy = Math.abs(dy);
-        // 수평 제스처 + 오른쪽으로 충분히 이동한 경우만 잡기
+
+        // 수직 스크롤 우선
         if (absDy > absDx) return false;
-        if (dx <= 8) return false;
+
+        // ✅ 오른쪽 스와이프만 모드 전환으로 사용
+        if (dx < 12) return false;
+
         return true;
       },
-      onMoveShouldSetPanResponderCapture: (
-        _: GestureResponderEvent,
-        g: PanResponderGestureState,
-      ) => {
+      onMoveShouldSetPanResponderCapture: (_: GestureResponderEvent, g: PanResponderGestureState) => {
+        if (openCloserRef.current) return false;
+
         const { dx, dy } = g;
         const absDx = Math.abs(dx);
         const absDy = Math.abs(dy);
+
         if (absDy > absDx) return false;
-        if (dx <= 8) return false;
+        if (dx < 12) return false;
+
         return true;
       },
       onPanResponderTerminationRequest: () => true,
-      onPanResponderRelease: (
-        _: GestureResponderEvent,
-        g: PanResponderGestureState,
-      ) => {
+      onPanResponderRelease: (_: GestureResponderEvent, g: PanResponderGestureState) => {
+        // 스와이프 행이 열려있을 때는 모드 전환 금지
+        if (openCloserRef.current) return;
+
         const { dx, vx } = g;
         const absVx = Math.abs(vx);
 
         const DIST_THRESHOLD = 30;
         const VELOCITY_THRESHOLD = 0.05;
 
-        // 오른쪽 스와이프만 모드 토글
-        if (
-          dx > DIST_THRESHOLD ||
-          (dx > 0 && absVx > VELOCITY_THRESHOLD)
-        ) {
+        if (dx > DIST_THRESHOLD || (dx > 0 && absVx > VELOCITY_THRESHOLD)) {
           toggleMode();
         }
       },
@@ -964,114 +1342,70 @@ export default function FriendsScreen() {
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: '#fff' }}
-      {...panResponder.panHandlers} // 본문까지 스와이프 인식
+      edges={['left', 'right', 'bottom']}
+    
+      {...modePanResponder.panHandlers}
     >
-      <StatusBar
-        backgroundColor="#fff"
-        translucent={false}
-        barStyle="dark-content"
-      />
+      <RNStatusBar backgroundColor="transparent" translucent={true} barStyle="dark-content" />
 
       {/* 상단 헤더 */}
-      <View style={s.headerContainer}>
+      <View
+        style={[s.headerContainer, { paddingTop: Math.max(insets.top, 0) + 4 }]}
+              >
         <View style={s.headerRow}>
           <View style={s.headerLeft}>
             {mode === 'friends' ? (
               <>
-                <Pressable
-                  onPress={() => setMode('friends')}
-                  hitSlop={8}
-                >
-                  <Text
-                    style={[
-                      s.headerTitle,
-                      s.headerTitleActive,
-                    ]}
-                  >
-                    친구
-                  </Text>
+                <Pressable onPress={() => setMode('friends')} hitSlop={8}>
+                  <Text style={[s.headerTitle, s.headerTitleActive]}>친구</Text>
                 </Pressable>
-                <Pressable
-                  onPress={() => setMode('groups')}
-                  hitSlop={8}
-                >
-                  <Text
-                    style={[
-                      s.headerTitle,
-                      s.headerTitleInactive,
-                    ]}
-                  >
-                    그룹
-                  </Text>
+                <Pressable onPress={() => setMode('groups')} hitSlop={8}>
+                  <Text style={[s.headerTitle, s.headerTitleInactive]}>그룹</Text>
                 </Pressable>
               </>
             ) : (
               <>
-                <Pressable
-                  onPress={() => setMode('groups')}
-                  hitSlop={8}
-                >
-                  <Text
-                    style={[
-                      s.headerTitle,
-                      s.headerTitleActive,
-                    ]}
-                  >
-                    그룹
-                  </Text>
+                <Pressable onPress={() => setMode('groups')} hitSlop={8}>
+                  <Text style={[s.headerTitle, s.headerTitleActive]}>그룹</Text>
                 </Pressable>
-                <Pressable
-                  onPress={() => setMode('friends')}
-                  hitSlop={8}
-                >
-                  <Text
-                    style={[
-                      s.headerTitle,
-                      s.headerTitleInactive,
-                    ]}
-                  >
-                    친구
-                  </Text>
+                <Pressable onPress={() => setMode('friends')} hitSlop={8}>
+                  <Text style={[s.headerTitle, s.headerTitleInactive]}>친구</Text>
                 </Pressable>
               </>
             )}
           </View>
 
           <View style={s.headerIconsRow}>
+            {/* 검색 */}
             <Pressable
               style={s.headerIconButton}
               onPress={() => {
                 setSearchVisible((v) => !v);
                 if (!searchVisible) {
-                  setTimeout(
-                    () => searchRef.current?.focus(),
-                    0,
-                  );
+                  setTimeout(() => searchRef.current?.focus(), 0);
                 }
               }}
             >
               <Search size={20} color="#111827" />
             </Pressable>
 
-            {/* 그룹 추가 */}
+            {/* 친구 추가 → Add.tsx 화면으로 이동 */}
             <Pressable
               style={s.headerIconButton}
-              onPress={openAddGroupModal}
-            >
-              <Tag size={20} color="#111827" />
-            </Pressable>
-
-            {/* 친구 추가 */}
-            <Pressable
-              style={s.headerIconButton}
-              onPress={openAddFriendModal}
+              onPress={() => navigation.navigate('FriendAdd')}
             >
               <UserPlus2 size={20} color="#111827" />
             </Pressable>
 
+            {/* 그룹 추가 */}
+            <Pressable style={s.headerIconButton} onPress={openAddGroupModal}>
+              <Tag size={20} color="#111827" />
+            </Pressable>
+
+            {/* 설정 홈으로 이동 */}
             <Pressable
               style={s.headerIconButton}
-              onPress={() => navigation.navigate('MeStack')}
+              onPress={() => navigation.navigate('SettingsHome')}
             >
               <Settings size={20} color="#111827" />
             </Pressable>
@@ -1098,30 +1432,17 @@ export default function FriendsScreen() {
       {/* 콘텐츠 영역 */}
       <View style={{ flex: 1 }}>
         {loading ? (
-          <View
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <ActivityIndicator />
           </View>
         ) : mode === 'friends' ? (
           <>
-            {/* 생일인 친구 섹션: D-5 이내 + 한 명이라도 있을 때만 표시 */}
+            {/* 생일인 친구 섹션 */}
             {birthdayList.length > 0 && (
               <>
                 <View style={s.sectionHeader}>
-                  <Text style={s.sectionTitle}>
-                    생일인 친구 {birthdayList.length}
-                  </Text>
-                  <Pressable
-                    onPress={() =>
-                      setOpenBirthdaySection((v) => !v)
-                    }
-                    hitSlop={8}
-                  >
+                  <Text style={s.sectionTitle}>생일인 친구 {birthdayList.length}</Text>
+                  <Pressable onPress={() => setOpenBirthdaySection((v) => !v)} hitSlop={8}>
                     {openBirthdaySection ? (
                       <ChevronUp size={18} color="#9CA3AF" />
                     ) : (
@@ -1142,17 +1463,13 @@ export default function FriendsScreen() {
               </>
             )}
 
-            {/* 즐겨찾는 친구 섹션: 비어 있으면 아예 표시 안 함 */}
+            {/* 즐겨찾는 친구 섹션 */}
             {favList.length > 0 && (
               <>
                 <View style={s.sectionHeader}>
-                  <Text style={s.sectionTitle}>
-                    즐겨찾는 친구 {favList.length}
-                  </Text>
+                  <Text style={s.sectionTitle}>즐겨찾는 친구 {favList.length}</Text>
                   <Pressable
-                    onPress={() =>
-                      setOpenFavoriteFriendsSection((v) => !v)
-                    }
+                    onPress={() => setOpenFavoriteFriendsSection((v) => !v)}
                     hitSlop={8}
                   >
                     {openFavoriteFriendsSection ? (
@@ -1177,15 +1494,11 @@ export default function FriendsScreen() {
 
             {/* 전체 친구 섹션 */}
             <View style={s.sectionHeader}>
-              <Text style={s.sectionTitle}>
-                친구 {rows.length}
-              </Text>
+              <Text style={s.sectionTitle}>친구 {rows.length}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Text style={s.sortHint}>가나다 순</Text>
                 <Pressable
-                  onPress={() =>
-                    setOpenFriendsSection((v) => !v)
-                  }
+                  onPress={() => setOpenFriendsSection((v) => !v)}
                   hitSlop={8}
                   style={{ marginLeft: 4 }}
                 >
@@ -1203,9 +1516,7 @@ export default function FriendsScreen() {
                 keyExtractor={keyExtractor}
                 renderItem={renderRow}
                 refreshControl={refreshCtrl}
-                ListEmptyComponent={
-                  <Text style={s.empty}>친구가 없습니다.</Text>
-                }
+                ListEmptyComponent={<Text style={s.empty}>친구가 없습니다.</Text>}
                 contentContainerStyle={{ paddingBottom: 20 }}
                 initialNumToRender={18}
                 windowSize={10}
@@ -1214,23 +1525,13 @@ export default function FriendsScreen() {
           </>
         ) : (
           // ── 그룹 모드 화면 ──────────────────────────────
-          <ScrollView
-            refreshControl={refreshCtrl}
-            contentContainerStyle={{ paddingBottom: 20 }}
-          >
-            {/* 즐겨찾는 그룹 섹션: 비어 있으면 표시 안 함 */}
+          <ScrollView refreshControl={refreshCtrl} contentContainerStyle={{ paddingBottom: 20 }}>
+            {/* 즐겨찾는 그룹 섹션 */}
             {favoriteGroupSections.length > 0 && (
               <>
                 <View style={s.sectionHeader}>
-                  <Text style={s.sectionTitle}>
-                    즐겨찾는 그룹 {favoriteGroupSections.length}
-                  </Text>
-                  <Pressable
-                    onPress={() =>
-                      setOpenFavoriteGroupsSection((v) => !v)
-                    }
-                    hitSlop={8}
-                  >
+                  <Text style={s.sectionTitle}>즐겨찾는 그룹 {favoriteGroupSections.length}</Text>
+                  <Pressable onPress={() => setOpenFavoriteGroupsSection((v) => !v)} hitSlop={8}>
                     {openFavoriteGroupsSection ? (
                       <ChevronUp size={18} color="#9CA3AF" />
                     ) : (
@@ -1242,16 +1543,26 @@ export default function FriendsScreen() {
                   favoriteGroupSections.map((sec) => (
                     <View key={`fav-${sec.label.id}`}>
                       <View style={s.sectionHeader}>
-                        <Text style={s.sectionTitle}>
-                          {sec.label.name}
-                        </Text>
-                        <Text style={s.sortHint}>
-                          {sec.members.length}명
-                        </Text>
+                        <Text style={s.sectionTitle}>{sec.label.name}</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                          <Text style={s.sortHint}>{sec.members.length}명</Text>
+                          <Pressable
+                            style={s.headerIconButton}
+                            onPress={() => openEditMembersModal(sec.label)}
+                          >
+                            <Plus size={16} color="#6b7280" />
+                          </Pressable>
+                          <Pressable
+                            style={s.headerIconButton}
+                            onPress={() => openEditGroupModal(sec.label)}
+                          >
+                            <MoreHorizontal size={18} color="#6b7280" />
+                          </Pressable>
+                        </View>
                       </View>
                       {sec.members.map((m) => (
                         <View key={m.user_id}>
-                          <FriendListRow item={m} />
+                          <GroupMemberRow item={m} labelId={sec.label.id} />
                         </View>
                       ))}
                       <View style={s.sectionGap} />
@@ -1262,15 +1573,11 @@ export default function FriendsScreen() {
 
             {/* 전체 그룹 섹션 */}
             <View style={s.sectionHeader}>
-              <Text style={s.sectionTitle}>
-                그룹 {normalGroupSections.length}
-              </Text>
+              <Text style={s.sectionTitle}>그룹 {normalGroupSections.length}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Text style={s.sortHint}>가나다 순</Text>
                 <Pressable
-                  onPress={() =>
-                    setOpenGroupsSection((v) => !v)
-                  }
+                  onPress={() => setOpenGroupsSection((v) => !v)}
                   hitSlop={8}
                   style={{ marginLeft: 4 }}
                 >
@@ -1284,23 +1591,31 @@ export default function FriendsScreen() {
             </View>
             {openGroupsSection &&
               (normalGroupSections.length === 0 ? (
-                <Text style={[s.empty, { marginTop: 4 }]}>
-                  그룹에 속한 친구가 없습니다.
-                </Text>
+                <Text style={[s.empty, { marginTop: 4 }]}>그룹에 속한 친구가 없습니다.</Text>
               ) : (
                 normalGroupSections.map((sec) => (
                   <View key={sec.label.id}>
                     <View style={s.sectionHeader}>
-                      <Text style={s.sectionTitle}>
-                        {sec.label.name}
-                      </Text>
-                      <Text style={s.sortHint}>
-                        {sec.members.length}명
-                      </Text>
+                      <Text style={s.sectionTitle}>{sec.label.name}</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Text style={s.sortHint}>{sec.members.length}명</Text>
+                        <Pressable
+                          style={s.headerIconButton}
+                          onPress={() => openEditMembersModal(sec.label)}
+                        >
+                          <Plus size={16} color="#6b7280" />
+                        </Pressable>
+                        <Pressable
+                          style={s.headerIconButton}
+                          onPress={() => openEditGroupModal(sec.label)}
+                        >
+                          <MoreHorizontal size={18} color="#6b7280" />
+                        </Pressable>
+                      </View>
                     </View>
                     {sec.members.map((m) => (
                       <View key={m.user_id}>
-                        <FriendListRow item={m} />
+                        <GroupMemberRow item={m} labelId={sec.label.id} />
                       </View>
                     ))}
                     <View style={s.sectionGap} />
@@ -1311,41 +1626,28 @@ export default function FriendsScreen() {
         )}
       </View>
 
-      {/* 옵션 시트 */}
-      <Modal
-        visible={sheetOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={closeSheet}
-      >
-        <Pressable
-          style={s.sheetBackdrop}
-          onPress={closeSheet}
-        />
+      {/* 친구 옵션 시트 */}
+      <Modal visible={sheetOpen} transparent animationType="fade" onRequestClose={closeSheet}>
+        <Pressable style={s.sheetBackdrop} onPress={closeSheet} />
         <View style={s.sheetCard}>
-          <Text style={s.sheetTitle}>
-            {target?.nickname ?? ''}
-          </Text>
+          <Text style={s.sheetTitle}>{target?.nickname ?? ''}</Text>
 
-          <Pressable
-            style={s.sheetRow}
-            onPress={doFavorite}
-          >
+          <Pressable style={s.sheetRow} onPress={doFavorite}>
             <Text style={s.sheetTxt}>
-              {target?.is_favorite
-                ? '즐겨찾기에서 제거'
-                : '즐겨찾기에 추가'}
+              {target?.is_favorite ? '즐겨찾기에서 제거' : '즐겨찾기에 추가'}
             </Text>
           </Pressable>
 
           <Pressable style={s.sheetRow} onPress={doAlias}>
-            <Text style={s.sheetTxt}>
-              별명(내게만 보임) 설정
-            </Text>
+            <Text style={s.sheetTxt}>별명(내게만 보임) 설정</Text>
           </Pressable>
 
           <Pressable style={s.sheetRow} onPress={doGroups}>
             <Text style={s.sheetTxt}>그룹 관리</Text>
+          </Pressable>
+
+          <Pressable style={s.sheetRow} onPress={doQuickAddGroup}>
+            <Text style={s.sheetTxt}>그룹에 추가하기</Text>
           </Pressable>
 
           <Pressable style={s.sheetRow} onPress={doHide}>
@@ -1353,45 +1655,25 @@ export default function FriendsScreen() {
           </Pressable>
 
           <Pressable style={s.sheetRow} onPress={doDelete}>
-            <Text style={[s.sheetTxt, { color: '#ef4444' }]}>
-              삭제
-            </Text>
+            <Text style={[s.sheetTxt, { color: '#ef4444' }]}>삭제</Text>
           </Pressable>
 
           <Pressable style={s.sheetRow} onPress={doBlock}>
-            <Text style={[s.sheetTxt, { color: '#ef4444' }]}>
-              차단
-            </Text>
+            <Text style={[s.sheetTxt, { color: '#ef4444' }]}>차단</Text>
           </Pressable>
         </View>
       </Modal>
 
       {/* 통화 옵션 모달 */}
-      <Modal
-        visible={callOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={closeCallOptions}
-      >
-        <Pressable
-          style={s.sheetBackdrop}
-          onPress={closeCallOptions}
-        />
+      <Modal visible={callOpen} transparent animationType="fade" onRequestClose={closeCallOptions}>
+        <Pressable style={s.sheetBackdrop} onPress={closeCallOptions} />
         <View style={s.sheetCard}>
           <Text style={s.sheetTitle}>어떻게 통화할까요?</Text>
-          <Pressable
-            style={s.sheetRow}
-            onPress={handleCallPhone}
-          >
+          <Pressable style={s.sheetRow} onPress={handleCallPhone}>
             <Text style={s.sheetTxt}>전화번호로 통화</Text>
           </Pressable>
-          <Pressable
-            style={s.sheetRow}
-            onPress={handleCallVoice}
-          >
-            <Text style={[s.sheetTxt, { color: '#6b7280' }]}>
-              보이스콜 (추후 지원)
-            </Text>
+          <Pressable style={s.sheetRow} onPress={handleCallVoice}>
+            <Text style={[s.sheetTxt, { color: '#6b7280' }]}>보이스콜 (추후 지원)</Text>
           </Pressable>
         </View>
       </Modal>
@@ -1403,10 +1685,7 @@ export default function FriendsScreen() {
         animationType="fade"
         onRequestClose={() => setAliasOpen(false)}
       >
-        <Pressable
-          style={s.sheetBackdrop}
-          onPress={() => setAliasOpen(false)}
-        />
+        <Pressable style={s.sheetBackdrop} onPress={() => setAliasOpen(false)} />
         <View style={s.sheetCard}>
           <Text style={s.sheetTitle}>별명 설정</Text>
           <TextInput
@@ -1415,46 +1694,31 @@ export default function FriendsScreen() {
             placeholder="내게만 보일 별명"
             style={s.input}
           />
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: 8,
-              marginTop: 10,
-            }}
-          >
-            <Pressable
-              style={[s.btn, s.btnGhost]}
-              onPress={() => setAliasOpen(false)}
-            >
+          <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
+            <Pressable style={[s.btn, s.btnGhost]} onPress={() => setAliasOpen(false)}>
               <Text style={s.btnGhostTxt}>취소</Text>
             </Pressable>
-            <Pressable
-              style={[s.btn, s.btnPrimary]}
-              onPress={saveAlias}
-            >
+            <Pressable style={[s.btn, s.btnPrimary]} onPress={saveAlias}>
               <Text style={s.btnPrimaryTxt}>저장</Text>
             </Pressable>
           </View>
         </View>
       </Modal>
 
-      {/* 그룹 관리 모달 */}
+      {/* 그룹 관리 모달 (친구 기준) */}
       <Modal
         visible={groupsOpen}
         transparent
         animationType="fade"
         onRequestClose={() => setGroupsOpen(false)}
       >
-        <Pressable
-          style={s.sheetBackdrop}
-          onPress={() => setGroupsOpen(false)}
-        />
+        <Pressable style={s.sheetBackdrop} onPress={() => setGroupsOpen(false)} />
         <View style={s.sheetCard}>
           <Text style={s.sheetTitle}>그룹 관리</Text>
           {groups.length === 0 ? (
             <Text style={s.empty}>
-              만든 그룹이 없습니다. 상단 태그 아이콘으로 그룹
-              추가 후 친구를 넣어 주세요.
+              만든 그룹이 없습니다. 상단 태그 아이콘으로 그룹 추가 후 친구를 넣어
+              주세요.
             </Text>
           ) : (
             <View style={{ gap: 8 }}>
@@ -1463,130 +1727,41 @@ export default function FriendsScreen() {
                 return (
                   <Pressable
                     key={g.id}
-                    style={[
-                      s.groupRow,
-                      on && s.groupRowOn,
-                    ]}
+                    style={[s.groupRow, on && s.groupRowOn]}
                     onPress={() => toggleMember(g.id)}
                   >
-                    <Text
-                      style={[
-                        s.groupTxt,
-                        on && { color: '#fff' },
-                      ]}
-                    >
-                      {g.name}
-                    </Text>
+                    <Text style={[s.groupTxt, on && { color: '#fff' }]}>{g.name}</Text>
                   </Pressable>
                 );
               })}
             </View>
           )}
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: 8,
-              marginTop: 12,
-            }}
-          >
+          <View style={{ flexDirection: 'row', gap: 8, marginTop: 12 }}>
             <Pressable
-              style={[s.btn, s.btnGhost]}
-              onPress={() => setGroupsOpen(false)}
-            >
-              <Text style={s.btnGhostTxt}>닫기</Text>
-            </Pressable>
-            <Pressable
-              style={[
-                s.btn,
-                s.btnPrimary,
-                savingGroups && { opacity: 0.7 },
-              ]}
+              style={[s.btn, s.btnPrimary, savingGroups && { opacity: 0.7 }]}
               onPress={saveGroups}
               disabled={savingGroups}
             >
-              <Text style={s.btnPrimaryTxt}>
-                {savingGroups ? '저장 중…' : '저장'}
-              </Text>
+              <Text style={s.btnPrimaryTxt}>{savingGroups ? '저장 중…' : '저장'}</Text>
+            </Pressable>
+            <Pressable style={[s.btn, s.btnGhost]} onPress={() => setGroupsOpen(false)}>
+              <Text style={s.btnGhostTxt}>닫기</Text>
             </Pressable>
           </View>
         </View>
       </Modal>
 
-      {/* 친구 추가 모달 */}
-      <Modal
-        visible={addFriendOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={closeAddFriendModal}
-      >
-        <Pressable
-          style={s.sheetBackdrop}
-          onPress={closeAddFriendModal}
-        />
-        <View style={s.sheetCard}>
-          <Text style={s.sheetTitle}>친구 추가</Text>
-          <Text style={s.helpText}>
-            상대방의 친구 아이디(팔로우 ID)를 입력해 주세요.
-          </Text>
-          <TextInput
-            value={addFriendId}
-            onChangeText={setAddFriendId}
-            placeholder="예: yj_shin"
-            autoCapitalize="none"
-            autoCorrect={false}
-            style={s.input}
-          />
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: 8,
-              marginTop: 10,
-            }}
-          >
-            <Pressable
-              style={[s.btn, s.btnGhost]}
-              onPress={closeAddFriendModal}
-              disabled={addFriendLoading}
-            >
-              <Text style={s.btnGhostTxt}>취소</Text>
-            </Pressable>
-            <Pressable
-              style={[
-                s.btn,
-                s.btnPrimary,
-                addFriendLoading && { opacity: 0.7 },
-              ]}
-              onPress={handleAddFriend}
-              disabled={addFriendLoading}
-            >
-              {addFriendLoading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={s.btnPrimaryTxt}>
-                  친구 요청하기
-                </Text>
-              )}
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
-      {/* 그룹 추가 모달 */}
+      {/* 새 그룹 추가 모달 */}
       <Modal
         visible={addGroupOpen}
         transparent
         animationType="fade"
         onRequestClose={closeAddGroupModal}
       >
-        <Pressable
-          style={s.sheetBackdrop}
-          onPress={closeAddGroupModal}
-        />
+        <Pressable style={s.sheetBackdrop} onPress={closeAddGroupModal} />
         <View style={s.sheetCard}>
           <Text style={s.sheetTitle}>그룹 추가</Text>
-          <Text style={s.helpText}>
-            친구들을 묶을 그룹 이름을 입력해 주세요.
-          </Text>
+          <Text style={s.helpText}>친구들을 묶을 그룹 이름을 입력해 주세요.</Text>
           <TextInput
             value={addGroupName}
             onChangeText={setAddGroupName}
@@ -1595,13 +1770,7 @@ export default function FriendsScreen() {
             autoCorrect={false}
             style={s.input}
           />
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: 8,
-              marginTop: 10,
-            }}
-          >
+          <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
             <Pressable
               style={[s.btn, s.btnGhost]}
               onPress={closeAddGroupModal}
@@ -1610,11 +1779,7 @@ export default function FriendsScreen() {
               <Text style={s.btnGhostTxt}>취소</Text>
             </Pressable>
             <Pressable
-              style={[
-                s.btn,
-                s.btnPrimary,
-                addGroupLoading && { opacity: 0.7 },
-              ]}
+              style={[s.btn, s.btnPrimary, addGroupLoading && { opacity: 0.7 }]}
               onPress={handleAddGroup}
               disabled={addGroupLoading}
             >
@@ -1627,18 +1792,155 @@ export default function FriendsScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* “그룹에 추가하기” 빠른 모달 (친구 기준) */}
+      <Modal
+        visible={quickGroupOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setQuickGroupOpen(false)}
+      >
+        <Pressable style={s.sheetBackdrop} onPress={() => setQuickGroupOpen(false)} />
+        <View style={s.sheetCard}>
+          <Text style={s.sheetTitle}>그룹에 추가하기</Text>
+          <Text style={s.helpText}>이 친구를 넣을 그룹을 선택해 주세요.</Text>
+          {groups.length === 0 ? (
+            <Text style={s.empty}>
+              만든 그룹이 없습니다. 상단 태그 아이콘으로 그룹을 먼저 만들어 주세요.
+            </Text>
+          ) : (
+            <View style={{ gap: 8, marginTop: 4 }}>
+              {groups.map((g) => (
+                <Pressable
+                  key={g.id}
+                  style={[s.groupRow]}
+                  onPress={() => handleQuickAddToGroup(g.id)}
+                >
+                  <Text style={s.groupTxt}>{g.name}</Text>
+                </Pressable>
+              ))}
+            </View>
+          )}
+          <View style={{ flexDirection: 'row', gap: 8, marginTop: 12 }}>
+            <Pressable style={[s.btn, s.btnGhost]} onPress={() => setQuickGroupOpen(false)}>
+              <Text style={s.btnGhostTxt}>닫기</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      {/* 그룹 편집 모달 (이름 수정 / 삭제) */}
+      <Modal
+        visible={editGroupOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setEditGroupOpen(false)}
+      >
+        <Pressable style={s.sheetBackdrop} onPress={() => setEditGroupOpen(false)} />
+        <View style={s.sheetCard}>
+          <View style={s.sheetHeaderRow}>
+            <Text style={s.sheetTitle}>그룹 설정</Text>
+            <Pressable onPress={deleteGroup} disabled={editGroupLoading} hitSlop={8}>
+              <Text style={s.sheetDeleteTxt}>삭제</Text>
+            </Pressable>
+          </View>
+          <Text style={s.helpText}>그룹 이름을 수정하거나 삭제할 수 있습니다.</Text>
+          <TextInput
+            value={editGroupName}
+            onChangeText={setEditGroupName}
+            placeholder="그룹 이름"
+            autoCapitalize="none"
+            autoCorrect={false}
+            style={s.input}
+          />
+          <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
+            <Pressable
+              style={[s.btn, s.btnPrimary, editGroupLoading && { opacity: 0.7 }]}
+              onPress={saveGroupEdit}
+              disabled={editGroupLoading}
+            >
+              <Text style={s.btnPrimaryTxt}>이름 저장</Text>
+            </Pressable>
+            <Pressable
+              style={[s.btn, s.btnGhost]}
+              onPress={() => setEditGroupOpen(false)}
+              disabled={editGroupLoading}
+            >
+              <Text style={s.btnGhostTxt}>닫기</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      {/* 그룹 멤버 편집 모달 (그룹 기준) */}
+      <Modal
+        visible={editMembersOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setEditMembersOpen(false)}
+      >
+        <Pressable style={s.sheetBackdrop} onPress={() => setEditMembersOpen(false)} />
+        <View style={s.sheetCard}>
+          <Text style={s.sheetTitle}>{editingMembersGroup?.name ?? '그룹 멤버 설정'}</Text>
+          <Text style={s.helpText}>
+            이 그룹에 포함할 친구를 선택하세요. (꾹 누르면 그룹에서 바로 제거도 가능)
+          </Text>
+
+          <TextInput
+            value={memberSearch}
+            onChangeText={setMemberSearch}
+            placeholder="친구 검색"
+            autoCapitalize="none"
+            autoCorrect={false}
+            style={[s.input, { marginTop: 4, marginBottom: 6 }]}
+          />
+
+          {rows.length === 0 ? (
+            <Text style={s.empty}>추가할 친구가 없습니다.</Text>
+          ) : (
+            <ScrollView style={{ maxHeight: 360, marginTop: 4 }}>
+              {memberFilteredRows.map((fr) => {
+                const on = membersSelection.includes(fr.user_id);
+                return (
+                  <Pressable
+                    key={fr.user_id}
+                    style={[s.groupRow, on && s.groupRowOn]}
+                    onPress={() => toggleMemberSelection(fr.user_id)}
+                  >
+                    <Text style={[s.groupTxt, on && { color: '#fff' }]}>{fr.nickname}</Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          )}
+          <View style={{ flexDirection: 'row', gap: 8, marginTop: 12 }}>
+            <Pressable
+              style={[s.btn, s.btnPrimary, savingMembers && { opacity: 0.7 }]}
+              onPress={saveGroupMembers}
+              disabled={savingMembers}
+            >
+              <Text style={s.btnPrimaryTxt}>{savingMembers ? '저장 중…' : '저장'}</Text>
+            </Pressable>
+            <Pressable
+              style={[s.btn, s.btnGhost]}
+              onPress={() => setEditMembersOpen(false)}
+              disabled={savingMembers}
+            >
+              <Text style={s.btnGhostTxt}>닫기</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
 
 const s = StyleSheet.create({
-  // 상단 헤더 컨테이너
   headerContainer: {
     backgroundColor: '#ffffff',
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#E5E7EB',
-    paddingTop: 4,
-    paddingBottom: 4,
+    paddingBottom: 8,
   },
   headerRow: {
     flexDirection: 'row',
@@ -1649,19 +1951,18 @@ const s = StyleSheet.create({
   },
   headerLeft: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: 10,
+    alignItems: 'center',
+    gap: 12,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '800',
   },
   headerTitleActive: {
     color: '#111827',
   },
   headerTitleInactive: {
-    color: '#D1D5DB', 
-    fontSize: 20,   
+    color: '#D1D5DB',
   },
   headerIconsRow: {
     flexDirection: 'row',
@@ -1673,7 +1974,6 @@ const s = StyleSheet.create({
     marginLeft: 6,
   },
 
-  // 검색
   searchWrap: {
     paddingHorizontal: 16,
     marginBottom: 6,
@@ -1688,7 +1988,6 @@ const s = StyleSheet.create({
     backgroundColor: '#fff',
   },
 
-  // 섹션 헤더
   sectionHeader: {
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -1702,28 +2001,85 @@ const s = StyleSheet.create({
     color: '#111827',
   },
   sortHint: {
-    color: '#9CA3AF', 
-    fontSize: 12,   
+    color: '#9CA3AF',
+    fontSize: 12,
   },
   sectionGap: {
     height: 8,
   },
+  friendRowContainer: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    backgroundColor: '#fff',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#f3f4f6',
+    minHeight: 74,
+    elevation: 0,
+    shadowColor: 'transparent',
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 0 },
+  },
+  fixedProfileArea: {
+    paddingLeft: 16,
+    paddingRight: 12,
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+    zIndex: 2,
+    elevation: 0,
+    shadowColor: 'transparent',
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 0 },
+  },
 
-  // 행
-  row: {
-    paddingHorizontal: 16,
+  swipeableWrap: {
+    flex: 1,
+    zIndex: 1,
+  },
+
+  revealHost: {
+    flex: 1,
+    minHeight: 74,
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+    overflow: 'hidden',
+  },
+  revealActions: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: 112,
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+    zIndex: 5,
+    elevation: 0,
+    shadowColor: 'transparent',
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 0 },
+  },
+
+  revealContent: {
+    flex: 1,
+    paddingRight: 16,
     paddingVertical: 12,
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+  },
+
+  rightInner: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#fff',
+    gap: 10,
   },
-  rowLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+  rightText: {
     flex: 1,
+    justifyContent: 'center',
   },
+
   avatar: {
     width: 48,
     height: 48,
@@ -1762,25 +2118,25 @@ const s = StyleSheet.create({
     color: '#6b7280',
   },
 
-  // 스와이프 액션
   swipeActions: {
+    width: 112,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'stretch',
     justifyContent: 'flex-end',
+    backgroundColor: '#fff',
   },
   swipeBtn: {
-    width: 56,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   swipeChatBtn: {
-    backgroundColor: '#111827',
+    backgroundColor: 'transparent',
   },
   swipeCallBtn: {
-    backgroundColor: '#10b981',
+    backgroundColor: 'transparent',
   },
 
-  // 시트 공통
   sheetBackdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.25)',
@@ -1812,8 +2168,18 @@ const s = StyleSheet.create({
     fontWeight: '700',
     color: '#111827',
   },
+  sheetHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  sheetDeleteTxt: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#ef4444',
+  },
 
-  // 버튼 공통
   btn: {
     flex: 1,
     height: 42,
@@ -1838,7 +2204,6 @@ const s = StyleSheet.create({
     fontWeight: '700',
   },
 
-  // 그룹 행 (모달)
   groupRow: {
     paddingVertical: 10,
     paddingHorizontal: 12,
@@ -1855,7 +2220,6 @@ const s = StyleSheet.create({
     color: '#111827',
   },
 
-  // 입력 공통
   input: {
     borderWidth: 1,
     borderColor: '#e5e7eb',

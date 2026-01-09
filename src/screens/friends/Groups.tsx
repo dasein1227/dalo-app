@@ -1,297 +1,394 @@
-// src/screens/GroupsScreen.tsx
-import React, { useCallback, useEffect, useState } from 'react';
+// src/screens/friends/Groups.tsx
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  View, Text, TextInput, Pressable, StyleSheet, Alert, FlatList,
-  Modal, TouchableOpacity, RefreshControl,
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  FlatList,
+  ActivityIndicator,
+  Alert,
+  TextInput,
+  Modal,
+  StatusBar,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { supabase } from '../../lib/supabase';
+import { useNavigation } from '@react-navigation/native';
+import { ChevronLeft, Plus, Trash2, Pencil, Users } from 'lucide-react-native';
 
-type Label = { id: number; owner_id: string; name: string };
-type LabelMember = { id: number; label_id: number; target_user_id: string };
-type Friendship = { requester: string; addressee: string; status: 'pending'|'accepted'|'blocked' };
+import { supabase } from '@/lib/supabase';
 
-export default function GroupsScreen() {
-  const [me, setMe] = useState<string>('');
+type Label = {
+  id: number;
+  name: string;
+  member_count: number;
+};
+
+type FriendLite = {
+  friend_id: string;
+  nickname: string | null;
+  follow_id: string | null;
+  friend_code: string | null;
+  alias: string | null;
+  is_favorite: boolean;
+  groups: string[];
+};
+
+type LabelsPayload = {
+  items: Label[];
+};
+
+type FriendsPayload = {
+  items: FriendLite[];
+  has_more: boolean;
+  next_offset: number;
+};
+
+const BG = '#fff';
+const TEXT = '#111827';
+const MUTED = '#6B7280';
+const HAIRLINE = '#E5E7EB';
+const ACCENT = '#FF5A7A';
+
+async function rpc<T>(fn: string, args?: Record<string, any>): Promise<T> {
+  const { data, error } = await supabase.rpc(fn, args ?? {});
+  if (error) throw error;
+  return data as T;
+}
+
+function safeMsg(e: any) {
+  return (e?.message ?? String(e)) as string;
+}
+
+function friendName(f: FriendLite) {
+  return f.alias?.trim() || f.nickname?.trim() || f.follow_id?.trim() || f.friend_code?.trim() || '사용자';
+}
+
+export default function FriendGroupsScreen() {
+  const navigation = useNavigation<any>();
+
   const [labels, setLabels] = useState<Label[]>([]);
-  const [members, setMembers] = useState<Record<number, LabelMember[]>>({});
-  const [friends, setFriends] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const [createModal, setCreateModal] = useState(false);
   const [newName, setNewName] = useState('');
-  const [pickerOpen, setPickerOpen] = useState<{ labelId: number } | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
 
-  const ensureSession = useCallback(async () => {
-    let { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      const { data } = await supabase.auth.refreshSession();
-      session = data?.session ?? null;
-    }
-    return session;
-  }, []);
+  const [editModal, setEditModal] = useState<{ open: boolean; label: Label | null }>({ open: false, label: null });
+  const [editName, setEditName] = useState('');
 
-  const load = useCallback(async () => {
+  const [memberModal, setMemberModal] = useState<{ open: boolean; label: Label | null }>({ open: false, label: null });
+  const [friends, setFriends] = useState<FriendLite[]>([]);
+  const [friendLoading, setFriendLoading] = useState(false);
+  const [friendQ, setFriendQ] = useState('');
+
+  const loadLabels = useCallback(async () => {
     try {
       setLoading(true);
-      const session = await ensureSession();
-      if (!session?.user) throw new Error('로그인이 필요합니다.');
-      const myId = session.user.id;
-      setMe(myId);
-
-      // 1) 내 라벨 & 내 친구 동시 로드 (owner 스코프 고정)
-      const [{ data: ls, error: e1 }, { data: fr, error: e2 }] = await Promise.all([
-        supabase
-          .from('user_labels')
-          .select('id, owner_id, name')
-          .eq('owner_id', myId)
-          .order('created_at', { ascending: true }),
-        supabase
-          .from('friendships')
-          .select('requester, addressee, status')
-          .or(`requester.eq.${myId},addressee.eq.${myId}`),
-      ]);
-      if (e1) throw e1;
-      if (e2) throw e2;
-
-      const labelsData = (ls ?? []) as Label[];
-      setLabels(labelsData);
-
-      // 2) 라벨 멤버 (owner 스코프 + 해당 라벨들)
-      if (labelsData.length > 0) {
-        const { data: raw, error: e3 } = await supabase
-          .from('user_label_members')
-          .select('id, label_id, target_user_id')
-          .in('label_id', labelsData.map(l => l.id));
-        if (e3) throw e3;
-
-        const mems: Record<number, LabelMember[]> = {};
-        (raw as LabelMember[] | null)?.forEach(m => {
-          mems[m.label_id] = mems[m.label_id] ? [...mems[m.label_id], m] : [m];
-        });
-        setMembers(mems);
-      } else {
-        setMembers({});
-      }
-
-      // 3) 친구 id 집합(accepted만)
-      const accepted = (fr ?? []).filter(f => f.status === 'accepted') as Friendship[];
-      const ids = new Set<string>();
-      accepted.forEach(f => { ids.add(f.requester === myId ? f.addressee : f.requester); });
-      setFriends(Array.from(ids));
+      const payload = await rpc<LabelsPayload>('list_labels_v1');
+      setLabels(payload?.items ?? []);
     } catch (e: any) {
-      Alert.alert('불러오기 실패', (e.message ?? String(e)).slice(0, 200));
+      Alert.alert('불러오기 실패', safeMsg(e).slice(0, 200));
+      setLabels([]);
     } finally {
       setLoading(false);
-      setRefreshing(false);
     }
-  }, [ensureSession]);
+  }, []);
 
-  useEffect(() => { load(); }, [load]);
+  const loadFriends = useCallback(async (q?: string) => {
+    try {
+      setFriendLoading(true);
+      const payload = await rpc<FriendsPayload>('list_friends_v1', { q: q?.trim() ? q.trim() : null, lim: 200, off: 0 });
+      setFriends(payload?.items ?? []);
+    } catch (e: any) {
+      setFriends([]);
+      Alert.alert('친구 불러오기 실패', safeMsg(e).slice(0, 200));
+    } finally {
+      setFriendLoading(false);
+    }
+  }, []);
 
-  // 🔄 리얼타임: 내 라벨/멤버/친구 변경 시 갱신
   useEffect(() => {
-    const ch = supabase
-      .channel('groups_screen_realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_labels' }, () => load())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_label_members' }, () => load())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships' }, () => load())
-      .subscribe();
-    return () => { supabase.removeChannel(ch); };
-  }, [load]);
+    loadLabels();
+  }, [loadLabels]);
 
   const createLabel = useCallback(async () => {
+    const name = newName.trim();
+    if (!name) return;
     try {
-      const name = newName.trim();
-      if (!name) return;
-      // RLS에 owner_id 기본값 트리거가 없다면 owner_id 명시
-      const { error } = await supabase.from('user_labels').insert({ name, owner_id: me });
-      if (error) throw error;
+      await rpc('create_label_v1', { name });
+      setCreateModal(false);
       setNewName('');
-      await load();
+      await loadLabels();
     } catch (e: any) {
-      Alert.alert('생성 실패', (e.message ?? String(e)).slice(0, 200));
+      Alert.alert('생성 실패', safeMsg(e).slice(0, 200));
     }
-  }, [newName, me, load]);
+  }, [newName, loadLabels]);
+
+  const renameLabel = useCallback(async () => {
+    if (!editModal.label) return;
+    const name = editName.trim();
+    if (!name) return;
+    try {
+      await rpc('rename_label_v1', { label_id: editModal.label.id, name });
+      setEditModal({ open: false, label: null });
+      setEditName('');
+      await loadLabels();
+    } catch (e: any) {
+      Alert.alert('수정 실패', safeMsg(e).slice(0, 200));
+    }
+  }, [editModal.label, editName, loadLabels]);
 
   const deleteLabel = useCallback(async (label: Label) => {
+    Alert.alert('삭제', `"${label.name}" 그룹을 삭제할까요?`, [
+      { text: '취소', style: 'cancel' },
+      {
+        text: '삭제',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await rpc('delete_label_v1', { label_id: label.id });
+            await loadLabels();
+          } catch (e: any) {
+            Alert.alert('삭제 실패', safeMsg(e).slice(0, 200));
+          }
+        },
+      },
+    ]);
+  }, [loadLabels]);
+
+  const openMembers = useCallback(async (label: Label) => {
+    setMemberModal({ open: true, label });
+    setFriendQ('');
+    await loadFriends('');
+  }, [loadFriends]);
+
+  const toggleMember = useCallback(async (label: Label, friendId: string, add: boolean) => {
     try {
-      // 내 소유 라벨만 삭제
-      const { error } = await supabase
-        .from('user_labels')
-        .delete()
-        .eq('id', label.id)
-        .eq('owner_id', me);
-      if (error) throw error;
-      await load();
+      await rpc('set_label_member_v1', { label_id: label.id, friend_id: friendId, in_group: add });
+      // local update (fast UX) — keep counts consistent
+      let delta = 0;
+      setFriends((prev) => {
+        const target = prev.find((f) => f.friend_id === friendId);
+        const has = !!target && target.groups.includes(label.name);
+
+        delta = add ? (has ? 0 : 1) : has ? -1 : 0;
+
+        return prev.map((f) => {
+          if (f.friend_id !== friendId) return f;
+          const nextGroups = add ? (has ? f.groups : [...f.groups, label.name]) : f.groups.filter((g) => g !== label.name);
+          return { ...f, groups: nextGroups };
+        });
+      });
+
+      setLabels((prev) =>
+        prev.map((l) => (l.id === label.id ? { ...l, member_count: Math.max(0, l.member_count + delta) } : l)),
+      );
     } catch (e: any) {
-      Alert.alert('삭제 실패', (e.message ?? String(e)).slice(0, 200));
+      Alert.alert('실패', safeMsg(e).slice(0, 200));
     }
-  }, [me, load]);
+  }, []);
 
-  const addMember = useCallback(async (labelId: number, targetUserId: string) => {
-    try {
-      if (!targetUserId) return;
-      const { error } = await supabase
-    .from('user_label_members')
-    .upsert(
-      { label_id: labelId, target_user_id: targetUserId },
-      { onConflict: 'label_id,target_user_id' }
-    );
-      if (error) throw error;
-      await load();
-    } catch (e: any) {
-      Alert.alert('추가 실패', (e.message ?? String(e)).slice(0, 200));
-    }
-  }, [me, load]);
-
-  const removeMember = useCallback(async (m: LabelMember) => {
-    try {
-      const { error } = await supabase
-        .from('user_label_members').delete().eq('id', m.id);
-      if (error) throw error;
-      await load();
-    } catch (e: any) {
-      Alert.alert('삭제 실패', (e.message ?? String(e)).slice(0, 200));
-    }
-  }, [me, load]);
-
-  const renderLabel = ({ item }: { item: Label }) => {
-    const list = members[item.id] ?? [];
-    return (
-      <View style={s.card}>
-        <View style={s.cardHeader}>
-          <Text style={s.cardTitle}>{item.name}</Text>
-          <Pressable onPress={() => deleteLabel(item)}>
-            <Text style={s.danger}>삭제</Text>
-          </Pressable>
-        </View>
-
-        {list.length === 0 ? (
-          <Text style={s.empty}>멤버가 없습니다.</Text>
-        ) : (
-          list.map(m => (
-            <View key={m.id} style={s.memberRow}>
-              <Text style={s.memberText} numberOfLines={1}>{m.target_user_id}</Text>
-              <Pressable style={s.badge} onPress={() => removeMember(m)}>
-                <Text style={s.badgeTxt}>제거</Text>
-              </Pressable>
-            </View>
-          ))
-        )}
-
-        <Pressable style={s.btn} onPress={() => setPickerOpen({ labelId: item.id })}>
-          <Text style={s.btnTxt}>친구 추가</Text>
-        </Pressable>
-      </View>
-    );
-  };
+  const filteredFriends = useMemo(() => {
+    const term = friendQ.trim().toLowerCase();
+    if (!term) return friends;
+    return friends.filter((f) => friendName(f).toLowerCase().includes(term));
+  }, [friends, friendQ]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <View style={s.header}>
-        <Text style={s.headerTitle}>그룹(라벨) 관리</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: BG }}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" translucent={false} />
+
+      <View style={st.topBar}>
+        <Pressable style={st.topLeft} hitSlop={10} onPress={() => navigation.goBack()}>
+          <ChevronLeft size={22} color={TEXT} />
+        </Pressable>
+        <Text style={st.topTitle}>그룹</Text>
+        <Pressable style={st.topRightBtn} hitSlop={10} onPress={() => setCreateModal(true)}>
+          <Plus size={20} color={TEXT} />
+        </Pressable>
       </View>
 
-      <View style={{ padding: 16, gap: 8 }}>
-        <Text style={{ fontWeight: '700' }}>새 그룹 이름</Text>
-        <View style={{ flexDirection: 'row', gap: 8 }}>
-          <TextInput
-            value={newName}
-            onChangeText={setNewName}
-            placeholder="예) 등산, 노래, 게임"
-            style={s.input}
-          />
-          <Pressable style={s.btnPrimary} onPress={createLabel}>
-            <Text style={s.btnTxt}>추가</Text>
-          </Pressable>
-        </View>
-      </View>
-
-      <FlatList
-        data={labels}
-        keyExtractor={l => String(l.id)}
-        renderItem={renderLabel}
-        ListEmptyComponent={
-          <Text style={s.empty2}>{loading ? '불러오는 중…' : '아직 그룹이 없습니다.'}</Text>
-        }
-        contentContainerStyle={{ paddingBottom: 16 }}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => { setRefreshing(true); load(); }}
-          />
-        }
-      />
-
-      {/* 멤버 선택 모달 */}
-      <Modal
-        visible={!!pickerOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setPickerOpen(null)}
-      >
-        <TouchableOpacity style={s.backdrop} activeOpacity={1} onPress={() => setPickerOpen(null)} />
-        <View style={s.sheet}>
-          <Text style={{ fontWeight: '700', marginBottom: 8 }}>친구에서 선택</Text>
-          <FlatList
-            data={friends}
-            keyExtractor={id => id}
-            renderItem={({ item }) => (
-              <Pressable
-                style={s.pickRow}
-                onPress={() => {
-                  if (pickerOpen) addMember(pickerOpen.labelId, item);
-                  setPickerOpen(null);
-                }}
-              >
-                <Text numberOfLines={1}>{item}</Text>
+      {loading ? (
+        <View style={st.center}><ActivityIndicator /></View>
+      ) : (
+        <FlatList
+          data={labels}
+          keyExtractor={(i) => String(i.id)}
+          renderItem={({ item }) => (
+            <View style={st.row}>
+              <Pressable style={{ flex: 1 }} onPress={() => openMembers(item)}>
+                <Text style={st.rowTitle}>{item.name}</Text>
+                <Text style={st.rowSub}>{item.member_count}명</Text>
               </Pressable>
+
+              <Pressable style={st.iconBtn} onPress={() => { setEditModal({ open: true, label: item }); setEditName(item.name); }}>
+                <Pencil size={18} color={TEXT} />
+              </Pressable>
+              <Pressable style={st.iconBtn} onPress={() => deleteLabel(item)}>
+                <Trash2 size={18} color="#EF4444" />
+              </Pressable>
+              <Pressable style={st.iconBtn} onPress={() => openMembers(item)}>
+                <Users size={18} color={TEXT} />
+              </Pressable>
+            </View>
+          )}
+          ItemSeparatorComponent={() => <View style={st.sep} />}
+          ListEmptyComponent={<Text style={st.empty}>그룹이 없습니다. 우측 상단 + 로 추가하세요.</Text>}
+        />
+      )}
+
+      {/* Create */}
+      <Modal transparent visible={createModal} animationType="fade" onRequestClose={() => setCreateModal(false)}>
+        <Pressable style={st.backdrop} onPress={() => setCreateModal(false)}>
+          <Pressable style={st.modalCard} onPress={() => {}}>
+            <Text style={st.modalTitle}>그룹 만들기</Text>
+            <TextInput
+              style={st.input}
+              value={newName}
+              onChangeText={setNewName}
+              placeholder="그룹 이름"
+              placeholderTextColor="#9CA3AF"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            <View style={st.modalBtnRow}>
+              <Pressable style={[st.btn, st.ghost]} onPress={() => setCreateModal(false)}>
+                <Text style={st.btnGhostTxt}>취소</Text>
+              </Pressable>
+              <Pressable style={[st.btn, st.primary]} onPress={createLabel}>
+                <Text style={st.btnPrimaryTxt}>생성</Text>
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      {/* Rename */}
+      <Modal transparent visible={editModal.open} animationType="fade" onRequestClose={() => setEditModal({ open: false, label: null })}>
+        <Pressable style={st.backdrop} onPress={() => setEditModal({ open: false, label: null })}>
+          <Pressable style={st.modalCard} onPress={() => {}}>
+            <Text style={st.modalTitle}>그룹 이름 수정</Text>
+            <TextInput
+              style={st.input}
+              value={editName}
+              onChangeText={setEditName}
+              placeholder="그룹 이름"
+              placeholderTextColor="#9CA3AF"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            <View style={st.modalBtnRow}>
+              <Pressable style={[st.btn, st.ghost]} onPress={() => setEditModal({ open: false, label: null })}>
+                <Text style={st.btnGhostTxt}>취소</Text>
+              </Pressable>
+              <Pressable style={[st.btn, st.primary]} onPress={renameLabel}>
+                <Text style={st.btnPrimaryTxt}>저장</Text>
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      {/* Members */}
+      <Modal transparent visible={memberModal.open} animationType="fade" onRequestClose={() => setMemberModal({ open: false, label: null })}>
+        <Pressable style={st.backdrop} onPress={() => setMemberModal({ open: false, label: null })}>
+          <Pressable style={[st.modalCard, { maxHeight: 520 }]} onPress={() => {}}>
+            <Text style={st.modalTitle}>{memberModal.label?.name ?? '그룹'} 멤버</Text>
+
+            <TextInput
+              style={[st.input, { marginBottom: 10 }]}
+              value={friendQ}
+              onChangeText={setFriendQ}
+              placeholder="친구 검색"
+              placeholderTextColor="#9CA3AF"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+
+            {friendLoading ? (
+              <ActivityIndicator style={{ marginVertical: 10 }} />
+            ) : (
+              <FlatList
+                data={filteredFriends}
+                keyExtractor={(i) => i.friend_id}
+                renderItem={({ item }) => {
+                  const label = memberModal.label!;
+                  const inGroup = item.groups.includes(label.name);
+                  return (
+                    <View style={st.memberRow}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={st.memberName}>{friendName(item)}</Text>
+                        <Text style={st.memberSub} numberOfLines={1}>
+                          {item.follow_id || item.friend_code || item.friend_id.slice(0, 8) + '…'}
+                        </Text>
+                      </View>
+
+                      <Pressable
+                        style={[st.memberBtn, inGroup ? st.memberBtnOn : st.memberBtnOff]}
+                        onPress={() => toggleMember(label, item.friend_id, !inGroup)}
+                      >
+                        <Text style={inGroup ? st.memberBtnTxtOn : st.memberBtnTxtOff}>{inGroup ? '추가됨' : '추가'}</Text>
+                      </Pressable>
+                    </View>
+                  );
+                }}
+                ItemSeparatorComponent={() => <View style={st.sep2} />}
+                ListEmptyComponent={<Text style={st.empty}>친구가 없습니다.</Text>}
+              />
             )}
-            ListEmptyComponent={<Text style={s.empty}>친구가 없습니다.</Text>}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} />
-            }
-          />
-        </View>
+          </Pressable>
+        </Pressable>
       </Modal>
     </SafeAreaView>
   );
 }
 
-const s = StyleSheet.create({
-  header: { paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderColor: '#f3f4f6' },
-  headerTitle: { fontSize: 18, fontWeight: '700' },
+const st = StyleSheet.create({
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 
-  input: { flex: 1, borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 8, paddingHorizontal: 10, height: 40 },
-
-  btnPrimary: {
-    backgroundColor: '#111827', borderRadius: 8, paddingHorizontal: 12,
-    alignItems: 'center', justifyContent: 'center',
+  topBar: {
+    height: 54,
+    backgroundColor: '#fff',
+    paddingHorizontal: 14,
+    paddingLeft: 5,
+    paddingTop: Platform.OS === 'ios' ? 8 : 4,
+    paddingBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  btn: {
-    backgroundColor: '#111827', borderRadius: 8, paddingHorizontal: 12,
-    alignItems: 'center', justifyContent: 'center', height: 36, marginTop: 10,
-  },
-  btnTxt: { color: '#fff', fontWeight: '700' },
+  topLeft: { width: 44, alignItems: 'flex-start', justifyContent: 'center' },
+  topTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '700', color: TEXT },
+  topRightBtn: { width: 44, alignItems: 'flex-end', justifyContent: 'center' },
 
-  card: { marginHorizontal: 16, marginTop: 12, padding: 12, borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 10 },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cardTitle: { fontWeight: '700', fontSize: 16 },
+  row: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 12, backgroundColor: '#fff', gap: 10 },
+  rowTitle: { fontSize: 15, fontWeight: '900', color: TEXT },
+  rowSub: { marginTop: 2, fontSize: 12, color: MUTED, fontWeight: '700' },
 
-  empty: { color: '#6b7280', margin: 10 },
-  empty2: { color: '#6b7280', marginHorizontal: 16, marginTop: 16 },
+  iconBtn: { width: 36, height: 36, borderRadius: 14, borderWidth: 1, borderColor: HAIRLINE, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' },
 
-  memberRow: {
-    marginTop: 8, paddingVertical: 6, borderBottomWidth: 1, borderColor: '#f3f4f6',
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-  },
-  memberText: { fontWeight: '600', maxWidth: '75%' },
+  sep: { height: 1, backgroundColor: '#F3F4F6', marginLeft: 14 },
+  sep2: { height: 1, backgroundColor: '#F3F4F6' },
+  empty: { color: MUTED, padding: 14, lineHeight: 18 },
 
-  danger: { color: '#ef4444', fontWeight: '700' },
-  badge: { paddingHorizontal: 10, height: 28, borderRadius: 6, backgroundColor: '#ef4444', alignItems: 'center', justifyContent: 'center' },
-  badgeTxt: { color: '#fff', fontWeight: '700' },
+  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', padding: 20 },
+  modalCard: { width: Math.min(420, 360), borderRadius: 18, backgroundColor: '#fff', borderWidth: 1, borderColor: HAIRLINE, padding: 14 },
+  modalTitle: { fontSize: 16, fontWeight: '900', color: TEXT, marginBottom: 10 },
+  input: { height: 44, borderRadius: 12, borderWidth: 1, borderColor: HAIRLINE, paddingHorizontal: 12, color: TEXT, backgroundColor: '#fff' },
 
-  backdrop: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.25)' },
-  sheet: { position: 'absolute', left: 16, right: 16, top: 120, bottom: 120, borderRadius: 12, backgroundColor: '#fff', padding: 12 },
-  pickRow: { paddingVertical: 10, borderBottomWidth: 1, borderColor: '#f3f4f6' },
+  modalBtnRow: { flexDirection: 'row', gap: 10, marginTop: 12 },
+  btn: { flex: 1, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  primary: { backgroundColor: ACCENT },
+  ghost: { backgroundColor: '#fff', borderWidth: 1, borderColor: HAIRLINE },
+  btnPrimaryTxt: { color: '#fff', fontWeight: '900' },
+  btnGhostTxt: { color: TEXT, fontWeight: '900' },
+
+  memberRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10 },
+  memberName: { fontSize: 14, fontWeight: '900', color: TEXT },
+  memberSub: { marginTop: 2, fontSize: 12, color: MUTED, fontWeight: '700' },
+  memberBtn: { height: 34, paddingHorizontal: 12, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  memberBtnOn: { backgroundColor: '#111827' },
+  memberBtnOff: { backgroundColor: '#fff', borderWidth: 1, borderColor: HAIRLINE },
+  memberBtnTxtOn: { color: '#fff', fontWeight: '900', fontSize: 12 },
+  memberBtnTxtOff: { color: TEXT, fontWeight: '900', fontSize: 12 },
 });

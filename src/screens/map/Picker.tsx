@@ -1,10 +1,5 @@
 // src/screens/map/Picker.tsx
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-} from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -18,7 +13,7 @@ import {
   Animated as RNAnimated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import MapView, { Region } from 'react-native-maps';
+import MapboxGL from '@rnmapbox/maps';
 import * as Location from 'expo-location';
 import {
   useNavigation,
@@ -32,12 +27,17 @@ import type { RootStackParamList } from '@/navigation/types';
 const PRIMARY = '#e74c3c';
 const DARK = '#0f172a';
 
-const SEOUL: Region = {
-  latitude: 37.5665,
-  longitude: 126.978,
-  latitudeDelta: 0.05,
-  longitudeDelta: 0.05,
+type LatLng = { lat: number; lng: number };
+
+const SEOUL: LatLng = {
+  lat: 37.5665,
+  lng: 126.978,
 };
+
+function zoomForPicker() {
+  // Picker는 시야 넓지 않게 고정
+  return 15.5;
+}
 
 export default function MapPicker() {
   const navigation = useNavigation<any>();
@@ -47,7 +47,7 @@ export default function MapPicker() {
   const initLat = route.params?.lat;
   const initLng = route.params?.lng;
 
-  const [initialRegion, setInitialRegion] = useState<Region | null>(null);
+  const [initialCenter, setInitialCenter] = useState<LatLng | null>(null);
   const [loading, setLoading] = useState(true);
   const [mapReady, setMapReady] = useState(false);
   const [buttonEnabled, setButtonEnabled] = useState(false);
@@ -58,10 +58,12 @@ export default function MapPicker() {
   const [searchQuery, setSearchQuery] = useState('');
   const [detailAddress, setDetailAddress] = useState('');
 
-  const regionRef = useRef<{ lat: number; lng: number } | null>(null);
+  const centerRef = useRef<LatLng | null>(null);
   const sendingRef = useRef(false);
   const aliveRef = useRef(true);
-  const mapRef = useRef<MapView | null>(null);
+
+  const cameraRef = useRef<MapboxGL.Camera | null>(null);
+  const lastFetchAtRef = useRef(0);
 
   // 키보드 올라왔을 때 하단 패널을 위로 띄우는 용도
   const keyboardBottom = useRef(new RNAnimated.Value(0)).current;
@@ -72,7 +74,7 @@ export default function MapPicker() {
     const hideEvent =
       Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
 
-    const showSub = Keyboard.addListener(showEvent, (e) => {
+    const showSub = Keyboard.addListener(showEvent, (e: any) => {
       const h = e.endCoordinates?.height ?? 0;
       RNAnimated.timing(keyboardBottom, {
         toValue: h,
@@ -100,23 +102,15 @@ export default function MapPicker() {
 
     (async () => {
       try {
-        if (
-          Number.isFinite(initLat as any) &&
-          Number.isFinite(initLng as any)
-        ) {
-          const r: Region = {
-            latitude: initLat!,
-            longitude: initLng!,
-            latitudeDelta: 0.008,
-            longitudeDelta: 0.008,
-          };
-          setInitialRegion(r);
-          regionRef.current = { lat: r.latitude, lng: r.longitude };
+        // 초기 좌표가 넘어온 경우
+        if (Number.isFinite(initLat as any) && Number.isFinite(initLng as any)) {
+          const c: LatLng = { lat: initLat!, lng: initLng! };
+          setInitialCenter(c);
+          centerRef.current = c;
           return;
         }
 
-        const { status } =
-          await Location.requestForegroundPermissionsAsync();
+        const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
           throw new Error('위치 권한이 필요합니다.');
         }
@@ -128,29 +122,19 @@ export default function MapPicker() {
               : Location.Accuracy.Low,
         });
 
-        const r: Region = {
-          latitude: loc.coords.latitude,
-          longitude: loc.coords.longitude,
-          latitudeDelta: 0.008,
-          longitudeDelta: 0.008,
-        };
+        const c: LatLng = { lat: loc.coords.latitude, lng: loc.coords.longitude };
         if (aliveRef.current) {
-          setInitialRegion(r);
-          regionRef.current = { lat: r.latitude, lng: r.longitude };
+          setInitialCenter(c);
+          centerRef.current = c;
         }
       } catch (err) {
         console.warn('📍 위치 초기화 실패:', err);
         if (aliveRef.current) {
-          setInitialRegion(SEOUL);
-          regionRef.current = {
-            lat: SEOUL.latitude,
-            lng: SEOUL.longitude,
-          };
+          setInitialCenter(SEOUL);
+          centerRef.current = SEOUL;
         }
       } finally {
-        if (aliveRef.current) {
-          setLoading(false);
-        }
+        if (aliveRef.current) setLoading(false);
       }
     })();
 
@@ -173,19 +157,14 @@ export default function MapPicker() {
         return;
       }
 
-      const parts = [
-        first.region,
-        first.district,
-        first.street,
-        first.name,
-      ].filter(Boolean);
+      const parts = [first.region, first.district, first.street, first.name].filter(
+        Boolean,
+      );
 
       const pretty = parts.join(' ');
       setAddress(pretty || null);
 
-      if (pretty) {
-        setSearchQuery(pretty);
-      }
+      if (pretty) setSearchQuery(pretty);
     } catch (e) {
       console.warn('reverseGeocode 실패', e);
       setAddress(null);
@@ -200,38 +179,41 @@ export default function MapPicker() {
       if (aliveRef.current) setButtonEnabled(true);
     }, 150);
 
-    const pos = regionRef.current;
+    const pos = centerRef.current;
     if (pos) {
-      const r: Region = {
-        latitude: pos.lat,
-        longitude: pos.lng,
-        latitudeDelta: 0.008,
-        longitudeDelta: 0.008,
-      };
-      mapRef.current?.animateToRegion(r, 300);
+      cameraRef.current?.setCamera({
+        centerCoordinate: [pos.lng, pos.lat],
+        zoomLevel: zoomForPicker(),
+        animationDuration: 320,
+      });
       fetchAddress(pos.lat, pos.lng);
     }
   }, [fetchAddress]);
 
-  const handleRegionChangeComplete = useCallback(
-    (r: Region) => {
-      if (
-        Number.isFinite(r.latitude) &&
-        Number.isFinite(r.longitude) &&
-        Number.isFinite(r.latitudeDelta) &&
-        Number.isFinite(r.longitudeDelta)
-      ) {
-        regionRef.current = { lat: r.latitude, lng: r.longitude };
-        fetchAddress(r.latitude, r.longitude);
-      }
+  // Mapbox 카메라 이동 중 발생 -> 너무 잦으면 reverseGeocode 과부하라 간단한 throttle
+  const onCameraChanged = useCallback(
+    (state: any) => {
+      const cc = state?.properties?.centerCoordinate;
+      if (!cc || !Array.isArray(cc) || cc.length < 2) return;
+
+      const lng = Number(cc[0]);
+      const lat = Number(cc[1]);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+      centerRef.current = { lat, lng };
+
+      const now = Date.now();
+      if (now - lastFetchAtRef.current < 600) return; // 0.6s throttle
+      lastFetchAtRef.current = now;
+
+      fetchAddress(lat, lng);
     },
-    [fetchAddress]
+    [fetchAddress],
   );
 
   const moveToMyLocation = useCallback(async () => {
     try {
-      const { status } =
-        await Location.requestForegroundPermissionsAsync();
+      const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') throw new Error('권한 필요');
 
       const loc = await Location.getCurrentPositionAsync({
@@ -241,15 +223,16 @@ export default function MapPicker() {
             : Location.Accuracy.Low,
       });
 
-      const r: Region = {
-        latitude: loc.coords.latitude,
-        longitude: loc.coords.longitude,
-        latitudeDelta: 0.008,
-        longitudeDelta: 0.008,
-      };
-      regionRef.current = { lat: r.latitude, lng: r.longitude };
-      mapRef.current?.animateToRegion(r, 400);
-      fetchAddress(r.latitude, r.longitude);
+      const c: LatLng = { lat: loc.coords.latitude, lng: loc.coords.longitude };
+      centerRef.current = c;
+
+      cameraRef.current?.setCamera({
+        centerCoordinate: [c.lng, c.lat],
+        zoomLevel: zoomForPicker(),
+        animationDuration: 420,
+      });
+
+      fetchAddress(c.lat, c.lng);
     } catch {
       // ignore
     }
@@ -268,26 +251,25 @@ export default function MapPicker() {
         Alert.alert('알림', '해당 주소를 찾지 못했습니다.');
         return;
       }
-      const r: Region = {
-        latitude: first.latitude,
-        longitude: first.longitude,
-        latitudeDelta: 0.008,
-        longitudeDelta: 0.008,
-      };
-      regionRef.current = { lat: r.latitude, lng: r.longitude };
-      mapRef.current?.animateToRegion(r, 400);
-      fetchAddress(r.latitude, r.longitude);
+
+      const c: LatLng = { lat: first.latitude, lng: first.longitude };
+      centerRef.current = c;
+
+      cameraRef.current?.setCamera({
+        centerCoordinate: [c.lng, c.lat],
+        zoomLevel: zoomForPicker(),
+        animationDuration: 420,
+      });
+
+      fetchAddress(c.lat, c.lng);
     } catch (e: any) {
-      Alert.alert(
-        '검색 실패',
-        e?.message ?? '주소 검색 중 오류가 발생했습니다.'
-      );
+      Alert.alert('검색 실패', e?.message ?? '주소 검색 중 오류가 발생했습니다.');
     }
   }, [searchQuery, fetchAddress]);
 
   const sendHere = useCallback(async () => {
     if (!buttonEnabled || sendingRef.current) return;
-    const pos = regionRef.current;
+    const pos = centerRef.current;
     if (!pos) return;
 
     try {
@@ -320,20 +302,14 @@ export default function MapPicker() {
                 },
               },
               source: prev.key,
-            })
+            }),
           );
         } else {
-          Alert.alert(
-            '위치 선택됨',
-            `(${pos.lat}, ${pos.lng})\n${combined ?? ''}`
-          );
+          Alert.alert('위치 선택됨', `(${pos.lat}, ${pos.lng})\n${combined ?? ''}`);
         }
       }
     } catch (err: any) {
-      Alert.alert(
-        '오류',
-        err?.message ?? '위치를 전달하지 못했습니다.'
-      );
+      Alert.alert('오류', err?.message ?? '위치를 전달하지 못했습니다.');
     } finally {
       sendingRef.current = false;
       if (aliveRef.current) navigation.goBack();
@@ -344,11 +320,7 @@ export default function MapPicker() {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       {/* 상단 헤더 */}
       <View style={st.header}>
-        <Pressable
-          onPress={() => navigation.goBack()}
-          hitSlop={10}
-          style={st.headerLeft}
-        >
+        <Pressable onPress={() => navigation.goBack()} hitSlop={10} style={st.headerLeft}>
           <ChevronLeft size={20} color={DARK} strokeWidth={2.6} />
           <Text style={st.link}>뒤로</Text>
         </Pressable>
@@ -359,22 +331,34 @@ export default function MapPicker() {
       </View>
       <View style={{ height: 1, backgroundColor: '#ECEFF4' }} />
 
-      {loading || !initialRegion ? (
+      {loading || !initialCenter ? (
         <View style={st.center}>
           <ActivityIndicator />
           <Text style={st.centerText}>지도를 여는 중…</Text>
         </View>
       ) : (
         <View style={{ flex: 1 }}>
-          {/* 위: 지도 영역 (고정 / 항상 중앙 보이게) */}
+          {/* 위: 지도 영역 */}
           <View style={st.mapArea}>
-            <MapView
-              ref={mapRef}
+            <MapboxGL.MapView
               style={StyleSheet.absoluteFillObject}
-              initialRegion={initialRegion}
-              onRegionChangeComplete={handleRegionChangeComplete}
-              onMapReady={handleMapReady}
-            />
+              styleURL={MapboxGL.StyleURL.Street}
+              logoEnabled={false}
+              compassEnabled
+              scaleBarEnabled={false}
+              onDidFinishLoadingMap={handleMapReady}
+              onCameraChanged={onCameraChanged}
+            >
+              <MapboxGL.Camera
+                ref={(r) => {
+                  cameraRef.current = r;
+                }}
+                centerCoordinate={[initialCenter.lng, initialCenter.lat]}
+                zoomLevel={zoomForPicker()}
+              />
+
+              <MapboxGL.UserLocation visible androidRenderMode="normal" />
+            </MapboxGL.MapView>
 
             {/* 중앙 핀 */}
             <View pointerEvents="none" style={st.centerPin}>
@@ -387,19 +371,14 @@ export default function MapPicker() {
 
             {/* 내 위치 버튼 */}
             <View style={st.myLocWrap}>
-              <Pressable
-                style={st.myLocBtn}
-                onPress={moveToMyLocation}
-              >
+              <Pressable style={st.myLocBtn} onPress={moveToMyLocation}>
                 <Crosshair size={20} color={DARK} strokeWidth={2.6} />
               </Pressable>
             </View>
           </View>
 
-          {/* 아래: 검색 / 상세주소 / 공유 (분리된 패널) */}
-          <RNAnimated.View
-            style={[st.bottomArea, { paddingBottom: keyboardBottom }]}
-          >
+          {/* 아래: 검색 / 상세주소 / 공유 */}
+          <RNAnimated.View style={[st.bottomArea, { paddingBottom: keyboardBottom }]}>
             <View style={st.addressCard}>
               {/* 검색 */}
               <View style={st.searchRow}>
@@ -412,10 +391,7 @@ export default function MapPicker() {
                   returnKeyType="search"
                   onSubmitEditing={searchAddress}
                 />
-                <Pressable
-                  style={st.searchBtn}
-                  onPress={searchAddress}
-                >
+                <Pressable style={st.searchBtn} onPress={searchAddress}>
                   <Text style={st.searchBtnTxt}>검색</Text>
                 </Pressable>
               </View>
@@ -432,16 +408,11 @@ export default function MapPicker() {
                 />
               </View>
 
-              {addrLoading && (
-                <Text style={st.loadingText}>주소를 불러오는 중…</Text>
-              )}
+              {addrLoading && <Text style={st.loadingText}>주소를 불러오는 중…</Text>}
             </View>
 
             <Pressable
-              style={[
-                st.btn,
-                (!mapReady || !buttonEnabled) && { opacity: 0.5 },
-              ]}
+              style={[st.btn, (!mapReady || !buttonEnabled) && { opacity: 0.5 }]}
               onPress={sendHere}
               disabled={!mapReady || !buttonEnabled}
             >
@@ -493,7 +464,7 @@ const st = StyleSheet.create({
     fontWeight: '600',
   },
 
-  // 지도 영역 (상단)
+  // 지도 영역
   mapArea: {
     flex: 1,
     backgroundColor: '#e5e7eb',
@@ -556,7 +527,7 @@ const st = StyleSheet.create({
     elevation: 4,
   },
 
-  // 하단 영역 (검색/상세주소/버튼)
+  // 하단 영역
   bottomArea: {
     borderTopWidth: 1,
     borderTopColor: '#e5e7eb',

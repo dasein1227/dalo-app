@@ -1,5 +1,5 @@
 // src/screens/chat/components/ChatRoomCard.tsx
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   View,
   Text,
@@ -40,6 +40,11 @@ const ChatRoomCard: React.FC<Props> = ({ item, onPress, onLongPress }) => {
 
   const timeLabel = formatTime(item.updated_at);
   const hasUnread = item.unread != null && item.unread > 0;
+
+  const previewText = useMemo(() => {
+    if (item.pending) return '수락 대기중';
+    return normalizeLastMessagePreview(item.last_msg) || '메시지가 없습니다.';
+  }, [item.pending, item.last_msg]);
 
   return (
     <Pressable
@@ -105,9 +110,7 @@ const ChatRoomCard: React.FC<Props> = ({ item, onPress, onLongPress }) => {
             style={styles.lastMsg}
             numberOfLines={1}
           >
-            {item.pending
-              ? '수락 대기중'
-              : item.last_msg || '메시지가 없습니다.'}
+            {previewText}
           </Text>
         </View>
       </View>
@@ -134,6 +137,155 @@ const ChatRoomCard: React.FC<Props> = ({ item, onPress, onLongPress }) => {
 };
 
 export default ChatRoomCard;
+
+/* =========================
+ * Preview normalizer
+ * ========================= */
+
+function safeJsonParse(v?: string | null) {
+  if (!v) return null;
+  try {
+    return JSON.parse(v);
+  } catch {
+    return null;
+  }
+}
+
+function stripReplyPrefix(s: string): string {
+  const raw = String(s ?? '');
+  return raw.replace(/^\s*\[reply:[^\]]+\]\s*/i, '').trim();
+}
+
+function isUrlLike(v?: string | null) {
+  if (!v) return false;
+  const s = String(v).trim();
+  return (
+    s.startsWith('http://') ||
+    s.startsWith('https://') ||
+    s.startsWith('file://') ||
+    s.startsWith('content://')
+  );
+}
+
+function hasAudioHint(s: string) {
+  const t = s.toLowerCase();
+  return (
+    t.includes('audio') ||
+    t.includes('voice') ||
+    t.includes('record') ||
+    t.includes('.m4a') ||
+    t.includes('.aac') ||
+    t.includes('.mp3') ||
+    t.includes('.wav') ||
+    t.includes('.ogg') ||
+    t.includes('.webm')
+  );
+}
+
+function hasImageHint(s: string) {
+  const t = s.toLowerCase();
+  return (
+    t.includes('image') ||
+    t.includes('photo') ||
+    t.includes('picture') ||
+    t.includes('.jpg') ||
+    t.includes('.jpeg') ||
+    t.includes('.png') ||
+    t.includes('.gif') ||
+    t.includes('.webp') ||
+    t.includes('.heic')
+  );
+}
+
+function hasVideoHint(s: string) {
+  const t = s.toLowerCase();
+  return (
+    t.includes('video') ||
+    t.includes('.mp4') ||
+    t.includes('.mov') ||
+    t.includes('.mkv') ||
+    t.includes('.m4v') ||
+    t.includes('.avi')
+  );
+}
+
+/**
+ * ✅ 채팅방 리스트 프리뷰 규칙
+ * - URL이 그대로 노출되면 안됨
+ * - file/content/http(s) 형태면: 오디오/이미지/비디오 힌트로 라벨링
+ * - JSON(배열/메타) 형태면 그것도 라벨링
+ */
+function normalizeLastMessagePreview(lastMsg: string | null): string {
+  if (!lastMsg) return '';
+
+  const raw = stripReplyPrefix(String(lastMsg));
+
+  // 1) JSON 형태(배열/메타)로 들어오는 경우
+  const js = safeJsonParse(raw);
+  if (Array.isArray(js)) {
+    // 이미지/파일 uri 배열로 저장되는 케이스
+    const first = js[0] != null ? String(js[0]) : '';
+    if (isUrlLike(first)) {
+      if (hasImageHint(first)) return '사진';
+      if (hasVideoHint(first)) return '동영상';
+      if (hasAudioHint(first)) return '음성 메시지';
+      return '파일';
+    }
+    // 문자열 배열이지만 URL이 아니면 그냥 축약
+    const text = js.map((x) => String(x)).join(' ');
+    return text.trim().length ? text : '';
+  }
+
+  if (js && typeof js === 'object') {
+    const kind = String((js as any).kind ?? (js as any).type ?? '').toLowerCase();
+    if (kind === 'audio' || kind === 'voice') return '음성 메시지';
+    if (kind === 'image' || kind === 'photo') return '사진';
+    if (kind === 'video') return '동영상';
+
+    const uri = String(
+      (js as any).uri ??
+      (js as any).url ??
+      (js as any).path ??
+      (js as any).file_key ??
+      (js as any).fileKey ??
+      ''
+    ).trim();
+
+    if (isUrlLike(uri)) {
+      if (hasImageHint(uri)) return '사진';
+      if (hasVideoHint(uri)) return '동영상';
+      if (hasAudioHint(uri)) return '음성 메시지';
+      return '파일';
+    }
+
+    const text = String((js as any).text ?? (js as any).content ?? '').trim();
+    if (text) return text;
+  }
+
+  // 2) plain string인데 URL 노출되는 경우 → 라벨로 치환
+  if (isUrlLike(raw)) {
+    if (hasImageHint(raw)) return '사진';
+    if (hasVideoHint(raw)) return '동영상';
+    if (hasAudioHint(raw)) return '음성 메시지';
+    return '파일';
+  }
+
+  // 3) 문자열 내부에 URL이 섞여있는 경우도 방지(보수적으로 처리)
+  //    예: "file:///...something.m4a"
+  if (raw.includes('file://') || raw.includes('content://') || raw.includes('http://') || raw.includes('https://')) {
+    if (hasImageHint(raw)) return '사진';
+    if (hasVideoHint(raw)) return '동영상';
+    if (hasAudioHint(raw)) return '음성 메시지';
+    return '파일';
+  }
+
+  // 4) 일반 텍스트
+  return raw;
+}
+
+/* =========================
+ * Time formatter
+ * ========================= */
 
 function formatTime(iso: string | null | undefined): string {
   if (!iso) return '';

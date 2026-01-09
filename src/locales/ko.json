@@ -12,8 +12,8 @@
     "continue": "계속하기",
     "later": "나중에",
     "loading": "불러오는 중…",
-    "required": "필수 항목입니다.",
-    "copied": "복사되었습니다.",
+    "required": "필수 항목입니다。",
+    "copied": "복사되었습니다。",
     "manage": "관리"
   },
 
@@ -154,7 +154,132 @@
     "invite": "초대",
     "manage": "관리",
     "members": "멤버",
-    "placeholder": "메시지를 입력하세요…"
+    "placeholder": "메시지를 입력하세요…",
+
+    "all": "전체",
+    "and_others_n": "외 N",
+    "others_suffix": "외",
+    "anonymous": "익명",
+
+    "message": "메시지",
+    "message_search": "메시지 검색",
+    "message_send": "메시지 보내기",
+    "message_send_failed": "메시지 전송 실패",
+    "message_delete_failed": "메시지 삭제에 실패했습니다.",
+    "message_deleted": "메시지가 삭제되었습니다.",
+    "new_message_one": "새 메시지 1개",
+    "new_messages_count": "새 메시지 {{count}}개",
+
+    "chat_with_me": "나와의 채팅",
+    "chat_room_title": "채팅방",
+    "one_to_one_chat": "1:1 채팅",
+    "group_chat_title": "그룹채팅",
+    "open_chat_title": "오픈채팅",
+    "beacon_chat_title": "비콘채팅",
+    "room_not_found": "방 정보가 없습니다.",
+    "chat_room_not_found": "채팅방을 찾을 수 없습니다.",
+    "conversation_partner": "대화상대",
+
+    "audio_send_failed": "오디오 전송 실패",
+    "video": "동영상",
+    "photo": "사진",
+    "file_label": "파일",
+    "open_file": "파일 열기",
+    "play_video": "영상 재생",
+    "voice_message": "음성메시지",
+
+    "share_location": "위치 공유",
+    "map_location_shared_title": "위치 공유",
+    "map_tap_to_open": "지도를 열려면 탭하세요.",
+    "cannot_open_map": "지도를 열 수 없습니다.",
+    "no_coordinate_info": "좌표 정보 없음",
+
+    "send_failed": "전송 실패",
+    "share": "공유",
+    "share_failed": "공유 실패",
+    "delete_failed": "삭제 실패",
+    "upload_failed": "업로드 실패",
+
+    "selection_mode": "선택 모드",
+    "selection_mode_hint": "삭제할 메시지를 눌러 선택하세요.",
+    "selection_clear": "선택 해제",
+
+    "delete_dialog_title": "메시지 삭제",
+    "delete_dialog_desc": "삭제 방법을 선택하세요.",
+    "delete_for_everyone": "모두에게서 삭제",
+    "delete_hide_for_everyone": "메시지 가리기 (모두에게서 숨기기)",
+    "delete_for_me": "나에게서만 삭제",
+    "delete_for_me_hint": "선택한 메시지는 나에게서만 삭제할 수 있습니다.",
+
+    "reply": "답장",
+    "reply_to_me": "내 메시지에 답장",
+    "reply_to_user": "{{nickname}}에게 답장",
+    "msg_deleted_by_user": "{{nickname}}님이 메시지를 삭제했습니다.",
+
+    "notice": "공지",
+    "notice_coming_soon": "공지 기능은 추후 구현 예정입니다.",
+
+    "korean_label": "한국어",
+
+    "auto_translate_paid_only": "중간/고급 번역 플랜에서만 자동 번역을 사용할 수 있습니다.",
+    "translation_paid_only": "번역은 유료 회원 전용입니다.",
+    "premium_only": "프리미엄 전용",
+    "premium_only_feature_hint": "프리미엄 회원부터 사용 가능한 기능입니다.",
+
+    "tone_neutral": "중립",
+    "tone_casual": "친근하게",
+    "tone_formal": "격식 있게",
+    "tone_business": "비즈니스",
+    "tone_playful": "재미있게",
+    "tone_change_premium_only": "번역 톤 변경은 고급(프리미엄) 번역 회원부터 사용할 수 있습니다.",
+    "tone_premium_only_hint": "고급 번역(프리미엄)에서만 적용됩니다.",
+
+    "login_required": "로그인이 필요합니다.",
+    "no_permission_send_rls": "메시지를 보낼 권한이 없습니다. (RLS)\n",
+    "rls_help_chat_members": "→ chat_members에 내가 포함되어 있는지, chat_messages 정책을 확인하세요.",
+
+    "search_placeholder": "검색어를 입력하세요",
+    "search_result_count": "결과 {{count}}개",
+
+    "show_original": "원문 보기",
+    "show_translation": "번역 보기",
+
+    "translating": "번역 중…",
+
+    "input": {
+      "placeholder": "메시지 보내기"
+    },
+
+    "error": {
+      "loginRequired": "로그인이 필요합니다.",
+      "roomNotFound": "채팅방을 찾을 수 없습니다."
+    },
+
+    "sheet": {
+      "moreActions": "추가 동작",
+      "media": "사진/영상",
+      "file": "파일",
+      "location": "위치공유",
+      "inviteFriend": "친구초대",
+      "inviteLink": "초대링크",
+      "translate": "번역"
+    },
+
+    "translate": {
+      "title": "번역",
+      "current_lang_prefix": "현재: {{code}}",
+      "tone_label": "번역 톤",
+      "toneNeutral": "중립",
+      "toneNeutralDesc": "기본 자연스러운 번역",
+      "toneCasual": "친근하게",
+      "toneCasualDesc": "카톡/친구 대화용",
+      "toneFormal": "격식 있게",
+      "toneFormalDesc": "존댓말/공손한 표현",
+      "toneBusiness": "비즈니스",
+      "toneBusinessDesc": "메일/보고서/업무용",
+      "tonePlayful": "재미있게",
+      "tonePlayfulDesc": "밈/가벼운 농담 등"
+    }
   },
 
   "profile": {

@@ -1,3 +1,4 @@
+// src/screens/chat/VoiceRecorderModal.tsx
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Modal,
@@ -10,18 +11,66 @@ import {
 import { Audio } from 'expo-av';
 import { Play, Pause, RotateCcw, Send } from 'lucide-react-native';
 
+import type { ChatRoomType, VoiceRecorderModalTheme } from './theme/chatTheme';
+import { getVoiceRecorderModalTheme } from './theme/chatTheme';
+
 type Props = {
   visible: boolean;
   onClose: () => void;
   onSend: (uri: string, durationMs: number) => Promise<void>;
-  themeColor: string; // 우리 포인트 컬러 (빨강)
+
+  /**
+   * (기존 호환) 우리 포인트 컬러 (빨강)
+   * - 호출부 깨지지 않게 남겨둠
+   * - 표 기반 테마가 없을 때 fallback 용도로만 사용
+   */
+  themeColor: string;
+
+  /**
+   * ✅ NEW(선택): 방 타입/방 객체/직접 테마 전달
+   * - 셋 중 하나만 줘도 됨
+   */
+  roomType?: ChatRoomType;
+  room?: any;
+  modalTheme?: VoiceRecorderModalTheme;
 };
+
+function hexToRgb(hex: string) {
+  const h = hex.replace('#', '').trim();
+  if (h.length !== 6) return null;
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return null;
+  return { r, g, b };
+}
+
+function withAlpha(hex: string, alpha01: number) {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return hex;
+  const a = Math.max(0, Math.min(1, alpha01));
+  return `rgba(${rgb.r},${rgb.g},${rgb.b},${a})`;
+}
+
+function isDark(hex: string) {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return true;
+  const lum = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255;
+  return lum < 0.6;
+}
+
+function pickReadableText(bgHex: string, dark: string, light: string) {
+  return isDark(bgHex) ? light : dark;
+}
 
 export default function VoiceRecorderModal({
   visible,
   onClose,
   onSend,
   themeColor,
+  roomType,
+  room,
+  modalTheme,
 }: Props) {
   const [mode, setMode] = useState<'idle' | 'recording' | 'review'>('idle');
 
@@ -40,31 +89,65 @@ export default function VoiceRecorderModal({
 
   const BAR_COUNT = 24;
   const [amplitudeBars, setAmplitudeBars] = useState<number[]>(
-    Array.from({ length: BAR_COUNT }, () => 0.2)
+    Array.from({ length: BAR_COUNT }, () => 0.2),
   );
+
+  const t: VoiceRecorderModalTheme =
+    modalTheme ?? getVoiceRecorderModalTheme(roomType ?? room ?? 'dm');
+
+  // 표 기준: 파형/중앙 버튼은 Red 고정 (#FF3B30)
+  const waveRed = t.waveHighlight || '#FF3B30';
+  const centerRed = t.centerButton || '#FF3B30';
+  const sendActive = t.sendActive || '#0044CC';
 
   const playRatio =
     finalDurationMs > 0
       ? Math.min(playbackPosMs / finalDurationMs, 1)
       : 0;
 
+  // ───────────────── theme-derived UI tokens (하드코딩 제거 핵심) ─────────────────
+  const sheetBg = t.modalBg;
+
+  // pill 배경/라인을 테마 기반으로
+  const pillBg = React.useMemo(() => {
+    // 모달 배경이 흰색 계열이면 아주 옅은 회색, 아니면 약간 더 밝은 오버레이
+    return isDark(sheetBg) ? withAlpha('#FFFFFF', 0.10) : withAlpha('#0F172A', 0.06);
+  }, [sheetBg]);
+
+  const pillLine = React.useMemo(() => {
+    return isDark(sheetBg) ? withAlpha('#FFFFFF', 0.18) : withAlpha('#0F172A', 0.10);
+  }, [sheetBg]);
+
+  const pillTrackBg = React.useMemo(() => {
+    return isDark(sheetBg) ? withAlpha('#FFFFFF', 0.18) : withAlpha('#0F172A', 0.12);
+  }, [sheetBg]);
+
+  const playBtnBg = React.useMemo(() => {
+    // play 버튼은 pill 안에서 살짝 떠 보이게
+    return isDark(sheetBg) ? withAlpha('#FFFFFF', 0.14) : withAlpha('#FFFFFF', 0.85);
+  }, [sheetBg]);
+
+  const circleBg = React.useMemo(() => {
+    return isDark(sheetBg) ? withAlpha('#FFFFFF', 0.10) : '#FFFFFF';
+  }, [sheetBg]);
+
+  const circleBorder = React.useMemo(() => {
+    return isDark(sheetBg) ? withAlpha('#FFFFFF', 0.22) : withAlpha('#0F172A', 0.10);
+  }, [sheetBg]);
+
+  const handleLineBg = React.useMemo(() => {
+    return isDark(sheetBg) ? withAlpha('#FFFFFF', 0.18) : withAlpha('#0F172A', 0.12);
+  }, [sheetBg]);
+
+  const sendIconDisabled = withAlpha(sendActive, 0.4);
+  const stopSquareColor = pickReadableText(centerRed, '#111827', '#FFFFFF');
+
   // ───────────────── helpers ─────────────────
   const fmt = (ms: number) => {
     const sec = Math.floor(ms / 1000);
-    const mm = Math.floor(sec / 60)
-      .toString()
-      .padStart(2, '0');
+    const mm = Math.floor(sec / 60).toString().padStart(2, '0');
     const ss = (sec % 60).toString().padStart(2, '0');
     return `${mm}:${ss}`;
-  };
-
-  const hexToRgb = (hex: string) => {
-    const h = hex.replace('#', '');
-    if (h.length !== 6) return null;
-    const r = parseInt(h.slice(0, 2), 16);
-    const g = parseInt(h.slice(2, 4), 16);
-    const b = parseInt(h.slice(4, 6), 16);
-    return { r, g, b };
   };
 
   const resetState = () => {
@@ -108,6 +191,7 @@ export default function VoiceRecorderModal({
     return () => {
       cleanupAll();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   useEffect(() => {
@@ -130,14 +214,12 @@ export default function VoiceRecorderModal({
   useEffect(() => {
     if (mode === 'recording') {
       waveTimerRef.current = setInterval(() => {
-        setAmplitudeBars(prev =>
-          prev.map(() => Math.random() * 0.8 + 0.2) // 0.2 ~ 1.0
-        );
+        setAmplitudeBars((prev) => prev.map(() => Math.random() * 0.8 + 0.2));
       }, 100);
     } else {
       if (waveTimerRef.current) clearInterval(waveTimerRef.current);
       waveTimerRef.current = null;
-      setAmplitudeBars(prev => prev.map(() => 0.2));
+      setAmplitudeBars((prev) => prev.map(() => 0.2));
     }
     return () => {
       if (waveTimerRef.current) clearInterval(waveTimerRef.current);
@@ -281,15 +363,16 @@ export default function VoiceRecorderModal({
 
   // ───────────────── UI parts ─────────────────
   const renderAmplitudeWave = () => {
-    const rgb = hexToRgb(themeColor) ?? { r: 217, g: 76, b: 43 }; // fallback 빨강
+    // 표 기준: 파형은 Red(#FF3B30)
+    // (themeColor는 fallback만)
+    const rgb = hexToRgb(waveRed) ?? hexToRgb(themeColor) ?? { r: 255, g: 59, b: 48 };
     return (
       <View style={styles.waveRow}>
         {amplitudeBars.map((v, idx) => {
           const barH = 16 * v;
           const ratio = idx / Math.max(1, amplitudeBars.length - 1); // 0~1
-          // 왼쪽(진) -> 오른쪽(옅음) 그라데이션 + 약간의 밝기 랜덤
           const alphaBase = 0.55 + 0.45 * (1 - ratio);
-          const brightness = 0.9 + Math.random() * 0.1; // 0.9~1.0
+          const brightness = 0.9 + Math.random() * 0.1;
           const alpha = Math.max(0.1, Math.min(1, alphaBase * brightness));
           const color = `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha})`;
 
@@ -314,30 +397,30 @@ export default function VoiceRecorderModal({
     if (mode === 'review') {
       return (
         <View style={styles.pillRow}>
-          <View style={styles.reviewPillNew}>
-            <Pressable style={styles.reviewPlayBtn} onPress={togglePlayPause}>
+          <View style={[styles.reviewPillNew, { backgroundColor: pillBg, borderColor: pillLine }]}>
+            <Pressable style={[styles.reviewPlayBtn, { backgroundColor: playBtnBg }]} onPress={togglePlayPause}>
               {isPlaying ? (
-                <Pause size={20} color="#0f172a" strokeWidth={2} />
+                <Pause size={20} color={t.baseText} strokeWidth={2} />
               ) : (
-                <Play size={20} color="#0f172a" strokeWidth={2} />
+                <Play size={20} color={t.baseText} strokeWidth={2} />
               )}
             </Pressable>
 
             <View style={styles.reviewBarAreaNew}>
-              <View style={styles.reviewBarBgNew}>
+              <View style={[styles.reviewBarBgNew, { backgroundColor: pillTrackBg }]}>
                 <View
                   style={[
                     styles.reviewBarFgNew,
                     {
                       width: `${playRatio * 100}%`,
-                      backgroundColor: themeColor,
+                      backgroundColor: t.playbackText,
                     },
                   ]}
                 />
               </View>
             </View>
 
-            <Text style={styles.timeTextReviewNew}>{fmt(playbackPosMs)}</Text>
+            <Text style={[styles.timeTextReviewNew, { color: t.playbackText }]}>{fmt(playbackPosMs)}</Text>
           </View>
         </View>
       );
@@ -345,12 +428,12 @@ export default function VoiceRecorderModal({
 
     return (
       <View style={styles.pillRow}>
-        <View style={styles.recordPill}>
+        <View style={[styles.recordPill, { backgroundColor: pillBg, borderColor: pillLine }]}>
           <View style={styles.recordLeftArea}>
-            {mode === 'recording' ? renderAmplitudeWave() : <View style={styles.idleLineBg} />}
+            {mode === 'recording' ? renderAmplitudeWave() : <View style={[styles.idleLineBg, { backgroundColor: pillTrackBg }]} />}
           </View>
 
-          <Text style={styles.timeTextRecord}>
+          <Text style={[styles.timeTextRecord, { color: t.baseText }]}>
             {mode === 'recording' ? fmt(elapsedMs) : fmt(0)}
           </Text>
         </View>
@@ -363,18 +446,33 @@ export default function VoiceRecorderModal({
       return (
         <View style={styles.bottomRow}>
           <Pressable style={styles.bottomSide} onPress={onClose}>
-            <Text style={styles.bottomLabel}>취소</Text>
+            <Text style={[styles.bottomLabel, { color: t.cancelText }]}>취소</Text>
           </Pressable>
 
           <View style={styles.bottomCenter}>
-            <Pressable style={styles.circleBtnBorder} onPress={redo}>
-              <RotateCcw size={24} color="#0f172a" strokeWidth={2} />
+            <Pressable
+              style={[
+                styles.circleBtnBorder,
+                { backgroundColor: circleBg, borderColor: circleBorder },
+              ]}
+              onPress={redo}
+            >
+              <RotateCcw size={24} color={t.baseText} strokeWidth={2} />
             </Pressable>
           </View>
 
           <Pressable style={styles.bottomSideRight} onPress={handleSend}>
-            <View style={[styles.circleBtnSolid, styles.sendBtnBgActive]}>
-              <Send size={22} color="#0A4BFF" strokeWidth={2.5} />
+            <View
+              style={[
+                styles.circleBtnSolid,
+                {
+                  backgroundColor: circleBg,
+                  borderWidth: 2,
+                  borderColor: circleBorder,
+                },
+              ]}
+            >
+              <Send size={22} color={sendActive} strokeWidth={2.5} />
             </View>
           </Pressable>
         </View>
@@ -383,29 +481,40 @@ export default function VoiceRecorderModal({
 
     const middleBtn =
       mode === 'idle' ? (
-        <Pressable style={styles.circleBtnBorder} onPress={startRecording}>
-          <View style={styles.idleDot} />
+        <Pressable
+          style={[
+            styles.circleBtnBorder,
+            { backgroundColor: circleBg, borderColor: circleBorder },
+          ]}
+          onPress={startRecording}
+        >
+          <View style={[styles.idleDot, { backgroundColor: centerRed }]} />
         </Pressable>
       ) : (
         <Pressable
-          style={[styles.circleBtnSolid, { backgroundColor: themeColor }]}
+          style={[styles.circleBtnSolid, { backgroundColor: centerRed }]}
           onPress={stopRecording}
         >
-          <View style={styles.stopSquare} />
+          <View style={[styles.stopSquare, { backgroundColor: stopSquareColor }]} />
         </Pressable>
       );
 
     return (
       <View style={styles.bottomRow}>
         <Pressable style={styles.bottomSide} onPress={onClose}>
-          <Text style={styles.bottomLabel}>취소</Text>
+          <Text style={[styles.bottomLabel, { color: t.cancelText }]}>취소</Text>
         </Pressable>
 
         <View style={styles.bottomCenter}>{middleBtn}</View>
 
         <View style={styles.bottomSideRight}>
-          <View style={[styles.circleBtnBorderDisabled]}>
-            <Send size={22} color="rgba(10,75,255,0.4)" strokeWidth={2.5} />
+          <View
+            style={[
+              styles.circleBtnBorderDisabled,
+              { backgroundColor: circleBg, borderColor: circleBorder, opacity: 0.6 },
+            ]}
+          >
+            <Send size={22} color={sendIconDisabled} strokeWidth={2.5} />
           </View>
         </View>
       </View>
@@ -417,12 +526,12 @@ export default function VoiceRecorderModal({
   return (
     <Modal visible transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.backdrop}>
-        <View style={styles.sheet}>
+        <View style={[styles.sheet, { backgroundColor: sheetBg }]}>
           {renderTopPill()}
           {renderBottomRow()}
 
           <View style={styles.bottomHandleWrap}>
-            <View style={styles.bottomHandleLine} />
+            <View style={[styles.bottomHandleLine, { backgroundColor: handleLineBg }]} />
           </View>
         </View>
       </View>
@@ -451,7 +560,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: '#fff',
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     paddingTop: 20,
@@ -468,9 +576,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: PILL_HEIGHT,
-    backgroundColor: '#F1F2F5',
     borderRadius: PILL_RADIUS,
     paddingHorizontal: 12,
+    borderWidth: 1,
   },
   recordLeftArea: {
     flex: 1,
@@ -481,7 +589,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#D7DAE1',
   },
 
   waveRow: {
@@ -494,13 +601,11 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 1,
     borderRadius: 2,
-    // backgroundColor는 코드에서 동적으로 덮어씀
   },
 
   timeTextRecord: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#1E2533',
     minWidth: 56,
     textAlign: 'right',
   },
@@ -509,16 +614,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: PILL_HEIGHT,
-    backgroundColor: '#F1F2F5',
     borderRadius: PILL_RADIUS,
     paddingHorizontal: 12,
+    borderWidth: 1,
   },
 
   reviewPlayBtn: {
     width: REVIEW_PLAY_BTN,
     height: REVIEW_PLAY_BTN,
     borderRadius: REVIEW_PLAY_BTN / 2,
-    backgroundColor: 'rgba(255,255,255,0.9)',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -533,7 +637,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#D7DAE1',
     overflow: 'hidden',
   },
   reviewBarFgNew: {
@@ -547,7 +650,6 @@ const styles = StyleSheet.create({
   timeTextReviewNew: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#0f172a',
     minWidth: 56,
     textAlign: 'right',
   },
@@ -575,16 +677,13 @@ const styles = StyleSheet.create({
   bottomLabel: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#0f172a',
   },
 
   circleBtnBorder: {
     width: MAIN_BTN_SIZE,
     height: MAIN_BTN_SIZE,
     borderRadius: MAIN_BTN_SIZE / 2,
-    backgroundColor: '#fff',
     borderWidth: 2,
-    borderColor: '#E0E3E9',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -592,9 +691,7 @@ const styles = StyleSheet.create({
     width: MAIN_BTN_SIZE,
     height: MAIN_BTN_SIZE,
     borderRadius: MAIN_BTN_SIZE / 2,
-    backgroundColor: '#fff',
     borderWidth: 2,
-    borderColor: '#E0E3E9',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -605,23 +702,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  sendBtnBgActive: {
-    backgroundColor: '#fff',
-    borderWidth: 2,
-    borderColor: '#E0E3E9',
-  },
 
   idleDot: {
     width: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: '#D94C2B',
   },
   stopSquare: {
     width: 18,
     height: 18,
     borderRadius: 4,
-    backgroundColor: '#fff',
   },
 
   bottomHandleWrap: {
@@ -632,7 +722,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#D7DAE1',
   },
 
   loadingOverlay: {

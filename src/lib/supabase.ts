@@ -11,37 +11,36 @@ const extra: any =
   (Constants as any)?.manifest?.extra ||
   {};
 
-const SUPABASE_URL = extra.EXPO_PUBLIC_SUPABASE_URL;
-const SUPABASE_ANON = extra.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+const SUPABASE_URL = extra.EXPO_PUBLIC_SUPABASE_URL as string;
+const SUPABASE_ANON = extra.EXPO_PUBLIC_SUPABASE_ANON_KEY as string;
+const SUPABASE_REF = extra.EXPO_PUBLIC_SUPABASE_REF as string | undefined;
 
-// ============================================================
-// ✅ Supabase 클라이언트 (세션 자동복원 + 토큰자동갱신)
-// ============================================================
+// ================================
+// ✅ Supabase 클라이언트
+// ================================
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON, {
   auth: {
     storage: AsyncStorage,
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: false,
-    flowType: 'pkce',
+    flowType: 'pkce', // ← 이 줄 **다시 추가**
   },
 });
 
-// ============================================================
+// ================================
 // ✅ 세션 상태 점검 유틸
-// ============================================================
+// ================================
 export async function ensureSupabaseSession() {
   try {
-    let {
-      data: { session },
-      error,
-    } = await supabase.auth.getSession();
+    const { data, error } = await supabase.auth.getSession();
 
-    // 세션 없으면 갱신 시도
-    if ((!session || !session.user) && !error) {
-      const { data } = await supabase.auth.refreshSession();
-      session = data?.session ?? null;
+    if (error) {
+      console.warn('⚠️ getSession error in ensureSupabaseSession:', error);
+      return null;
     }
+
+    const session = data?.session ?? null;
 
     if (!session?.user?.id) {
       console.warn('⚠️ Supabase: No active session detected.');
@@ -52,5 +51,37 @@ export async function ensureSupabaseSession() {
   } catch (err) {
     console.warn('⚠️ ensureSupabaseSession() failed:', err);
     return null;
+  }
+}
+
+// ================================
+// ✅ Auth 토큰 storage 초기화
+// ================================
+export async function resetSupabaseAuthStorage() {
+  try {
+    const allKeys = await AsyncStorage.getAllKeys();
+
+    const prefix =
+      SUPABASE_REF && typeof SUPABASE_REF === 'string'
+        ? `sb-${SUPABASE_REF}-auth-token`
+        : 'sb-';
+
+    const supaKeys = allKeys.filter((k) => {
+      const lower = k.toLowerCase();
+      return (
+        k.startsWith(prefix) ||
+        lower.includes('supabase') ||
+        lower.includes('auth')
+      );
+    });
+
+    if (supaKeys.length > 0) {
+      console.log('[supabase] resetSupabaseAuthStorage remove keys:', supaKeys);
+      await AsyncStorage.multiRemove(supaKeys);
+    } else {
+      console.log('[supabase] resetSupabaseAuthStorage: no keys to remove');
+    }
+  } catch (e) {
+    console.warn('[supabase] resetSupabaseAuthStorage error', e);
   }
 }

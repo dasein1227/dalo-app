@@ -1,0 +1,40 @@
+profiles 테이블에
+user_tier 실제 유저회원등급
+translation_tier 유저가 설정한 번역등급(실제 유저등급을 포함해서 그아래를 설정가능)
+setting_lang (내 UI에서 사용할 언어_view_lang의 default값이된다.)
+view_lang (내 채팅화면에서 번역될언어)
+preferred_lang(내가 보낼때 번역될 언어)
+translation_tone_default (high등급의 사용자가 gpt를 통해서 번역할때 사용 될 톤)
+
+
+
+chat_messages 테이블에 
+original (원문메세지)
+source_lang (내가 메세지를 보낼때 사용된 내 언어)
+sender_selected_tier (보내는 사람의 translation_tier)
+max_generated_tier ( max(translation_tier, sender_selected_tier)으로 둘중에서 높은 등급을 말함)_실제 최종적으로 내화면에 표시될 번역의 등급
+content : 최종적으로 메세지가 저장되는 언어. 
+
+
+
+나와의 채팅일때 
+mid나 high일때 preferred_lang(translation_tier)이 content에 저장된다. 
+free일때 번역기능없음. 그냥 original이 content에 저장된다.
+
+1:1 채팅일때 
+mid나 high일때 view_lang(번역등급은 max_generated_tier)이 content에 저장된다.
+free일때 번역기능이 없기에 그냥 상대방의 preferred_lang(등급은 sender_selected_tier)가 content에 저장됨.
+즉 view_lang가 preferred_lang의 상위 개념임.
+051-608-5071
+
+
+
+그룹 채팅일때. message_translations을 사용.
+
+
+기본사항. 스와이프를 통해서 번역이 발생한다. (메세지 우측으로 스와이프)
+
+1:1 채팅일때 로직 한글을쓴다- 상대방화면에 상대방언어로 번역된 언어가 간다. -상대방이 답장쓴다- 내화면에 한글이 보인다. (즉 내화면에는 한글만 보임. 하지만 해당 메세지를 스와이프하면 양측의 번역된 메세지를 볼수있음)_번역모드 on일경우
+
+
+{"url": "https://m.search.naver.com/search.naver?sm=mtb_hty.top&where=m&ssc=tab.m.all&oquery=%EC%97%94%ED%99%94+%ED%99%98%EC%9C%A8&tqi=jRKpDwqpsiZssg3E3%2BN-489019&query=%EB%8D%94%EB%A6%AC%EC%96%BC%ED%8E%8D&ackey=mw516jh6", "image": "https://ssl.pstatic.net/sstatic/search/favicon/og_200x200_240820.png", "title": "더리얼펍 : 네이버 검색", "site_name": "m.search.naver.com", "description": null}

@@ -1,8 +1,8 @@
 // src/navigation/RootNavigator.tsx
 import React from 'react';
+import { Platform } from 'react-native';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import type { RootStackParamList } from './types';
 
 /* tabs */
 import MainTabs from './MainTabs';
@@ -11,7 +11,6 @@ import MainTabs from './MainTabs';
 import SplashGate from '@/screens/system/SplashGate';
 import NotFound from '@/screens/system/NotFound';
 import Offline from '@/screens/system/Offline';
-import PostLoginRouter from '@/screens/system/PostLoginRouter';
 
 /* auth */
 import Login from '@/screens/auth/Login';
@@ -36,12 +35,22 @@ import ChatInvite from '@/screens/chat/Invite';
 import ChatManage from '@/screens/chat/Manage';
 import Members from '@/screens/chat/Members';
 import MediaViewer from '@/screens/chat/MediaViewer';
+import ChatSetting from '@/screens/chat/Setting';
 
 /* profile */
 import ProfileView from '@/screens/profile/View';
 import ProfileEdit from '@/screens/profile/Edit';
 import PostDetail from '@/screens/profile/PostDetail';
 import CreatePost from '@/screens/profile/CreatePost';
+import EditPost from '@/screens/profile/EditPost';
+import ProfileFollowList from '@/screens/profile/FollowList';
+
+/* friends */
+import FriendsListScreen from '@/screens/friends/List';
+import FriendRequestsScreen from '@/screens/friends/Requests';
+import FriendGroupsScreen from '@/screens/friends/Groups';
+import FriendEditScreen from '@/screens/friends/Edit';
+import AddFriendScreen from '@/screens/friends/Add';
 
 /* legal */
 import TermsPrivacy from '@/screens/legal/TermsPrivacy';
@@ -52,29 +61,52 @@ import SettingsHome from '@/screens/settings/Home';
 import SettingsNotification from '@/screens/settings/Notification';
 import SettingsPrivacy from '@/screens/settings/Privacy';
 import AccountSettings from '@/screens/settings/AccountSettings';
+import ThemeSettings from '@/screens/settings/ThemeSettings';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+/* business */
+import BusinessRegister from '@/screens/business/BusinessRegister';
+import BusinessUnregister from '@/screens/business/BusinessUnregister';
+import BusinessCreate from '@/screens/business/Create';
+import BusinessDetail from '@/screens/business/Detail';
 
-const theme = {
+const Stack = createNativeStackNavigator();
+
+/**
+ * ✅ 여기 색이 "투명 Status/NavBar 뒤에 비칠" 전역 바탕색이다.
+ * App.tsx의 APP_BASE_BG 와 반드시 동일하게 맞춰라.
+ */
+const APP_BASE_BG = '#0B1220';
+
+const navTheme = {
   ...DefaultTheme,
-  colors: { ...DefaultTheme.colors, background: '#fff' },
+  colors: {
+    ...DefaultTheme.colors,
+    background: APP_BASE_BG, // ✅ 절대 #fff로 두면 안됨
+  },
 };
 
 export default function RootNavigator() {
   return (
-    <NavigationContainer theme={theme}>
+    <NavigationContainer theme={navTheme}>
       <Stack.Navigator
         initialRouteName="SplashGate"
         screenOptions={{
           headerShown: false,
           animation: 'slide_from_right',
+          ...(Platform.OS === 'android'
+            ? {
+                statusBarTranslucent: true,
+                statusBarColor: 'transparent',
+                statusBarStyle: 'light',
+                navigationBarColor: 'transparent',
+              }
+            : null),
         }}
       >
         {/* system */}
         <Stack.Screen name="SplashGate" component={SplashGate} />
         <Stack.Screen name="Offline" component={Offline} />
         <Stack.Screen name="NotFound" component={NotFound} />
-        <Stack.Screen name="PostLoginRouter" component={PostLoginRouter} />
 
         {/* auth */}
         <Stack.Screen name="Login" component={Login} />
@@ -102,12 +134,22 @@ export default function RootNavigator() {
         <Stack.Screen name="ChatManage" component={ChatManage} />
         <Stack.Screen name="ChatMembers" component={Members} />
         <Stack.Screen name="MediaViewer" component={MediaViewer} />
+        <Stack.Screen name="ChatSetting" component={ChatSetting} options={{ headerShown: false }} />
 
         {/* profile */}
         <Stack.Screen name="ProfileView" component={ProfileView} />
         <Stack.Screen name="ProfileEdit" component={ProfileEdit} />
         <Stack.Screen name="PostDetail" component={PostDetail} />
         <Stack.Screen name="CreatePost" component={CreatePost} />
+        <Stack.Screen name="EditPost" component={EditPost} />
+        <Stack.Screen name="ProfileFollowList" component={ProfileFollowList} />
+
+        {/* friends */}
+        <Stack.Screen name="FriendList" component={FriendsListScreen} />
+        <Stack.Screen name="FriendRequests" component={FriendRequestsScreen} />
+        <Stack.Screen name="FriendGroups" component={FriendGroupsScreen} />
+        <Stack.Screen name="FriendEdit" component={FriendEditScreen} />
+        <Stack.Screen name="FriendAdd" component={AddFriendScreen} />
 
         {/* legal */}
         <Stack.Screen name="TermsPrivacy" component={TermsPrivacy} />
@@ -115,12 +157,16 @@ export default function RootNavigator() {
 
         {/* settings */}
         <Stack.Screen name="SettingsHome" component={SettingsHome} />
-        <Stack.Screen
-          name="SettingsNotification"
-          component={SettingsNotification}
-        />
+        <Stack.Screen name="SettingsNotification" component={SettingsNotification} />
         <Stack.Screen name="SettingsPrivacy" component={SettingsPrivacy} />
         <Stack.Screen name="AccountSettings" component={AccountSettings} />
+        <Stack.Screen name="ThemeSettings" component={ThemeSettings} options={{ headerShown: false }} />
+
+        {/* business */}
+        <Stack.Screen name="BusinessRegister" component={BusinessRegister} />
+        <Stack.Screen name="BusinessUnregister" component={BusinessUnregister} />
+        <Stack.Screen name="BusinessCreate" component={BusinessCreate} />
+        <Stack.Screen name="BusinessDetail" component={BusinessDetail} />
       </Stack.Navigator>
     </NavigationContainer>
   );

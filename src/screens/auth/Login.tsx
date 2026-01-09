@@ -1,8 +1,15 @@
 // src/screens/auth/Login.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  View, Text, StyleSheet, ActivityIndicator, Image, Alert,
-  Platform, TextInput, Pressable,
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Image,
+  Alert,
+  Platform,
+  TextInput,
+  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -70,10 +77,11 @@ export default function LoginScreen() {
     const { data } = await supabase.auth.getSession();
     const uid = data?.session?.user?.id;
     if (uid) {
-      try { await ensureProfiles(uid); } catch {}
+      try {
+        await ensureProfiles(uid);
+      } catch {}
     }
     const root = getRootNavigation(navigation);
-    // ⬇️ 마지막 두 단계는 실제 네비 이름으로 조정
     resetToNested(root, ['MainTabs', 'Map', 'Main']);
   };
 
@@ -93,29 +101,41 @@ export default function LoginScreen() {
         const qp = parsed.queryParams ?? {};
         const code = (qp.code as string) || '';
         const errorDesc = qp.error_description as string | undefined;
-        if (errorDesc) { setErr(decodeURIComponent(errorDesc)); return; }
+
+        console.log('[Login] onUrl called. code =', code ? '***' : '(empty)');
+
+        if (errorDesc) {
+          setErr(decodeURIComponent(errorDesc));
+          return;
+        }
         if (!code) return;
 
         setLoading(true);
-        try {
-          // 신규 SDK 시그니처
-          const { error } = await (supabase.auth as any).exchangeCodeForSession({ auth_code: code });
-          if (error) throw error;
-        } catch {
-          // 예전 시그니처 폴백
-          const { error } = await (supabase.auth as any).exchangeCodeForSession(code);
-          if (error) throw error;
-        }
+
+        // ✅ JS 클라이언트는 문자열만 넘긴다 (auth_code 객체 X)
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (error) throw error;
+
+        console.log('[Login] exchangeCodeForSession success, going home');
         await goHome();
       } catch (e: any) {
+        console.warn('[Login] onUrl error:', e);
         setErr(e?.message ?? t('auth.error_during_login'));
       } finally {
         setLoading(false);
       }
     };
 
-    Linking.getInitialURL().then((url) => { if (url) onUrl({ url }); });
-    const sub = Linking.addEventListener('url', (ev) => { if (ev?.url) onUrl({ url: ev.url }); });
+    // 앱이 이미 딥링크로 켜진 경우
+    Linking.getInitialURL().then((url) => {
+      if (url) onUrl({ url });
+    });
+
+    // 실행 중에 들어오는 딥링크
+    const sub = Linking.addEventListener('url', (ev) => {
+      if (ev?.url) onUrl({ url: ev.url });
+    });
+
     return () => sub.remove();
   }, []);
 
@@ -165,14 +185,20 @@ export default function LoginScreen() {
       const res = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
       await WebBrowser.coolDownAsync?.();
 
-      if (res.type === 'cancel') { setErr(t('auth.error_during_login')); return; }
+      if (res.type === 'cancel') {
+        setErr(t('auth.error_during_login'));
+        return;
+      }
 
       if (useProxy) {
         const s = await pollSession();
         if (!s) throw new Error(t('auth.oauth_redirect_missing'));
-        try { await ensureProfiles(s.user.id); } catch {}
+        try {
+          await ensureProfiles(s.user.id);
+        } catch {}
         await goHome();
-      } // Prod(딥링크): 교환은 onUrl에서 처리되고 goHome에서 ensureProfiles 실행
+      }
+      // Prod(딥링크): 교환은 onUrl에서 처리
     } catch (e: any) {
       const m = (e?.message || '').toLowerCase();
       if (m.includes('invalid client') || m.includes('client id')) {
@@ -189,24 +215,30 @@ export default function LoginScreen() {
   };
 
   /** 소셜 개별 핸들러 */
-  const signInWithGoogle   = () => signInWithProvider('google');
-  const signInWithApple    = () => {
+  const signInWithGoogle = () => signInWithProvider('google');
+  const signInWithApple = () => {
     if (Platform.OS !== 'ios') return Alert.alert('Apple', t('auth.apple_only_ios'));
     return signInWithProvider('apple');
   };
-  const signInWithKakao    = () => signInWithProvider('kakao' as any);
+  const signInWithKakao = () => signInWithProvider('kakao' as any);
   const signInWithFacebook = () => signInWithProvider('facebook' as any);
 
   /** 이메일/전화 폼 열기 */
-  const openEmailForm = () => { setAuthMode('email'); setIsSignUp(true); };
-  const openPhoneForm = () => { setAuthMode('phone'); setIsSignUp(true); };
+  const openEmailForm = () => {
+    setAuthMode('email');
+    setIsSignUp(true);
+  };
+  const openPhoneForm = () => {
+    setAuthMode('phone');
+    setIsSignUp(true);
+  };
 
   /** 이메일: 가입/로그인 (비밀번호 기반) */
   const handleEmailSubmit = async () => {
     try {
-      setLoading(true); setErr(null);
+      setLoading(true);
+      setErr(null);
       if (isSignUp) {
-        // 이메일 인증 클릭 시 앱으로 복귀(딥링크/프록시)하도록 redirect 지정
         const redirectTo = makeRedirectUri();
         const { error } = await supabase.auth.signUp({
           email,
@@ -216,56 +248,83 @@ export default function LoginScreen() {
         if (error) throw error;
         Alert.alert(t('auth.signup_done_title'), t('auth.signup_done_desc'));
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
         if (error) throw error;
-        // 로그인 성공 → 세션 존재 → 프로필 보장 후 홈
         await goHome();
       }
-    } catch (e:any) {
+    } catch (e: any) {
       setErr(e?.message ?? t('auth.error_during_login'));
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   /** 휴대폰: 가입/로그인 (비밀번호 기반) + 최초 1회 SMS 인증 */
   const handlePhoneSubmit = async () => {
     try {
-      setLoading(true); setErr(null);
+      setLoading(true);
+      setErr(null);
       if (isSignUp) {
         const { error } = await supabase.auth.signUp({ phone, password });
         if (error) throw error;
         Alert.alert(t('auth.signup_done_title'), t('auth.signup_send_code'));
       } else {
-        const { data, error } = await supabase.auth.signInWithPassword({ phone, password });
+        const { data, error } = await supabase.auth.signInWithPassword({
+          phone,
+          password,
+        });
         if (error) throw error;
-        // 로그인 성공 → 프로필 보장 후 홈
-        if (data?.user?.id) { try { await ensureProfiles(data.user.id); } catch {} }
+        if (data?.user?.id) {
+          try {
+            await ensureProfiles(data.user.id);
+          } catch {}
+        }
         await goHome();
       }
-    } catch (e:any) {
+    } catch (e: any) {
       setErr(e?.message ?? t('auth.error_during_login'));
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const verifyPhoneOnce = async () => {
     try {
-      setLoading(true); setErr(null);
-      const { error } = await supabase.auth.verifyOtp({ phone, token: otp, type: 'sms' });
+      setLoading(true);
+      setErr(null);
+      const { error } = await supabase.auth.verifyOtp({
+        phone,
+        token: otp,
+        type: 'sms',
+      });
       if (error) throw error;
       const { data } = await supabase.auth.getSession();
       const uid = data?.session?.user?.id;
-      if (uid) { try { await ensureProfiles(uid); } catch {} }
+      if (uid) {
+        try {
+          await ensureProfiles(uid);
+        } catch {}
+      }
       Alert.alert(t('auth.signup_done_title'), t('auth.verify_code'));
-    } catch (e:any) {
+    } catch (e: any) {
       setErr(e?.message ?? t('auth.error_during_login'));
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: '#000' }}>
-      <StatusBar style="light" />
+      {/* ✅ SplashGate와 동일: 상단 StatusBar 투명 */}
+      <StatusBar translucent backgroundColor="transparent" style="light" />
+
       <LinearGradient
         colors={['#833ab4', '#fd1d1d', '#fcb045']}
-        start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         style={StyleSheet.absoluteFill}
       />
       <SafeAreaView style={styles.wrap}>
@@ -275,7 +334,6 @@ export default function LoginScreen() {
         />
         <Text style={styles.subtitle}>{t('auth.subtitle')}</Text>
 
-        {/* 소셜 버튼 모음 */}
         <SocialLoginButtons
           loading={loading}
           onApple={Platform.OS === 'ios' ? signInWithApple : undefined}
@@ -291,9 +349,11 @@ export default function LoginScreen() {
           <View style={styles.formWrap}>
             <View style={styles.formHeader}>
               <Text style={styles.formTitle}>
-                {t('auth.with_email_title', { mode: t(isSignUp ? 'auth.mode_signup' : 'auth.mode_login') })}
+                {t('auth.with_email_title', {
+                  mode: t(isSignUp ? 'auth.mode_signup' : 'auth.mode_login'),
+                })}
               </Text>
-              <Pressable onPress={() => setIsSignUp(v => !v)}>
+              <Pressable onPress={() => setIsSignUp((v) => !v)}>
                 <Text style={styles.formSwitch}>
                   {isSignUp ? t('auth.have_account') : t('auth.new_here')}
                 </Text>
@@ -332,7 +392,9 @@ export default function LoginScreen() {
                   (!email || !password || loading) && styles.ctaDisabled,
                 ]}
               >
-                <Text style={styles.ctaText}>{t(isSignUp ? 'auth.signup' : 'auth.login')}</Text>
+                <Text style={styles.ctaText}>
+                  {t(isSignUp ? 'auth.signup' : 'auth.login')}
+                </Text>
               </Pressable>
             </View>
           </View>
@@ -343,9 +405,11 @@ export default function LoginScreen() {
           <View style={styles.formWrap}>
             <View style={styles.formHeader}>
               <Text style={styles.formTitle}>
-                {t('auth.with_phone_title', { mode: t(isSignUp ? 'auth.mode_signup' : 'auth.mode_login') })}
+                {t('auth.with_phone_title', {
+                  mode: t(isSignUp ? 'auth.mode_signup' : 'auth.mode_login'),
+                })}
               </Text>
-              <Pressable onPress={() => setIsSignUp(v => !v)}>
+              <Pressable onPress={() => setIsSignUp((v) => !v)}>
                 <Text style={styles.formSwitch}>
                   {isSignUp ? t('auth.have_account') : t('auth.new_here')}
                 </Text>
@@ -353,7 +417,9 @@ export default function LoginScreen() {
             </View>
 
             <View style={styles.card}>
-              <Text style={{ color:'#666', marginBottom:6 }}>{t('auth.phone_hint')}</Text>
+              <Text style={{ color: '#666', marginBottom: 6 }}>
+                {t('auth.phone_hint')}
+              </Text>
               <View style={styles.inputBox}>
                 <TextInput
                   placeholder={t('auth.phone_placeholder')}
@@ -391,12 +457,13 @@ export default function LoginScreen() {
                 </View>
               )}
 
-              <View style={{ flexDirection:'row', gap:8, marginTop:10 }}>
+              <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
                 <Pressable
                   onPress={handlePhoneSubmit}
                   disabled={loading || !phone || !password}
                   style={[
-                    styles.ctaHalf, { backgroundColor:'#6B7280' },
+                    styles.ctaHalf,
+                    { backgroundColor: '#6B7280' },
                     (!phone || !password || loading) && styles.ctaDisabled,
                   ]}
                 >
@@ -432,21 +499,49 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  wrap: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 },
+  wrap: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
   subtitle: { color: '#fff', opacity: 0.9, marginBottom: 18 },
   err: { color: '#ffe4e6', textAlign: 'center', marginTop: 16 },
 
-  formWrap: { width:'86%', marginTop: 14 },
-  formHeader: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginBottom:8 },
-  formTitle: { color:'#fff', fontSize:16 },
-  formSwitch: { color:'#ffd' },
+  formWrap: { width: '86%', marginTop: 14 },
+  formHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  formTitle: { color: '#fff', fontSize: 16 },
+  formSwitch: { color: '#ffd' },
 
-  card: { backgroundColor:'#fff', borderRadius:12, padding:12 },
-  inputBox: { backgroundColor:'#f5f5f5', borderRadius:8, paddingHorizontal:10, marginBottom:10 },
-  input: { height: 46, color:'#000' },
+  card: { backgroundColor: '#fff', borderRadius: 12, padding: 12 },
+  inputBox: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+  },
+  input: { height: 46, color: '#000' },
 
-  cta: { backgroundColor:'#2F80ED', borderRadius:10, height:46, alignItems:'center', justifyContent:'center' },
-  ctaHalf: { flex:1, backgroundColor:'#2F80ED', borderRadius:10, height:46, alignItems:'center', justifyContent:'center' },
-  ctaText: { color:'#fff', fontWeight:'600' },
+  cta: {
+    backgroundColor: '#2F80ED',
+    borderRadius: 10,
+    height: 46,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ctaHalf: {
+    flex: 1,
+    backgroundColor: '#2F80ED',
+    borderRadius: 10,
+    height: 46,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ctaText: { color: '#fff', fontWeight: '600' },
   ctaDisabled: { opacity: 0.6 },
 });

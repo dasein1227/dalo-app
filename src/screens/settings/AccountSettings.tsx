@@ -27,88 +27,88 @@ type ProfileRow = {
   id: string;
   nickname: string | null;
   follow_id?: string | null;
+  friend_code?: string | null;
   phone_number?: string | null;
   phone_verified?: boolean | null;
   show_nickname_to_friends?: boolean | null;
+  is_business?: boolean | null;
 };
-
-function validateFollowId(id: string): string | null {
-  if (!id) {
-    return '아이디를 입력해 주세요.';
-  }
-
-  // 길이
-  if (id.length < 2 || id.length > 20) {
-    return '아이디는 2~20자 사이여야 합니다.';
-  }
-
-  // 허용 문자만 있는지 체크 (영문, 숫자, 한글, . _)
-  const allowedRegex = /^[a-z0-9._\uAC00-\uD7A3]+$/;
-  if (!allowedRegex.test(id)) {
-    return '영문, 숫자, 한글, ".", "_"만 사용할 수 있어요.';
-  }
-
-  // 시작/끝 특수문자 불가
-  if (/^[._]/.test(id) || /[._]$/.test(id)) {
-    return '아이디의 처음과 끝에는 ".", "_"를 사용할 수 없어요.';
-  }
-
-  // 연속된 특수문자 (.., __, ._, _.) 금지
-  if (/[._]{2,}/.test(id) || /(\._|_\.)/.test(id)) {
-    return '특수문자를 연속해서 사용할 수 없어요.';
-  }
-
-  // 공백 방지
-  if (/\s/.test(id)) {
-    return '공백은 사용할 수 없어요.';
-  }
-
-  return null;
-}
 
 export default function AccountSettings() {
   const navigation = useNavigation<any>();
 
   const [meId, setMeId] = useState<string>('');
-  const [nickname, setNickname] = useState<string>('');
-  const [followId, setFollowId] = useState<string>('');
-  const [originalFollowId, setOriginalFollowId] = useState<string>('');
+
+  const [nickname, setNickname] = useState('');
+
+  const [followId, setFollowId] = useState('');
+  const [originalFollowId, setOriginalFollowId] = useState('');
   const [followIdError, setFollowIdError] = useState<string | null>(null);
+  const [checkingFollow, setCheckingFollow] = useState(false);
+
+  const [friendCode, setFriendCode] = useState('');
+  const [originalFriendCode, setOriginalFriendCode] = useState('');
+  const [friendCodeError, setFriendCodeError] = useState<string | null>(null);
+  const [checkingFriend, setCheckingFriend] = useState(false);
 
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
-  const [phoneVerified, setPhoneVerified] = useState<boolean>(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
 
-  // 새 토글 상태
-  const [showNicknameToFriends, setShowNicknameToFriends] =
-    useState<boolean>(true);
+  const [showNicknameToFriends, setShowNicknameToFriends] = useState(true);
   const [originalShowNicknameToFriends, setOriginalShowNicknameToFriends] =
-    useState<boolean>(true);
+    useState(true);
 
-  const [loading, setLoading] = useState<boolean>(true);
-  const [saving, setSaving] = useState<boolean>(false);
-  const [checking, setChecking] = useState<boolean>(false);
+  const [isBusiness, setIsBusiness] = useState(false);
 
-  const [idInfoOpen, setIdInfoOpen] = useState<boolean>(false); // 팝업용 (필요하면 Modal 연결)
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-  // ---- 프로필 로드 ----
+  // ---------------------------------------------------------
+  // ⚡ VALIDATION
+  // ---------------------------------------------------------
+
+  const validateFollowId = (id: string): string | null => {
+    if (!id) return '아이디를 입력해 주세요.';
+    if (id.length < 2 || id.length > 20) return '아이디는 2~20자 사이여야 합니다.';
+    const allowed = /^[a-z0-9._\uAC00-\uD7A3]+$/;
+    if (!allowed.test(id)) return '영문, 숫자, 한글, ".", "_"만 사용할 수 있어요.';
+    if (/^[._]/.test(id) || /[._]$/.test(id))
+      return '아이디의 처음과 끝에는 ".", "_"를 사용할 수 없어요.';
+    if (/[._]{2,}|(\._|_\.)/.test(id))
+      return '특수문자를 연속해서 사용할 수 없어요.';
+    if (/\s/.test(id)) return '공백은 사용할 수 없어요.';
+    return null;
+  };
+
+  const validateFriendCode = (code: string): string | null => {
+    if (!code) return null;
+    if (code.length < 4 || code.length > 20)
+      return '친구 코드는 4~20자 사이여야 합니다.';
+    const regex = /^[a-z0-9_\uAC00-\uD7A3]+$/;
+    if (!regex.test(code)) return '영문 소문자, 숫자, 한글, "_"만 사용할 수 있어요.';
+    return null;
+  };
+
+  // ---------------------------------------------------------
+  // ⚡ LOAD PROFILE + 사업자 이중 체크
+  // ---------------------------------------------------------
+
   const load = useCallback(async () => {
     try {
       setLoading(true);
+
       const {
         data: { user },
-        error: authErr,
       } = await supabase.auth.getUser();
 
-      if (authErr || !user) {
-        throw new Error('로그인이 필요합니다.');
-      }
-
+      if (!user) throw new Error('로그인이 필요합니다.');
       setMeId(user.id);
 
+      // 1) 프로필 기본 정보
       const { data, error } = await supabase
         .from('profiles')
         .select(
-          'id, nickname, follow_id, phone_number, phone_verified, show_nickname_to_friends',
+          'id, nickname, follow_id, friend_code, phone_number, phone_verified, show_nickname_to_friends, is_business'
         )
         .eq('id', user.id)
         .maybeSingle();
@@ -118,17 +118,39 @@ export default function AccountSettings() {
       const row = (data ?? null) as ProfileRow | null;
 
       setNickname(row?.nickname ?? '');
-      const currentId = (row?.follow_id ?? '').toLowerCase();
-      setFollowId(currentId);
-      setOriginalFollowId(currentId);
-      setFollowIdError(null);
+
+      const f = (row?.follow_id ?? '').toLowerCase();
+      setFollowId(f);
+      setOriginalFollowId(f);
+
+      const fc = (row?.friend_code ?? '').toLowerCase();
+      setFriendCode(fc);
+      setOriginalFriendCode(fc);
 
       setPhoneNumber(row?.phone_number ?? null);
       setPhoneVerified(!!row?.phone_verified);
 
-      const flag = row?.show_nickname_to_friends ?? true; // 컬럼 없으면 기본 true 라고 가정
-      setShowNicknameToFriends(!!flag);
-      setOriginalShowNicknameToFriends(!!flag);
+      const flag = row?.show_nickname_to_friends ?? true;
+      setShowNicknameToFriends(flag);
+      setOriginalShowNicknameToFriends(flag);
+
+      // 기본값: profiles.is_business
+      let bizFlag = row?.is_business ?? false;
+
+      // 2) business_registrations 에서 승인 여부 이중 체크
+      const { data: reg, error: regError } = await supabase
+        .from('business_registrations')
+        .select('status')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (!regError && reg?.status === 'approved') {
+        bizFlag = true;
+      }
+
+      setIsBusiness(bizFlag);
     } catch (e: any) {
       Alert.alert('오류', e?.message ?? String(e));
     } finally {
@@ -140,97 +162,121 @@ export default function AccountSettings() {
     load();
   }, [load]);
 
-  // ---- 입력 핸들러 ----
+  // ---------------------------------------------------------
+  // ⚡ ID CHANGE
+  // ---------------------------------------------------------
+
   const handleChangeFollowId = (text: string) => {
-    // 사용자가 "@abc" 이런 식으로 넣어도 잘라내기
-    const withoutAt = text.startsWith('@') ? text.slice(1) : text;
-
-    // 허용 문자 이외 제거 (영문, 숫자, 한글, . _ 만 살림)
-    const cleaned = withoutAt.replace(/[^a-zA-Z0-9._\uAC00-\uD7A3]/g, '');
-
-    const lowered = cleaned.toLowerCase();
+    const cleaned = text.startsWith('@') ? text.slice(1) : text;
+    const filtered = cleaned.replace(/[^a-zA-Z0-9._\uAC00-\uD7A3]/g, '');
+    const lowered = filtered.toLowerCase();
     setFollowId(lowered);
-
-    const err = validateFollowId(lowered);
-    setFollowIdError(err);
+    setFollowIdError(validateFollowId(lowered));
   };
 
-  // ---- 중복 체크 ----
-  const checkAvailability = useCallback(
-    async (id: string): Promise<string | null> => {
-      const basicErr = validateFollowId(id);
-      if (basicErr) return basicErr;
-
-      if (!meId) return '유저 정보를 불러오지 못했습니다.';
+  const checkFollowId = useCallback(
+    async (id: string) => {
+      const basic = validateFollowId(id);
+      if (basic) return basic;
 
       try {
-        setChecking(true);
-        const { count, error } = await supabase
+        setCheckingFollow(true);
+        const { count } = await supabase
           .from('profiles')
           .select('id', { count: 'exact', head: true })
           .eq('follow_id', id)
           .neq('id', meId);
 
-        if (error) {
-          console.log('check follow_id error', error);
-          return '아이디 중복 확인 중 오류가 발생했습니다.';
-        }
-
-        if ((count ?? 0) > 0) {
-          return '이미 사용 중인 아이디입니다.';
-        }
-
+        if ((count ?? 0) > 0) return '이미 사용 중인 아이디입니다.';
         return null;
       } finally {
-        setChecking(false);
+        setCheckingFollow(false);
       }
     },
-    [meId],
+    [meId]
   );
 
   const handleBlurFollowId = async () => {
-    if (!followId) return;
-    // 변경된 경우에만 중복 체크
-    if (followId === originalFollowId) return;
-    const err = await checkAvailability(followId);
+    if (!followId || followId === originalFollowId) return;
+    const err = await checkFollowId(followId);
     setFollowIdError(err);
   };
 
-  // ---- 저장 ----
-  const handleSave = async () => {
-    if (!meId) {
-      Alert.alert('오류', '유저 정보를 불러오지 못했습니다.');
+  // ---------------------------------------------------------
+  // ⚡ FRIEND CODE CHANGE
+  // ---------------------------------------------------------
+
+  const handleChangeFriendCode = (text: string) => {
+    const noSpace = text.replace(/\s+/g, '').toLowerCase();
+    const filtered = noSpace.replace(/[^a-z0-9_\uAC00-\uD7A3]/g, '');
+    setFriendCode(filtered);
+    setFriendCodeError(validateFriendCode(filtered));
+  };
+
+  const checkFriendCode = useCallback(
+    async (code: string) => {
+      const basic = validateFriendCode(code);
+      if (basic) return basic;
+      if (!code) return null;
+
+      try {
+        setCheckingFriend(true);
+        const { count } = await supabase
+          .from('profiles')
+          .select('id', { count: 'exact', head: true })
+          .eq('friend_code', code)
+          .neq('id', meId);
+
+        if ((count ?? 0) > 0) return '이미 사용 중인 친구 코드입니다.';
+        return null;
+      } finally {
+        setCheckingFriend(false);
+      }
+    },
+    [meId]
+  );
+
+  const handleBlurFriendCode = async () => {
+    if (friendCode === originalFriendCode) return;
+    if (!friendCode) {
+      setFriendCodeError(null);
       return;
     }
+    const err = await checkFriendCode(friendCode);
+    setFriendCodeError(err);
+  };
 
-    const trimmed = followId.trim().toLowerCase();
+  // ---------------------------------------------------------
+  // ⚡ SAVE
+  // ---------------------------------------------------------
 
-    // follow_id 를 바꿨을 때만 형식/중복 검사
-    if (trimmed !== originalFollowId) {
-      const errBasic = validateFollowId(trimmed);
-      if (errBasic) {
-        setFollowIdError(errBasic);
-        Alert.alert('확인', errBasic);
-        return;
-      }
-
-      const errDup = await checkAvailability(trimmed);
-      if (errDup) {
-        setFollowIdError(errDup);
-        Alert.alert('중복 확인', errDup);
-        return;
-      }
-    }
-
+  const handleSave = async () => {
     try {
       setSaving(true);
 
-      const payload: Partial<ProfileRow> = {
+      const f = followId.trim().toLowerCase();
+      const fc = friendCode.trim().toLowerCase();
+
+      if (f !== originalFollowId) {
+        const e1 = validateFollowId(f);
+        if (e1) return Alert.alert('확인', e1);
+        const e2 = await checkFollowId(f);
+        if (e2) return Alert.alert('중복 확인', e2);
+      }
+
+      if (fc !== originalFriendCode) {
+        const e1 = validateFriendCode(fc);
+        if (e1) return Alert.alert('확인', e1);
+        const e2 = await checkFriendCode(fc);
+        if (e2) return Alert.alert('중복 확인', e2);
+      }
+
+      const payload: any = {
         show_nickname_to_friends: showNicknameToFriends,
       };
-      if (trimmed !== originalFollowId) {
-        payload.follow_id = trimmed;
-      }
+
+      if (f !== originalFollowId) payload.follow_id = f;
+      if (fc !== originalFriendCode) payload.friend_code = fc || null;
 
       const { error } = await supabase
         .from('profiles')
@@ -239,10 +285,8 @@ export default function AccountSettings() {
 
       if (error) throw error;
 
-      setOriginalFollowId(trimmed);
-      setFollowId(trimmed);
-      setFollowIdError(null);
-
+      setOriginalFollowId(f);
+      setOriginalFriendCode(fc);
       setOriginalShowNicknameToFriends(showNicknameToFriends);
 
       Alert.alert('저장 완료', '계정 정보가 저장되었습니다.');
@@ -255,7 +299,12 @@ export default function AccountSettings() {
 
   const hasChanges =
     followId !== originalFollowId ||
+    friendCode !== originalFriendCode ||
     showNicknameToFriends !== originalShowNicknameToFriends;
+
+  // ---------------------------------------------------------
+  // ⚡ LOADING
+  // ---------------------------------------------------------
 
   if (loading) {
     return (
@@ -266,55 +315,75 @@ export default function AccountSettings() {
     );
   }
 
+  // ---------------------------------------------------------
+  // ⚡ RENDER
+  // ---------------------------------------------------------
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* 상단 헤더 */}
+      {/* HEADER */}
       <View style={styles.header}>
         <Pressable
-          onPress={() => navigation.goBack()}
-          hitSlop={8}
           style={styles.headerLeft}
+          hitSlop={8}
+          onPress={() => navigation.goBack()}
         >
           <ChevronLeft size={22} color={TEXT_MAIN} />
         </Pressable>
+
         <Text style={styles.headerTitle}>계정 정보</Text>
-        <View style={styles.headerRight} />
+
+        <View style={styles.headerRight}>
+          {isBusiness ? (
+            <Pressable
+              hitSlop={8}
+              style={styles.bizBtn}
+              onPress={() => navigation.navigate('BusinessUnregister')}
+            >
+              <Text style={styles.bizBtnDanger}>사업자 해지</Text>
+            </Pressable>
+          ) : (
+            <Pressable
+              hitSlop={8}
+              style={styles.bizBtn}
+              onPress={() => navigation.navigate('BusinessRegister')}
+            >
+              <Text style={styles.bizBtnText}>사업자 등록</Text>
+            </Pressable>
+          )}
+        </View>
       </View>
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* 안내 텍스트 */}
+      {/* BODY */}
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* INTRO */}
         <View style={styles.introBox}>
-          <Text style={styles.introTitle}>CO·ONN 아이디</Text>
+          <Text style={styles.introTitle}>CO·ONN 아이디 & 친구 코드</Text>
           <Text style={styles.introText}>
-            친구가 @아이디로 나를 검색하고 팔로우할 수 있어요.
-            {'\n'}한 번 정해두면 나를 찾는 대표 주소가 됩니다.
+            • @아이디는 공개 프로필과 팔로우에 사용돼요.{'\n'}
+            • 친구 코드는 내가 알려준 사람만 나에게 친구 요청을 보낼 수 있어요.
           </Text>
         </View>
 
-        {/* 아이디 입력 박스 */}
+        {/* FOLLOW ID */}
         <View style={styles.card}>
           <View style={styles.labelRow}>
             <Text style={styles.label}>CO·ONN 아이디</Text>
-
             <Pressable
               style={styles.labelInfoBtn}
               hitSlop={8}
-              onPress={() => {
+              onPress={() =>
                 Alert.alert(
-                  '아이디 생성 규칙',
+                  '아이디 규칙',
                   [
                     '• 사용 가능: 영문, 숫자, 한글, ".", "_"',
                     '• 길이 2–20자',
-                    '• 특수문자 연속 사용 불가 (.., __, ._, _.)',
-                    '• 시작/끝에 특수문자 불가',
-                    '• 공백 불가',
-                    '• 저장 시 소문자로 변환',
-                  ].join('\n'),
-                );
-              }}
+                    '• 특수문자 연속 불가',
+                    '• 시작/끝 특수문자 불가',
+                    '• 공백 없음',
+                  ].join('\n')
+                )
+              }
             >
               <Info size={18} color={TEXT_MUTED} />
             </Pressable>
@@ -327,51 +396,91 @@ export default function AccountSettings() {
               onChangeText={handleChangeFollowId}
               onBlur={handleBlurFollowId}
               style={styles.textInput}
-              placeholder="아이디 입력 (예: youngjin_coonn)"
+              placeholder="아이디 입력"
               autoCapitalize="none"
               autoCorrect={false}
-              maxLength={24}
             />
           </View>
 
           <View style={styles.helperRow}>
-            {checking && (
+            {checkingFollow && (
               <Text style={styles.helperChecking}>중복 확인 중…</Text>
             )}
-            {!checking && !followIdError && followId.length >= 2 && (
-              <Text style={styles.helperOk}>사용 가능한 형식입니다.</Text>
+            {!checkingFollow && !followIdError && followId.length >= 2 && (
+              <Text style={styles.helperOk}>사용 가능</Text>
             )}
             {followIdError && (
               <Text style={styles.helperError}>{followIdError}</Text>
             )}
           </View>
-
-          <Text style={styles.subHint}>
-            • 아이디는 추후 정책에 따라 변경 횟수가 제한될 수 있어요.
-          </Text>
         </View>
 
-        {/* 닉네임 표시 (읽기 전용) */}
+        {/* FRIEND CODE */}
+        <View style={styles.card}>
+          <View style={styles.labelRow}>
+            <Text style={styles.label}>친구 코드</Text>
+            <Pressable
+              style={styles.labelInfoBtn}
+              hitSlop={8}
+              onPress={() =>
+                Alert.alert(
+                  '친구 코드 규칙',
+                  [
+                    '• 영문 소문자, 숫자, 한글, "_" 사용 가능',
+                    '• 길이 4–20자',
+                    '• 공백 없음',
+                  ].join('\n')
+                )
+              }
+            >
+              <Info size={18} color={TEXT_MUTED} />
+            </Pressable>
+          </View>
+
+          <View style={styles.inputRow}>
+            <TextInput
+              value={friendCode}
+              onChangeText={handleChangeFriendCode}
+              onBlur={handleBlurFriendCode}
+              style={styles.textInput}
+              placeholder="친구 코드 입력"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+          </View>
+
+          <View style={styles.helperRow}>
+            {checkingFriend && (
+              <Text style={styles.helperChecking}>중복 확인 중…</Text>
+            )}
+            {!checkingFriend &&
+              !friendCodeError &&
+              friendCode.length >= 4 && (
+                <Text style={styles.helperOk}>사용 가능</Text>
+              )}
+            {friendCodeError && (
+              <Text style={styles.helperError}>{friendCodeError}</Text>
+            )}
+          </View>
+        </View>
+
+        {/* NICKNAME */}
         <View style={styles.card}>
           <Text style={styles.subLabel}>현재 닉네임</Text>
-          <Text style={styles.subValue}>
-            {nickname || '(설정되지 않음)'}
-          </Text>
-          <Text style={styles.subHint}>
-            • 닉네임은 프로필 편집 화면에서 변경할 수 있어요.
-          </Text>
+          <Text style={styles.subValue}>{nickname || '(설정되지 않음)'}</Text>
+          <Text style={styles.subHint}>프로필 편집에서 변경할 수 있어요.</Text>
         </View>
 
-        {/* ✅ 친구에게 닉네임으로 보일지 토글 */}
+        {/* NICKNAME TOGGLE */}
         <View style={styles.card}>
           <View style={styles.toggleRow}>
             <View style={{ flex: 1 }}>
               <Text style={styles.subLabel}>친구에게 닉네임으로 표시</Text>
               <Text style={styles.toggleDesc}>
-                끄면 모든 사람에게 @아이디로만 보이고,
-                {'\n'}켜면 친구 관계인 사람에게는 닉네임으로 보여요.
+                끄면 모든 사람에게 @아이디로만 표시됩니다.
               </Text>
             </View>
+
             <Switch
               value={showNicknameToFriends}
               onValueChange={setShowNicknameToFriends}
@@ -379,27 +488,18 @@ export default function AccountSettings() {
           </View>
         </View>
 
-        {/* 전화번호 / 재인증 */}
+        {/* PHONE NUMBER */}
         <View style={styles.card}>
           <Text style={styles.subLabel}>전화번호</Text>
 
-          {phoneNumber ? (
-            <Text style={styles.subValue}>
-              {phoneNumber} {phoneVerified ? '(인증됨)' : '(미인증)'}
-            </Text>
-          ) : (
-            <Text style={styles.subValue}>(미등록)</Text>
-          )}
-
-          <Text style={styles.subHint}>
-            • 지인 찾기, 통화 기능을 위해 1회 인증이 필요합니다.
+          <Text style={styles.subValue}>
+            {phoneNumber
+              ? `${phoneNumber} ${phoneVerified ? '(인증됨)' : '(미인증)'}`
+              : '(미등록)'}
           </Text>
 
           <Pressable
-            style={({ pressed }) => [
-              styles.reverifyButton,
-              pressed && { opacity: 0.85 },
-            ]}
+            style={styles.reverifyButton}
             onPress={() => navigation.navigate('PhoneVerification')}
           >
             <Text style={styles.reverifyText}>
@@ -408,20 +508,21 @@ export default function AccountSettings() {
           </Pressable>
         </View>
 
-        {/* 저장 버튼 */}
+        {/* SAVE */}
         <View style={styles.footer}>
           <Pressable
-            style={({ pressed }) => [
+            style={[
               styles.saveButton,
-              (!hasChanges || !!followIdError || saving) &&
+              (!hasChanges ||
+                !!followIdError ||
+                !!friendCodeError ||
+                saving) &&
                 styles.saveButtonDisabled,
-              pressed &&
-                !saving &&
-                hasChanges &&
-                !followIdError && { opacity: 0.85 },
             ]}
+            disabled={
+              !hasChanges || !!followIdError || !!friendCodeError || saving
+            }
             onPress={handleSave}
-            disabled={!hasChanges || !!followIdError || saving}
           >
             {saving ? (
               <ActivityIndicator color="#fff" />
@@ -435,65 +536,59 @@ export default function AccountSettings() {
   );
 }
 
+// ---------------------------------------------------------
+// ⭐ STYLES
+// ---------------------------------------------------------
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: BG },
 
   loadingContainer: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: BG,
+    alignItems: 'center',
   },
-  loadingText: { marginTop: 8, color: '#6b7280' },
+  loadingText: { marginTop: 8, color: TEXT_MUTED },
 
   header: {
+    height: 54,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingTop: Platform.select({ ios: 8, android: 4 }),
+    paddingBottom: 8,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: HAIRLINE,
+    backgroundColor: '#fff',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#fff',
   },
-  headerTitle: { fontSize: 18, fontWeight: '800', color: TEXT_MAIN },
-  headerLeft: {
-    width: 40,
-    alignItems: 'flex-start',
-    justifyContent: 'center',
+
+  headerLeft: { width: 34, justifyContent: 'center' },
+  headerTitle: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 17,
+    fontWeight: '700',
+    color: TEXT_MAIN,
   },
-  headerRight: {
-    width: 40,
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-  },
+  headerRight: { width: 70, alignItems: 'flex-end' },
+
+  bizBtn: { paddingHorizontal: 6, paddingVertical: 2 },
+  bizBtnText: { fontSize: 12, fontWeight: '700', color: ACCENT },
+  bizBtnDanger: { fontSize: 12, fontWeight: '700', color: '#DC2626' },
 
   scrollContent: {
     paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 32,
+    paddingTop: 10,
+    paddingBottom: 40,
   },
 
-  introBox: {
-    marginBottom: 16,
-  },
-  introTitle: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: TEXT_MAIN,
-    marginBottom: 4,
-  },
-  introText: {
-    fontSize: 13,
-    color: TEXT_MUTED,
-    lineHeight: 20,
-  },
+  introBox: { marginBottom: 16 },
+  introTitle: { fontSize: 16, fontWeight: '800', color: TEXT_MAIN },
+  introText: { fontSize: 13, color: TEXT_MUTED, lineHeight: 20, marginTop: 4 },
 
   card: {
     backgroundColor: '#fff',
+    padding: 14,
     borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: HAIRLINE,
     marginBottom: 12,
@@ -501,19 +596,13 @@ const styles = StyleSheet.create({
 
   labelRow: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 8,
   },
-  label: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: TEXT_MAIN,
-  },
-  labelInfoBtn: {
-    paddingHorizontal: 4,
-    paddingVertical: 2,
-  },
+
+  label: { fontSize: 14, fontWeight: '700', color: TEXT_MAIN },
+
+  labelInfoBtn: { paddingHorizontal: 4, paddingVertical: 2 },
 
   inputRow: {
     flexDirection: 'row',
@@ -525,12 +614,14 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === 'ios' ? 8 : 4,
     backgroundColor: '#F9FAFB',
   },
+
   atSymbol: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#6B7280',
+    color: TEXT_MUTED,
     marginRight: 4,
   },
+
   textInput: {
     flex: 1,
     fontSize: 15,
@@ -538,73 +629,17 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === 'ios' ? 4 : 0,
   },
 
-  helperRow: {
-    marginTop: 6,
-    minHeight: 18,
-  },
-  helperChecking: {
-    fontSize: 12,
-    color: TEXT_MUTED,
-  },
-  helperOk: {
-    fontSize: 12,
-    color: '#16A34A',
-    fontWeight: '600',
-  },
-  helperError: {
-    fontSize: 12,
-    color: '#EF4444',
-  },
+  helperRow: { minHeight: 18, marginTop: 4 },
+  helperChecking: { fontSize: 12, color: TEXT_MUTED },
+  helperOk: { fontSize: 12, color: '#16A34A', fontWeight: '700' },
+  helperError: { fontSize: 12, color: '#EF4444' },
 
-  subHint: {
-    marginTop: 8,
-    fontSize: 12,
-    color: '#9CA3AF',
-    lineHeight: 18,
-  },
+  subLabel: { fontSize: 13, fontWeight: '700', color: TEXT_MAIN },
+  subValue: { fontSize: 14, color: TEXT_MAIN, marginTop: 2 },
+  subHint: { fontSize: 12, color: TEXT_MUTED, marginTop: 4 },
 
-  subLabel: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: TEXT_MAIN,
-    marginBottom: 4,
-  },
-  subValue: {
-    fontSize: 14,
-    color: TEXT_MAIN,
-    marginBottom: 4,
-  },
-
-  // 토글 박스
-  toggleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  toggleDesc: {
-    marginTop: 2,
-    fontSize: 12,
-    color: TEXT_MUTED,
-    lineHeight: 18,
-  },
-
-  footer: {
-    marginTop: 8,
-  },
-  saveButton: {
-    borderRadius: 999,
-    paddingVertical: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: ACCENT,
-  },
-  saveButtonDisabled: {
-    backgroundColor: '#FCA5A5',
-  },
-  saveButtonText: {
-    fontSize: 15,
-    fontWeight: '800',
-    color: '#FFFFFF',
-  },
+  toggleRow: { flexDirection: 'row', alignItems: 'center' },
+  toggleDesc: { fontSize: 12, color: TEXT_MUTED, marginTop: 4 },
 
   reverifyButton: {
     marginTop: 10,
@@ -612,11 +647,17 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: '#111827',
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  reverifyText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#fff',
+  reverifyText: { fontSize: 14, fontWeight: '700', color: '#fff' },
+
+  footer: { marginTop: 8 },
+
+  saveButton: {
+    backgroundColor: ACCENT,
+    paddingVertical: 12,
+    borderRadius: 999,
+    alignItems: 'center',
   },
+  saveButtonDisabled: { backgroundColor: '#FCA5A5' },
+  saveButtonText: { color: '#fff', fontSize: 15, fontWeight: '800' },
 });

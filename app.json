@@ -13,9 +13,8 @@
       "resizeMode": "contain",
       "backgroundColor": "#000000"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
+
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.youngjin1.daloapp",
@@ -23,17 +22,14 @@
         "NSPhotoLibraryUsageDescription": "채팅에서 사진을 선택하여 전송하기 위해 사진 보관함 접근이 필요합니다.",
         "NSPhotoLibraryAddUsageDescription": "사진을 저장하거나 전송 이력을 저장하기 위해 사진 보관함에 쓰기 권한이 필요합니다.",
         "NSLocationWhenInUseUsageDescription": "내 주변 기능을 위해 현재 위치 정보가 필요합니다."
-      },
-      "config": {
-        "googleMapsApiKey": "AIzaSyA-kHB5zvLqWLhqsvOjAnxaAbAU6cYCkHI"
       }
     },
+
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "softwareKeyboardLayoutMode": "resize",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "permissions": [
@@ -45,10 +41,7 @@
       "intentFilters": [
         {
           "action": "VIEW",
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ],
+          "category": ["BROWSABLE", "DEFAULT"],
           "data": [
             {
               "scheme": "dalo",
@@ -58,13 +51,9 @@
           ]
         }
       ],
-      "package": "com.youngjin1.daloapp",
-      "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyA-kHB5zvLqWLhqsvOjAnxaAbAU6cYCkHI"
-        }
-      }
+      "package": "com.youngjin1.daloapp"
     },
+
     "plugins": [
       "expo-web-browser",
       "expo-font",
@@ -81,15 +70,36 @@
       "expo-dev-client",
       "expo-localization",
       "expo-audio",
-      "expo-video"
+      "expo-video",
+      [
+        "react-native-edge-to-edge",
+        {
+          "android": {
+            "enforceNavigationBarContrast": false
+          }
+        }
+      ],
+      [
+        "@rnmapbox/maps",
+        {
+          "RNMapboxMapsImpl": "mapbox",
+          "RNMapboxMapsDownloadToken": "sk.eyJ1Ijoic2hpbnlvdW5namluIiwiYSI6ImNtanpuam1xdDVoZGYzZ3NjMmlha3JlOHYifQ.UnuTGk2nz3hn6XGImhvb5w"
+        }
+      ]
     ],
+
     "newArchEnabled": true,
+
     "extra": {
       "EXPO_PUBLIC_SUPABASE_URL": "https://yyvjwgnajosvapptbhwi.supabase.co",
       "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5dmp3Z25ham9zdmFwcHRiaHdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzODE0NzUsImV4cCI6MjA3NDk1NzQ3NX0.hzwIzJAAlzFsaiygV6sxgS4k7gzFIQGHF92Tb1WQ6PU",
       "EXPO_PUBLIC_GOOGLE_EXPO_CLIENT_ID": "848105897985-0riu77j4s3o5odjclvplkb65tjjl3ac5.apps.googleusercontent.com",
       "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "848105897985-k0b5r4dica6tunjfjgl5df9refn4ojnd.apps.googleusercontent.com",
       "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "848105897985-flfdqdlda55h77mp9c5fics5k7v1m59d.apps.googleusercontent.com",
+      "EXPO_PUBLIC_GOOGLE_PLACES_API_KEY": "AIzaSyDt_vSLEYse8kjVt65cgzwrhfNv6x5NAjA",
+
+      "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "pk.eyJ1Ijoic2hpbnlvdW5namluIiwiYSI6ImNtanl5ZGhpbjBhOGozbHE0ZXl6Nnp5OXQifQ.8x9OTSQQakPOtYRbp_gYgQ",
+
       "eas": {
         "projectId": "8367c5c3-a4d9-47fe-9079-9164c8894a26"
       }

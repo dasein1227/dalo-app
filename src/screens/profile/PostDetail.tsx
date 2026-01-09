@@ -1,3 +1,4 @@
+// src/screens/profile/PostDetail.tsx
 import React, {
   useCallback,
   useEffect,
@@ -433,7 +434,11 @@ export default function PostDetailScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const insets = useSafeAreaInsets();
+
   const postId = route.params?.postId as string;
+  const businessIdFromRoute = route.params?.businessId as string | undefined;
+  const routeMode = route.params?.mode as string | undefined;
+  const isBusinessMode = !!businessIdFromRoute && routeMode === 'business';
 
   const [myId, setMyId] = useState<string | null>(null);
   const [ownerId, setOwnerId] = useState<string | null>(null);
@@ -591,14 +596,13 @@ export default function PostDetailScreen() {
       setComments(withMeta);
       setCommentLayouts({}); // 위치는 초기화
       if (options?.reset) {
-        // 모달 처음 열 때만 전체 접기
         setExpandedCommentIds([]);
       }
     },
     [myId],
   );
 
-  /* ===== 특정 탭의 게시물 로드 (좋아요/미디어/댓글수 포함) ===== */
+  /* ===== 특정 탭의 게시물 로드 (프로필 모드) ===== */
   const loadPostsForTab = useCallback(
     async (owner: string, tabId: string | null, focusPostId?: string) => {
       let currentUserId: string | null = null;
@@ -631,7 +635,7 @@ export default function PostDetailScreen() {
       const rows = postRows ?? [];
       const postIds = rows.map((p) => p.id);
 
-      // 2) 프로필
+      // 2) 프로필 (owner 1개)
       let profile: ProfileLite | null = null;
       if (owner) {
         const { data: profRow, error: profErr } = (await supabase
@@ -741,12 +745,137 @@ export default function PostDetailScreen() {
     try {
       setLoading(true);
 
-      // 0) 로그인 유저
+      // 로그인 유저
       const { data: authRes } = await supabase.auth.getUser();
       const uid = authRes?.user?.id ?? null;
       setMyId(uid);
 
-      // 1) 클릭된 게시물 owner/tab
+      /* ---------- 가게 모드: businessId 기준으로 모아보기 ---------- */
+      if (isBusinessMode && businessIdFromRoute) {
+        // 1) 이 가게에 태그된 모든 게시물 + 작성자 프로필 + 미디어
+        const { data: postRows, error: pErr } = (await supabase
+          .from('posts')
+          .select(
+            `
+            id,
+            user_id,
+            caption,
+            visibility,
+            created_at,
+            tab_id,
+            profiles:profiles!posts_user_id_fkey (
+              nickname,
+              avatar_url,
+              follow_id
+            ),
+            post_media (
+              id,
+              file_url,
+              width,
+              height
+            )
+          `,
+          )
+          .eq('business_id', businessIdFromRoute)
+          .is('deleted_at', null)
+          .order('created_at', { ascending: false })) as {
+          data:
+            | (PostRow & {
+                profiles: ProfileLite | null;
+                post_media: PostMediaRow[];
+              })[]
+            | null;
+          error: any;
+        };
+
+        if (pErr) throw pErr;
+
+        const rows =
+          (postRows ??
+            []) as (PostRow & {
+            profiles: ProfileLite | null;
+            post_media: PostMediaRow[];
+          })[];
+
+        const postIds = rows.map((p) => p.id);
+
+        // 2) 좋아요
+        let likeCountMap: Record<string, number> = {};
+        const likedSet = new Set<string>();
+
+        if (postIds.length > 0) {
+          const { data: likeRows, error: likeErr } = (await supabase
+            .from('post_likes')
+            .select('post_id,user_id')
+            .in('post_id', postIds)) as {
+            data: LikeRow[] | null;
+            error: any;
+          };
+
+          if (likeErr) throw likeErr;
+
+          (likeRows ?? []).forEach((lk) => {
+            likeCountMap[lk.post_id] =
+              (likeCountMap[lk.post_id] ?? 0) + 1;
+            if (uid && lk.user_id === uid) {
+              likedSet.add(lk.post_id);
+            }
+          });
+        }
+
+        // 3) 댓글 수
+        let commentCountMap: Record<string, number> = {};
+        if (postIds.length > 0) {
+          const { data: cRows, error: cErr } = (await supabase
+            .from('post_comments')
+            .select('id,post_id')
+            .in('post_id', postIds)) as {
+            data: CommentCountRow[] | null;
+            error: any;
+          };
+
+          if (cErr) throw cErr;
+
+          (cRows ?? []).forEach((c) => {
+            commentCountMap[c.post_id] =
+              (commentCountMap[c.post_id] ?? 0) + 1;
+          });
+        }
+
+        const detailed: DetailedPost[] = rows.map((p) => ({
+          id: p.id,
+          user_id: p.user_id,
+          caption: p.caption,
+          visibility: p.visibility,
+          created_at: p.created_at,
+          profiles: p.profiles ?? null,
+          post_media: (p.post_media ?? []).map((m) => ({
+            id: m.id,
+            file_url: m.file_url,
+            width: m.width,
+            height: m.height,
+          })),
+          like_count: likeCountMap[p.id] ?? 0,
+          is_liked: likedSet.has(p.id),
+          comment_count: commentCountMap[p.id] ?? 0,
+          share_count: 0,
+        }));
+
+        setPosts(detailed);
+        setTabs([]);
+        setCurrentTabId(null);
+        setOwnerId(null);
+        setIsFriendOwner(false);
+
+        const focusId = postId;
+        const idx = detailed.findIndex((p) => p.id === focusId);
+        setInitialIndex(idx >= 0 ? idx : 0);
+
+        return; // ✅ 가게 모드는 여기서 끝
+      }
+
+      /* ---------- 프로필 모드: 기존 로직 그대로 ---------- */
+
       const { data: basePost, error: baseErr } = (await supabase
         .from('posts')
         .select('id,user_id,tab_id')
@@ -759,7 +888,7 @@ export default function PostDetailScreen() {
       const owner = basePost.user_id;
       setOwnerId(owner);
 
-      // 2) 친구 여부 체크
+      // 친구 여부 체크
       if (uid && owner && uid !== owner) {
         const { data: friendRow } = (await supabase
           .from('friends')
@@ -775,7 +904,7 @@ export default function PostDetailScreen() {
         setIsFriendOwner(false);
       }
 
-      // 3) 탭 목록
+      // 탭 목록
       const { data: tabRows, error: tabErr } = (await supabase
         .from('profile_tabs')
         .select('id,name')
@@ -796,7 +925,6 @@ export default function PostDetailScreen() {
       }
       setCurrentTabId(initialTabId);
 
-      // 4) 탭 게시물 로드
       await loadPostsForTab(owner, initialTabId, basePost.id);
     } catch (e: any) {
       Alert.alert('불러오기 실패', e?.message ?? String(e));
@@ -804,7 +932,13 @@ export default function PostDetailScreen() {
     } finally {
       setLoading(false);
     }
-  }, [postId, navigation, loadPostsForTab]);
+  }, [
+    postId,
+    navigation,
+    loadPostsForTab,
+    isBusinessMode,
+    businessIdFromRoute,
+  ]);
 
   useEffect(() => {
     loadAll();
@@ -864,7 +998,7 @@ export default function PostDetailScreen() {
         return;
       }
       if (comment.user_id !== myId) {
-        return; // 내 댓글만 삭제 가능
+        return;
       }
 
       Alert.alert('댓글 삭제', '이 댓글을 삭제할까요?', [
@@ -938,7 +1072,6 @@ export default function PostDetailScreen() {
         if (!replyTo.parent_id) {
           parentId = replyTo.id;
         } else {
-          // 이미 답글인 댓글에 대한 답글 → 루트 댓글 찾기
           let current: CommentRow | undefined = replyTo;
           while (current?.parent_id) {
             const found = comments.find(
@@ -949,7 +1082,6 @@ export default function PostDetailScreen() {
           }
           parentId = current?.id ?? replyTo.id;
 
-          // @팔로우아이디 자동 붙이기 + 숨은 cid 태깅
           const targetFollow =
             replyTo.profiles?.follow_id ?? replyTo.profiles?.nickname ?? '';
           const mention = targetFollow ? `@${targetFollow}` : '';
@@ -977,9 +1109,8 @@ export default function PostDetailScreen() {
 
       setNewComment('');
       setReplyTo(null);
-      await loadComments(commentTarget.id); // 스레드 열린 상태 유지
+      await loadComments(commentTarget.id);
 
-      // 게시물의 댓글 수도 업데이트
       setPosts((prev) =>
         prev.map((p) =>
           p.id === commentTarget.id
@@ -1193,7 +1324,7 @@ export default function PostDetailScreen() {
   const goEdit = useCallback(() => {
     if (!sheetTarget) return;
     setMoreOpen(false);
-    navigation.navigate('CreatePost', { postId: sheetTarget.id });
+    navigation.navigate('EditPost', { postId: sheetTarget.id });
   }, [navigation, sheetTarget]);
 
   const pinPost = useCallback(() => {
@@ -1201,7 +1332,7 @@ export default function PostDetailScreen() {
     Alert.alert('준비 중', '고정 기능은 준비 중입니다.');
   }, []);
 
-  /* ===== 탭 변경 ===== */
+  /* ===== 탭 변경 (프로필 모드에서만 사용) ===== */
   const onSelectTab = useCallback(
     async (tabId: string) => {
       setTabPickerOpen(false);
@@ -1250,7 +1381,6 @@ export default function PostDetailScreen() {
       const hasReplies = node.replies.length > 0;
       const isExpanded = expandedCommentIds.includes(node.id);
 
-      // body 파싱: 숨은 cid + @mention 분리
       let rawBody = node.body ?? '';
       let targetCommentId: string | null = null;
 
@@ -1346,7 +1476,6 @@ export default function PostDetailScreen() {
                 <Pressable
                   onPress={() => {
                     setReplyTo(node);
-                    // 2레벨부터는 @팔로우아이디 자동 입력
                     if (node.parent_id) {
                       const targetFollow =
                         node.profiles?.follow_id ??
@@ -1444,20 +1573,27 @@ export default function PostDetailScreen() {
           <Plus size={22} color="#000" />
         </Pressable>
 
-        {/* 중앙 로고를 완전 중앙 고정 */}
+        {/* 중앙 로고 */}
         <View style={styles.headerCenter}>
           <Pressable onPress={goHome}>
             <Text style={styles.logoText}>CO·ONN</Text>
           </Pressable>
         </View>
 
-        <Pressable
-          style={styles.headerRight}
-          onPress={() => setTabPickerOpen(true)}
-        >
-          <Text style={styles.headerTabTitle}>{currentTabName}</Text>
-          <ChevronDown size={18} color="#000" style={{ marginLeft: 4 }} />
-        </Pressable>
+        {/* 프로필 모드에서만 탭 선택 가능, 가게 모드는 고정 라벨 */}
+        {isBusinessMode ? (
+          <View style={styles.headerRight}>
+            <Text style={styles.headerTabTitle}>가게 피드</Text>
+          </View>
+        ) : (
+          <Pressable
+            style={styles.headerRight}
+            onPress={() => setTabPickerOpen(true)}
+          >
+            <Text style={styles.headerTabTitle}>{currentTabName}</Text>
+            <ChevronDown size={18} color="#000" style={{ marginLeft: 4 }} />
+          </Pressable>
+        )}
       </View>
 
       {/* 인스타 피드처럼 여러 게시물 */}
@@ -1485,39 +1621,41 @@ export default function PostDetailScreen() {
         scrollEventThrottle={16}
       />
 
-      {/* ===== 탭 선택 모달 ===== */}
-      <Modal
-        transparent
-        visible={tabPickerOpen}
-        animationType="fade"
-        onRequestClose={() => setTabPickerOpen(false)}
-      >
-        <Pressable
-          style={styles.backdrop}
-          onPress={() => setTabPickerOpen(false)}
-        />
-        <SafeAreaView style={styles.sheetWrap}>
-          <View style={styles.sheetHandle} />
-          <View style={styles.sheetInner}>
-            {tabs.map((tab) => (
-              <Pressable
-                key={tab.id}
-                style={styles.sheetRow}
-                onPress={() => onSelectTab(tab.id)}
-              >
-                <Text
-                  style={[
-                    styles.sheetText,
-                    currentTabId === tab.id && { fontWeight: '700' },
-                  ]}
+      {/* ===== 탭 선택 모달 (프로필 모드에서만) ===== */}
+      {!isBusinessMode && (
+        <Modal
+          transparent
+          visible={tabPickerOpen}
+          animationType="fade"
+          onRequestClose={() => setTabPickerOpen(false)}
+        >
+          <Pressable
+            style={styles.backdrop}
+            onPress={() => setTabPickerOpen(false)}
+          />
+          <SafeAreaView style={styles.sheetWrap}>
+            <View style={styles.sheetHandle} />
+            <View style={styles.sheetInner}>
+              {tabs.map((tab) => (
+                <Pressable
+                  key={tab.id}
+                  style={styles.sheetRow}
+                  onPress={() => onSelectTab(tab.id)}
                 >
-                  {tab.name}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-        </SafeAreaView>
-      </Modal>
+                  <Text
+                    style={[
+                      styles.sheetText,
+                      currentTabId === tab.id && { fontWeight: '700' },
+                    ]}
+                  >
+                    {tab.name}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </SafeAreaView>
+        </Modal>
+      )}
 
       {/* ===== 더보기 모달 ===== */}
       <Modal
@@ -1684,7 +1822,6 @@ export default function PostDetailScreen() {
               onPress={() => setCommentModal(false)}
             />
 
-            {/* SafeAreaView → View 로 변경해서 아래 패딩 줄임 */}
             <View style={styles.commentSheet}>
               <View style={styles.sheetHandle} />
               <View style={styles.commentHeaderRow}>
@@ -2031,7 +2168,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingBottom: 4, // SafeAreaView 제거했으니 살짝만
+    paddingBottom: 4,
   },
   commentHeaderRow: {
     flexDirection: 'row',
@@ -2115,7 +2252,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     paddingHorizontal: 12,
     paddingTop: 8,
-    paddingBottom: 0, // 여백 최대한 제거
+    paddingBottom: 0,
   },
   commentInputBox: {
     flex: 1,

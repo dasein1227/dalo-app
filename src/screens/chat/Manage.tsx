@@ -1,614 +1,1185 @@
-// src/screens/RoomManageScreen.tsx
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+// src/screens/chat/Manage.tsx
+import React, { useEffect, useMemo, useState } from 'react';
 import {
-  View, Text, StyleSheet, Pressable, FlatList,
-  ActivityIndicator, Alert, TextInput, Switch
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  Image,
+  StatusBar,
+  ActivityIndicator,
+  Alert,
+  Share,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { supabase } from '../../lib/supabase';
+import {
+  ChevronLeft,
+  BellOff,
+  Star,
+  Share2,
+  Settings as SettingsIcon,
+  ImageIcon,
+  FileText,
+  Link2,
+  Megaphone,
+  Calendar,
+  ListTodo,
+  HelpCircle,
+  Bot,
+  UserPlus,
+} from 'lucide-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type MemberRow = {
-  user_id: string;
-  joined_at: string | null;
-  left_at: string | null;
-  profile?: { user_id: string; nickname?: string | null; avatar_url?: string | null };
+import { supabase } from '@/lib/supabase';
+
+type RoomType = 'dm' | 'group' | 'open' | 'beacon' | 'self' | 'personal';
+
+type Participant = {
+  id: string;
+  nickname: string;
+  avatar_url?: string | null;
+  isOwner?: boolean;
+  isMe?: boolean;
 };
 
-type RoomRow = {
-  id: number;
-  beacon_id: number | null;
-  created_by: string; // uuid
+type RouteParams = {
+  roomId: number; // bigint
+  roomName?: string;
+  coverImageUrl?: string | null;
+  roomType?: RoomType;
 };
 
-type BeaconRow = {
-  id: number;
-  owner_id: string;                 // uuid
-  status: string | null;
-  memo?: string | null;
-  profile_public?: boolean | null;  // ✅ 우선 사용
-  profile_visible?: boolean | null; // (레거시 fallback 로드만)
-  visible_gender?: 'all' | 'male' | 'female' | null;
-  age_min?: number | null;
-  age_max?: number | null;
-  is_closed?: boolean | null;
-  is_active?: boolean | null;
-  closed_at?: string | null;
-
-  // ✅ 생성/맵/디테일과 일관: host_*_limit
-  host_male_limit?: number | null;
-  host_female_limit?: number | null;
-  host_single_limit?: number | null;
-  host_total_limit?: number | null;
-};
-
-export default function RoomManageScreen() {
-  const nav = useNavigation<any>();
+export default function ChatManageScreen() {
+  const insets = useSafeAreaInsets();
+  const navigation = useNavigation<any>();
   const route = useRoute<any>();
+  const params: RouteParams = route.params ?? {};
 
-  // 파라미터 → number 보장
-  const roomIdParamRaw = route.params?.roomId as unknown;
-  const roomIdNum =
-    typeof roomIdParamRaw === 'number' ? roomIdParamRaw :
-    typeof roomIdParamRaw === 'string' ? Number(roomIdParamRaw) : NaN;
+  const roomId = params.roomId;
+  const [roomTypeState, setRoomTypeState] = useState<RoomType>(
+    params.roomType ?? 'group',
+  );
 
-  const [meId, setMeId] = useState<string | null>(null);
-  const [room, setRoom] = useState<RoomRow | null>(null);
-  const [beacon, setBeacon] = useState<BeaconRow | null>(null);
-  const [members, setMembers] = useState<MemberRow[]>([]);
+  const [myUserId, setMyUserId] = useState<string | null>(null);
+
+  const [roomTitle, setRoomTitle] = useState<string>(
+    params.roomName ?? '채팅방',
+  );
+  const [coverImage, setCoverImage] = useState<string | null>(null);
+
+  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [blockedUserIds, setBlockedUserIds] = useState<string[]>([]);
+  const [mutedUserIds, setMutedUserIds] = useState<string[]>([]);
+  const [isRoomMuted, setIsRoomMuted] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [debugOpen, setDebugOpen] = useState(false);
 
-  // 폼(비콘 기준 프리필) — 화면 상태명은 유지
-  const [title, setTitle] = useState(''); // room_beacons.status
-  const [memo, setMemo] = useState('');
-  const [profileOpen, setProfileOpen] = useState(false);
-  const [gender, setGender] = useState<'all' | 'male' | 'female'>('all');
-  const [ageMin, setAgeMin] = useState<string>('');
-  const [ageMax, setAgeMax] = useState<string>('');
-  const [headMale, setHeadMale] = useState<string>('');   // -> host_male_limit
-  const [headFemale, setHeadFemale] = useState<string>(''); // -> host_female_limit
-  const [headOther, setHeadOther] = useState<string>(''); // -> host_single_limit
-  const [headTotal, setHeadTotal] = useState<string>(''); // -> host_total_limit
-
-  // 방장 판별(폴백 포함)
-  const isOwner = useMemo(() => {
-    if (!meId) return false;
-    const ownerId = room?.created_by ?? beacon?.owner_id ?? null;
-    if (ownerId && ownerId === meId) return true;
-    const iAmOnlyMember = members.length === 1 && members[0]?.user_id === meId;
-    return iAmOnlyMember;
-  }, [room, beacon, meId, members]);
-
-  const loadAll = useCallback(async () => {
-    try {
-      if (!Number.isFinite(roomIdNum)) throw new Error('방 ID가 올바르지 않습니다.');
-      setLoading(true);
-
-      // 내 계정
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('로그인이 필요합니다.');
-      setMeId(user.id);
-
-      // 1) 방 정보
-      const { data: r, error: rErr } = await supabase
-        .from('chat_rooms')
-        .select('id, beacon_id, created_by')
-        .eq('id', roomIdNum)
-        .maybeSingle();
-      if (rErr) throw rErr;
-      if (!r) throw new Error('방을 찾을 수 없습니다.');
-      setRoom(r as RoomRow);
-
-      // 2) 현재 참가자 (퇴장자 제외)
-      const { data: memRows, error: mErr } = await supabase
-        .from('chat_members')
-        .select('user_id, joined_at, left_at')
-        .eq('room_id', roomIdNum)
-        .is('left_at', null);
-      if (mErr) throw mErr;
-
-      // id 집합
-      let ids = Array.from(new Set((memRows ?? []).map(m => m.user_id)));
-      if (user.id && !ids.includes(user.id)) ids.push(user.id);
-
-      // 프로필 IN 조회 — ✅ profiles.user_id 키 사용
-      let profileMap: Record<string, { user_id: string; nickname?: string | null; avatar_url?: string | null }> = {};
-      if (ids.length) {
-        const { data: profs, error: pErr } = await supabase
-          .from('profiles')
-          .select('user_id, nickname, avatar_url')
-          .in('user_id', ids);
-        if (pErr) throw pErr;
-        (profs ?? []).forEach((p: any) => { profileMap[p.user_id] = p; });
-      }
-
-      // 합치기
-      const merged: MemberRow[] = ids.map(uid => ({
-        user_id: uid,
-        joined_at: null,
-        left_at: null,
-        profile: profileMap[uid] ? {
-          user_id: profileMap[uid].user_id,
-          nickname: profileMap[uid].nickname ?? null,
-          avatar_url: profileMap[uid].avatar_url ?? null,
-        } : undefined,
-      }));
-      setMembers(merged);
-
-      // 3) 비콘 설정 → 폼 프리필
-      if (r.beacon_id) {
-        const { data: b, error: bErr } = await supabase
-          .from('room_beacons')
-          .select(`
-            id, owner_id, status, memo, profile_public, profile_visible, visible_gender,
-            age_min, age_max, is_closed, is_active, closed_at,
-            host_male_limit, host_female_limit, host_single_limit, host_total_limit
-          `)
-          .eq('id', r.beacon_id as number)
-          .maybeSingle();
-        if (bErr) throw bErr;
-
-        if (b) {
-          const beaconRow = b as BeaconRow;
-          setBeacon(beaconRow);
-          setTitle((beaconRow.status ?? '') as string);
-          setMemo(beaconRow.memo ?? '');
-
-          // 공개여부: profile_public 우선, 없으면 profile_visible fallback
-          const open = typeof beaconRow.profile_public === 'boolean' ? beaconRow.profile_public
-                     : typeof beaconRow.profile_visible === 'boolean' ? beaconRow.profile_visible
-                     : false;
-          setProfileOpen(!!open);
-
-          setGender((beaconRow.visible_gender as any) || 'all');
-          setAgeMin(beaconRow.age_min != null ? String(beaconRow.age_min) : '');
-          setAgeMax(beaconRow.age_max != null ? String(beaconRow.age_max) : '');
-
-          // 인원 프리필 — host_*_limit 기준
-          setHeadMale  (beaconRow.host_male_limit   != null ? String(beaconRow.host_male_limit)   : '');
-          setHeadFemale(beaconRow.host_female_limit != null ? String(beaconRow.host_female_limit) : '');
-          setHeadOther (beaconRow.host_single_limit != null ? String(beaconRow.host_single_limit) : '');
-          setHeadTotal (beaconRow.host_total_limit  != null ? String(beaconRow.host_total_limit)  : '');
-        } else {
-          setBeacon(null);
-          setTitle('');
-          setMemo('');
-          setHeadMale(''); setHeadFemale(''); setHeadOther(''); setHeadTotal('');
-        }
-      } else {
-        setBeacon(null);
-        setTitle('');
-        setMemo('');
-        setHeadMale(''); setHeadFemale(''); setHeadOther(''); setHeadTotal('');
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [roomIdNum]);
-
-  useEffect(() => { loadAll(); }, [loadAll]);
-
-  // 멤버/룸 실시간 반영
+  // ───────────────── 현재 로그인 유저 ─────────────────
   useEffect(() => {
-    if (!Number.isFinite(roomIdNum)) return;
-    const ch = supabase
-      .channel(`rm_members_${roomIdNum}`)
-      .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'chat_members', filter: `room_id=eq.${roomIdNum}` },
-        () => loadAll()
-      )
-      .subscribe();
-    return () => { try { supabase.removeChannel(ch); } catch {} };
-  }, [roomIdNum, loadAll]);
+    (async () => {
+      try {
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+        if (error) {
+          console.warn('auth.getUser error', error);
+        }
+        if (user) {
+          setMyUserId(user.id);
+        }
+      } catch (e) {
+        console.warn('auth.getUser catch', e);
+      }
+    })();
+  }, []);
 
-  // 강퇴
-  const kick = useCallback(async (targetUserId: string) => {
-    try {
-      if (!isOwner || !Number.isFinite(roomIdNum)) return;
-      const { error } = await supabase
-        .from('chat_members')
-        .update({ left_at: new Date().toISOString() })
-        .eq('room_id', roomIdNum)
-        .eq('user_id', targetUserId);
-      if (error) throw error;
-      Alert.alert('알림', '강퇴되었습니다.');
-      await loadAll();
-    } catch (e: any) {
-      Alert.alert('오류', e?.message ?? '강퇴 실패');
-    }
-  }, [isOwner, roomIdNum, loadAll]);
+  const roomMuteKey =
+    myUserId && roomId
+      ? `chat:roomMute:${myUserId}:${roomId}`
+      : undefined;
+  const roomFavKey =
+    myUserId && roomId
+      ? `chat:roomFav:${myUserId}:${roomId}`
+      : undefined;
+  const perUserMuteKey =
+    myUserId && roomId
+      ? `chat:mutes:${myUserId}:${roomId}`
+      : undefined;
 
-  // 나가기
-  const leave = useCallback(async () => {
-    try {
-      if (!meId || !Number.isFinite(roomIdNum)) return;
-      const { error } = await supabase
-        .from('chat_members')
-        .update({ left_at: new Date().toISOString() })
-        .eq('room_id', roomIdNum)
-        .eq('user_id', meId);
-      if (error) throw error;
-      Alert.alert('알림', '방을 나갔습니다.');
-      nav.goBack();
-    } catch (e: any) {
-      Alert.alert('오류', e?.message ?? '나가기 실패');
-    }
-  }, [meId, roomIdNum, nav]);
+  // ───────────────── 로컬 설정값 로드 (방 전체 알림/즐겨찾기/per-user mute) ─────────────────
+  useEffect(() => {
+    if (!myUserId || !roomId) return;
 
-  // 초대
-  const openInvite = useCallback(() => {
-    if (!Number.isFinite(roomIdNum)) return;
-    nav.navigate('InviteFriends', { roomId: roomIdNum });
-  }, [nav, roomIdNum]);
+    (async () => {
+      try {
+        if (roomMuteKey) {
+          const v = await AsyncStorage.getItem(roomMuteKey);
+          if (v != null) setIsRoomMuted(v === '1');
+        }
+        if (roomFavKey) {
+          const v = await AsyncStorage.getItem(roomFavKey);
+          if (v != null) setIsFavorite(v === '1');
+        }
+        if (perUserMuteKey) {
+          const v = await AsyncStorage.getItem(perUserMuteKey);
+          if (v) setMutedUserIds(JSON.parse(v));
+        }
+      } catch (e) {
+        console.warn('load chat settings error', e);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myUserId, roomId]);
 
-  // 방 삭제(비콘 연동 시 안전 종료 후 방 삭제)
-  const deleteRoom = useCallback(async () => {
-    if (!isOwner || !Number.isFinite(roomIdNum)) return;
-    Alert.alert('방 삭제', '정말 삭제할까요? 메시지/멤버십이 모두 삭제됩니다.', [
-      { text: '취소', style: 'cancel' },
-      {
-        text: '삭제',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            // 1) 비콘이 연결된 경우: 먼저 안전 종료
-            if (room?.beacon_id) {
-              try {
-                await supabase
-                  .from('room_beacons')
-                  .update({ is_closed: true, is_active: false, closed_at: new Date().toISOString() })
-                  .eq('id', room.beacon_id);
-              } catch {}
-            }
-            // 2) 방 삭제 RPC
-            const { error: rpcErr } = await supabase.rpc('admin_delete_chat_room', { p_room_id: roomIdNum });
-            if (rpcErr) throw rpcErr;
+  // ───────────────── 참가자 / 차단 목록 로드 ─────────────────
+  useEffect(() => {
+    if (!roomId) return;
 
-            Alert.alert('삭제됨', '방이 삭제되었어요.');
-            nav.goBack();
-          } catch (e: any) {
-            Alert.alert('오류', e?.message ?? '삭제 실패');
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const roomPk = Number(roomId);
+
+        // 1) 내가 차단한 사람
+        if (myUserId) {
+          const { data: blocks, error: blocksError } = await supabase
+            .from('chat_room_blocks')
+            .select('user_id')
+            .eq('room_id', roomPk)
+            .eq('blocked_by', myUserId);
+
+          if (blocksError) {
+            console.warn('chat_room_blocks error', blocksError);
+          } else if (blocks) {
+            setBlockedUserIds(
+              blocks.map((b: any) => b.user_id as string),
+            );
           }
         }
-      }
-    ]);
-  }, [isOwner, roomIdNum, nav, room?.beacon_id]);
 
-  // 저장 (비콘이 있을 때만)
-  const saveSettings = useCallback(async () => {
-    if (!Number.isFinite(roomIdNum)) return;
-    try {
-      setSaving(true);
-      if (!isOwner) {
-        Alert.alert('권한 없음', '방장만 설정을 변경할 수 있어요.');
-        return;
-      }
-      if (!beacon) {
-        Alert.alert('안내', '이 방은 비콘 설정이 없어 편집할 항목이 없어요.');
-        return;
-      }
+        // 2) 멤버 + 프로필
+        const { data: members, error: membersError } = await supabase
+          .from('chat_members')
+          .select(
+            `
+            user_id,
+            role,
+            profiles (
+              nickname,
+              avatar_url
+            )
+          `,
+          )
+          .eq('room_id', roomPk)
+          .eq('active', true)
+          .order('joined_at', { ascending: true });
 
-      // 총원 자동계산(비워두면 남+여+혼성 합계)
-      const nMale   = headMale   !== '' ? Number(headMale)   : 0;
-      const nFemale = headFemale !== '' ? Number(headFemale) : 0;
-      const nOther  = headOther  !== '' ? Number(headOther)  : 0;
-      const totalComputed = nMale + nFemale + nOther;
-      const totalToSave = headTotal !== '' ? Number(headTotal) : totalComputed;
+        if (membersError) {
+          console.error('chat_members error', membersError);
+          Alert.alert(
+            '오류',
+            '참가자 목록을 불러오지 못했습니다.',
+          );
+        } else if (members) {
+          const mapped: Participant[] = members.map((m: any) => {
+            const uid = m.user_id as string;
+            const nickname =
+              m.profiles?.nickname ??
+              (uid === myUserId ? '나' : '알 수 없음');
 
-      // ✅ patch: room_beacons 최신 스키마로 정규화
-      const patch: any = {
-        status: title || null,
-        profile_public: !!profileOpen,
-        visible_gender: gender,
-        age_min:  ageMin  ? Number(ageMin)  : null,
-        age_max:  ageMax  ? Number(ageMax)  : null,
+            return {
+              id: uid,
+              nickname,
+              avatar_url: m.profiles?.avatar_url ?? null,
+              isOwner: m.role === 'owner' || m.role === 'host',
+              isMe: uid === myUserId,
+            };
+          });
 
-        // 인원은 host_*_limit 로 저장(생성/맵과 일관)
-        host_male_limit:    headMale   !== '' ? Number(headMale)   : null,
-        host_female_limit:  headFemale !== '' ? Number(headFemale) : null,
-        host_single_limit:  headOther  !== '' ? Number(headOther)  : null,
-        host_total_limit:   Number.isFinite(totalToSave) ? totalToSave : null,
-      };
-
-      // memo 컬럼이 없는 환경 대비: 1차 시도에 포함, 실패 시 제거 재시도
-      if (typeof memo === 'string') patch.memo = memo || null;
-
-      const tryUpdate = async () => {
-        const { error } = await supabase.from('room_beacons').update(patch).eq('id', beacon.id);
-        if (error) throw error;
-      };
-
-      try {
-        await tryUpdate();
-      } catch (e: any) {
-        const msg = String(e?.message ?? '').toLowerCase();
-        if (msg.includes('column') && msg.includes('memo')) {
-          const { memo: _drop, ...retry } = patch;
-          const { error: e2 } = await supabase.from('room_beacons').update(retry).eq('id', beacon.id);
-          if (e2) throw e2;
+          setParticipants(mapped);
         } else {
-          throw e;
+          setParticipants([]);
         }
+      } catch (e) {
+        console.error(e);
+        Alert.alert('오류', '채팅방 정보를 불러오지 못했습니다.');
+      } finally {
+        setLoading(false);
       }
+    };
 
-      Alert.alert('저장됨', '방 설정이 저장되었어요.');
-      await loadAll();
-    } catch (e: any) {
-      Alert.alert('오류', e?.message ?? '저장 실패');
-    } finally {
-      setSaving(false);
-    }
-  }, [isOwner, beacon, title, memo, profileOpen, gender, ageMin, ageMax, headMale, headFemale, headOther, headTotal, roomIdNum, loadAll]);
+    fetchData();
+  }, [roomId, myUserId]);
 
-  const renderItem = ({ item }: { item: MemberRow }) => {
-    const nick = item.profile?.nickname?.trim() || '닉네임 없음';
-    const isMe = meId === item.user_id;
+  const participantCount = participants.length;
+
+  const isSelfChat = useMemo(() => {
+    if (roomTypeState === 'self') return true;
+    if (!myUserId) return false;
     return (
-      <View style={st.memberRow}>
-        <Text style={st.memberNick} numberOfLines={1}>
-          {nick}{isMe ? ' (나)' : ''}
-        </Text>
-        {isOwner && !isMe && (
-          <Pressable style={[st.smallBtn, st.danger]} onPress={() => kick(item.user_id)}>
-            <Text style={st.smallBtnTxt}>강퇴</Text>
-          </Pressable>
-        )}
-      </View>
+      participants.length === 1 && participants[0]?.id === myUserId
     );
+  }, [participants, myUserId, roomTypeState]);
+
+  const isOwnerMe = useMemo(
+    () =>
+      participants.some((p) => p.isMe && (p.isOwner ?? false)),
+    [participants],
+  );
+
+  // ───────────────── Chat.tsx와 동일한 규칙으로 방 제목 계산 ─────────────────
+  useEffect(() => {
+    if (!roomId) return;
+    const roomPk = Number(roomId);
+    let mounted = true;
+
+    (async () => {
+      try {
+        const { data: roomRow, error } = await supabase
+          .from('chat_rooms')
+          .select('id, type, custom_title, beacon_id, created_by')
+          .eq('id', roomPk)
+          .maybeSingle();
+
+        if (error) {
+          console.warn('chat_rooms error', error);
+        }
+        if (!mounted) return;
+
+        const roomTypeDb = (roomRow?.type as RoomType | null) ?? null;
+        const effectiveType: RoomType | null =
+          roomTypeDb ?? roomTypeState ?? null;
+
+        if (roomTypeDb && roomTypeDb !== roomTypeState) {
+          setRoomTypeState(roomTypeDb);
+        }
+
+        const customTitle = roomRow?.custom_title?.trim() || '';
+
+        const memberIds = participants.map((p) => p.id);
+        const otherIds = myUserId
+          ? memberIds.filter((uid) => uid !== myUserId)
+          : memberIds;
+
+        const getNickname = (uid: string | null | undefined) => {
+          if (!uid) return '';
+          const p = participants.find((m) => m.id === uid);
+          const nick = p?.nickname;
+          return (nick ?? '').trim();
+        };
+
+        // 🔹 비콘 채팅: Chat.tsx와 동일하게 beacons_visible / beacons에서 제목 우선
+        if (effectiveType === 'beacon') {
+          let beaconTitle = '';
+
+          if (roomRow?.beacon_id != null) {
+            const beaconPk = Number(roomRow.beacon_id);
+
+            try {
+              const { data: vrow } = await supabase
+                .from('beacons_visible')
+                .select('title')
+                .eq('id', beaconPk)
+                .maybeSingle();
+
+              if (vrow?.title?.trim()) {
+                beaconTitle = vrow.title.trim();
+              }
+            } catch (e) {
+              console.warn('beacons_visible error', e);
+            }
+
+            if (!beaconTitle) {
+              try {
+                const { data: brow } = await supabase
+                  .from('beacons')
+                  .select('title')
+                  .eq('id', beaconPk)
+                  .maybeSingle();
+
+                if (brow?.title?.trim()) {
+                  beaconTitle = brow.title.trim();
+                }
+              } catch (e) {
+                console.warn('beacons error', e);
+              }
+            }
+          }
+
+          if (!beaconTitle) {
+            // Chat.tsx에서 쓰는 기본 포맷
+            beaconTitle = `비콘채팅 #${roomPk}`;
+          }
+
+          if (mounted) {
+            setRoomTitle(beaconTitle);
+          }
+          return;
+        }
+
+        let resolvedTitle = '';
+
+        // 1순위: custom_title
+        if (customTitle) {
+          resolvedTitle = customTitle;
+        } else if (effectiveType === 'self') {
+          const myNick = getNickname(myUserId);
+          resolvedTitle = myNick || '나와의 채팅';
+        } else if (
+          effectiveType === 'dm' ||
+          effectiveType === 'personal' ||
+          (!effectiveType && otherIds.length === 1)
+        ) {
+          // 1:1
+          if (otherIds.length === 1) {
+            const nick = getNickname(otherIds[0]);
+            resolvedTitle = nick || '대화상대';
+          } else {
+            resolvedTitle = '1:1 채팅';
+          }
+        } else if (effectiveType === 'group') {
+          const nicks = memberIds
+            .map((id) => getNickname(id))
+            .filter((s) => !!s);
+
+          if (nicks.length) {
+            resolvedTitle =
+              nicks.slice(0, 3).join(', ') +
+              (nicks.length > 3 ? ` 외 ${nicks.length - 3}` : '');
+          }
+
+          if (!resolvedTitle.trim()) {
+            resolvedTitle = `그룹채팅 #${roomPk}`;
+          }
+        } else if (effectiveType === 'open') {
+          resolvedTitle = `오픈채팅 #${roomPk}`;
+        }
+
+        if (!resolvedTitle) {
+          resolvedTitle = `채팅방 #${roomPk}`;
+        }
+
+        if (mounted) {
+          setRoomTitle(resolvedTitle);
+        }
+      } catch (e) {
+        console.error('load room meta error', e);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [roomId, myUserId, participants, roomTypeState]);
+
+  // ───────────────── 방 아이콘(커버) 결정: Chat.tsx 규칙 맞추기 ─────────────────
+  useEffect(() => {
+    const meP = participants.find((p) => p.isMe);
+    const others = participants.filter((p) => !p.isMe);
+
+    let nextCover: string | null = null;
+
+    if (roomTypeState === 'self' || roomTypeState === 'beacon') {
+      if (meP?.avatar_url) nextCover = meP.avatar_url;
+    } else if (
+      (roomTypeState === 'dm' || roomTypeState === 'personal') &&
+      others.length === 1 &&
+      others[0].avatar_url
+    ) {
+      nextCover = others[0].avatar_url;
+    }
+    // group / open은 아직 커버 미구현 → 기본 placeholder
+
+    setCoverImage(nextCover);
+  }, [roomTypeState, participants]);
+
+  const canOpenProfile =
+    roomTypeState === 'dm' ||
+    roomTypeState === 'group' ||
+    roomTypeState === 'self';
+
+  // ───────────────── Header 액션 ─────────────────
+  const handleGoBack = () => {
+    navigation.goBack();
   };
 
-  if (loading) {
-    return (
-      <SafeAreaView style={st.center}>
-        <ActivityIndicator />
-        <Text style={{ color: '#6b7280', marginTop: 8 }}>불러오는 중…</Text>
-      </SafeAreaView>
-    );
-  }
+  const handleToggleRoomMute = async () => {
+    if (!roomMuteKey) return;
+    const next = !isRoomMuted;
+    setIsRoomMuted(next);
+    try {
+      await AsyncStorage.setItem(roomMuteKey, next ? '1' : '0');
+    } catch (e) {
+      console.warn('room mute save error', e);
+    }
+  };
 
-  const editable = !!beacon && isOwner;
+  const handleToggleFavorite = async () => {
+    if (!roomFavKey) return;
+    const next = !isFavorite;
+    setIsFavorite(next);
+    try {
+      await AsyncStorage.setItem(roomFavKey, next ? '1' : '0');
+    } catch (e) {
+      console.warn('fav save error', e);
+    }
+  };
 
+  const handleShareRoom = async () => {
+    try {
+      await Share.share({
+        // TODO: 실제 딥링크 있으면 url로 교체
+        message: `CO·ONN에서 채팅방에 초대합니다.\n방 ID: ${roomId}`,
+      });
+    } catch (e) {
+      console.warn('share error', e);
+    }
+  };
+
+  // ✅ Setting.tsx(= ChatBeaconSettingScreen)으로 이동
+  const handleOpenSettings = () => {
+    if (!roomId) return;
+
+    navigation.navigate('ChatSetting', {
+      roomId: String(roomId),   // Setting.tsx에서 roomId 타입이 string 이라서 맞춰줌
+      roomName: roomTitle,
+      // memo, 인원수, 성별/연령 필터는 나중에 Supabase 값 붙이면서 추가
+    });
+  };
+
+  // ───────────────── 방 공통 액션 ─────────────────
+  const handleInviteFriends = () => {
+    navigation.navigate('FriendSelect', {
+      roomId,
+    });
+  };
+
+  const handleLeaveRoom = () => {
+    // TODO: 실제 나가기 로직 연결
+    navigation.goBack();
+  };
+
+  const handleOpenMedia = () => {
+    // TODO: 사진/동영상 탭으로 이동
+  };
+
+  const handleOpenFiles = () => {
+    // TODO: 파일 탭으로 이동
+  };
+
+  const handleOpenLinks = () => {
+    // TODO: 링크 탭으로 이동
+  };
+
+  const handleOpenNotice = () => {
+    // TODO: 공지 탭으로 이동
+  };
+
+  const handleOpenSchedule = () => {
+    // TODO: 일정 탭으로 이동
+  };
+
+  const handleOpenPoll = () => {
+    // TODO: 투표 탭으로 이동
+  };
+
+  const handleOpenQuiz = () => {
+    // TODO: 퀴즈 탭으로 이동
+  };
+
+  const handleOpenBot = () => {
+    // TODO: 오픈채팅봇 활성화
+  };
+
+  // ───────────────── 참가자 탭/롱프레스 ─────────────────
+  const handlePressParticipant = (p: Participant) => {
+    if (!canOpenProfile) return;
+    navigation.navigate('ProfileView', {
+      userId: p.id,
+      publicView: true,
+    });
+  };
+
+  const savePerUserMute = async (nextIds: string[]) => {
+    if (!perUserMuteKey) return;
+    try {
+      await AsyncStorage.setItem(
+        perUserMuteKey,
+        JSON.stringify(nextIds),
+      );
+    } catch (e) {
+      console.warn('per-user mute save error', e);
+    }
+  };
+
+  const toggleMuteUser = (p: Participant) => {
+    setMutedUserIds((prev) => {
+      let next: string[];
+      if (prev.includes(p.id)) {
+        next = prev.filter((id) => id !== p.id);
+      } else {
+        next = [...prev, p.id];
+      }
+      savePerUserMute(next);
+      return next;
+    });
+  };
+
+  const toggleBlockUser = async (p: Participant) => {
+    if (!myUserId) return;
+
+    const isBlocked = blockedUserIds.includes(p.id);
+
+    if (isBlocked) {
+      const { error } = await supabase
+        .from('chat_room_blocks')
+        .delete()
+        .eq('room_id', roomId)
+        .eq('user_id', p.id)
+        .eq('blocked_by', myUserId);
+
+      if (error) {
+        console.error('unblock error', error);
+        Alert.alert('오류', '차단 해제에 실패했습니다.');
+        return;
+      }
+
+      setBlockedUserIds((prev) =>
+        prev.filter((id) => id !== p.id),
+      );
+    } else {
+      const { error } = await supabase
+        .from('chat_room_blocks')
+        .insert({
+          room_id: roomId,
+          user_id: p.id,
+          blocked_by: myUserId,
+          blocked_at: new Date().toISOString(),
+        });
+
+      if (error) {
+        console.error('block error', error);
+        Alert.alert('오류', '차단에 실패했습니다.');
+        return;
+      }
+
+      setBlockedUserIds((prev) =>
+        prev.includes(p.id) ? prev : [...prev, p.id],
+      );
+    }
+  };
+
+  const kickMember = async (p: Participant) => {
+    if (!isOwnerMe) return;
+
+    const { error } = await supabase
+      .from('chat_members')
+      .update({
+        kicked: true,
+        active: false,
+        left_at: new Date().toISOString(),
+      })
+      .eq('room_id', roomId)
+      .eq('user_id', p.id);
+
+    if (error) {
+      console.error('kick error', error);
+      Alert.alert('오류', '강퇴에 실패했습니다.');
+      return;
+    }
+
+    setParticipants((prev) => prev.filter((m) => m.id !== p.id));
+  };
+
+  const handleLongPressParticipant = (p: Participant) => {
+    if (!myUserId) return;
+    if (p.id === myUserId) return;
+
+    const isBlocked = blockedUserIds.includes(p.id);
+    const isMuted = mutedUserIds.includes(p.id);
+
+    const buttons: {
+      text: string;
+      onPress?: () => void;
+      style?: 'default' | 'cancel' | 'destructive';
+    }[] = [];
+
+    if (isOwnerMe) {
+      buttons.push({
+        text: '강퇴하기',
+        style: 'destructive',
+        onPress: () => kickMember(p),
+      });
+    }
+
+    buttons.push({
+      text: isBlocked ? '차단 해제' : '차단하기',
+      onPress: () => toggleBlockUser(p),
+    });
+
+    buttons.push({
+      text: isMuted
+        ? '이 사람 알림 켜기'
+        : '이 사람 알림 끄기',
+      onPress: () => toggleMuteUser(p),
+    });
+
+    buttons.push({
+      text: '취소',
+      style: 'cancel',
+    });
+
+    Alert.alert(p.nickname, '이 참가자에 대해 무엇을 할까요?', buttons);
+  };
+
+  // ───────────────── UI ─────────────────
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      {/* 헤더 (디버그: 길게 누르면 진단패널 토글) */}
-      <Pressable onLongPress={() => setDebugOpen(v => !v)}>
-        <View style={st.header}>
-          <Text style={st.headerTitle}>방 관리</Text>
-          <View style={{ flexDirection: 'row', gap: 8 }}>
-            <Pressable style={st.topBtn} onPress={openInvite}>
-              <Text style={st.topBtnTxt}>친구 초대</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar
+        backgroundColor="#ffffff"
+        barStyle="dark-content"
+        translucent={false}
+      />
+
+      {/* 헤더 */}
+      <View
+        style={[
+          styles.topBar,
+          {
+            paddingTop: insets.top > 0 ? 8 : 4,
+            paddingBottom: 8,
+          },
+        ]}
+      >
+        <View style={styles.topBarLeft}>
+          <Pressable
+            onPress={handleGoBack}
+            hitSlop={10}
+            style={styles.headerIconBtn}
+          >
+            <ChevronLeft size={22} />
+          </Pressable>
+          <Text style={styles.topBarTitle}>채팅방 관리</Text>
+        </View>
+
+        <View style={styles.topBarRight}>
+          <Pressable
+            onPress={handleToggleRoomMute}
+            hitSlop={10}
+            style={styles.headerIconBtn}
+          >
+            <BellOff
+              size={20}
+              color={isRoomMuted ? '#fb923c' : '#0f172a'}
+            />
+          </Pressable>
+          <Pressable
+            onPress={handleToggleFavorite}
+            hitSlop={10}
+            style={styles.headerIconBtn}
+          >
+            <Star
+              size={20}
+              color={isFavorite ? '#facc15' : '#0f172a'}
+              fill={isFavorite ? '#facc15' : 'none'}
+            />
+          </Pressable>
+          <Pressable
+            onPress={handleShareRoom}
+            hitSlop={10}
+            style={styles.headerIconBtn}
+          >
+            <Share2 size={20} />
+          </Pressable>
+          <Pressable
+            onPress={handleOpenSettings}
+            hitSlop={10}
+            style={styles.headerIconBtn}
+          >
+            <SettingsIcon size={20} />
+          </Pressable>
+        </View>
+      </View>
+
+      {/* 본문 */}
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{ paddingBottom: 32 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {loading && (
+          <View style={styles.loadingRow}>
+            <ActivityIndicator />
+          </View>
+        )}
+
+        {/* 방 카드 */}
+        <View style={styles.roomCard}>
+          <View style={styles.roomCoverRow}>
+            <View style={styles.roomCoverWrapper}>
+              {coverImage ? (
+                <Image
+                  source={{ uri: coverImage }}
+                  style={styles.roomCoverImage}
+                />
+              ) : (
+                <View style={styles.roomCoverPlaceholder}>
+                  <Text style={styles.roomCoverInitial}>
+                    {roomTitle.slice(0, 1)}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            <View style={styles.roomInfoCol}>
+              <Text style={styles.roomName}>{roomTitle}</Text>
+              <Text style={styles.roomSubMeta}>
+                참여자 {participantCount}명
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* 콘텐츠 섹션 */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>콘텐츠</Text>
+
+          <View style={styles.sectionCard}>
+            <RowItem
+              icon={<ImageIcon size={20} />}
+              label="사진/동영상"
+              onPress={handleOpenMedia}
+            />
+            <Divider />
+            <RowItem
+              icon={<FileText size={20} />}
+              label="파일"
+              onPress={handleOpenFiles}
+            />
+            <Divider />
+            <RowItem
+              icon={<Link2 size={20} />}
+              label="링크"
+              onPress={handleOpenLinks}
+            />
+          </View>
+        </View>
+
+        {/* 채팅방 기능 섹션 */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>채팅방 기능</Text>
+
+          <View style={styles.sectionCard}>
+            <RowItem
+              icon={<Megaphone size={20} />}
+              label="공지"
+              onPress={handleOpenNotice}
+            />
+            <Divider />
+            <RowItem
+              icon={<Calendar size={20} />}
+              label="일정"
+              onPress={handleOpenSchedule}
+            />
+
+            {!isSelfChat && (
+              <>
+                <Divider />
+                <RowItem
+                  icon={<ListTodo size={20} />}
+                  label="투표"
+                  onPress={handleOpenPoll}
+                />
+                <Divider />
+                <RowItem
+                  icon={<HelpCircle size={20} />}
+                  label="퀴즈"
+                  onPress={handleOpenQuiz}
+                />
+              </>
+            )}
+
+            <Divider />
+            <RowItem
+              icon={<Bot size={20} />}
+              label="오픈채팅봇 활성화"
+              onPress={handleOpenBot}
+            />
+          </View>
+        </View>
+
+        {/* 참가자 목록 */}
+        <View style={styles.section}>
+          <View style={styles.participantHeaderRow}>
+            <Text style={styles.sectionTitle}>
+              대화상대 {participantCount}
+            </Text>
+
+            <Pressable
+              style={styles.inviteBtn}
+              onPress={handleInviteFriends}
+            >
+              <UserPlus size={18} color="#0066FF" />
+              <Text style={styles.inviteBtnText}>친구 초대</Text>
             </Pressable>
-            {isOwner && (
-              <Pressable style={[st.topBtn, st.dangerGhost]} onPress={deleteRoom}>
-                <Text style={[st.topBtnTxt, { color: '#b91c1c' }]}>방 삭제</Text>
-              </Pressable>
+          </View>
+
+          <View style={styles.sectionCard}>
+            {participants.map((p, index) => (
+              <React.Fragment key={p.id}>
+                {index > 0 && <Divider />}
+                <Pressable
+                  style={styles.participantRow}
+                  onPress={() => handlePressParticipant(p)}
+                  onLongPress={() =>
+                    handleLongPressParticipant(p)
+                  }
+                >
+                  {p.avatar_url ? (
+                    <Image
+                      source={{ uri: p.avatar_url }}
+                      style={styles.participantAvatar}
+                    />
+                  ) : (
+                    <View
+                      style={styles.participantAvatarPlaceholder}
+                    >
+                      <Text style={styles.participantInitial}>
+                        {p.nickname.slice(0, 1)}
+                      </Text>
+                    </View>
+                  )}
+
+                  <View style={{ flex: 1 }}>
+                    <View style={styles.participantNameRow}>
+                      <Text style={styles.participantName}>
+                        {p.isMe ? `나 (${p.nickname})` : p.nickname}
+                      </Text>
+                      {p.isOwner && (
+                        <Text style={styles.ownerBadge}>방장</Text>
+                      )}
+                      {blockedUserIds.includes(p.id) && (
+                        <Text style={styles.blockedBadge}>차단</Text>
+                      )}
+                      {mutedUserIds.includes(p.id) && (
+                        <Text style={styles.mutedBadge}>무음</Text>
+                      )}
+                    </View>
+                  </View>
+                </Pressable>
+              </React.Fragment>
+            ))}
+
+            {!loading && participants.length === 0 && (
+              <View style={styles.emptyRow}>
+                <Text style={styles.emptyText}>
+                  아직 참가자가 없습니다.
+                </Text>
+              </View>
             )}
           </View>
         </View>
-      </Pressable>
 
-      {/* 안내/디버그 패널 */}
-      {(!beacon || debugOpen) && (
-        <View style={[st.infoBox, !beacon ? st.infoWarning : st.infoDebug]}>
-          {!beacon ? (
-            <Text style={st.infoTxt}>
-              이 방에는 비콘 설정이 없어 편집할 항목이 제한됩니다. 참가자/강퇴/삭제만 가능합니다.
-            </Text>
-          ) : (
-            <>
-              <Text style={st.debugTxt}>meId: {meId}</Text>
-              <Text style={st.debugTxt}>room.created_by: {room?.created_by ?? '(없음)'}</Text>
-              <Text style={st.debugTxt}>beacon.owner_id: {beacon?.owner_id ?? '(없음)'}</Text>
-              <Text style={st.debugTxt}>members: {members.map(m => m.user_id).join(', ') || '(없음)'}</Text>
-              <Text style={st.debugTxt}>isOwner: {String(isOwner)}</Text>
-              <Text style={st.debugTxt}>beacon.is_active: {String(beacon?.is_active)}</Text>
-              <Text style={st.debugTxt}>beacon.is_closed: {String(beacon?.is_closed)}</Text>
-            </>
-          )}
+        {/* 채팅방 나가기 */}
+        <View style={styles.footer}>
+          <Pressable
+            style={styles.leaveButton}
+            onPress={handleLeaveRoom}
+          >
+            <Text style={styles.leaveButtonText}>채팅방 나가기</Text>
+          </Pressable>
         </View>
-      )}
-
-      <View style={st.section}>
-        <Text style={st.sectionTitle}>참가자</Text>
-        <FlatList
-          data={members}
-          keyExtractor={(m) => m.user_id}
-          renderItem={renderItem}
-          ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
-          ListEmptyComponent={<Text style={{ color: '#6b7280' }}>참가자가 없습니다.</Text>}
-        />
-      </View>
-
-      {/* 생성화면 느낌 유지: 동일 폼, 단 비콘 없으면 disabled */}
-      <View style={st.section}>
-        <Text style={st.sectionTitle}>방 설정</Text>
-
-        <View style={st.field}>
-          <Text style={st.label}>방 제목</Text>
-          <TextInput
-            editable={editable}
-            value={title}
-            onChangeText={setTitle}
-            placeholder="상태 문구 / 방 제목"
-            style={[st.input, !editable && st.inputDisabled]}
-          />
-        </View>
-
-        <View style={st.field}>
-          <Text style={st.label}>메모</Text>
-          <TextInput
-            editable={editable}
-            value={memo}
-            onChangeText={setMemo}
-            placeholder="간단 메모"
-            style={[st.input, { height: 80 }, !editable && st.inputDisabled]}
-            multiline
-          />
-        </View>
-
-        <View style={st.field}>
-          <Text style={st.label}>현재 인원(방장이 입력)</Text>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 6 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <Text style={st.label}>남</Text>
-              <TextInput
-                editable={editable}
-                style={[st.input, { width: 90 }, !editable && st.inputDisabled]}
-                keyboardType="number-pad"
-                value={headMale}
-                onChangeText={setHeadMale}
-                placeholder="0"
-              />
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <Text style={st.label}>여</Text>
-              <TextInput
-                editable={editable}
-                style={[st.input, { width: 90 }, !editable && st.inputDisabled]}
-                keyboardType="number-pad"
-                value={headFemale}
-                onChangeText={setHeadFemale}
-                placeholder="0"
-              />
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <Text style={st.label}>혼성</Text>
-              <TextInput
-                editable={editable}
-                style={[st.input, { width: 90 }, !editable && st.inputDisabled]}
-                keyboardType="number-pad"
-                value={headOther}
-                onChangeText={setHeadOther}
-                placeholder="0"
-              />
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <Text style={st.label}>총</Text>
-              <TextInput
-                editable={editable}
-                style={[st.input, { width: 110 }, !editable && st.inputDisabled]}
-                keyboardType="number-pad"
-                value={headTotal}
-                onChangeText={setHeadTotal}
-                placeholder="(비우면 자동 합산)"
-              />
-            </View>
-          </View>
-        </View>
-
-        <View style={st.rowBetween}>
-          <Text style={st.label}>프로필 공개</Text>
-          <Switch value={profileOpen} onValueChange={setProfileOpen} disabled={!editable} />
-        </View>
-
-        <View style={st.rowBetween}>
-          <Text style={st.label}>공개 성별</Text>
-          <View style={st.tags}>
-            {(['all', 'male', 'female'] as const).map(g => (
-              <Pressable
-                key={g}
-                disabled={!editable}
-                style={[st.tag, gender === g && st.tagActive, !editable && st.tagDisabled]}
-                onPress={() => editable && setGender(g)}
-              >
-                <Text style={[st.tagTxt, gender === g && st.tagTxtActive]}>
-                  {g === 'all' ? '전체' : g === 'male' ? '남성' : '여성'}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-        </View>
-
-        <View style={st.rowBetween}>
-          <Text style={st.label}>연령대</Text>
-          <View style={{ flexDirection: 'row', gap: 10 }}>
-            <TextInput
-              editable={editable}
-              keyboardType="number-pad"
-              placeholder="최소"
-              value={ageMin}
-              onChangeText={setAgeMin}
-              style={[st.input, { width: 90 }, !editable && st.inputDisabled]}
-            />
-            <TextInput
-              editable={editable}
-              keyboardType="number-pad"
-              placeholder="최대"
-              value={ageMax}
-              onChangeText={setAgeMax}
-              style={[st.input, { width: 90 }, !editable && st.inputDisabled]}
-            />
-          </View>
-        </View>
-
-        <Pressable
-          style={[st.saveBtn, (!editable || saving) && { opacity: 0.6 }]}
-          disabled={!editable || saving}
-          onPress={saveSettings}
-        >
-          <Text style={st.saveTxt}>{saving ? '저장 중…' : '설정 저장'}</Text>
-        </Pressable>
-      </View>
-
-      <View style={{ padding: 12 }}>
-        <Pressable style={st.leaveBtn} onPress={leave}>
-          <Text style={st.leaveTxt}>방 나가기</Text>
-        </Pressable>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
-const st = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  header: {
-    paddingHorizontal: 12, paddingVertical: 10,
-    borderBottomWidth: 1, borderColor: '#f3f4f6',
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+/* ───────────── 재사용 컴포넌트 ───────────── */
+
+type RowItemProps = {
+  icon: React.ReactNode;
+  label: string;
+  onPress: () => void;
+};
+
+function RowItem({ icon, label, onPress }: RowItemProps) {
+  return (
+    <Pressable style={styles.rowItem} onPress={onPress}>
+      <View style={styles.rowLeft}>
+        <View style={styles.rowIconWrapper}>{icon}</View>
+        <Text style={styles.rowLabel}>{label}</Text>
+      </View>
+      <ChevronLeft
+        size={18}
+        style={{ transform: [{ rotate: '180deg' }] }}
+      />
+    </Pressable>
+  );
+}
+
+function Divider() {
+  return <View style={styles.divider} />;
+}
+
+/* ───────────── 스타일 ───────────── */
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#ffffff',
   },
-  headerTitle: { fontSize: 18, fontWeight: '800', color: '#111827' },
-  topBtn: { paddingHorizontal: 12, height: 36, borderRadius: 18, backgroundColor: '#f3f4f6', alignItems: 'center', justifyContent: 'center' },
-  topBtnTxt: { color: '#111827', fontWeight: '800' },
-  dangerGhost: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#fee2e2' },
-
-  infoBox: { marginHorizontal: 12, marginTop: 8, marginBottom: -4, padding: 8, borderRadius: 10, borderWidth: 1 },
-  infoWarning: { backgroundColor: '#f1f5f9', borderColor: '#e2e8f0' },
-  infoDebug: { backgroundColor: '#fef3c7', borderColor: '#fde68a' },
-  infoTxt: { color: '#334155', fontSize: 12 },
-  debugTxt: { color: '#92400e', fontSize: 12, lineHeight: 16 },
-
-  section: { paddingHorizontal: 12, paddingTop: 12, paddingBottom: 10, borderBottomWidth: 1, borderColor: '#f9fafb' },
-  sectionTitle: { fontSize: 16, fontWeight: '800', marginBottom: 8 },
-
-  memberRow: {
-    padding: 10, borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 10,
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    backgroundColor: '#fff'
+  container: {
+    flex: 1,
+    paddingHorizontal: 16,
+    backgroundColor: '#ffffff',
   },
-  memberNick: { fontWeight: '800', color: '#111827', maxWidth: '70%' },
-  smallBtn: { paddingHorizontal: 10, height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center', backgroundColor: '#111827' },
-  smallBtnTxt: { color: '#fff', fontWeight: '800' },
-  danger: { backgroundColor: '#b91c1c' },
+  loadingRow: {
+    paddingTop: 16,
+    paddingBottom: 4,
+  },
 
-  field: { marginTop: 10, gap: 6 },
-  label: { fontWeight: '800', color: '#111827' },
-  input: { borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 10, paddingHorizontal: 10, height: 40, backgroundColor: '#fff' },
-  inputDisabled: { backgroundColor: '#f9fafb', color: '#9ca3af' },
+  topBar: {
+    height: 54,
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 14,
+    paddingLeft: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#e2e8f0',
+  },
+  topBarLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  topBarRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerIconBtn: {
+    padding: 6,
+    marginLeft: 2,
+  },
+  topBarTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#0f172a',
+    marginLeft: 2,
+  },
 
-  rowBetween: { marginTop: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  roomCard: {
+    marginTop: 16,
+    padding: 16,
+    backgroundColor: '#ffffff',
+    borderRadius: 18,
+    shadowColor: '#000000',
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  roomCoverRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  roomCoverWrapper: {
+    width: 72,
+    height: 72,
+    borderRadius: 24,
+    overflow: 'hidden',
+    marginRight: 14,
+    backgroundColor: '#e2e8f0',
+  },
+  roomCoverImage: {
+    width: '100%',
+    height: '100%',
+  },
+  roomCoverPlaceholder: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  roomCoverInitial: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#475569',
+  },
+  roomInfoCol: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  roomName: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: 4,
+  },
+  roomSubMeta: {
+    fontSize: 13,
+    color: '#64748b',
+  },
 
-  tags: { flexDirection: 'row', gap: 8 },
-  tag: { paddingHorizontal: 10, height: 30, borderRadius: 15, borderWidth: 1, borderColor: '#e5e7eb', alignItems: 'center', justifyContent: 'center' },
-  tagActive: { backgroundColor: '#111827', borderColor: '#111827' },
-  tagDisabled: { opacity: 0.5 },
-  tagTxt: { fontWeight: '800', color: '#6b7280' },
-  tagTxtActive: { color: '#fff' },
+  section: {
+    marginTop: 24,
+  },
+  sectionTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#0f172a',
+    marginBottom: 8,
+  },
+  sectionCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    paddingVertical: 4,
+    shadowColor: '#000000',
+    shadowOpacity: 0.03,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
+  },
 
-  saveBtn: { marginTop: 14, height: 44, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: '#111827' },
-  saveTxt: { color: '#fff', fontWeight: '800' },
+  rowItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    justifyContent: 'space-between',
+  },
+  rowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rowIconWrapper: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+    backgroundColor: '#ffffff',
+  },
+  rowLabel: {
+    fontSize: 14,
+    color: '#0f172a',
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: '#e2e8f0',
+    marginLeft: 52,
+  },
 
-  leaveBtn: { paddingHorizontal: 12, height: 44, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f3f4f6' },
-  leaveTxt: { color: '#111827', fontWeight: '800' },
+  participantHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  inviteBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    backgroundColor: 'transparent',
+  },
+  inviteBtnText: {
+    marginLeft: 4,
+    fontSize: 13,
+    color: '#0066FF',
+    fontWeight: '600',
+  },
+  participantRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  participantAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginRight: 10,
+  },
+  participantAvatarPlaceholder: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginRight: 10,
+    backgroundColor: '#e2e8f0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  participantInitial: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#475569',
+  },
+  participantNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  participantName: {
+    fontSize: 14,
+    color: '#0f172a',
+  },
+  ownerBadge: {
+    marginLeft: 6,
+    fontSize: 11,
+    color: '#f97316',
+    backgroundColor: '#fff7ed',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  blockedBadge: {
+    marginLeft: 6,
+    fontSize: 11,
+    color: '#dc2626',
+    backgroundColor: '#fee2e2',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  mutedBadge: {
+    marginLeft: 6,
+    fontSize: 11,
+    color: '#0369a1',
+    backgroundColor: '#e0f2fe',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+
+  emptyRow: {
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 13,
+    color: '#94a3b8',
+  },
+
+  footer: {
+    marginTop: 24,
+  },
+  leaveButton: {
+    marginTop: 8,
+    paddingVertical: 14,
+    borderRadius: 999,
+    backgroundColor: '#fee2e2',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  leaveButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#b91c1c',
+  },
 });

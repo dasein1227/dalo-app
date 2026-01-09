@@ -1,4 +1,4 @@
-// src/screens/posts/CreatePost.tsx
+// src/screens/profile/CreatePost.tsx
 
 import React, {
   useState,
@@ -23,6 +23,8 @@ import {
   PanResponder,
   LayoutChangeEvent,
   StatusBar,
+  ActivityIndicator,
+  FlatList,
 } from 'react-native';
 import {
   SafeAreaView,
@@ -39,6 +41,7 @@ import {
   Check,
   ChevronDown,
   RotateCcw,
+  Search,
 } from 'lucide-react-native';
 import { uploadImageToR2 } from '@/lib/r2Upload';
 
@@ -56,8 +59,8 @@ const VISIBILITY_OPTIONS: { id: VisibilityType; label: string }[] = [
 type ImageItem = {
   uri: string; // 원본
   editedUri?: string; // 잘라낸 버전
-  width: number; // 원본 width
-  height: number; // 원본 height
+  width: number;
+  height: number;
 };
 
 type RatioKey = 'original' | '1:1' | '3:4' | '9:16';
@@ -65,9 +68,71 @@ type RatioKey = 'original' | '1:1' | '3:4' | '9:16';
 const RATIO_OPTIONS: { id: RatioKey; label: string }[] = [
   { id: 'original', label: '원본' },
   { id: '1:1', label: '1:1' },
-  { id: '3:4', label: '3:4' }, // 기본 세로
+  { id: '3:4', label: '3:4' },
   { id: '9:16', label: '9:16' },
 ];
+
+// ===== 태그 관련 타입 =====
+type TaggedUser = {
+  id: string;
+  nickname: string | null;
+  follow_id: string | null;
+  avatar_url: string | null;
+};
+
+type LocationTag = {
+  name: string;
+  address?: string | null;
+  lat?: number | null;
+  lng?: number | null;
+};
+
+type BusinessTag = {
+  id: string;
+  name: string;
+  shop_id: string | null;
+  thumbnail_url: string | null; // logo/main/hero 중 하나를 매핑해서 사용
+};
+
+type TagModalMode = 'person' | 'location' | 'business' | null;
+
+// FlatList 공용 유니온 타입
+type TagListItem = TaggedUser | LocationTag | BusinessTag;
+
+/**
+ * caption에서 인스타 스타일 해시태그 추출
+ * - 예: "오늘 #느끼함 #WorkFriendly" -> ["느끼함", "WorkFriendly"]
+ * - DB 저장은 tag_text에 '#' 제외한 값으로 저장
+ * - 중복 제거(대소문자 무시), 최대 20개, 태그 길이 60 제한
+ */
+const extractHashtags = (text: string): string[] => {
+  const src = (text ?? '').trim();
+  if (!src) return [];
+
+  // 허용 문자: 한글/영문/숫자/언더스코어
+  const re = /#([0-9A-Za-z가-힣_]+)/g;
+
+  const out: string[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(src)) !== null) {
+    const raw = (m[1] ?? '').trim();
+    if (!raw) continue;
+
+    const tag = raw.length > 60 ? raw.slice(0, 60) : raw;
+    out.push(tag);
+  }
+
+  const seen = new Set<string>();
+  const uniq: string[] = [];
+  for (const t of out) {
+    const key = t.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    uniq.push(t);
+  }
+
+  return uniq.slice(0, 20);
+};
 
 export default function CreatePostScreen({ navigation }: any) {
   const insets = useSafeAreaInsets();
@@ -81,11 +146,9 @@ export default function CreatePostScreen({ navigation }: any) {
   const [caption, setCaption] = useState('');
   const [link, setLink] = useState('');
 
-  // 댓글 / 공유 허용
   const [allowComments, setAllowComments] = useState(true);
   const [allowShare, setAllowShare] = useState(true);
 
-  // 공개 범위
   const [visibility, setVisibility] =
     useState<VisibilityType>('public');
 
@@ -93,11 +156,11 @@ export default function CreatePostScreen({ navigation }: any) {
   // 비율 & 방향 (전체 이미지 공통)
   // ----------------------------
   const [selectedRatio, setSelectedRatio] =
-    useState<RatioKey>('3:4'); // 기본 3:4 세로
+    useState<RatioKey>('3:4');
   const [orientation, setOrientation] = useState<
     'portrait' | 'landscape'
   >('portrait');
-  const [flipOriginal, setFlipOriginal] = useState(false); // original일 때만 사용
+  const [flipOriginal, setFlipOriginal] = useState(false);
 
   const handleSelectRatio = (id: RatioKey) => {
     setSelectedRatio(id);
@@ -108,9 +171,9 @@ export default function CreatePostScreen({ navigation }: any) {
 
   const toggleOrientation = () => {
     if (selectedRatio === 'original') {
-      setFlipOriginal((prev) => !prev);
+      setFlipOriginal(prev => !prev);
     } else {
-      setOrientation((prev) =>
+      setOrientation(prev =>
         prev === 'portrait' ? 'landscape' : 'portrait',
       );
     }
@@ -119,8 +182,12 @@ export default function CreatePostScreen({ navigation }: any) {
   // ----------------------------
   // 탭 선택
   // ----------------------------
-  const [tabs, setTabs] = useState<{ id: string; name: string }[]>([]);
-  const [selectedTab, setSelectedTab] = useState<string | null>(null);
+  const [tabs, setTabs] = useState<{ id: string; name: string }[]>(
+    [],
+  );
+  const [selectedTab, setSelectedTab] = useState<string | null>(
+    null,
+  );
 
   const loadTabs = async () => {
     const uid = (await supabase.auth.getUser()).data.user?.id;
@@ -156,12 +223,12 @@ export default function CreatePostScreen({ navigation }: any) {
     });
 
     if (!res.canceled) {
-      const newImgs: ImageItem[] = res.assets.map((a) => ({
+      const newImgs: ImageItem[] = res.assets.map(a => ({
         uri: a.uri,
         width: a.width ?? SCREEN_WIDTH,
         height: a.height ?? SCREEN_WIDTH,
       }));
-      setImages((prev) => {
+      setImages(prev => {
         const merged = [...prev, ...newImgs];
         if (prev.length === 0 && merged.length > 0) {
           setSelectedIndex(0);
@@ -172,7 +239,7 @@ export default function CreatePostScreen({ navigation }: any) {
   };
 
   const handleRemoveImage = (index: number) => {
-    setImages((prev) => {
+    setImages(prev => {
       const next = prev.filter((_, i) => i !== index);
       if (next.length === 0) {
         setSelectedIndex(0);
@@ -185,7 +252,6 @@ export default function CreatePostScreen({ navigation }: any) {
 
   const activeImage = images[selectedIndex];
 
-  // 현재 선택된 비율에 따른 프레임 aspectRatio
   const frameAspectRatio = useMemo(() => {
     if (!activeImage) return 1;
 
@@ -198,7 +264,6 @@ export default function CreatePostScreen({ navigation }: any) {
       return orientation === 'portrait' ? 9 / 16 : 16 / 9;
     }
 
-    // original
     const base = activeImage.width / activeImage.height || 1;
     return flipOriginal ? 1 / base : base;
   }, [activeImage, selectedRatio, orientation, flipOriginal]);
@@ -217,16 +282,14 @@ export default function CreatePostScreen({ navigation }: any) {
     setFrameSize({ w: width, h: height });
   };
 
-  // 이동용 Animated 값 + 숫자 ref
   const translateX = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(0)).current;
   const txRef = useRef(0);
   const tyRef = useRef(0);
 
-  // 스케일은 width/height로만 처리 (relative scale)
   const [scaleState, setScaleState] = useState(1);
   const scaleRef = useRef(1);
-  const baseScaleRef = useRef(1); // contain 스케일
+  const baseScaleRef = useRef(1);
   const minRelativeScaleRef = useRef(1);
   const maxRelativeScaleRef = useRef(4);
 
@@ -235,7 +298,6 @@ export default function CreatePostScreen({ navigation }: any) {
   const startScaleRef = useRef(1);
   const startPinchDistanceRef = useRef<number | null>(null);
 
-  // 편집창 들어올 때: 전체가 딱 들어오게(contain) 초기화
   useEffect(() => {
     if (
       !editorVisible ||
@@ -249,7 +311,7 @@ export default function CreatePostScreen({ navigation }: any) {
     const imgW = activeImage.width || 1;
     const imgH = activeImage.height || 1;
 
-    const fit = Math.min(frameSize.w / imgW, frameSize.h / imgH); // contain
+    const fit = Math.min(frameSize.w / imgW, frameSize.h / imgH);
     baseScaleRef.current = fit;
     scaleRef.current = 1;
     setScaleState(1);
@@ -275,7 +337,6 @@ export default function CreatePostScreen({ navigation }: any) {
     translateY,
   ]);
 
-  // PanResponder (핀치 줌 + 드래그)
   const panResponder = useMemo(
     () =>
       PanResponder.create({
@@ -302,7 +363,6 @@ export default function CreatePostScreen({ navigation }: any) {
           let nextTx = txRef.current;
           let nextTy = tyRef.current;
 
-          // 핀치
           if (touches.length >= 2) {
             const [t1, t2] = touches;
             const dx = t1.pageX - t2.pageX;
@@ -319,7 +379,6 @@ export default function CreatePostScreen({ navigation }: any) {
 
             nextRelativeScale = startScaleRef.current * ratio;
 
-            // 스케일 클램프
             const minS = minRelativeScaleRef.current;
             const maxS = maxRelativeScaleRef.current;
             if (nextRelativeScale < minS) nextRelativeScale = minS;
@@ -327,9 +386,7 @@ export default function CreatePostScreen({ navigation }: any) {
 
             scaleRef.current = nextRelativeScale;
             setScaleState(nextRelativeScale);
-          }
-          // 드래그
-          else {
+          } else {
             nextTx = startTxRef.current + gestureState.dx;
             nextTy = startTyRef.current + gestureState.dy;
           }
@@ -339,7 +396,6 @@ export default function CreatePostScreen({ navigation }: any) {
           const dispW = imgW * actualScale;
           const dispH = imgH * actualScale;
 
-          // 이동 한계 계산 (이미지가 프레임보다 작으면 중앙 고정)
           let minTx = frameSize.w - dispW;
           let maxTx = 0;
           let minTy = frameSize.h - dispH;
@@ -357,7 +413,6 @@ export default function CreatePostScreen({ navigation }: any) {
           }
 
           if (touches.length < 2) {
-            // 드래그일 때만 클램프 적용
             nextTx = Math.min(maxTx, Math.max(minTx, nextTx));
             nextTy = Math.min(maxTy, Math.max(minTy, nextTy));
             txRef.current = nextTx;
@@ -365,7 +420,6 @@ export default function CreatePostScreen({ navigation }: any) {
             translateX.setValue(nextTx);
             translateY.setValue(nextTy);
           } else {
-            // 핀치일 때 위치도 정렬
             nextTx = Math.min(maxTx, Math.max(minTx, txRef.current));
             nextTy = Math.min(maxTy, Math.max(minTy, tyRef.current));
             txRef.current = nextTx;
@@ -400,13 +454,11 @@ export default function CreatePostScreen({ navigation }: any) {
       const tx = txRef.current;
       const ty = tyRef.current;
 
-      // 화면 (0,0)~(frameW,frameH)가 원본의 어느 영역인가?
       let originX = (0 - tx) / actualScale;
       let originY = (0 - ty) / actualScale;
       let cropWidth = frameSize.w / actualScale;
       let cropHeight = frameSize.h / actualScale;
 
-      // 범위 클램프
       originX = Math.max(0, originX);
       originY = Math.max(0, originY);
       if (originX + cropWidth > imgW) {
@@ -416,7 +468,7 @@ export default function CreatePostScreen({ navigation }: any) {
         cropHeight = imgH - originY;
       }
 
-      const sourceUri = activeImage.uri; // 항상 원본 기준
+      const sourceUri = activeImage.uri;
 
       const manipulated = await ImageManipulator.manipulateAsync(
         sourceUri,
@@ -465,35 +517,177 @@ export default function CreatePostScreen({ navigation }: any) {
     useState(true);
 
   // ----------------------------
-  // 이미지 업로드
-  // 리사이즈 + R2 업로드
+  // 태그 상태
+  // ----------------------------
+  const [taggedUsers, setTaggedUsers] = useState<TaggedUser[]>([]);
+  const [selectedLocation, setSelectedLocation] =
+    useState<LocationTag | null>(null);
+  const [selectedBusiness, setSelectedBusiness] =
+    useState<BusinessTag | null>(null);
+
+  const [tagModalMode, setTagModalMode] =
+    useState<TagModalMode>(null);
+  const [tagModalVisible, setTagModalVisible] = useState(false);
+  const [tagSearch, setTagSearch] = useState('');
+  const [tagSearching, setTagSearching] = useState(false);
+
+  const [personResults, setPersonResults] = useState<TaggedUser[]>(
+    [],
+  );
+  const [locationResults, setLocationResults] = useState<
+    LocationTag[]
+  >([]);
+  const [businessResults, setBusinessResults] = useState<
+    BusinessTag[]
+  >([]);
+
+  const openPersonTagModal = () => {
+    setTagModalMode('person');
+    setTagSearch('');
+    setPersonResults([]);
+    setTagModalVisible(true);
+  };
+
+  const openLocationTagModal = () => {
+    setTagModalMode('location');
+    setTagSearch('');
+    setLocationResults([]);
+    setTagModalVisible(true);
+  };
+
+  const openBusinessTagModal = () => {
+    setTagModalMode('business');
+    setTagSearch('');
+    setBusinessResults([]);
+    setTagModalVisible(true);
+  };
+
+  const closeTagModal = () => {
+    setTagModalVisible(false);
+    setTagModalMode(null);
+    setTagSearch('');
+    setTagSearching(false);
+  };
+
+  const toggleTaggedUser = (user: TaggedUser) => {
+    setTaggedUsers(prev => {
+      const exists = prev.some(u => u.id === user.id);
+      if (exists) {
+        return prev.filter(u => u.id !== user.id);
+      }
+      return [...prev, user];
+    });
+  };
+
+  const runTagSearch = async (
+    mode: TagModalMode,
+    keyword: string,
+  ) => {
+    const q = keyword.trim();
+    if (!mode || !q) {
+      if (mode === 'person') setPersonResults([]);
+      if (mode === 'location') setLocationResults([]);
+      if (mode === 'business') setBusinessResults([]);
+      return;
+    }
+    setTagSearching(true);
+    try {
+      if (mode === 'person') {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id, nickname, follow_id, avatar_url')
+          .or(
+            `nickname.ilike.%${q}%,follow_id.ilike.%${q}%`,
+          )
+          .limit(30);
+        if (error) {
+          console.error('person search error', error);
+        } else {
+          setPersonResults((data ?? []) as TaggedUser[]);
+        }
+      } else if (mode === 'business') {
+        const { data, error } = await supabase
+          .from('businesses')
+          // hero / logo / main 이미지 모두 가져와서 JS에서 thumbnail_url 로 매핑
+          .select(
+            'id, name, shop_id, logo_image_url, main_image_url, hero_image_url',
+          )
+          .or(`name.ilike.%${q}%,shop_id.ilike.%${q}%`)
+          .limit(30);
+        if (error) {
+          console.error('business search error', error);
+        } else {
+          const rows = (data ?? []) as any[];
+          const mapped: BusinessTag[] = rows.map(row => ({
+            id: row.id,
+            name: row.name,
+            shop_id: row.shop_id ?? null,
+            thumbnail_url:
+              row.logo_image_url ??
+              row.main_image_url ??
+              row.hero_image_url ??
+              null,
+          }));
+          setBusinessResults(mapped);
+        }
+      } else if (mode === 'location') {
+        const { data, error } = await supabase
+          .from('post_locations')
+          .select('name, address, lat, lng')
+          .ilike('name', `%${q}%`)
+          .limit(30);
+        if (error) {
+          console.error('location search error', error);
+        } else {
+          const seen = new Set<string>();
+          const unique: LocationTag[] = [];
+          (data ?? []).forEach((row: any) => {
+            const key = `${row.name}||${row.address ?? ''}`;
+            if (!seen.has(key)) {
+              seen.add(key);
+              unique.push({
+                name: row.name,
+                address: row.address,
+                lat: row.lat,
+                lng: row.lng,
+              });
+            }
+          });
+          setLocationResults(unique);
+        }
+      }
+    } finally {
+      setTagSearching(false);
+    }
+  };
+
+  // ----------------------------
+  // 이미지 업로드 (R2)
+  // ----------------------------
   const uploadImageForPost = async (
     postId: string,
     localUri: string,
   ): Promise<string> => {
-    // 1) 먼저 리사이즈 + 압축 (인스타 느낌)
     const manipulated = await ImageManipulator.manipulateAsync(
       localUri,
-      [
-        // 긴 변 기준 1440px 정도로 줄이기 (육안상 티 거의 안 나는 수준)
-        { resize: { width: 1440 } },
-      ],
+      [{ resize: { width: 1440 } }],
       {
-        compress: 0.8, // 0.0 ~ 1.0 (0.8이면 충분히 깔끔)
+        compress: 0.8,
         format: ImageManipulator.SaveFormat.JPEG,
       },
     );
 
     const resizedUri = manipulated.uri;
-
-    // 2) R2 경로 만들기
     const fileName = `${Date.now()}.jpg`;
     const path = `posts/${postId}/${fileName}`;
 
-    // 3) R2 업로드
-    const publicUrl = await uploadImageToR2(resizedUri, path, 'image/jpeg');
+    const publicUrl = await uploadImageToR2(
+      resizedUri,
+      path,
+      'image/jpeg',
+    );
 
-    return publicUrl; // R2 공개 URL
+    return publicUrl;
   };
 
   const uploadPost = async () => {
@@ -508,7 +702,6 @@ export default function CreatePostScreen({ navigation }: any) {
       return;
     }
 
-    // ✅ visibility를 배열이 아니라 text 하나로 저장
     const { data: post, error: postErr } = await supabase
       .from('posts')
       .insert({
@@ -516,9 +709,11 @@ export default function CreatePostScreen({ navigation }: any) {
         caption,
         link,
         tab_id: selectedTab,
-        visibility, // ← [visibility] 에서 수정
+        visibility,
         allow_comments: allowComments,
         allow_share: allowShare,
+        business_id: selectedBusiness?.id ?? null,
+        business_name: selectedBusiness?.name ?? null,
       })
       .select()
       .single();
@@ -528,8 +723,32 @@ export default function CreatePostScreen({ navigation }: any) {
       return;
     }
 
+    // ============================
+    // [추가] caption 해시태그 → post_tags 저장
+    // ============================
     try {
-      // ✅ 각 이미지마다 post_media에 row 생성
+      const tags = extractHashtags(caption);
+      if (tags.length > 0) {
+        const rows = tags.map(t => ({
+          post_id: post.id,
+          user_id: user.id,
+          tag_text: t,
+        }));
+
+        const { error: tagErr } = await supabase
+          .from('post_tags')
+          .insert(rows);
+
+        // 태그 저장 실패는 게시물 업로드 전체를 막지 않음(상용화 안정성)
+        if (tagErr) {
+          console.error('post_tags insert error', tagErr);
+        }
+      }
+    } catch (e) {
+      console.error('post_tags parse/insert failed', e);
+    }
+
+    try {
       for (let i = 0; i < images.length; i++) {
         const img = images[i];
         const src = img.editedUri || img.uri;
@@ -540,7 +759,7 @@ export default function CreatePostScreen({ navigation }: any) {
           .from('post_media')
           .insert({
             post_id: post.id,
-            file_url: publicUrl,     // ✅ 컬럼 이름 수정 (image_path → file_url)
+            file_url: publicUrl,
             media_type: 'image',
             sort_order: i,
             width: img.width,
@@ -553,13 +772,46 @@ export default function CreatePostScreen({ navigation }: any) {
         }
       }
 
+      // 사람 태그 저장
+      if (taggedUsers.length > 0) {
+        const { error: tagErr } = await supabase
+          .from('post_tagged_users')
+          .insert(
+            taggedUsers.map(u => ({
+              post_id: post.id,
+              tagged_user_id: u.id,
+            })),
+          );
+        if (tagErr) {
+          console.error('post_tagged_users error', tagErr);
+          throw tagErr;
+        }
+      }
+
+      // 위치 태그 저장
+      if (selectedLocation) {
+        const { error: locErr } = await supabase
+          .from('post_locations')
+          .insert({
+            post_id: post.id,
+            name: selectedLocation.name,
+            address: selectedLocation.address ?? null,
+            lat: selectedLocation.lat ?? null,
+            lng: selectedLocation.lng ?? null,
+          });
+        if (locErr) {
+          console.error('post_locations error', locErr);
+          throw locErr;
+        }
+      }
+
       Alert.alert('게시 완료!');
       navigation.goBack();
     } catch (e: any) {
       console.error(e);
       Alert.alert(
-        '이미지 업로드 실패',
-        e?.message ?? '일부 이미지를 업로드하지 못했습니다.',
+        '이미지/태그 업로드 실패',
+        e?.message ?? '일부 데이터를 업로드하지 못했습니다.',
       );
     }
   };
@@ -588,6 +840,18 @@ export default function CreatePostScreen({ navigation }: any) {
   );
 
   const hasImage = !!activeImage;
+
+  const tagSummaryText = () => {
+    const parts: string[] = [];
+    if (taggedUsers.length > 0)
+      parts.push(`사람 ${taggedUsers.length}명`);
+    if (selectedLocation)
+      parts.push(`위치 ${selectedLocation.name}`);
+    if (selectedBusiness)
+      parts.push(`비즈니스 ${selectedBusiness.name}`);
+    if (parts.length === 0) return '태그 없음';
+    return parts.join(' · ');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -647,14 +911,14 @@ export default function CreatePostScreen({ navigation }: any) {
             </View>
           )}
 
-          {/* 비율 선택 + 회전 버튼 */}
+          {/* 비율 선택 + 회전 */}
           {hasImage && (
             <View style={styles.ratioBar}>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
               >
-                {RATIO_OPTIONS.map((opt) => (
+                {RATIO_OPTIONS.map(opt => (
                   <Pressable
                     key={opt.id}
                     onPress={() => handleSelectRatio(opt.id)}
@@ -729,7 +993,7 @@ export default function CreatePostScreen({ navigation }: any) {
               showsHorizontalScrollIndicator={false}
               style={{ paddingVertical: 6 }}
             >
-              {tabs.map((tab) => (
+              {tabs.map(tab => (
                 <Pressable
                   key={tab.id}
                   onPress={() => setSelectedTab(tab.id)}
@@ -759,7 +1023,7 @@ export default function CreatePostScreen({ navigation }: any) {
               title="내용 입력"
               open={openCaptionSection}
               onToggle={() =>
-                setOpenCaptionSection((prev) => !prev)
+                setOpenCaptionSection(prev => !prev)
               }
             />
             {openCaptionSection && (
@@ -780,7 +1044,7 @@ export default function CreatePostScreen({ navigation }: any) {
               title="링크"
               open={openLinkSection}
               onToggle={() =>
-                setOpenLinkSection((prev) => !prev)
+                setOpenLinkSection(prev => !prev)
               }
             />
             {openLinkSection && (
@@ -800,37 +1064,51 @@ export default function CreatePostScreen({ navigation }: any) {
               title="태그"
               open={openTagSection}
               onToggle={() =>
-                setOpenTagSection((prev) => !prev)
+                setOpenTagSection(prev => !prev)
               }
             />
             {openTagSection && (
               <>
                 <Pressable
                   style={styles.optionRow}
-                  onPress={() =>
-                    Alert.alert('사람 태그', '준비 중입니다.')
-                  }
+                  onPress={openPersonTagModal}
                 >
-                  <Text style={styles.optionText}>사람 태그</Text>
+                  <Text style={styles.optionText}>
+                    사람 태그
+                    {taggedUsers.length > 0
+                      ? ` · ${taggedUsers.length}명`
+                      : ''}
+                  </Text>
                 </Pressable>
                 <Pressable
                   style={styles.optionRow}
-                  onPress={() =>
-                    Alert.alert('위치 태그', '준비 중입니다.')
-                  }
+                  onPress={openLocationTagModal}
                 >
-                  <Text style={styles.optionText}>위치 태그</Text>
+                  <Text style={styles.optionText}>
+                    위치 태그
+                    {selectedLocation
+                      ? ` · ${selectedLocation.name}`
+                      : ''}
+                  </Text>
                 </Pressable>
                 <Pressable
                   style={styles.optionRow}
-                  onPress={() =>
-                    Alert.alert('비즈니스 태그', '준비 중입니다.')
-                  }
+                  onPress={openBusinessTagModal}
                 >
                   <Text style={styles.optionText}>
                     비즈니스 태그
+                    {selectedBusiness
+                      ? ` · ${selectedBusiness.name}`
+                      : ''}
                   </Text>
                 </Pressable>
+
+                {/* 선택 요약 줄 */}
+                <View style={styles.tagSummaryBox}>
+                  <Text style={styles.tagSummaryText}>
+                    {tagSummaryText()}
+                  </Text>
+                </View>
               </>
             )}
           </View>
@@ -841,17 +1119,19 @@ export default function CreatePostScreen({ navigation }: any) {
               title="공개 범위"
               open={openVisibilitySection}
               onToggle={() =>
-                setOpenVisibilitySection((prev) => !prev)
+                setOpenVisibilitySection(prev => !prev)
               }
             />
             {openVisibilitySection &&
-              VISIBILITY_OPTIONS.map((opt) => (
+              VISIBILITY_OPTIONS.map(opt => (
                 <Pressable
                   key={opt.id}
                   style={styles.visibilityRow}
                   onPress={() => setVisibility(opt.id)}
                 >
-                  <Text style={styles.optionText}>{opt.label}</Text>
+                  <Text style={styles.optionText}>
+                    {opt.label}
+                  </Text>
                   {visibility === opt.id && (
                     <Check size={20} color="#000" />
                   )}
@@ -859,13 +1139,13 @@ export default function CreatePostScreen({ navigation }: any) {
               ))}
           </View>
 
-          {/* 고급 설정 (댓글 / 공유) */}
+          {/* 고급 설정 */}
           <View style={[styles.section, { marginBottom: 24 }]}>
             <SectionHeader
               title="고급 설정"
               open={openOptionSection}
               onToggle={() =>
-                setOpenOptionSection((prev) => !prev)
+                setOpenOptionSection(prev => !prev)
               }
             />
             {openOptionSection && (
@@ -873,7 +1153,7 @@ export default function CreatePostScreen({ navigation }: any) {
                 <Pressable
                   style={styles.visibilityRow}
                   onPress={() =>
-                    setAllowComments((prev) => !prev)
+                    setAllowComments(prev => !prev)
                   }
                 >
                   <Text style={styles.optionText}>댓글 허용</Text>
@@ -887,7 +1167,7 @@ export default function CreatePostScreen({ navigation }: any) {
 
                 <Pressable
                   style={styles.visibilityRow}
-                  onPress={() => setAllowShare((prev) => !prev)}
+                  onPress={() => setAllowShare(prev => !prev)}
                 >
                   <Text style={styles.optionText}>공유 허용</Text>
                   <View
@@ -902,6 +1182,227 @@ export default function CreatePostScreen({ navigation }: any) {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* 태그 검색 모달 (사람 / 위치 / 비즈니스 공용) */}
+      <Modal visible={tagModalVisible} animationType="slide">
+        <SafeAreaView style={styles.tagModalContainer}>
+          <View style={styles.tagModalHeader}>
+            <Pressable onPress={closeTagModal}>
+              <ChevronLeft size={22} color="#000" />
+            </Pressable>
+            <Text style={styles.tagModalTitle}>
+              {tagModalMode === 'person'
+                ? '사람 태그'
+                : tagModalMode === 'location'
+                ? '위치 태그'
+                : tagModalMode === 'business'
+                ? '비즈니스 태그'
+                : '태그'}
+            </Text>
+            <View style={{ width: 22 }} />
+          </View>
+
+          <View style={styles.tagSearchRow}>
+            <Search
+              size={18}
+              color="#6B7280"
+              style={{ marginRight: 6 }}
+            />
+            <TextInput
+              value={tagSearch}
+              onChangeText={text => {
+                setTagSearch(text);
+                if (text.trim().length >= 1) {
+                  runTagSearch(tagModalMode, text);
+                } else {
+                  runTagSearch(tagModalMode, '');
+                }
+              }}
+              placeholder="검색어를 입력하세요"
+              placeholderTextColor="#9CA3AF"
+              style={styles.tagSearchInput}
+            />
+          </View>
+
+          {tagSearching && (
+            <ActivityIndicator
+              style={{ marginTop: 8 }}
+              size="small"
+            />
+          )}
+
+          <FlatList<TagListItem>
+            data={
+              (tagModalMode === 'person'
+                ? personResults
+                : tagModalMode === 'location'
+                ? locationResults
+                : tagModalMode === 'business'
+                ? businessResults
+                : []) as TagListItem[]
+            }
+            keyExtractor={(item, index) => {
+              const anyItem = item as any;
+              if (anyItem.id) return String(anyItem.id);
+              if (anyItem.name) return String(anyItem.name);
+              return String(index);
+            }}
+            renderItem={({ item }) => {
+              if (tagModalMode === 'person') {
+                const u = item as TaggedUser;
+                const selected = taggedUsers.some(
+                  x => x.id === u.id,
+                );
+                return (
+                  <Pressable
+                    style={styles.tagListItem}
+                    onPress={() => toggleTaggedUser(u)}
+                  >
+                    <View style={styles.tagAvatar}>
+                      {u.avatar_url ? (
+                        <Image
+                          source={{ uri: u.avatar_url }}
+                          style={styles.tagAvatarImg}
+                        />
+                      ) : (
+                        <View style={styles.tagAvatarPlaceholder}>
+                          <Text style={styles.tagAvatarInitial}>
+                            {u.nickname
+                              ?.trim()
+                              ?.[0]
+                              ?.toUpperCase() ?? 'U'}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.tagMainText}>
+                        {u.nickname ?? '이름 없음'}
+                      </Text>
+                      {u.follow_id && (
+                        <Text style={styles.tagSubText}>
+                          @{u.follow_id}
+                        </Text>
+                      )}
+                    </View>
+                    {selected && (
+                      <Check size={20} color="#10B981" />
+                    )}
+                  </Pressable>
+                );
+              }
+
+              if (tagModalMode === 'business') {
+                const b = item as BusinessTag;
+                const selected =
+                  selectedBusiness?.id === b.id;
+                return (
+                  <Pressable
+                    style={styles.tagListItem}
+                    onPress={() => {
+                      setSelectedBusiness(b);
+                      closeTagModal();
+                    }}
+                  >
+                    <View style={styles.tagAvatar}>
+                      {b.thumbnail_url ? (
+                        <Image
+                          source={{ uri: b.thumbnail_url }}
+                          style={styles.tagAvatarImg}
+                        />
+                      ) : (
+                        <View style={styles.tagAvatarPlaceholder}>
+                          <Text style={styles.tagAvatarInitial}>
+                            {b.name?.trim()
+                              ?.[0]
+                              ?.toUpperCase() ?? 'B'}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.tagMainText}>
+                        {b.name}
+                      </Text>
+                      {b.shop_id && (
+                        <Text style={styles.tagSubText}>
+                          @{b.shop_id}
+                        </Text>
+                      )}
+                    </View>
+                    {selected && (
+                      <Check size={20} color="#10B981" />
+                    )}
+                  </Pressable>
+                );
+              }
+
+              if (tagModalMode === 'location') {
+                const l = item as LocationTag;
+                const selected =
+                  selectedLocation?.name === l.name &&
+                  selectedLocation?.address === l.address;
+                return (
+                  <Pressable
+                    style={styles.tagListItem}
+                    onPress={() => {
+                      setSelectedLocation(l);
+                      closeTagModal();
+                    }}
+                  >
+                    <View style={styles.tagLocationIcon}>
+                      <Text style={styles.tagLocationIconText}>
+                        위치
+                      </Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.tagMainText}>
+                        {l.name}
+                      </Text>
+                      {l.address && (
+                        <Text style={styles.tagSubText}>
+                          {l.address}
+                        </Text>
+                      )}
+                    </View>
+                    {selected && (
+                      <Check size={20} color="#10B981" />
+                    )}
+                  </Pressable>
+                );
+              }
+
+              return null;
+            }}
+            ListEmptyComponent={() =>
+              !tagSearching && tagSearch.trim().length > 0 ? (
+                <View style={styles.tagEmptyBox}>
+                  <Text style={styles.tagEmptyText}>
+                    검색 결과가 없습니다.
+                  </Text>
+                </View>
+              ) : null
+            }
+          />
+
+          {tagModalMode === 'location' &&
+            tagSearch.trim().length > 0 && (
+              <Pressable
+                style={styles.tagNewLocationBtn}
+                onPress={() => {
+                  setSelectedLocation({
+                    name: tagSearch.trim(),
+                  });
+                  closeTagModal();
+                }}
+              >
+                <Text style={styles.tagNewLocationText}>
+                  “{tagSearch.trim()}” 새 위치로 사용
+                </Text>
+              </Pressable>
+            )}
+        </SafeAreaView>
+      </Modal>
 
       {/* 사진 편집 모달 */}
       <Modal visible={editorVisible} animationType="slide">
@@ -951,7 +1452,6 @@ export default function CreatePostScreen({ navigation }: any) {
 
                   return (
                     <>
-                      {/* 1) 먼저 전체 이미지를 블러로 깐다 */}
                       <Animated.Image
                         source={{ uri: activeImage.uri }}
                         style={commonStyle}
@@ -959,12 +1459,16 @@ export default function CreatePostScreen({ navigation }: any) {
                         blurRadius={20}
                       />
 
-                      {/* 2) 가운데 크롭 영역만 선명하게 보이도록 마스크 */}
                       <View
                         pointerEvents="none"
                         style={StyleSheet.absoluteFill}
                       >
-                        <View style={{ flex: 1, overflow: 'hidden' }}>
+                        <View
+                          style={{
+                            flex: 1,
+                            overflow: 'hidden',
+                          }}
+                        >
                           <Animated.Image
                             source={{ uri: activeImage.uri }}
                             style={commonStyle}
@@ -973,7 +1477,6 @@ export default function CreatePostScreen({ navigation }: any) {
                         </View>
                       </View>
 
-                      {/* 3) 바깥 테두리 + 3x3 가이드 */}
                       <View
                         pointerEvents="none"
                         style={styles.cropBorder}
@@ -983,7 +1486,6 @@ export default function CreatePostScreen({ navigation }: any) {
                         pointerEvents="none"
                         style={StyleSheet.absoluteFill}
                       >
-                        {/* 수직 */}
                         <View
                           style={[
                             styles.gridLineVertical,
@@ -996,7 +1498,6 @@ export default function CreatePostScreen({ navigation }: any) {
                             { left: '66.666%' },
                           ]}
                         />
-                        {/* 수평 */}
                         <View
                           style={[
                             styles.gridLineHorizontal,
@@ -1207,8 +1708,126 @@ const styles = StyleSheet.create({
   tabText: { fontSize: 14, color: '#111' },
   tabTextSelected: { color: '#007AFF', fontWeight: '600' },
 
+  // 태그 요약
+  tagSummaryBox: {
+    marginTop: 6,
+    paddingVertical: 6,
+  },
+  tagSummaryText: {
+    fontSize: 13,
+    color: '#6B7280',
+  },
+
+  // 태그 모달
+  tagModalContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  tagModalHeader: {
+    height: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  tagModalTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  tagSearchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  tagSearchInput: {
+    flex: 1,
+    fontSize: 14,
+    paddingVertical: 6,
+    color: '#111827',
+  },
+  tagListItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  tagAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    overflow: 'hidden',
+    marginRight: 10,
+  },
+  tagAvatarImg: {
+    width: '100%',
+    height: '100%',
+  },
+  tagAvatarPlaceholder: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E5E7EB',
+  },
+  tagAvatarInitial: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#4B5563',
+  },
+  tagMainText: {
+    fontSize: 14,
+    color: '#111827',
+    fontWeight: '500',
+  },
+  tagSubText: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 2,
+  },
+  tagLocationIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  tagLocationIconText: {
+    fontSize: 10,
+    color: '#4B5563',
+    fontWeight: '700',
+  },
+  tagEmptyBox: {
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tagEmptyText: {
+    fontSize: 13,
+    color: '#9CA3AF',
+  },
+  tagNewLocationBtn: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+  },
+  tagNewLocationText: {
+    fontSize: 14,
+    color: '#007AFF',
+    fontWeight: '600',
+  },
+
   // 에디터
-  editorContainer: { flex: 1, backgroundColor: '#ffffffff' },
+  editorContainer: { flex: 1, backgroundColor: '#fff' },
   editorHeader: {
     height: 52,
     flexDirection: 'row',
@@ -1253,7 +1872,6 @@ const styles = StyleSheet.create({
     borderColor: '#bdbdbd77',
   },
 
-  // 3x3 가이드 라인
   gridLineVertical: {
     position: 'absolute',
     top: 0,

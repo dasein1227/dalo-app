@@ -38,6 +38,8 @@ type ProfileRow = {
 
   terms_accepted?: boolean | null;
   is_admin?: boolean | null;
+
+  translation_plan?: 'free' | 'basic' | 'premium' | null;
 };
 
 const ACCENT = '#FF5A7A';
@@ -285,39 +287,38 @@ export default function SettingsHome() {
 
       <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
         {/* 프로필 카드 - 여기에서 AccountSettings로 이동 */}
-<Pressable
-  style={styles.profile}
-  onPress={() =>
-    navigation.navigate('AccountSettings', {
-      user_id: meId,
-      isMe: true,
-    })
-  }
->
-  {prof?.avatar_url ? (
-    <Image source={{ uri: prof.avatar_url }} style={styles.avatar} />
-  ) : (
-    <View style={[styles.avatar, styles.avatarFallback]}>
-      <Text style={styles.avatarInitial}>
-        {prof?.nickname?.trim()?.[0]?.toUpperCase() || '?'}
-      </Text>
-    </View>
-  )}
-  <View style={{ flex: 1 }}>
-    <Text style={styles.name}>
-      {prof?.nickname?.trim() || t('settings.me.noName', '(이름 없음)')}
-    </Text>
-    {authEmail ? (
-      <Text style={styles.subName}>{authEmail}</Text>
-    ) : (
-      <Text style={styles.subName}>
-        {t('settings.me.profileManage', '프로필 관리')}
-      </Text>
-    )}
-  </View>
-  <Text style={styles.chev}>{t('common.manage', '관리')}</Text>
-</Pressable>
-
+        <Pressable
+          style={styles.profile}
+          onPress={() =>
+            navigation.navigate('AccountSettings', {
+              user_id: meId,
+              isMe: true,
+            })
+          }
+        >
+          {prof?.avatar_url ? (
+            <Image source={{ uri: prof.avatar_url }} style={styles.avatar} />
+          ) : (
+            <View style={[styles.avatar, styles.avatarFallback]}>
+              <Text style={styles.avatarInitial}>
+                {prof?.nickname?.trim()?.[0]?.toUpperCase() || '?'}
+              </Text>
+            </View>
+          )}
+          <View style={{ flex: 1 }}>
+            <Text style={styles.name}>
+              {prof?.nickname?.trim() || t('settings.me.noName', '(이름 없음)')}
+            </Text>
+            {authEmail ? (
+              <Text style={styles.subName}>{authEmail}</Text>
+            ) : (
+              <Text style={styles.subName}>
+                {t('settings.me.profileManage', '프로필 관리')}
+              </Text>
+            )}
+          </View>
+          <Text style={styles.chev}>{t('common.manage', '관리')}</Text>
+        </Pressable>
 
         {/* 1. 계정 / 보안 */}
         <Section title={t('settings.account.title', '개인 / 보안')}>
@@ -434,12 +435,7 @@ export default function SettingsHome() {
             }
             right={<ChevronRight size={18} color="#D1D5DB" />}
             last
-            onPress={() =>
-              Alert.alert(
-                t('settings.theme.title', '테마'),
-                t('settings.theme.soon', '테마 설정 화면은 추후 제공될 예정입니다.'),
-              )
-            }
+            onPress={() => navigation.navigate('ThemeSettings')}
           />
         </Section>
 

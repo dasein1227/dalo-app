@@ -1,39 +1,51 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "expo/tsconfig.base",
+
   "compilerOptions": {
-    /* 엄격 모드 */
+    /* ------- WatermelonDB 필수 옵션 ------- */
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": false,
+    "useDefineForClassFields": false,
+
+    /* ------- 일반 TS 엄격 모드 ------- */
     "strict": true,
     "noImplicitAny": false,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
 
-    /* JSX / 모듈 설정 */
+    /* ------- React Native / Expo ------- */
     "jsx": "react-jsx",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "moduleResolution": "bundler",
     "module": "esnext",
     "target": "ES2020",
+    "lib": ["ES2021", "DOM", "DOM.Iterable"],
+    "moduleResolution": "bundler",
     "downlevelIteration": true,
     "noEmit": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
 
-    /* JSON, 경로 alias */
+    /* ------- Path alias ------- */
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
-    },
-
-    /* 최신 브라우저/DOM 지원 */
-    "lib": ["ES2021", "DOM", "DOM.Iterable"]
+    }
   },
-  "include": ["**/*.ts", "**/*.tsx", "src/screens/chat/Chat copy"],
+
+  /* ------- 포함 파일 ------- */
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "src/screens/chat/Chat copy"
+  ],
+
+  /* ------- 제외 파일 ------- */
   "exclude": [
     "node_modules",
     "babel.config.js",
     "metro.config.js",
-    "supabase/functions",     /* ⬅️ Deno용 Supabase 함수 제외 */
+    "supabase/functions",
     "supabase/.temp"
   ]
 }

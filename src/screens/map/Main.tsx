@@ -11,14 +11,14 @@ import {
   Dimensions,
   PanResponder,
   FlatList,
-  Modal,
-  StatusBar,
+  StatusBar as RNStatusBar,
   BackHandler,
 } from 'react-native';
-import MapView, { Marker, Region, PROVIDER_GOOGLE } from 'react-native-maps';
-import ClusteredMap from 'react-native-map-clustering';
+
+import MapboxGL from '@rnmapbox/maps';
+
 import * as Location from 'expo-location';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Settings,
   Bell,
@@ -27,7 +27,6 @@ import {
   List,
   Crosshair,
   Plus,
-  ChevronRight,
 } from 'lucide-react-native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -37,7 +36,10 @@ import useNetworkGuard from '@/hooks/useNetworkGuard';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { MapStackParamList } from '@/navigation/MapStack';
 
-// Reanimated
+// ✅ 분리한 검색 모달
+import SearchModal from './modals/SearchModal';
+
+// Reanimated (시트/버튼 애니메이션 유지)
 import AnimatedRe, {
   useSharedValue,
   useAnimatedStyle,
@@ -94,18 +96,14 @@ type BeaconDraw = BeaconRow & {
   distance_m: number;
 };
 
-type BeaconVisibleRowRaw = BeaconRow;
-
 const AnimatedPressable = AnimatedRe.createAnimatedComponent(Pressable);
 
-const SEOUL: Region = {
+const SEOUL = {
   latitude: 37.5665,
   longitude: 126.978,
-  latitudeDelta: 0.04,
-  longitudeDelta: 0.04,
 };
 
-const { height: SCREEN_H } = Dimensions.get('window');
+const { height: SCREEN_H, width: SCREEN_W } = Dimensions.get('window');
 
 const toRad = (d: number) => (d * Math.PI) / 180;
 const haversine = (lat1: number, lng1: number, lat2: number, lng2: number) => {
@@ -120,20 +118,22 @@ const haversine = (lat1: number, lng1: number, lat2: number, lng2: number) => {
   return 2 * R * Math.asin(Math.sqrt(a));
 };
 
-const regionForRadiusMeters = (
-  center: { latitude: number; longitude: number },
-  meters: number,
-) => {
-  const minDelta = 0.003;
-  const latDelta = Math.max(minDelta, (meters / 111_000) * 2);
-  const cosLat = Math.max(0.2, Math.cos((center.latitude * Math.PI) / 180));
-  const lonDelta = Math.max(minDelta, (meters / (111_000 * cosLat)) * 2);
-  return {
-    latitude: center.latitude,
-    longitude: center.longitude,
-    latitudeDelta: latDelta,
-    longitudeDelta: lonDelta,
-  } as Region;
+/** radiusMeters가 화면에 적당히 들어오게 줌 레벨 계산 (대략) */
+const zoomForRadiusMeters = (centerLat: number, radiusMeters: number) => {
+  // 화면 가로의 70% 정도에 "지름(2*radius)"가 들어오게 맞춤
+  const targetMetersPerPixel = (radiusMeters * 2) / Math.max(1, SCREEN_W * 0.7);
+
+  // Mapbox/WebMercator 근사:
+  // metersPerPixel = cos(lat)*2*pi*R / (256*2^zoom)
+  // => zoom = log2(cos(lat)*2*pi*R / (256*metersPerPixel))
+  const R = 6378137;
+  const cosLat = Math.max(0.2, Math.cos((centerLat * Math.PI) / 180));
+  const numerator = cosLat * 2 * Math.PI * R;
+  const denom = 256 * Math.max(0.000001, targetMetersPerPixel);
+  const z = Math.log2(numerator / denom);
+
+  // 너무 과도한 줌 방지
+  return Math.max(3, Math.min(18, z));
 };
 
 /* 공개 범위 이모지 */
@@ -147,29 +147,6 @@ const visEmoji = (v: VisibilityT) =>
     : v === 'labels'
     ? '🏷️'
     : '🔒';
-
-const minutesLeft = (expires_at?: string | null) => {
-  if (!expires_at) return null;
-  const ms = Date.parse(expires_at) - Date.now();
-  return Math.ceil(ms / 60000);
-};
-
-// 필터 시트에서 쓰는 라벨들
-const VIS_LABEL: Record<VisibilityOrAny, string> = {
-  any: '전체',
-  public: '전체공개',
-  public_filtered: '공개(필터)',
-  friends: '친구만',
-  labels: '라벨',
-  custom: '맞춤',
-};
-
-const GENDER_LABEL: Record<'any' | 'male' | 'female' | 'other', string> = {
-  any: '전체',
-  male: '남성',
-  female: '여성',
-  other: '기타',
-};
 
 const displayMeters = (m: number) =>
   m >= 1000 ? `${(m / 1000).toFixed(m % 1000 === 0 ? 0 : 1)}km` : `${m}m`;
@@ -194,6 +171,8 @@ export default function MapMain({ route }: any) {
   const navigation =
     useNavigation<NativeStackNavigationProp<MapStackParamList>>();
   const rootNav = getRootNavigation(navigation);
+  const insets = useSafeAreaInsets(); // ✅ (상태바 정책용) 기능 로직에는 영향 없음
+
   const { count: unreadCount } = useNotifBadge();
   const highlightBeaconIdParam = route?.params?.highlightBeaconId as
     | string
@@ -202,8 +181,58 @@ export default function MapMain({ route }: any) {
 
   useNetworkGuard();
 
-  const mapRef = useRef<MapView | null>(null);
-  const initialRegionRef = useRef<Region>(SEOUL);
+  // =========================
+  // ✅ StatusBar (기존 로직 유지)
+  // =========================
+  const applyStatusBar = useCallback(() => {
+    try {
+      (navigation as any).setOptions?.({
+        statusBarColor: 'transparent',
+        statusBarStyle: 'dark',
+        statusBarTranslucent: true,
+      });
+    } catch {}
+
+    if (Platform.OS !== 'android') return;
+    try {
+      RNStatusBar.setTranslucent(true);
+      RNStatusBar.setBackgroundColor('transparent', true);
+      RNStatusBar.setBarStyle('dark-content', true);
+    } catch {}
+  }, [navigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      applyStatusBar();
+      let t1: any = null;
+      let t2: any = null;
+
+      try {
+        requestAnimationFrame(() => applyStatusBar());
+      } catch {}
+
+      t1 = setTimeout(() => applyStatusBar(), 0);
+      t2 = setTimeout(() => applyStatusBar(), 60);
+
+      return () => {
+        if (t1) clearTimeout(t1);
+        if (t2) clearTimeout(t2);
+      };
+    }, [applyStatusBar]),
+  );
+
+  useEffect(() => {
+    applyStatusBar();
+  }, [applyStatusBar]);
+
+  // Mapbox refs
+  const cameraRef = useRef<MapboxGL.Camera | null>(null);
+
+  // ✅ camera 준비 전에는 MapView를 렌더하지 않기 위해 별도 상태로 관리
+  const [cameraCenter, setCameraCenter] = useState<[number, number] | null>(null);
+  const [cameraZoom, setCameraZoom] = useState<number | null>(null);
+  const [locationReady, setLocationReady] = useState(false);
+
   const currentCenterRef = useRef<{ latitude: number; longitude: number }>(
     SEOUL,
   );
@@ -215,18 +244,20 @@ export default function MapMain({ route }: any) {
   const [highlightedBeaconId, setHighlightedBeaconId] = useState<
     string | number | null
   >(null);
-  const pulseAnim = useRef(new Animated.Value(1)).current;
 
+  // ✅ SearchModal로 대체 (showFilter만 유지)
   const [showFilter, setShowFilter] = useState(false);
-  const [showGenderSheet, setShowGenderSheet] = useState(false);
-  const [showVisibilitySheet, setShowVisibilitySheet] = useState(false);
 
-  const [radiusMeters, setRadiusMeters] = useState(800);
+  // ✅ 필터 상태 (SearchModal에서 제어)
+  const [radiusMeters, setRadiusMeters] = useState(200);
   const [gender, setGender] = useState<'any' | 'male' | 'female' | 'other'>(
     'any',
   );
   const [visibility, setVisibility] = useState<VisibilityOrAny>('any');
   const [ageRange, setAgeRange] = useState<[number, number]>([27, 49]);
+
+  // ✅ 비콘 AI 검색어(모달에서 입력)
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [selectedId, setSelectedId] = useState<string | number | undefined>(
     undefined,
@@ -253,28 +284,6 @@ export default function MapMain({ route }: any) {
       }, 900),
     );
   }, [fadeAnim]);
-
-  // 하이라이트 Glow 애니메이션 루프
-  useEffect(() => {
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.5,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-    loop.start();
-    return () => {
-      loop.stop();
-    };
-  }, [pulseAnim]);
 
   /* ===== Sheet (Reanimated) ===== */
   const { height: SCREEN_H_local } = Dimensions.get('window');
@@ -431,8 +440,7 @@ export default function MapMain({ route }: any) {
     let mounted = true;
     (async () => {
       try {
-        const { status } =
-          await Location.requestForegroundPermissionsAsync();
+        const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') throw new Error('위치 권한이 필요합니다.');
 
         const loc = await Location.getCurrentPositionAsync({
@@ -443,13 +451,15 @@ export default function MapMain({ route }: any) {
           longitude: loc.coords.longitude,
         };
         currentCenterRef.current = center;
-        initialRegionRef.current = regionForRadiusMeters(center, radiusMeters);
 
         if (mounted) setLoading(false);
 
-        requestAnimationFrame(() =>
-          mapRef.current?.animateToRegion(initialRegionRef.current!, 500),
-        );
+        // ✅ 초기 카메라: 애니메이션 없이 즉시 세팅 (날아오는 연출 제거)
+        const zoom = zoomForRadiusMeters(center.latitude, radiusMeters);
+        setCameraCenter([center.longitude, center.latitude]);
+        setCameraZoom(zoom);
+        setLocationReady(true);
+        // ✅ 위치 확보 즉시 1회 fetch는 아래 locationReady effect에서 수행
       } catch (e: any) {
         if (mounted) {
           setErr(e?.message || '현재 위치를 가져오지 못했습니다.');
@@ -464,25 +474,107 @@ export default function MapMain({ route }: any) {
 
   useEffect(() => {
     const center = currentCenterRef.current;
-    const next = regionForRadiusMeters(center, radiusMeters);
-    mapRef.current?.animateToRegion(next, 280);
+    const zoom = zoomForRadiusMeters(center.latitude, 300);
+
+    // ✅ radius 변경 시 카메라 업데이트 (기존 UX 유지)
+    setCameraCenter([center.longitude, center.latitude]);
+    setCameraZoom(zoom);
+
+    cameraRef.current?.setCamera({
+      centerCoordinate: [center.longitude, center.latitude],
+      zoomLevel: zoom,
+      animationDuration: 280,
+    });
+
     showRadiusHint();
     debouncedFetchRef.current?.();
   }, [radiusMeters, showRadiusHint]);
 
-  const handleRegionChangeComplete = useCallback((r: Region) => {
-    currentCenterRef.current = {
-      latitude: r.latitude,
-      longitude: r.longitude,
-    };
+  const onCameraChanged = useCallback((state: any) => {
+    // state.centerCoordinate = [lng, lat]
+    const cc = state?.properties?.centerCoordinate;
+    if (!cc || !Array.isArray(cc) || cc.length < 2) return;
+    const lng = Number(cc[0]);
+    const lat = Number(cc[1]);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+    currentCenterRef.current = { latitude: lat, longitude: lng };
     debouncedFetchRef.current?.();
   }, []);
 
   const fetchBeacons = useCallback(async () => {
+    if (!locationReady) return;
     try {
       setErr(null);
 
       const { latitude, longitude } = currentCenterRef.current;
+
+      // ✅ 검색어가 있으면: interpret + search_beacons_v1 (서버 랭킹)
+      const q = String(searchQuery ?? '').trim();
+      if (q.length > 0) {
+        // 0) 성별 토큰 자동 감지(옵션): UI에서 '전체'일 때만 텍스트를 힌트로 사용
+        const qNoSpace = q.replace(/\s+/g, '');
+        const genderHint: 'male' | 'female' | null =
+          /여자|여성/.test(qNoSpace) ? 'female' : /남자|남성/.test(qNoSpace) ? 'male' : null;
+
+        // 1) interpret (best-effort)
+        let signals: any = null;
+        let categoryTop3: string[] | null = null;
+        try {
+          const interpret = await supabase.rpc('search_interpret_local_v1', {
+            p_query: q,
+            p_lang: 'ko',
+          });
+          if (!interpret.error && interpret.data) {
+            signals = interpret.data;
+            categoryTop3 = Array.isArray(interpret.data?.category_top3)
+              ? (interpret.data.category_top3 as string[])
+              : null;
+          }
+        } catch {}
+
+        // 2) search_beacons_v1 (best-effort) - 실패 시 기존 discover fallback
+        const rpc = await supabase.rpc('search_beacons_v1', {
+          p_query: q,
+          p_signals: signals ?? { signals: [] },
+          p_category_top3: categoryTop3,
+          p_center_lat: latitude,
+          p_center_lng: longitude,
+          p_radius_m: radiusMeters,
+          p_visibility: visibility === 'any' ? null : visibility,
+          p_allow_gender: gender === 'any' ? genderHint : gender,
+          p_age_min: ageRange?.[0] ?? null,
+          p_age_max: ageRange?.[1] ?? null,
+          // 1차는 고정값(55, green)으로 시작. 추후 profiles.temp로 대체
+          p_user_temp: 55,
+          p_limit: 200,
+          p_offset: 0,
+        });
+
+        if (!rpc.error && Array.isArray(rpc.data)) {
+          const rows = (rpc.data as any[])
+            .map((b: any): BeaconDraw | null => {
+              if (!Number.isFinite(b.display_lat) || !Number.isFinite(b.display_lng)) return null;
+              const dLat = b.display_lat as number;
+              const dLng = b.display_lng as number;
+              const dist = Number.isFinite(b.distance_m)
+                ? Number(b.distance_m)
+                : haversine(latitude, longitude, dLat, dLng);
+
+              return {
+                ...b,
+                _lat: dLat,
+                _lng: dLng,
+                distance_m: dist,
+              } as BeaconDraw;
+            })
+            .filter((b): b is BeaconDraw => b !== null);
+
+          setBeacons(rows);
+          return;
+        }
+        // RPC 실패: 아래 discover fallback으로 진행
+      }
 
       const resp = await supabase
         .from('beacons_discover')
@@ -548,7 +640,7 @@ export default function MapMain({ route }: any) {
     } catch (e: any) {
       setErr(e?.message || '주변 비콘을 불러오지 못했습니다.');
     }
-  }, [radiusMeters, visibility, gender]);
+  }, [locationReady, radiusMeters, visibility, gender, searchQuery, ageRange]);
 
   const debouncedFetchRef = useRef<null | (() => void)>(null);
   useEffect(() => {
@@ -565,6 +657,16 @@ export default function MapMain({ route }: any) {
   useEffect(() => {
     debouncedFetchRef.current?.();
   }, []);
+
+  // ✅ 위치 확보 즉시 1회 fetch (새로고침 없이도 반드시 보이게)
+  useEffect(() => {
+    if (!locationReady) return;
+    const t = setTimeout(() => {
+      fetchBeacons();
+    }, 0);
+    return () => clearTimeout(t);
+  }, [locationReady, fetchBeacons]);
+
   useFocusEffect(
     React.useCallback(() => {
       debouncedFetchRef.current?.();
@@ -616,17 +718,19 @@ export default function MapMain({ route }: any) {
       (b) => String(b.id) === String(highlightBeaconIdParam),
     );
     if (!target) return;
+
     setHighlightedBeaconId(highlightBeaconIdParam);
-    const region = {
-      latitude: (target as any).display_lat ?? target._lat,
-      longitude: (target as any).display_lng ?? target._lng,
-      latitudeDelta: 0.002,
-      longitudeDelta: 0.002,
-    };
-    mapRef.current?.animateToRegion(region, 800);
+
+    const zoom = Math.max(14, zoomForRadiusMeters(target._lat, Math.max(200, radiusMeters / 2)));
+    cameraRef.current?.setCamera({
+      centerCoordinate: [target._lng, target._lat],
+      zoomLevel: zoom,
+      animationDuration: 800,
+    });
+
     const off = setTimeout(() => setHighlightedBeaconId(null), 6000);
     return () => clearTimeout(off);
-  }, [highlightBeaconIdParam, beacons]);
+  }, [highlightBeaconIdParam, beacons, radiusMeters]);
 
   const refreshNow = useCallback(() => {
     fetchBeacons();
@@ -679,12 +783,14 @@ export default function MapMain({ route }: any) {
 
       if (upErr) throw upErr;
 
-      currentCenterRef.current = {
-        latitude: lat,
-        longitude: lng,
-      };
-      const nextRegion = regionForRadiusMeters(currentCenterRef.current, radiusMeters);
-      mapRef.current?.animateToRegion(nextRegion, 380);
+      currentCenterRef.current = { latitude: lat, longitude: lng };
+
+      const zoom = zoomForRadiusMeters(lat, radiusMeters);
+      cameraRef.current?.setCamera({
+        centerCoordinate: [lng, lat],
+        zoomLevel: zoom,
+        animationDuration: 380,
+      });
 
       await fetchBeacons();
     } catch (e: any) {
@@ -702,8 +808,13 @@ export default function MapMain({ route }: any) {
         longitude: loc.coords.longitude,
       };
       currentCenterRef.current = center;
-      const next = regionForRadiusMeters(center, radiusMeters);
-      mapRef.current?.animateToRegion(next, 380);
+
+      const zoom = zoomForRadiusMeters(center.latitude, radiusMeters);
+      cameraRef.current?.setCamera({
+        centerCoordinate: [center.longitude, center.latitude],
+        zoomLevel: zoom,
+        animationDuration: 380,
+      });
     } catch (e: any) {
       setErr(e?.message || '현재 위치로 이동 실패');
     }
@@ -729,15 +840,12 @@ export default function MapMain({ route }: any) {
         <Pressable
           onPress={() => {
             setSelectedId(item.id);
-            mapRef.current?.animateToRegion(
-              {
-                latitude: item._lat,
-                longitude: item._lng,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-              },
-              280,
-            );
+            const zoom = Math.max(13, zoomForRadiusMeters(item._lat, Math.max(200, radiusMeters / 2)));
+            cameraRef.current?.setCamera({
+              centerCoordinate: [item._lng, item._lat],
+              zoomLevel: zoom,
+              animationDuration: 280,
+            });
             snapTo(1);
           }}
           style={{ flex: 1 }}
@@ -749,18 +857,11 @@ export default function MapMain({ route }: any) {
               justifyContent: 'space-between',
             }}
           >
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}
-            >
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.cardEmoji}>
                 {visEmoji((item.visibility as VisibilityT) || 'public')}
               </Text>
-              <Text style={styles.cardTitle}>
-                {item.title ?? '제목 없음'}
-              </Text>
+              <Text style={styles.cardTitle}>{item.title ?? '제목 없음'}</Text>
             </View>
 
             <Text style={styles.cardMeta}>
@@ -794,16 +895,85 @@ export default function MapMain({ route }: any) {
     );
   };
 
+  // ===== Mapbox: 클러스터용 GeoJSON =====
+  const featureCollection = useMemo(() => {
+    const features = beacons.map((b) => ({
+      type: 'Feature' as const,
+      id: `beacon-${b.id}`,
+      properties: {
+        beaconId: String(b.id),
+        visibility: (b.visibility || 'public') as string,
+        selected: selectedId != null && String(selectedId) === String(b.id) ? 1 : 0,
+        highlighted:
+          highlightedBeaconId != null && String(highlightedBeaconId) === String(b.id)
+            ? 1
+            : 0,
+      },
+      geometry: {
+        type: 'Point' as const,
+        coordinates: [b._lng, b._lat] as [number, number],
+      },
+    }));
+
+    return {
+      type: 'FeatureCollection' as const,
+      features,
+    };
+  }, [beacons, selectedId, highlightedBeaconId]);
+
+  const onPressShape = useCallback(
+    (e: any) => {
+      try {
+        const f = e?.features?.[0];
+        if (!f) return;
+
+        const props = f.properties || {};
+        const isCluster = !!props.cluster;
+        if (isCluster) {
+          // 클러스터 누르면 줌 인
+          const coords = f.geometry?.coordinates;
+          if (Array.isArray(coords) && coords.length >= 2) {
+            const lng = Number(coords[0]);
+            const lat = Number(coords[1]);
+            if (Number.isFinite(lat) && Number.isFinite(lng)) {
+              cameraRef.current?.setCamera({
+                centerCoordinate: [lng, lat],
+                zoomLevel: Math.min(18, (e?.properties?.zoomLevel ?? 14) + 2),
+                animationDuration: 260,
+              });
+            }
+          }
+          return;
+        }
+
+        const beaconId = props.beaconId;
+        if (beaconId != null) {
+          setSelectedId(beaconId);
+          snapTo(1);
+        }
+      } catch {}
+    },
+    [snapTo],
+  );
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <StatusBar
-        backgroundColor="#fff"
-        translucent={false}
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: '#fff' }}
+      edges={['left', 'right', 'bottom']}
+    >
+      <RNStatusBar
+        backgroundColor="transparent"
+        translucent={true}
         barStyle="dark-content"
       />
 
-      {/* 상단 바 (채팅 화면과 동일 구조) */}
-      <View style={styles.headerContainer}>
+      {/* 상단 바 */}
+      <View
+        style={[
+          styles.headerContainer,
+          { paddingTop: Math.max(insets.top, 0) + 4 },
+        ]}
+      >
         <View style={styles.headerRow}>
           <View style={styles.headerLeft}>
             <Text style={styles.headerTitle}>비콘</Text>
@@ -841,116 +1011,193 @@ export default function MapMain({ route }: any) {
         </View>
       </View>
 
-
       {/* 지도 + 오버레이들 */}
       <View style={{ flex: 1 }}>
-        {loading ? (
+        {loading || !cameraCenter || cameraZoom == null ? (
           <View style={styles.center}>
             <ActivityIndicator />
             <Text style={styles.loadTxt}>지도를 불러오는 중…</Text>
           </View>
         ) : (
-          <ClusteredMap
-            ref={mapRef as any}
+          <MapboxGL.MapView
             style={{ flex: 1 }}
-            initialRegion={initialRegionRef.current}
-            onRegionChangeComplete={handleRegionChangeComplete}
-            provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
-            spiralEnabled
-            showsUserLocation
-            showsMyLocationButton={Platform.OS === 'android'}
+            styleURL={MapboxGL.StyleURL.Street}
+            logoEnabled={false}
+            compassEnabled
+            scaleBarEnabled={false}
+            onCameraChanged={onCameraChanged}
+            onPress={() => {
+              // 지도 빈 곳 누르면 선택만 해제 (기존 UX 해치지 않게 최소)
+              setSelectedId(undefined);
+            }}
           >
-            {beacons.map((b) => {
-              const isHighlighted =
-                highlightedBeaconId != null &&
-                String(highlightedBeaconId) === String(b.id);
+            <MapboxGL.Camera
+              ref={(r) => {
+                cameraRef.current = r;
+              }}
+              centerCoordinate={cameraCenter as any}
+              zoomLevel={cameraZoom as any}
+              animationDuration={0}
+              animationMode="none"
+            />
 
-              return (
-                <Marker
-                  key={`beacon-${b.id}`}
-                  coordinate={{
-                    latitude: b._lat,
-                    longitude: b._lng,
-                  }}
-                  onPress={() => {
-                    setSelectedId(b.id);
-                    snapTo(1);
-                  }}
-                >
-                  {isHighlighted && (
-                    <Animated.View
-                      style={[
-                        styles.glowCircle,
-                        {
-                          transform: [{ scale: pulseAnim }],
-                          opacity: 0.7,
-                        },
-                      ]}
-                    />
-                  )}
+            <MapboxGL.UserLocation
+              visible
+              androidRenderMode="normal"
+              showsUserHeadingIndicator={false}
+            />
 
-                  <View
-                    style={[
-                      styles.pill,
-                      b.id === selectedId
-                        ? styles.pillPrimary
-                        : styles.pillDefault,
-                    ]}
-                  >
-                    <Text style={styles.pillEmoji}>
-                      {visEmoji(
-                        (b.visibility || 'public') as VisibilityT,
-                      )}
-                    </Text>
-                  </View>
-                  <View
-                    style={[
-                      styles.pinTail,
-                      b.id === selectedId
-                        ? { borderTopColor: '#111827' }
-                        : undefined,
-                    ]}
-                  />
-                </Marker>
-              );
-            })}
-          </ClusteredMap>
+            {/* Beacon icons */}
+            <MapboxGL.Images
+              images={{
+                beacon_cluster: require('../../assets/icons/beacon/beacon_cluster.png'),
+                beacon_default: require('../../assets/icons/beacon/beacon_default.png'),
+                beacon_friend: require('../../assets/icons/beacon/beacon_friend.png'),
+                beacon_group: require('../../assets/icons/beacon/beacon_group.png'),
+              }}
+            />
+
+            <MapboxGL.ShapeSource
+              id="beacons"
+              shape={featureCollection as any}
+              cluster
+              clusterRadius={42}
+              clusterMaxZoomLevel={17}
+              onPress={onPressShape}
+            >
+              <MapboxGL.SymbolLayer
+                id="clusterIcon"
+                filter={['has', 'point_count']}
+                style={{
+                  iconImage: 'beacon_cluster',
+                  iconAllowOverlap: true,
+                  iconIgnorePlacement: true,
+                  iconAnchor: 'center',
+                  iconSize: [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    10,
+                    ['step', ['get', 'point_count'], 0.21, 10, 0.23, 30, 0.25, 70, 0.27],
+                    13,
+                    ['step', ['get', 'point_count'], 0.24, 10, 0.26, 30, 0.28, 70, 0.30],
+                    16,
+                    ['step', ['get', 'point_count'], 0.27, 10, 0.29, 30, 0.31, 70, 0.33],
+                  ],
+                }}
+              />
+
+              <MapboxGL.SymbolLayer
+                id="clusterCount"
+                filter={['has', 'point_count']}
+                style={{
+                  textField: ['to-string', ['get', 'point_count']],
+                  textAllowOverlap: true,
+                  textIgnorePlacement: true,
+                  textAnchor: 'center',
+                  textColor: '#ffffff',
+                  textFont: ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                  textSize: [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    10,
+                    ['step', ['get', 'point_count'], 9.5, 10, 10, 30, 10.5, 70, 11],
+                    13,
+                    ['step', ['get', 'point_count'], 10.2, 10, 10.8, 30, 11.4, 70, 12.0],
+                    16,
+                    ['step', ['get', 'point_count'], 11.0, 10, 11.6, 30, 12.2, 70, 12.8],
+                  ],
+                  textHaloColor: 'rgba(0,0,0,0.40)',
+                  textHaloWidth: 1.0,
+                  textHaloBlur: 0.2,
+                }}
+              />
+
+              <MapboxGL.CircleLayer
+                id="selectedHalo"
+                filter={[
+                  'all',
+                  ['!', ['has', 'point_count']],
+                  ['any', ['==', ['get', 'selected'], 1], ['==', ['get', 'highlighted'], 1]],
+                ]}
+                style={{
+                  circleColor: 'rgba(17,24,39,0.14)',
+                  circleOpacity: 0.95,
+                  circleRadius: ['case', ['==', ['get', 'highlighted'], 1], 11, 9],
+                }}
+              />
+
+              <MapboxGL.SymbolLayer
+                id="singlePoints_base"
+                filter={[
+                  'all',
+                  ['!', ['has', 'point_count']],
+                  ['==', ['get', 'selected'], 0],
+                  ['==', ['get', 'highlighted'], 0],
+                ]}
+                style={{
+                  iconImage: [
+                    'case',
+                    ['==', ['get', 'visibility'], 'friends'],
+                    'beacon_friend',
+                    ['any', ['==', ['get', 'visibility'], 'labels'], ['==', ['get', 'visibility'], 'custom']],
+                    'beacon_group',
+                    'beacon_default',
+                  ],
+                  iconAllowOverlap: true,
+                  iconIgnorePlacement: true,
+                  iconAnchor: 'center',
+                  iconSize: ['interpolate', ['linear'], ['zoom'], 10, 0.17, 13, 0.21, 16, 0.24],
+                }}
+              />
+
+              <MapboxGL.SymbolLayer
+                id="singlePoints_selected"
+                filter={[
+                  'all',
+                  ['!', ['has', 'point_count']],
+                  ['any', ['==', ['get', 'selected'], 1], ['==', ['get', 'highlighted'], 1]],
+                ]}
+                style={{
+                  iconImage: [
+                    'case',
+                    ['==', ['get', 'visibility'], 'friends'],
+                    'beacon_friend',
+                    ['any', ['==', ['get', 'visibility'], 'labels'], ['==', ['get', 'visibility'], 'custom']],
+                    'beacon_group',
+                    'beacon_default',
+                  ],
+                  iconAllowOverlap: true,
+                  iconIgnorePlacement: true,
+                  iconAnchor: 'center',
+                  iconSize: ['interpolate', ['linear'], ['zoom'], 10, 0.20, 13, 0.24, 16, 0.27],
+                  iconOffset: [0, -10],
+                }}
+              />
+            </MapboxGL.ShapeSource>
+          </MapboxGL.MapView>
         )}
 
         {/* 오른쪽 사이드 버튼 */}
         <AnimatedRe.View style={[styles.sideControls, sideAnim]}>
           {Platform.OS === 'ios' && (
-            <Pressable
-              style={styles.sideBtn}
-              onPress={recenterToMe}
-            >
+            <Pressable style={styles.sideBtn} onPress={recenterToMe}>
               <Crosshair size={18} color="#111827" />
             </Pressable>
           )}
 
-          <Pressable
-            style={styles.sideBtn}
-            onPress={refreshNow}
-          >
+          <Pressable style={styles.sideBtn} onPress={refreshNow}>
             <RefreshCw size={18} color="#111827" />
           </Pressable>
 
-          <Pressable
-            style={styles.sideBtn}
-            onPress={moveMyBeaconToHere}
-          >
+          <Pressable style={styles.sideBtn} onPress={moveMyBeaconToHere}>
             <Text style={{ fontSize: 18 }}>📍</Text>
           </Pressable>
         </AnimatedRe.View>
 
         {/* 플로팅 + 버튼 */}
-        <AnimatedRe.View
-          style={[
-            styles.fabWrap,
-            { bottom: fabsBottom },
-            fabAnim,
-          ]}
-        >
+        <AnimatedRe.View style={[styles.fabWrap, { bottom: fabsBottom }, fabAnim]}>
           <Pressable
             style={[styles.fab, styles.primaryFab]}
             onPress={() => rootNav.navigate('CreateBeacon')}
@@ -984,13 +1231,7 @@ export default function MapMain({ route }: any) {
           >
             <List size={18} color="#111827" />
             <AnimatedRe.View style={[listBtnLabelAnim]}>
-              <Text
-                style={{
-                  fontWeight: '700',
-                  color: '#111827',
-                }}
-                numberOfLines={1}
-              >
+              <Text style={{ fontWeight: '700', color: '#111827' }} numberOfLines={1}>
                 리스트 보기
               </Text>
             </AnimatedRe.View>
@@ -998,35 +1239,20 @@ export default function MapMain({ route }: any) {
         </AnimatedRe.View>
 
         {/* 반경 힌트 */}
-        <Animated.View
-          style={[styles.radiusHint, { bottom: 90, opacity: fadeAnim }]}
-        >
-          <Text style={styles.radiusHintTxt}>
-            {displayMeters(radiusMeters)}
-          </Text>
+        <Animated.View style={[styles.radiusHint, { bottom: 90, opacity: fadeAnim }]}>
+          <Text style={styles.radiusHintTxt}>{displayMeters(radiusMeters)}</Text>
         </Animated.View>
 
         {/* 아래 시트 */}
-        <AnimatedRe.View
-          style={[styles.sheet, sheetAnim]}
-          {...panResponder.panHandlers}
-        >
+        <AnimatedRe.View style={[styles.sheet, sheetAnim]} {...panResponder.panHandlers}>
           <View style={styles.sheetHandle} />
 
-          <AnimatedRe.View
-            style={[styles.sheetHeaderRow, headerAppearAnim]}
-          >
+          <AnimatedRe.View style={[styles.sheetHeaderRow, headerAppearAnim]}>
             <View style={styles.sheetHeaderLeft}>
-              <Pressable
-                style={styles.circleIconBtn}
-                onPress={refreshNow}
-              >
+              <Pressable style={styles.circleIconBtn} onPress={refreshNow}>
                 <RefreshCw size={16} color="#111827" />
               </Pressable>
-              <Pressable
-                style={styles.circleIconBtn}
-                onPress={moveMyBeaconToHere}
-              >
+              <Pressable style={styles.circleIconBtn} onPress={moveMyBeaconToHere}>
                 <Text style={{ fontSize: 16 }}>📍</Text>
               </Pressable>
             </View>
@@ -1049,17 +1275,8 @@ export default function MapMain({ route }: any) {
               paddingRight: 12,
             }}
             ListEmptyComponent={
-              <View
-                style={{
-                  padding: 16,
-                  paddingRight: 72,
-                }}
-              >
-                <Text
-                  style={{
-                    color: '#6b7280',
-                  }}
-                >
+              <View style={{ padding: 16, paddingRight: 72 }}>
+                <Text style={{ color: '#6b7280' }}>
                   이 반경에 표시할 비콘이 없습니다. 필터를 조절해 보세요.
                 </Text>
               </View>
@@ -1068,203 +1285,31 @@ export default function MapMain({ route }: any) {
         </AnimatedRe.View>
       </View>
 
-      {/* 필터 모달 */}
-      <Modal
+      {/* ✅ SearchModal 연결 */}
+      <SearchModal
         visible={showFilter}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowFilter(false)}
-      >
-        <Pressable
-          style={styles.modalBackdrop}
-          onPress={() => setShowFilter(false)}
-        />
-        <View style={styles.filterPanel}>
-          {/* 거리 */}
-          <View style={styles.cardBlock}>
-            <View style={styles.cardBlockHead}>
-              <Text style={styles.cardBlockTitle}>상대와의 최대 거리</Text>
-              <Text style={styles.cardBlockValue}>
-                {displayMeters(radiusMeters)}
-              </Text>
-            </View>
-            <SingleSlider
-              min={50}
-              max={3000}
-              step={100}
-              value={radiusMeters}
-              onChange={(v: number) => setRadiusMeters(v)}
-              trackHeight={6}
-              thumbSize={22}
-              activeScale={1.25}
-            />
-            <Text style={styles.helperTxt}>
-              프로필 밀도가 낮을 때는 거리 범위를 자동으로 조정할 수 있어요.
-            </Text>
-          </View>
-
-          {/* 성별 */}
-          <Pressable
-            style={styles.cardRow}
-            onPress={() => setShowGenderSheet(true)}
-          >
-            <View>
-              <Text style={styles.cardBlockTitle}>보고 싶은 성별</Text>
-              <Text style={styles.rowSubValue}>
-                {GENDER_LABEL[gender]}
-              </Text>
-            </View>
-            <ChevronRight size={18} color="#9ca3af" />
-          </Pressable>
-
-          {/* 노출 범위 */}
-          <Pressable
-            style={styles.cardRow}
-            onPress={() => setShowVisibilitySheet(true)}
-          >
-            <View>
-              <Text style={styles.cardBlockTitle}>노출 범위</Text>
-              <Text style={styles.rowSubValue}>
-                {VIS_LABEL[visibility]}
-              </Text>
-            </View>
-            <ChevronRight size={18} color="#9ca3af" />
-          </Pressable>
-
-          {/* 연령대 */}
-          <View style={styles.cardBlock}>
-            <View style={styles.cardBlockHead}>
-              <Text style={styles.cardBlockTitle}>상대의 연령대</Text>
-              <Text style={styles.cardBlockValue}>
-                {ageRange[0]} - {ageRange[1] >= 80 ? '80+' : ageRange[1]}
-              </Text>
-            </View>
-            <RangeSlider
-              min={0}
-              max={80}
-              step={1}
-              value={ageRange}
-              onChange={setAgeRange}
-              trackHeight={6}
-              thumbSize={22}
-              activeScale={1.25}
-            />
-          </View>
-
-          {/* Actions */}
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'flex-end',
-              marginTop: 12,
-            }}
-          >
-            <Pressable
-              style={styles.modalBtnSecondary}
-              onPress={() => {
-                setRadiusMeters(800);
-                setGender('any');
-                setVisibility('any');
-                setAgeRange([27, 49]);
-              }}
-            >
-              <Text style={styles.modalBtnSecondaryTxt}>초기화</Text>
-            </Pressable>
-            <Pressable
-              style={styles.modalBtn}
-              onPress={() => {
-                setShowFilter(false);
-                debouncedFetchRef.current?.();
-              }}
-            >
-              <Text style={styles.modalBtnTxt}>적용</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Gender sheet */}
-      <Modal
-        visible={showGenderSheet}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowGenderSheet(false)}
-      >
-        <Pressable
-          style={styles.modalBackdrop}
-          onPress={() => setShowGenderSheet(false)}
-        />
-        <View style={styles.bottomSheet}>
-          {(['any', 'male', 'female', 'other'] as const).map((g) => (
-            <Pressable
-              key={g}
-              style={[
-                styles.sheetRow,
-                gender === g && styles.sheetRowActive,
-              ]}
-              onPress={() => {
-                setGender(g);
-                setShowGenderSheet(false);
-              }}
-            >
-              <Text
-                style={[
-                  styles.sheetRowTxt,
-                  gender === g && styles.sheetRowTxtActive,
-                ]}
-              >
-                {GENDER_LABEL[g]}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-      </Modal>
-
-      {/* Visibility sheet */}
-      <Modal
-        visible={showVisibilitySheet}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowVisibilitySheet(false)}
-      >
-        <Pressable
-          style={styles.modalBackdrop}
-          onPress={() => setShowVisibilitySheet(false)}
-        />
-        <View style={styles.bottomSheet}>
-          {(
-            [
-              'any',
-              'public',
-              'public_filtered',
-              'friends',
-              'labels',
-              'custom',
-            ] as const
-          ).map((v) => (
-            <Pressable
-              key={v}
-              style={[
-                styles.sheetRow,
-                visibility === v && styles.sheetRowActive,
-              ]}
-              onPress={() => {
-                setVisibility(v);
-                setShowVisibilitySheet(false);
-              }}
-            >
-              <Text
-                style={[
-                  styles.sheetRowTxt,
-                  visibility === v && styles.sheetRowTxtActive,
-                ]}
-              >
-                {VIS_LABEL[v]}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-      </Modal>
+        onClose={() => setShowFilter(false)}
+        queryText={searchQuery}
+        setQueryText={setSearchQuery}
+        radiusMeters={radiusMeters}
+        setRadiusMeters={setRadiusMeters}
+        gender={gender}
+        setGender={setGender}
+        visibility={visibility}
+        setVisibility={setVisibility}
+        ageRange={ageRange}
+        setAgeRange={setAgeRange}
+        onReset={() => {
+          setRadiusMeters(800);
+          setGender('any');
+          setVisibility('any');
+          setAgeRange([27, 49]);
+          setSearchQuery('');
+        }}
+        onApply={() => {
+          debouncedFetchRef.current?.();
+        }}
+      />
 
       {err && (
         <View style={styles.toast}>
@@ -1275,423 +1320,11 @@ export default function MapMain({ route }: any) {
   );
 }
 
-/* ======================= Custom sliders (Single/Range) ======================= */
-type SingleSliderProps = {
-  min: number;
-  max: number;
-  step?: number;
-  value: number;
-  onChange: (v: number) => void;
-  trackHeight?: number;
-  thumbSize?: number;
-  activeScale?: number;
-  disabled?: boolean;
-};
-type RangeSliderProps = {
-  min: number;
-  max: number;
-  step?: number;
-  value: [number, number];
-  onChange: (next: [number, number]) => void;
-  trackHeight?: number;
-  thumbSize?: number;
-  activeScale?: number;
-  disabled?: boolean;
-};
-
-const SingleSlider: React.FC<SingleSliderProps> = ({
-  min,
-  max,
-  step = 1,
-  value,
-  onChange,
-  trackHeight = 6,
-  thumbSize = 22,
-  activeScale = 1.25,
-  disabled = false,
-}) => {
-  const widthRef = useRef(0);
-  const [widthReady, setWidthReady] = useState(false);
-  const valueRef = useRef(value);
-  const minRef = useRef(min);
-  const maxRef = useRef(max);
-  const stepRef = useRef(step);
-
-  useEffect(() => {
-    valueRef.current = value;
-  }, [value]);
-  useEffect(() => {
-    minRef.current = min;
-    maxRef.current = max;
-  }, [min, max]);
-  useEffect(() => {
-    stepRef.current = step;
-  }, [step]);
-
-  const clamp = (n: number, lo: number, hi: number) =>
-    Math.max(lo, Math.min(hi, n));
-
-  const valToX = (val: number) => {
-    const w = widthRef.current || 0;
-    if (w <= 0) return 0;
-    return (
-      ((val - minRef.current) / (maxRef.current - minRef.current)) * w
-    );
-  };
-  const xToVal = (x: number) => {
-    const w = widthRef.current || 1;
-    const raw =
-      minRef.current +
-      (clamp(x, 0, w) / w) *
-        (maxRef.current - minRef.current);
-    const snapped =
-      Math.round(raw / stepRef.current) *
-      stepRef.current;
-    return clamp(
-      snapped,
-      minRef.current,
-      maxRef.current,
-    );
-  };
-
-  const thumbX = widthReady ? valToX(value) : 0;
-
-  const scale = useRef(new Animated.Value(1)).current;
-  const grow = () =>
-    Animated.spring(scale, {
-      toValue: activeScale,
-      useNativeDriver: true,
-      bounciness: 6,
-    }).start();
-  const shrink = () =>
-    Animated.spring(scale, {
-      toValue: 1,
-      useNativeDriver: true,
-      bounciness: 6,
-    }).start();
-
-  const pan = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () =>
-          !disabled,
-        onMoveShouldSetPanResponder: () =>
-          !disabled,
-        onPanResponderGrant: (e) => {
-          grow();
-          onChange(
-            xToVal(e.nativeEvent.locationX),
-          );
-        },
-        onPanResponderMove: (e) => {
-          onChange(
-            xToVal(e.nativeEvent.locationX),
-          );
-        },
-        onPanResponderRelease: () => shrink(),
-        onPanResponderTerminate: () => shrink(),
-        onPanResponderTerminationRequest: () => false,
-      }),
-    [onChange, disabled],
-  );
-
-  return (
-    <View style={{ paddingTop: 8 }}>
-      <View
-        collapsable={false}
-        style={[
-          styles.rangeWrap,
-          {
-            height: Math.max(
-              thumbSize,
-              trackHeight,
-            ),
-            position: 'relative',
-          },
-        ]}
-        onLayout={(e) => {
-          widthRef.current =
-            e.nativeEvent.layout.width;
-          if (!widthReady) setWidthReady(true);
-        }}
-      >
-        <View
-          style={[
-            styles.rangeTrack,
-            { height: trackHeight },
-          ]}
-        />
-        <View
-          style={[
-            styles.rangeSelected,
-            {
-              height: trackHeight,
-              left: 0,
-              width: Math.max(0, thumbX),
-            },
-          ]}
-        />
-        <Animated.View
-          pointerEvents="none"
-          style={[
-            styles.rangeThumb,
-            {
-              width: thumbSize,
-              height: thumbSize,
-              borderRadius: thumbSize / 2,
-              left: thumbX - thumbSize / 2,
-              transform: [{ scale }],
-            },
-          ]}
-        />
-        <View
-          {...(pan as any).panHandlers}
-          style={StyleSheet.absoluteFill}
-          pointerEvents="box-only"
-        />
-      </View>
-    </View>
-  );
-};
-
-const RangeSlider: React.FC<RangeSliderProps> = ({
-  min,
-  max,
-  step = 1,
-  value,
-  onChange,
-  trackHeight = 6,
-  thumbSize = 22,
-  activeScale = 1.25,
-  disabled = false,
-}) => {
-  const widthRef = useRef(0);
-  const [widthReady, setWidthReady] = useState(false);
-  const aRef = useRef(value[0]);
-  const bRef = useRef(value[1]);
-  const minRef = useRef(min);
-  const maxRef = useRef(max);
-  const stepRef = useRef(step);
-
-  useEffect(() => {
-    aRef.current = value[0];
-    bRef.current = value[1];
-  }, [value]);
-  useEffect(() => {
-    minRef.current = min;
-    maxRef.current = max;
-  }, [min, max]);
-  useEffect(() => {
-    stepRef.current = step;
-  }, [step]);
-
-  const clamp = (n: number, lo: number, hi: number) =>
-    Math.max(lo, Math.min(hi, n));
-
-  const toX = (val: number) => {
-    const w = widthRef.current || 0;
-    if (w <= 0) return 0;
-    return (
-      ((val - minRef.current) / (maxRef.current - minRef.current)) * w
-    );
-  };
-  const toVal = (x: number) => {
-    const w = widthRef.current || 1;
-    const raw =
-      minRef.current +
-      (clamp(x, 0, w) / w) *
-        (maxRef.current - minRef.current);
-    const snapped =
-      Math.round(raw / stepRef.current) *
-      stepRef.current;
-    return clamp(
-      snapped,
-      minRef.current,
-      maxRef.current,
-    );
-  };
-
-  const leftX = widthReady ? toX(value[0]) : 0;
-  const rightX = widthReady ? toX(value[1]) : 0;
-
-  const scaleA = useRef(new Animated.Value(1)).current;
-  const scaleB = useRef(new Animated.Value(1)).current;
-  const grow = (which: 'a' | 'b') =>
-    Animated.spring(which === 'a' ? scaleA : scaleB, {
-      toValue: activeScale,
-      useNativeDriver: true,
-      bounciness: 6,
-    }).start();
-  const shrink = (which: 'a' | 'b') =>
-    Animated.spring(which === 'a' ? scaleA : scaleB, {
-      toValue: 1,
-      useNativeDriver: true,
-      bounciness: 6,
-    }).start();
-
-  const active = useRef<'a' | 'b' | null>(null);
-  const pan = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () =>
-          !disabled,
-        onMoveShouldSetPanResponder: () =>
-          !disabled,
-        onPanResponderGrant: (e) => {
-          const x = e.nativeEvent.locationX;
-          active.current =
-            Math.abs(x - leftX) <=
-            Math.abs(x - rightX)
-              ? 'a'
-              : 'b';
-          if (active.current) grow(active.current);
-          const v = toVal(x);
-          if (active.current === 'a')
-            onChange([
-              Math.min(v, bRef.current),
-              bRef.current,
-            ]);
-          else
-            onChange([
-              aRef.current,
-              Math.max(v, aRef.current),
-            ]);
-        },
-        onPanResponderMove: (e) => {
-          if (!active.current) return;
-          const v = toVal(e.nativeEvent.locationX);
-          if (active.current === 'a')
-            onChange([
-              Math.min(v, bRef.current),
-              bRef.current,
-            ]);
-          else
-            onChange([
-              aRef.current,
-              Math.max(v, aRef.current),
-            ]);
-        },
-        onPanResponderRelease: () => {
-          if (active.current)
-            shrink(active.current);
-          active.current = null;
-        },
-        onPanResponderTerminate: () => {
-          if (active.current)
-            shrink(active.current);
-          active.current = null;
-        },
-        onPanResponderTerminationRequest: () => false,
-      }),
-    [onChange, leftX, rightX, disabled],
-  );
-
-  return (
-    <View style={{ paddingTop: 8 }}>
-      <View
-        collapsable={false}
-        style={[
-          styles.rangeWrap,
-          {
-            height: Math.max(
-              thumbSize,
-              trackHeight,
-            ),
-            position: 'relative',
-          },
-        ]}
-        onLayout={(e) => {
-          widthRef.current =
-            e.nativeEvent.layout.width;
-          if (!widthReady) setWidthReady(true);
-        }}
-      >
-        <View
-          style={[
-            styles.rangeTrack,
-            { height: trackHeight },
-          ]}
-        />
-        <View
-          style={[
-            styles.rangeSelected,
-            {
-              height: trackHeight,
-              left: Math.min(leftX, rightX),
-              width: Math.abs(rightX - leftX),
-            },
-          ]}
-        />
-        <Animated.View
-          pointerEvents="none"
-          style={[
-            styles.rangeThumb,
-            {
-              width: thumbSize,
-              height: thumbSize,
-              borderRadius: thumbSize / 2,
-              left: leftX - thumbSize / 2,
-              transform: [{ scale: scaleA }],
-            },
-          ]}
-        />
-        <Animated.View
-          pointerEvents="none"
-          style={[
-            styles.rangeThumb,
-            {
-              width: thumbSize,
-              height: thumbSize,
-              borderRadius: thumbSize / 2,
-              left: rightX - thumbSize / 2,
-              transform: [{ scale: scaleB }],
-            },
-          ]}
-        />
-        <View
-          {...(pan as any).panHandlers}
-          style={StyleSheet.absoluteFill}
-          pointerEvents="box-only"
-        />
-      </View>
-    </View>
-  );
-};
-
 const styles = StyleSheet.create({
-  /** 🔝 공통 상단바(예전 topBar용 – 지금은 안 써도 됨) */
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 14,
-    paddingLeft: 5,
-    paddingTop: Platform.OS === 'ios' ? 8 : 4,
-    paddingBottom: 8,
-    backgroundColor: '#fff',
-  },
-
-  logo: {
-    width: 112,
-    height: 36,
-    resizeMode: 'contain',
-  },
-
-  iconRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-
-  iconBtn: {
-    padding: 6,
-  },
-
   headerContainer: {
     backgroundColor: '#ffffff',
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#E5E7EB',
-    paddingTop: 4,
     paddingBottom: 4,
   },
   headerRow: {
@@ -1719,7 +1352,6 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     marginLeft: 6,
   },
-
 
   /** 배지 (알림 카운트) */
   badgeDot: {
@@ -1751,42 +1383,6 @@ const styles = StyleSheet.create({
   loadTxt: {
     marginTop: 6,
     color: '#6b7280',
-  },
-
-  /** 지도 마커 말풍선 */
-  pill: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: '#fff',
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  pillEmoji: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: '#fff',
-  },
-  pillDefault: {
-    backgroundColor: '#6b7280',
-  },
-  pillPrimary: {
-    backgroundColor: '#111827',
-  },
-  pinTail: {
-    width: 0,
-    height: 0,
-    borderLeftWidth: 6,
-    borderRightWidth: 6,
-    borderTopWidth: 8,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderTopColor: '#6b7280',
-    alignSelf: 'center',
-    marginTop: -2,
   },
 
   /** 오른쪽 사이드 버튼들 */
@@ -1977,128 +1573,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
 
-  /** 모달 / 필터 */
-  modalBackdrop: {
-    position: 'absolute',
-    inset: 0,
-    backgroundColor: 'rgba(0,0,0,0.28)',
-  },
-  filterPanel: {
-    position: 'absolute',
-    left: 12,
-    right: 12,
-    top: 64,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 14,
-    shadowColor: '#000',
-    shadowOpacity: 0.14,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-
-  cardBlock: {
-    borderRadius: 14,
-    padding: 14,
-    marginBottom: 12,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#eef0f3',
-  },
-  cardBlockHead: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  cardBlockTitle: {
-    fontSize: 16,
-    fontWeight: '900',
-    color: '#111827',
-  },
-  cardBlockValue: {
-    color: '#111827',
-    fontWeight: '800',
-    fontSize: 16,
-  },
-  helperTxt: {
-    color: '#9ca3af',
-    marginTop: 8,
-    fontSize: 13,
-  },
-
-  cardRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderRadius: 14,
-    padding: 14,
-    marginBottom: 12,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#eef0f3',
-  },
-  rowSubValue: {
-    marginTop: 6,
-    color: '#111827',
-    fontWeight: '700',
-  },
-
-  modalBtn: {
-    marginLeft: 10,
-    backgroundColor: '#111827',
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-  },
-  modalBtnTxt: {
-    color: '#fff',
-    fontWeight: '800',
-  },
-  modalBtnSecondary: {
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-  },
-  modalBtnSecondaryTxt: {
-    color: '#111827',
-    fontWeight: '800',
-  },
-
-  /** 하단 선택 시트 (성별 / 노출범위) */
-  bottomSheet: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    padding: 8,
-    borderTopWidth: 1,
-    borderColor: '#e5e7eb',
-  },
-  sheetRow: {
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 10,
-    marginVertical: 4,
-    backgroundColor: '#f9fafb',
-  },
-  sheetRowActive: {
-    backgroundColor: '#111827',
-  },
-  sheetRowTxt: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#111827',
-  },
-  sheetRowTxtActive: {
-    color: '#fff',
-  },
-
   /** 에러 토스트 */
   toast: {
     position: 'absolute',
@@ -2115,42 +1589,5 @@ const styles = StyleSheet.create({
     color: '#92400e',
     textAlign: 'center',
     fontSize: 13,
-  },
-
-  /** 슬라이더 비주얼 */
-  rangeWrap: {
-    justifyContent: 'center',
-    overflow: 'visible',
-  },
-  rangeTrack: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    borderRadius: 999,
-    backgroundColor: '#E5E7EB',
-  },
-  rangeSelected: {
-    position: 'absolute',
-    borderRadius: 999,
-    backgroundColor: '#EF4444',
-  },
-  rangeThumb: {
-    position: 'absolute',
-    backgroundColor: '#EF4444',
-    borderWidth: 3,
-    borderColor: '#fff',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 3,
-  },
-
-  /** 하이라이트 glow */
-  glowCircle: {
-    position: 'absolute',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: 'rgba(17,24,39,0.25)',
   },
 });

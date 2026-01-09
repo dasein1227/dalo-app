@@ -1,19 +1,22 @@
 // src/screens/home/Main.tsx
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Pressable,
-  StatusBar,
+  StatusBar as RNStatusBar,
   FlatList,
   ListRenderItem,
   NativeScrollEvent,
   NativeSyntheticEvent,
   Dimensions,
   Image,
+  ActivityIndicator,
+  RefreshControl,
+  Platform,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Bell,
   ChevronDown,
@@ -25,15 +28,19 @@ import {
   Settings as SettingsIcon,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { supabase } from '@/lib/supabase';
+import {
+  fetchFollowSummary,
+  type FollowSummary,
+} from '@/lib/social/followSummary';
 
 type FeedTab = 'friends' | 'following' | 'beacons';
 
 type FeedPost = {
   id: string;
   tab: FeedTab;
-  color: string; // TODO: 나중에 image_url 로 교체
+  imageUrl: string | null;
 };
 
 type ShopBanner = {
@@ -51,6 +58,7 @@ type MyProfileMini = {
   nickname: string | null;
   avatar_url: string | null;
   private_avatar_url: string | null;
+  dashboard_last_seen_at?: string | null;
 };
 
 const TABS: { key: FeedTab; label: string }[] = [
@@ -100,29 +108,168 @@ const SHOP_BANNERS: ShopBanner[] = [
   },
 ];
 
-function createDummyPosts(
-  tab: FeedTab,
-  count: number,
-  offset: number,
-): FeedPost[] {
-  const palette = {
-    friends: ['#F97373', '#FDBA74', '#FACC15', '#4ADE80', '#2DD4BF', '#60A5FA'],
-    following: ['#A78BFA', '#F472B6', '#F97373', '#22C55E', '#38BDF8', '#FBBF24'],
-    beacons: ['#F97373', '#FB7185', '#E879F9', '#22C55E', '#FACC15', '#60A5FA'],
-  } as const;
+/** posts + post_media 결과에서 썸네일 URL 추출 */
+const getImageUrlFromPost = (row: any): string | null => {
+  if (!row) return null;
 
-  const colors = palette[tab];
-  const arr: FeedPost[] = [];
+  if (row.image_url) return row.image_url;
+  if (row.thumbnail_url) return row.thumbnail_url;
 
-  for (let i = 0; i < count; i += 1) {
-    const idx = (offset + i) % colors.length;
-    arr.push({
-      id: `${tab}-${offset + i}`,
-      tab,
-      color: colors[idx],
-    });
+  if (Array.isArray(row.post_media) && row.post_media.length > 0) {
+    const first = row.post_media[0];
+    return (
+      first.thumbnail_url ||
+      first.url ||
+      first.image_url ||
+      first.media_url ||
+      first.file_url ||
+      null
+    );
   }
-  return arr;
+
+  return null;
+};
+
+/** 안 읽은 채팅 개수 (room_seq/read_receipts 기반: 서버 RPC 정답) */
+async function fetchUnreadChatCount(userId: string): Promise<number> {
+  // 1) 내 active room 목록
+  const { data: members, error: memErr } = await supabase
+    .from('chat_members')
+    .select('room_id,active')
+    .eq('user_id', userId);
+
+  if (memErr || !members || members.length === 0) {
+    if (memErr?.message) console.warn('fetchUnreadChatCount members error', memErr);
+    return 0;
+  }
+
+  const roomIds = (members ?? [])
+    .filter((m: any) => m.active !== false)
+    .map((m: any) => Number(m.room_id))
+    .filter((v: any) => Number.isFinite(v));
+
+  if (roomIds.length === 0) return 0;
+
+  // 2) ✅ RPC로 방별 unread_count 받아서 합산
+  try {
+    const { data, error } = await supabase.rpc('get_my_unreads', {
+      p_room_ids: roomIds,
+    });
+
+    if (error || !data) {
+      if (error?.message) console.warn('fetchUnreadChatCount get_my_unreads error', error);
+      return 0;
+    }
+
+    let total = 0;
+    for (const row of data as any[]) {
+      const c = Number(row?.unread_count ?? 0);
+      if (Number.isFinite(c)) total += c;
+    }
+    return total;
+  } catch (e) {
+    console.warn('fetchUnreadChatCount get_my_unreads exception', e);
+    return 0;
+  }
+}
+
+/** 주변 비콘 개수 (유저 비콘만) */
+async function fetchNearbyBeaconCount(): Promise<number> {
+  const { count, error } = await supabase
+    .from('beacons')
+    .select('id', { count: 'exact', head: true })
+    .is('business_id', null); // ✅ 가게 비콘 제외
+
+  if (error) {
+    if (error.message) {
+      console.warn('fetchNearbyBeaconCount error', {
+        code: (error as any).code,
+        message: error.message,
+        details: (error as any).details,
+        hint: (error as any).hint,
+      });
+    }
+    return 0;
+  }
+  return count ?? 0;
+}
+
+/** 친구/팔로잉 새 게시물 개수 */
+async function fetchNewFriendPostsCount(
+  userId: string,
+): Promise<{ count: number; dashboardLastSeenAt: string | null }> {
+  const { data: profileRow, error: profileErr } =
+    (await supabase
+      .from('profiles')
+      .select('id,dashboard_last_seen_at')
+      .eq('id', userId)
+      .maybeSingle()) as { data: MyProfileMini | null; error: any };
+
+  if (profileErr || !profileRow) {
+    if (profileErr?.message) {
+      console.warn('fetchNewFriendPostsCount profile error', profileErr);
+    }
+    return { count: 0, dashboardLastSeenAt: null };
+  }
+
+  const dashboardLastSeenAt = profileRow.dashboard_last_seen_at ?? null;
+
+  if (!dashboardLastSeenAt) {
+    return { count: 0, dashboardLastSeenAt: null };
+  }
+
+  // 친구 목록
+  const { data: friendsRows, error: friendErr } = await supabase
+    .from('friendships')
+    .select('requester,addressee,status')
+    .eq('status', 'accepted')
+    .or(`requester.eq.${userId},addressee.eq.${userId}`);
+
+  if (friendErr?.message) {
+    console.warn('fetchNewFriendPostsCount friends error', friendErr);
+  }
+
+  const friendIdSet = new Set<string>();
+  (friendsRows ?? []).forEach((row: any) => {
+    if (row.requester === userId && row.addressee) {
+      friendIdSet.add(row.addressee);
+    } else if (row.addressee === userId && row.requester) {
+      friendIdSet.add(row.requester);
+    }
+  });
+
+  // 내가 팔로우하는 사람들
+  const { data: followRows, error: followErr } = await supabase
+    .from('profile_follows')
+    .select('following_id')
+    .eq('follower_id', userId);
+
+  if (followErr?.message) {
+    console.warn('fetchNewFriendPostsCount follows error', followErr);
+  }
+
+  (followRows ?? []).forEach((row: any) => {
+    if (row.following_id) friendIdSet.add(row.following_id);
+  });
+
+  const authorIds = Array.from(friendIdSet);
+  if (authorIds.length === 0) {
+    return { count: 0, dashboardLastSeenAt };
+  }
+
+  const { count, error: postErr } = await supabase
+    .from('posts')
+    .select('id', { count: 'exact', head: true })
+    .in('user_id', authorIds)
+    .gt('created_at', dashboardLastSeenAt)
+    .is('deleted_at', null);
+
+  if (postErr?.message) {
+    console.warn('fetchNewFriendPostsCount posts error', postErr);
+    return { count: 0, dashboardLastSeenAt };
+  }
+
+  return { count: count ?? 0, dashboardLastSeenAt };
 }
 
 /** SHOP 추천 배너 캐러셀 */
@@ -226,48 +373,323 @@ function ShopCarousel() {
 
 export default function HomeMain() {
   const nav = useNavigation<any>();
+  const insets = useSafeAreaInsets();
+
+  // =========================
+  // ✅ StatusBar: 투명 + 헤더가 StatusBar 영역까지 확장 (ChatRoomsScreen과 동일)
+  // =========================
+  const applyStatusBar = useCallback(() => {
+    try {
+      (nav as any).setOptions?.({
+        statusBarColor: 'transparent',
+        statusBarStyle: 'dark',
+        statusBarTranslucent: true,
+      });
+    } catch {}
+
+    if (Platform.OS !== 'android') return;
+    try {
+      RNStatusBar.setTranslucent(true);
+      RNStatusBar.setBackgroundColor('transparent', true);
+      RNStatusBar.setBarStyle('dark-content', true);
+    } catch {}
+  }, [nav]);
+
+  useFocusEffect(
+    useCallback(() => {
+      applyStatusBar();
+      let t1: any = null;
+      let t2: any = null;
+
+      try {
+        requestAnimationFrame(() => applyStatusBar());
+      } catch {}
+
+      t1 = setTimeout(() => applyStatusBar(), 0);
+      t2 = setTimeout(() => applyStatusBar(), 60);
+
+      return () => {
+        if (t1) clearTimeout(t1);
+        if (t2) clearTimeout(t2);
+      };
+    }, [applyStatusBar]),
+  );
+
+  useEffect(() => {
+    applyStatusBar();
+  }, [applyStatusBar]);
 
   const [expanded, setExpanded] = useState(true);
   const [activeTab, setActiveTab] = useState<FeedTab>('friends');
+
   const [postsByTab, setPostsByTab] = useState<Record<FeedTab, FeedPost[]>>({
-    friends: createDummyPosts('friends', 18, 0),
-    following: createDummyPosts('following', 18, 0),
-    beacons: createDummyPosts('beacons', 18, 0),
+    friends: [],
+    following: [],
+    beacons: [],
   });
+
+  const [loadedTabs, setLoadedTabs] = useState<Record<FeedTab, boolean>>({
+    friends: false,
+    following: false,
+    beacons: false,
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [errorText, setErrorText] = useState<string | null>(null);
+
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [myProfile, setMyProfile] = useState<MyProfileMini | null>(null);
   const [headerHeight, setHeaderHeight] = useState(0);
 
+  // 브리핑 숫자
+  const [unreadChatCount, setUnreadChatCount] = useState(0);
+  const [nearbyBeaconCount, setNearbyBeaconCount] = useState(0);
+  const [newFriendPostsCount, setNewFriendPostsCount] = useState(0);
+  const [followSummary, setFollowSummary] = useState<FollowSummary | null>(
+    null,
+  );
+
   const listRef = useRef<FlatList<FeedPost>>(null);
+  const lastUnreadRefreshAtRef = useRef(0);
   const data = postsByTab[activeTab];
 
-  // 내 프로필 미니 정보
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      const { data: authData, error: authErr } = await supabase.auth.getUser();
-      if (authErr || !authData.user || !mounted) return;
 
-      const uid = authData.user.id;
+  /** 상단 브리핑 + 프로필 로딩 */
+  const loadOverview = useCallback(async () => {
+    const { data: authData, error: authErr } = await supabase.auth.getUser();
+    if (authErr || !authData.user) return;
+    const uid = authData.user.id;
 
-      const { data: profileRow, error: profileErr } =
-        (await supabase
-          .from('profiles')
-          .select('id,nickname,avatar_url,private_avatar_url')
-          .eq('id', uid)
-          .maybeSingle()) as {
-          data: MyProfileMini | null;
-          error: any;
-        };
+    // 프로필
+    const { data: profileRow, error: profileErr } =
+      (await supabase
+        .from('profiles')
+        .select(
+          'id,nickname,avatar_url,private_avatar_url,dashboard_last_seen_at',
+        )
+        .eq('id', uid)
+        .maybeSingle()) as {
+        data: MyProfileMini | null;
+        error: any;
+      };
 
-      if (!mounted || profileErr || !profileRow) return;
+    if (profileErr?.message) {
+      console.warn('HomeMain profile error', profileErr);
+    } else if (profileRow) {
       setMyProfile(profileRow);
-    })();
+    }
 
-    return () => {
-      mounted = false;
-    };
+    try {
+      // 브리핑 숫자들 병렬
+      const [unreadCount, beaconCount, newPostsResult, followSumm] =
+        await Promise.all([
+          fetchUnreadChatCount(uid),
+          fetchNearbyBeaconCount(),
+          fetchNewFriendPostsCount(uid),
+          fetchFollowSummary(uid),
+        ]);
+
+      setUnreadChatCount(unreadCount);
+      lastUnreadRefreshAtRef.current = Date.now();
+      setNearbyBeaconCount(beaconCount);
+      setNewFriendPostsCount(newPostsResult.count);
+      setFollowSummary(followSumm);
+
+      // 새 게시물 기준 시점 업데이트
+      if (newPostsResult.dashboardLastSeenAt) {
+        await supabase
+          .from('profiles')
+          .update({ dashboard_last_seen_at: new Date().toISOString() })
+          .eq('id', uid);
+      }
+    } catch (e) {
+      console.warn('HomeMain overview error', e);
+    }
   }, []);
+
+  /** 홈 복귀 시: unread 채팅만 가볍게 갱신 (DB write 없음) */
+const refreshUnreadChatCount = useCallback(async () => {
+  const now = Date.now();
+  if (now - lastUnreadRefreshAtRef.current < 1200) return;
+  lastUnreadRefreshAtRef.current = now;
+
+  try {
+    const { data: authData, error: authErr } = await supabase.auth.getUser();
+    if (authErr || !authData.user) return;
+
+    const uid = authData.user.id;
+    const unreadCount = await fetchUnreadChatCount(uid);
+    setUnreadChatCount(unreadCount);
+  } catch (e) {
+    console.warn('HomeMain refreshUnreadChatCount error', e);
+  }
+}, []);
+
+
+  // 최초 로딩
+  useEffect(() => {
+    loadOverview();
+  }, [loadOverview]);
+
+  useFocusEffect(
+    useCallback(() => {
+      refreshUnreadChatCount();
+    }, [refreshUnreadChatCount]),
+  );
+
+  /** 탭별 피드 로딩 */
+  const loadPostsForTab = useCallback(
+    async (tab: FeedTab) => {
+      setLoading(true);
+      setErrorText(null);
+
+      try {
+        const { data: authData, error: authErr } = await supabase.auth.getUser();
+        if (authErr || !authData.user) {
+          setErrorText('로그인이 필요합니다.');
+          return;
+        }
+
+        const uid = authData.user.id;
+
+        // 1) 친구 피드
+        if (tab === 'friends') {
+          const { data: friendsRows, error: frErr } = await supabase
+            .from('friendships')
+            .select('requester, addressee, status')
+            .eq('status', 'accepted')
+            .or(`requester.eq.${uid},addressee.eq.${uid}`);
+
+          if (frErr) {
+            console.error(frErr);
+            setErrorText('친구 목록을 불러오는 중 오류가 발생했습니다.');
+            return;
+          }
+
+          const friendIdSet = new Set<string>();
+          (friendsRows ?? []).forEach((row: any) => {
+            if (row.requester === uid && row.addressee) {
+              friendIdSet.add(row.addressee);
+            } else if (row.addressee === uid && row.requester) {
+              friendIdSet.add(row.requester);
+            }
+          });
+
+          const friendIds = Array.from(friendIdSet);
+          if (friendIds.length === 0) {
+            setPostsByTab((prev) => ({ ...prev, [tab]: [] }));
+            return;
+          }
+
+          const { data: postRows, error: postErr } = await supabase
+            .from('posts')
+            .select('id, user_id, caption, created_at, post_media(*)')
+            .in('user_id', friendIds)
+            .is('deleted_at', null)
+            .order('created_at', { ascending: false })
+            .limit(60);
+
+          if (postErr) {
+            console.error(postErr);
+            setErrorText('친구 피드를 불러오는 중 오류가 발생했습니다.');
+            return;
+          }
+
+          const mapped: FeedPost[] = (postRows ?? []).map((row: any) => ({
+            id: row.id,
+            tab,
+            imageUrl: getImageUrlFromPost(row),
+          }));
+
+          setPostsByTab((prev) => ({ ...prev, [tab]: mapped }));
+        }
+
+        // 2) 팔로잉 피드
+        if (tab === 'following') {
+          const { data: followRows, error: foErr } = await supabase
+            .from('profile_follows')
+            .select('follower_id, following_id')
+            .eq('follower_id', uid);
+
+          if (foErr) {
+            console.error(foErr);
+            setErrorText('팔로잉 정보를 불러오는 중 오류가 발생했습니다.');
+            return;
+          }
+
+          const followingIds = (followRows ?? [])
+            .map((row: any) => row.following_id)
+            .filter(Boolean);
+
+          if (followingIds.length === 0) {
+            setPostsByTab((prev) => ({ ...prev, [tab]: [] }));
+            return;
+          }
+
+          const { data: postRows, error: postErr } = await supabase
+            .from('posts')
+            .select('id, user_id, caption, created_at, post_media(*)')
+            .in('user_id', followingIds)
+            .is('deleted_at', null)
+            .order('created_at', { ascending: false })
+            .limit(60);
+
+          if (postErr) {
+            console.error(postErr);
+            setErrorText('팔로잉 피드를 불러오는 중 오류가 발생했습니다.');
+            return;
+          }
+
+          const mapped: FeedPost[] = (postRows ?? []).map((row: any) => ({
+            id: row.id,
+            tab,
+            imageUrl: getImageUrlFromPost(row),
+          }));
+
+          setPostsByTab((prev) => ({ ...prev, [tab]: mapped }));
+        }
+
+        // 3) 비콘 / 주변 피드 (일단 전체, 나중에 위치 필터)
+        if (tab === 'beacons') {
+          const { data: postRows, error: postErr } = await supabase
+            .from('posts')
+            .select('id, user_id, caption, created_at, post_media(*)')
+            .is('deleted_at', null)
+            .order('created_at', { ascending: false })
+            .limit(60);
+
+          if (postErr) {
+            console.error(postErr);
+            setErrorText('비콘 피드를 불러오는 중 오류가 발생했습니다.');
+            return;
+          }
+
+          const mapped: FeedPost[] = (postRows ?? []).map((row: any) => ({
+            id: row.id,
+            tab,
+            imageUrl: getImageUrlFromPost(row),
+          }));
+
+          setPostsByTab((prev) => ({ ...prev, [tab]: mapped }));
+        }
+      } catch (e) {
+        console.error(e);
+        setErrorText('피드를 불러오는 중 알 수 없는 오류가 발생했습니다.');
+      } finally {
+        setLoading(false);
+        setLoadedTabs((prev) => ({ ...prev, [tab]: true }));
+      }
+    },
+    [],
+  );
+
+  // 최초: 친구 탭 로딩
+  useEffect(() => {
+    if (!loadedTabs.friends) {
+      loadPostsForTab('friends');
+    }
+  }, [loadPostsForTab, loadedTabs.friends]);
 
   const handleToggleExpand = () => {
     setExpanded((prev) => !prev);
@@ -275,17 +697,18 @@ export default function HomeMain() {
 
   const handleChangeTab = (tab: FeedTab) => {
     setActiveTab(tab);
+    if (!loadedTabs[tab]) {
+      loadPostsForTab(tab);
+    }
   };
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
     setShowScrollTop(y > 600);
 
-    // 아래로 충분히 스크롤하면 자동 접기
     if (y > 120 && expanded) {
       setExpanded(false);
     }
-    // 거의 최상단으로 오면 자동 펼치기
     if (y < 20 && !expanded) {
       setExpanded(true);
     }
@@ -296,17 +719,29 @@ export default function HomeMain() {
   };
 
   const handleEndReached = () => {
-    setPostsByTab((prev) => {
-      const current = prev[activeTab];
-      const more = createDummyPosts(activeTab, 18, current.length);
-      return {
-        ...prev,
-        [activeTab]: [...current, ...more],
-      };
-    });
+    // TODO: 페이지네이션 붙이면 여기서 추가 로딩
   };
 
+  /** 당겨서 새로고침 → 브리핑 + 현재 탭 피드 둘 다 새로 요청 */
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    setErrorText(null);
+    try {
+      await Promise.all([loadOverview(), loadPostsForTab(activeTab)]);
+    } catch (e) {
+      console.warn('HomeMain refresh error', e);
+    }
+    setRefreshing(false);
+  }, [activeTab, loadOverview, loadPostsForTab]);
+
   const renderPost: ListRenderItem<FeedPost> = ({ item, index }) => {
+    const onPress = () => {
+      if (!item.id) return;
+      nav.navigate('PostDetail', {
+        postId: item.id,
+      });
+    };
+
     return (
       <View
         style={[
@@ -314,22 +749,35 @@ export default function HomeMain() {
           index % 3 !== 2 && { marginRight: 4 },
         ]}
       >
-        <View
-          style={[
-            styles.postBlock,
-            { backgroundColor: item.color },
-          ]}
-        >
-          <ImageIcon size={18} color="#F9FAFB" />
-        </View>
+        <Pressable onPress={onPress}>
+          <View style={styles.postBlock}>
+            {item.imageUrl ? (
+              <Image
+                source={{ uri: item.imageUrl }}
+                style={StyleSheet.absoluteFill}
+                resizeMode="cover"
+              />
+            ) : (
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <ImageIcon size={18} color="#F9FAFB" />
+              </View>
+            )}
+          </View>
+        </Pressable>
       </View>
     );
   };
 
   const keyExtractor = (item: FeedPost) => item.id;
 
-  // 상단 고정 영역 (타이틀 + 오늘의 브리핑 + 탭)
-  const HeaderFixed = () => {
+  /** 리스트 헤더(상단 전체 영역) */
+  const renderHeader = () => {
     const avatarUri =
       myProfile?.avatar_url || myProfile?.private_avatar_url || null;
     const avatarInitial =
@@ -337,7 +785,11 @@ export default function HomeMain() {
 
     return (
       <View
-        style={styles.fixedHeader}
+        style={[
+          styles.headerWrapper,
+          // ✅ StatusBar 영역까지 헤더 배경 확장
+          { paddingTop: Math.max(insets.top, 0) + 4 },
+        ]}
         onLayout={(e) => {
           const h = e.nativeEvent.layout.height;
           if (h !== headerHeight) {
@@ -353,7 +805,7 @@ export default function HomeMain() {
             </View>
 
             <View style={styles.topRightBox}>
-              {/* 프로필로 가는 원형 버튼 (왼쪽) */}
+              {/* 프로필로 가는 원형 버튼 */}
               <Pressable
                 style={styles.avatarButton}
                 onPress={() => {
@@ -372,11 +824,16 @@ export default function HomeMain() {
               </Pressable>
 
               {/* 알림 */}
-              <Pressable style={styles.iconButton}>
+              <Pressable
+                style={styles.iconButton}
+                onPress={() => {
+                  // TODO: 알림 화면
+                }}
+              >
                 <Bell size={18} color={TEXT_MAIN} />
               </Pressable>
 
-              {/* 홈 설정(커스텀 구성) */}
+              {/* 홈 설정 */}
               <Pressable
                 style={styles.iconButton}
                 onPress={() => nav.navigate('SettingsHome')}
@@ -406,43 +863,79 @@ export default function HomeMain() {
               </Pressable>
             </View>
 
-            {/* 👉 접히면 여기부터는 안 보이고, 헤더 row만 남는 구조 */}
             {expanded && (
               <>
+                {/* 1행: 안 읽은 채팅 / 주변 비콘 */}
                 <View style={styles.briefingRow}>
-                  <View style={styles.briefingChip}>
+                  <Pressable
+                    style={styles.briefingChip}
+                    onPress={() => {
+                      nav.navigate('ChatList');
+                    }}
+                  >
                     <View style={styles.briefingDotUnread} />
                     <Text style={styles.briefingText}>
                       안 읽은 채팅{' '}
-                      <Text style={styles.briefingStrong}>5개</Text>
+                      <Text style={styles.briefingStrong}>
+                        {unreadChatCount}개
+                      </Text>
                     </Text>
-                  </View>
+                  </Pressable>
 
-                  <View style={styles.briefingChip}>
+                  <Pressable
+                    style={styles.briefingChip}
+                    onPress={() => {
+                      nav.navigate('BeaconsMain');
+                    }}
+                  >
                     <View style={styles.briefingDotBeacon} />
                     <Text style={styles.briefingText}>
-                      주변 새 비콘{' '}
-                      <Text style={styles.briefingStrong}>3개</Text>
+                      주변 비콘{' '}
+                      <Text style={styles.briefingStrong}>
+                        {nearbyBeaconCount}개
+                      </Text>
                     </Text>
-                  </View>
+                  </Pressable>
                 </View>
 
+                {/* 2행: 친구 새 게시물 / 오늘 새 팔로워 */}
                 <View style={styles.briefingRow}>
-                  <View style={styles.briefingChip}>
+                  <Pressable
+                    style={styles.briefingChip}
+                    onPress={() => {
+                      setActiveTab('friends');
+                      // 그리드가 보이도록 헤더 아래로 스크롤
+                      if (headerHeight > 0) {
+                        listRef.current?.scrollToOffset({
+                          offset: headerHeight,
+                          animated: true,
+                        });
+                      }
+                    }}
+                  >
                     <View style={styles.briefingDotPost} />
                     <Text style={styles.briefingText}>
                       친구 새 게시물{' '}
-                      <Text style={styles.briefingStrong}>4개</Text>
+                      <Text style={styles.briefingStrong}>
+                        {newFriendPostsCount}개
+                      </Text>
                     </Text>
-                  </View>
+                  </Pressable>
 
-                  <View style={styles.briefingChip}>
+                  <Pressable
+                    style={styles.briefingChip}
+                    onPress={() => {
+                      nav.navigate('FriendsMain');
+                    }}
+                  >
                     <View style={styles.briefingDotFriend} />
                     <Text style={styles.briefingText}>
-                      새 친구/팔로워{' '}
-                      <Text style={styles.briefingStrong}>1명</Text>
+                      오늘 새 팔로워{' '}
+                      <Text style={styles.briefingStrong}>
+                        {followSummary?.newFollowersLast24h ?? 0}명
+                      </Text>
                     </Text>
-                  </View>
+                  </Pressable>
                 </View>
 
                 <ShopCarousel />
@@ -482,34 +975,55 @@ export default function HomeMain() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        backgroundColor="#ffffff"
-        translucent={false}
-        barStyle="dark-content"
-      />
+    // ✅ ChatRoomsScreen과 동일: top safe-area는 헤더에서 직접 처리하므로 top 제거
+    <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
+      {/* ✅ 투명 StatusBar + 헤더가 statusbar 영역까지 확장 */}
+      <RNStatusBar backgroundColor="transparent" translucent={true} barStyle="dark-content" />
 
       <View style={styles.page}>
-        {/* 상단 고정 헤더 */}
-        <HeaderFixed />
-
-        {/* 아래 포스트 그리드 */}
         <FlatList
           ref={listRef}
           data={data}
           keyExtractor={keyExtractor}
           renderItem={renderPost}
           numColumns={3}
-          contentContainerStyle={[
-            styles.listContent,
-            // 헤더 높이만큼 위에 패딩 줘서, 헤더 밑에서부터 표시
-            { paddingTop: headerHeight || 0 },
-          ]}
+          contentContainerStyle={styles.listContent}
           onScroll={handleScroll}
           scrollEventThrottle={16}
           onEndReached={handleEndReached}
           onEndReachedThreshold={0.4}
           showsVerticalScrollIndicator={false}
+          ListHeaderComponent={renderHeader}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+            />
+          }
+          ListEmptyComponent={
+            loading ? (
+              <View style={{ paddingTop: 40, alignItems: 'center' }}>
+                <ActivityIndicator />
+              </View>
+            ) : errorText ? (
+              <View style={{ paddingTop: 40, alignItems: 'center' }}>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    color: '#DC2626',
+                  }}
+                >
+                  {errorText}
+                </Text>
+              </View>
+            ) : (
+              <View style={{ paddingTop: 40, alignItems: 'center' }}>
+                <Text style={{ fontSize: 13, color: TEXT_MUTED }}>
+                  아직 표시할 피드가 없습니다.
+                </Text>
+              </View>
+            )
+          }
         />
 
         {showScrollTop && (
@@ -540,33 +1054,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: BG,
   },
-  // 포스트 리스트 content
   listContent: {
     paddingHorizontal: INNER_HORIZONTAL_PADDING,
     paddingBottom: 80,
   },
-
-  // ===== 상단 고정 헤더 =====
-  fixedHeader: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    // SafeAreaView 안이라 배경 흰색으로
-    backgroundColor: BG,
-    zIndex: 10,
-    paddingHorizontal: INNER_HORIZONTAL_PADDING,
+  // 리스트 헤더 래퍼
+  headerWrapper: {
+    paddingHorizontal: 0,
+    paddingTop: 0, // ✅ 실제 paddingTop은 renderHeader에서 insets.top + 4로 주입
     paddingBottom: 6,
+    backgroundColor: BG,
   },
-
   headerContainer: {
+    paddingHorizontal: INNER_HORIZONTAL_PADDING,
     paddingBottom: 6,
   },
   topRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 8,
+    paddingTop: 0, // ✅ StatusBar 확장 방식에서는 여기서 추가 paddingTop 주지 않음
     paddingBottom: 8,
   },
   titleBox: {
@@ -581,7 +1088,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   iconButton: {
     width: 32,
     height: 32,
@@ -593,8 +1099,6 @@ const styles = StyleSheet.create({
     marginLeft: 6,
     backgroundColor: '#FFFFFF',
   },
-
-  // 프로필 아바타 버튼 (왼쪽)
   avatarButton: {
     width: 34,
     height: 34,
@@ -615,17 +1119,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#F9FAFB',
   },
-
-  // 오늘의 브리핑 카드 – 반투명 카드 느낌
   dashboardCard: {
     borderRadius: 14,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    backgroundColor: 'rgba(228, 227, 227, 0.5)', // 50% 정도
+    backgroundColor: 'rgba(228, 227, 227, 0.5)',
     borderWidth: 0,
     marginBottom: 8,
   },
-
   briefingHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -637,7 +1138,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: TEXT_MAIN,
   },
-
   briefingToggle: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -647,7 +1147,6 @@ const styles = StyleSheet.create({
     color: TEXT_MUTED,
     marginRight: 4,
   },
-
   briefingRow: {
     flexDirection: 'row',
     marginTop: 4,
@@ -699,7 +1198,6 @@ const styles = StyleSheet.create({
   briefingStrong: {
     fontWeight: '700',
   },
-
   bannerWrap: {
     marginTop: 10,
   },
@@ -724,7 +1222,6 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 999,
   },
-
   bannerCardOuter: {
     width: BANNER_WIDTH,
     borderRadius: 12,
@@ -787,7 +1284,6 @@ const styles = StyleSheet.create({
   bannerDotActive: {
     backgroundColor: TEXT_MAIN,
   },
-
   tabRow: {
     flexDirection: 'row',
     marginTop: 8,
@@ -819,19 +1315,16 @@ const styles = StyleSheet.create({
     color: TEXT_MAIN,
     fontWeight: '700',
   },
-
   postCell: {
     width: '32.5%',
     marginBottom: 4,
   },
   postBlock: {
-    // 가로:세로 = 3:4
     aspectRatio: 3 / 4,
     borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
+    overflow: 'hidden',
+    backgroundColor: '#9CA3AF',
   },
-
   floatingTopButtonWrap: {
     position: 'absolute',
     right: 16,

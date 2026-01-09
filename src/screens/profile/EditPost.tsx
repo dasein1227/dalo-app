@@ -1,6 +1,10 @@
-// src/screens/posts/EditPost.tsx
-
-import React, { useEffect, useState, useCallback } from 'react';
+// src/screens/profile/EditPost.tsx
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   View,
   Text,
@@ -9,87 +13,144 @@ import {
   Pressable,
   ScrollView,
   TextInput,
-  Modal,
-  Dimensions,
   Alert,
-  KeyboardAvoidingView,
-  Platform,
+  Dimensions,
   ActivityIndicator,
+  StatusBar,
+  Modal,
+  FlatList,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import {
+  ChevronLeft,
+  Plus,
+  X,
+  Check,
+  Search,
+} from 'lucide-react-native';
+
 import { supabase } from '@/lib/supabase';
-import { ChevronLeft, X, Edit3, Plus, Check } from 'lucide-react-native';
+import { uploadImageToR2 } from '@/lib/r2Upload';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-type MediaItem = {
-  id?: string; // post_media.id (기존 이미지면 존재)
-  uri: string; // 표시용 URL
-  editedUri?: string;
-  isNew?: boolean; // 새로 추가된 이미지
-  image_path?: string; // 스토리지 경로
+type VisibilityType = 'public' | 'friends' | 'followers' | 'private';
+
+const VISIBILITY_OPTIONS: { id: VisibilityType; label: string }[] = [
+  { id: 'public', label: '전체' },
+  { id: 'friends', label: '친구' },
+  { id: 'followers', label: '팔로워' },
+  { id: 'private', label: '나만' },
+];
+
+type ImageItem = {
+  uri: string;
+  width: number;
+  height: number;
 };
 
-type PostRow = {
+type TaggedUser = {
   id: string;
-  caption: string | null;
-  link: string | null;
-  tab_id: string | null;
-  visibility: string[] | null;
-  allow_comments: boolean | null;
+  nickname: string | null;
+  follow_id: string | null;
+  avatar_url: string | null;
+};
+
+type LocationTag = {
+  name: string;
+  address?: string | null;
+  lat?: number | null;
+  lng?: number | null;
+};
+
+type BusinessTag = {
+  id: string;
+  name: string;
+  shop_id: string | null;
+  thumbnail_url: string | null;
+};
+
+type TagModalMode = 'person' | 'location' | 'business' | null;
+type TagListItem = TaggedUser | LocationTag | BusinessTag;
+
+type TabRow = {
+  id: string;
+  name: string;
+};
+
+const getInitialFromName = (name?: string | null) => {
+  if (!name) return '?';
+  const t = name.trim();
+  if (!t) return '?';
+  return t[0]?.toUpperCase() ?? '?';
 };
 
 export default function EditPostScreen() {
-  const insets = useSafeAreaInsets();
-  const route = useRoute<any>();
   const navigation = useNavigation<any>();
+  const route = useRoute<any>();
+  const insets = useSafeAreaInsets();
 
   const postId = route.params?.postId as string;
 
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-  const [images, setImages] = useState<MediaItem[]>([]);
+  const [images, setImages] = useState<ImageItem[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const [caption, setCaption] = useState('');
   const [link, setLink] = useState('');
-
+  const [visibility, setVisibility] =
+    useState<VisibilityType>('public');
   const [allowComments, setAllowComments] = useState(true);
+  const [allowShare, setAllowShare] = useState(true);
 
-  const [visibility, setVisibility] = useState<string[]>(['public']);
-  const VISIBILITY_OPTIONS = [
-    { id: 'public', label: '전체' },
-    { id: 'friends', label: '친구' },
-    { id: 'private', label: '나만' },
-  ];
-
-  // 탭
-  const [tabs, setTabs] = useState<{ id: string; name: string }[]>(
-    [],
-  );
+  const [tabs, setTabs] = useState<TabRow[]>([]);
   const [selectedTab, setSelectedTab] = useState<string | null>(null);
 
-  // 에디터
-  const [editorVisible, setEditorVisible] = useState(false);
-  const [selectedRatio, setSelectedRatio] =
-    useState<'original' | '1:1' | '4:5' | '16:9'>('original');
+  // 태그 상태
+  const [taggedUsers, setTaggedUsers] = useState<TaggedUser[]>([]);
+  const [selectedLocation, setSelectedLocation] =
+    useState<LocationTag | null>(null);
+  const [selectedBusiness, setSelectedBusiness] =
+    useState<BusinessTag | null>(null);
 
-  // ----------------------------
-  // 탭 로드
-  // ----------------------------
+  // 태그 모달
+  const [tagModalMode, setTagModalMode] =
+    useState<TagModalMode>(null);
+  const [tagModalVisible, setTagModalVisible] = useState(false);
+  const [tagSearch, setTagSearch] = useState('');
+  const [tagSearching, setTagSearching] = useState(false);
+  const [personResults, setPersonResults] = useState<TaggedUser[]>(
+    [],
+  );
+  const [locationResults, setLocationResults] = useState<
+    LocationTag[]
+  >([]);
+  const [businessResults, setBusinessResults] = useState<
+    BusinessTag[]
+  >([]);
+
+  const hasImage = images.length > 0;
+  const activeImage = images[selectedIndex];
+  const canSave = images.length > 0 && !saving;
+
+  /* ---------------- 탭 로드 ----------------- */
   const loadTabs = useCallback(async () => {
     const uid = (await supabase.auth.getUser()).data.user?.id;
     if (!uid) return;
 
     const { data, error } = await supabase
       .from('profile_tabs')
-      .select('id, name')
+      .select('id,name')
       .eq('user_id', uid)
       .eq('is_hidden', false)
       .order('sort_order', { ascending: true });
@@ -99,60 +160,139 @@ export default function EditPostScreen() {
     }
   }, []);
 
-  // ----------------------------
-  // 게시물 + 이미지 로드
-  // ----------------------------
+  /* ---------------- 게시물 로드 ----------------- */
   const loadPost = useCallback(async () => {
+    if (!postId) {
+      Alert.alert('불러오기 실패', '잘못된 게시물입니다.');
+      navigation.goBack();
+      return;
+    }
+
     try {
       setLoading(true);
 
-      // posts
-      const { data: post, error: postErr } = (await supabase
+      // 1) post 본문
+      const { data: post, error: pErr } = await supabase
         .from('posts')
         .select(
-          'id, caption, link, tab_id, visibility, allow_comments',
+          'id,user_id,caption,link,tab_id,visibility,allow_comments,allow_share,business_id,business_name',
         )
         .eq('id', postId)
-        .maybeSingle()) as { data: PostRow | null; error: any };
+        .maybeSingle();
 
-      if (postErr) throw postErr;
-      if (!post) throw new Error('게시물을 찾을 수 없습니다.');
+      if (pErr || !post) {
+        throw pErr ?? new Error('게시물을 찾을 수 없습니다.');
+      }
 
       setCaption(post.caption ?? '');
       setLink(post.link ?? '');
-      setSelectedTab(post.tab_id);
-      setVisibility(post.visibility ?? ['public']);
-      setAllowComments(post.allow_comments ?? true);
+      setVisibility(
+        (post.visibility as VisibilityType) ?? 'public',
+      );
+      setAllowComments(
+        post.allow_comments === null
+          ? true
+          : !!post.allow_comments,
+      );
+      setAllowShare(
+        post.allow_share === null ? true : !!post.allow_share,
+      );
+      setSelectedTab(post.tab_id ?? null);
 
-      // media
-      const { data: media, error: mediaErr } = await supabase
+      // 2) media (file_url 사용)
+      const { data: mediaRows, error: mErr } = await supabase
         .from('post_media')
-        .select('id, image_path')
+        .select('file_url,width,height,sort_order')
         .eq('post_id', postId)
-        .order('created_at', { ascending: true });
+        .order('sort_order', { ascending: true });
 
-      if (mediaErr) throw mediaErr;
+      if (mErr) throw mErr;
 
-      const mediaItems: MediaItem[] =
-        media?.map((m: any) => {
-          const { data: pub } = supabase.storage
-            .from('post_images')
-            .getPublicUrl(m.image_path);
-          return {
-            id: m.id,
-            uri: pub.publicUrl,
-            image_path: m.image_path,
-          };
-        }) ?? [];
+      const loadedImages: ImageItem[] =
+        (mediaRows ?? []).map((m: any) => ({
+          uri: m.file_url,
+          width: m.width ?? SCREEN_WIDTH,
+          height: m.height ?? SCREEN_WIDTH,
+        })) ?? [];
 
-      setImages(mediaItems);
-      if (mediaItems.length === 0) {
-        setSelectedIndex(0);
-      } else {
-        setSelectedIndex(0);
+      setImages(loadedImages);
+      if (loadedImages.length > 0) setSelectedIndex(0);
+
+      // 3) 사람 태그
+      const { data: tagUserRows, error: tuErr } = await supabase
+        .from('post_tagged_users')
+        .select(
+          `
+          tagged_user_id,
+          profiles:profiles!post_tagged_users_tagged_user_id_fkey (
+            nickname,
+            follow_id,
+            avatar_url
+          )
+        `,
+        )
+        .eq('post_id', postId);
+
+      if (!tuErr && tagUserRows) {
+        const mapped: TaggedUser[] = tagUserRows.map((r: any) => ({
+          id: r.tagged_user_id,
+          nickname: r.profiles?.nickname ?? null,
+          follow_id: r.profiles?.follow_id ?? null,
+          avatar_url: r.profiles?.avatar_url ?? null,
+        }));
+        setTaggedUsers(mapped);
+      }
+
+      // 4) 위치 태그 (단일)
+      const { data: locRow, error: locErr } = await supabase
+        .from('post_locations')
+        .select('name,address,lat,lng')
+        .eq('post_id', postId)
+        .maybeSingle();
+
+      if (!locErr && locRow) {
+        setSelectedLocation({
+          name: locRow.name,
+          address: locRow.address,
+          lat: locRow.lat,
+          lng: locRow.lng,
+        });
+      }
+
+      // 5) 비즈니스 태그
+      if (post.business_id) {
+        const { data: biz, error: bErr } = await supabase
+          .from('businesses')
+          .select(
+            'id,name,shop_id,main_image_url,logo_image_url',
+          )
+          .eq('id', post.business_id)
+          .maybeSingle();
+
+        if (!bErr && biz) {
+          setSelectedBusiness({
+            id: biz.id,
+            name: biz.name,
+            shop_id: biz.shop_id,
+            thumbnail_url:
+              biz.main_image_url ??
+              biz.logo_image_url ??
+              null,
+          });
+        } else {
+          setSelectedBusiness({
+            id: post.business_id,
+            name: post.business_name ?? '',
+            shop_id: null,
+            thumbnail_url: null,
+          });
+        }
       }
     } catch (e: any) {
-      Alert.alert('불러오기 실패', e?.message ?? '오류');
+      Alert.alert(
+        '불러오기 실패',
+        e?.message ?? '게시물을 불러오지 못했습니다.',
+      );
       navigation.goBack();
     } finally {
       setLoading(false);
@@ -164,10 +304,8 @@ export default function EditPostScreen() {
     loadPost();
   }, [loadTabs, loadPost]);
 
-  // ----------------------------
-  // 이미지 선택 (추가)
-  // ----------------------------
-  const pickImages = async () => {
+  /* ---------------- 이미지 선택 ----------------- */
+  const pickImages = useCallback(async () => {
     const res = await ImagePicker.launchImageLibraryAsync({
       allowsMultipleSelection: true,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -175,113 +313,201 @@ export default function EditPostScreen() {
     });
 
     if (!res.canceled) {
-      const newImgs: MediaItem[] = res.assets.map((a) => ({
+      const newImgs: ImageItem[] = res.assets.map((a) => ({
         uri: a.uri,
-        isNew: true,
+        width: a.width ?? SCREEN_WIDTH,
+        height: a.height ?? SCREEN_WIDTH,
       }));
-      setImages((prev) => [...prev, ...newImgs]);
-      if (images.length === 0 && newImgs.length > 0) {
-        setSelectedIndex(0);
+      setImages((prev) => {
+        const merged = [...prev, ...newImgs];
+        if (prev.length === 0 && merged.length > 0) {
+          setSelectedIndex(0);
+        }
+        return merged;
+      });
+    }
+  }, []);
+
+  const handleRemoveImage = useCallback((idx: number) => {
+    setImages((prev) => {
+      const next = prev.filter((_, i) => i !== idx);
+      if (next.length === 0) setSelectedIndex(0);
+      else if (idx >= next.length) setSelectedIndex(next.length - 1);
+      return next;
+    });
+  }, []);
+
+  /* ---------------- 태그 모달 제어 ----------------- */
+  const openPersonTagModal = () => {
+    setTagModalMode('person');
+    setTagSearch('');
+    setPersonResults([]);
+    setTagModalVisible(true);
+  };
+  const openLocationTagModal = () => {
+    setTagModalMode('location');
+    setTagSearch('');
+    setLocationResults([]);
+    setTagModalVisible(true);
+  };
+  const openBusinessTagModal = () => {
+    setTagModalMode('business');
+    setTagSearch('');
+    setBusinessResults([]);
+    setTagModalVisible(true);
+  };
+  const closeTagModal = () => {
+    setTagModalVisible(false);
+    setTagModalMode(null);
+    setTagSearch('');
+    setTagSearching(false);
+  };
+
+  const toggleTaggedUser = (user: TaggedUser) => {
+    setTaggedUsers((prev) => {
+      const exists = prev.some((u) => u.id === user.id);
+      if (exists)
+        return prev.filter((u) => u.id !== user.id);
+      return [...prev, user];
+    });
+  };
+
+  /* ---------------- 태그 검색 ----------------- */
+  const runTagSearch = useCallback(
+    async (mode: TagModalMode, keyword: string) => {
+      const q = keyword.trim();
+      if (!mode || !q) {
+        if (mode === 'person') setPersonResults([]);
+        if (mode === 'location') setLocationResults([]);
+        if (mode === 'business') setBusinessResults([]);
+        return;
       }
-    }
-  };
 
-  // ----------------------------
-  // 에디터 적용
-  // ----------------------------
-  const applyEditor = async () => {
-    const target = images[selectedIndex];
-    if (!target) return;
+      setTagSearching(true);
+      try {
+        if (mode === 'person') {
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('id,nickname,follow_id,avatar_url')
+            .or(
+              `nickname.ilike.%${q}%,follow_id.ilike.%${q}%`,
+            )
+            .limit(30);
 
-    let resultUri = target.uri;
+          if (!error && data) {
+            setPersonResults(data as TaggedUser[]);
+          }
+        } else if (mode === 'business') {
+          const { data, error } = await supabase
+            .from('businesses')
+            .select(
+              'id,name,shop_id,main_image_url,logo_image_url',
+            )
+            .or(
+              `name.ilike.%${q}%,shop_id.ilike.%${q}%`,
+            )
+            .limit(30);
 
-    const actions: any[] = [];
+          if (!error && data) {
+            const mapped: BusinessTag[] = (data as any[]).map(
+              (b) => ({
+                id: b.id,
+                name: b.name,
+                shop_id: b.shop_id,
+                thumbnail_url:
+                  b.main_image_url ??
+                  b.logo_image_url ??
+                  null,
+              }),
+            );
+            setBusinessResults(mapped);
+          }
+        } else if (mode === 'location') {
+          const { data, error } = await supabase
+            .from('post_locations')
+            .select('name,address,lat,lng')
+            .ilike('name', `%${q}%`)
+            .limit(30);
 
-    if (selectedRatio === '1:1') {
-      actions.push({
-        resize: { width: SCREEN_WIDTH, height: SCREEN_WIDTH },
-      });
-    }
-    if (selectedRatio === '4:5') {
-      actions.push({
-        resize: {
-          width: SCREEN_WIDTH,
-          height: SCREEN_WIDTH * 1.25,
-        },
-      });
-    }
-    if (selectedRatio === '16:9') {
-      actions.push({
-        resize: {
-          width: SCREEN_WIDTH,
-          height: SCREEN_WIDTH * 0.5625,
-        },
-      });
-    }
+          if (!error && data) {
+            const seen = new Set<string>();
+            const unique: LocationTag[] = [];
+            (data as any[]).forEach((row) => {
+              const key = `${row.name}||${row.address ?? ''}`;
+              if (!seen.has(key)) {
+                seen.add(key);
+                unique.push({
+                  name: row.name,
+                  address: row.address,
+                  lat: row.lat,
+                  lng: row.lng,
+                });
+              }
+            });
+            setLocationResults(unique);
+          }
+        }
+      } finally {
+        setTagSearching(false);
+      }
+    },
+    [],
+  );
 
-    if (actions.length > 0) {
-      const manipulated = await ImageManipulator.manipulateAsync(
-        resultUri,
-        actions,
-        { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG },
-      );
-      resultUri = manipulated.uri;
-    }
-
-    const updated = [...images];
-    updated[selectedIndex] = {
-      ...updated[selectedIndex],
-      editedUri: resultUri,
-      isNew: updated[selectedIndex].isNew || true,
-    };
-    setImages(updated);
-    setEditorVisible(false);
-  };
-
-  // 공개 범위 토글
-  const toggleVisibility = (id: string) => {
-    setVisibility((prev) =>
-      prev.includes(id)
-        ? prev.filter((v) => v !== id)
-        : [...prev, id],
-    );
-  };
-
-  // ----------------------------
-  // 이미지 업로드
-  // ----------------------------
-  const uploadImageToStorage = async (
-    postId: string,
+  /* ---------------- 이미지 업로드 (R2) ----------------- */
+  const uploadImageForPost = async (
+    postIdForUpload: string,
     localUri: string,
-  ) => {
-    const response = await fetch(localUri);
-    const blob = await response.blob();
+  ): Promise<{ url: string; width: number; height: number }> => {
+    const manipulated = await ImageManipulator.manipulateAsync(
+      localUri,
+      [{ resize: { width: 1440 } }],
+      {
+        compress: 0.8,
+        format: ImageManipulator.SaveFormat.JPEG,
+      },
+    );
 
-    const fileName = `${Date.now()}.jpg`;
-    const path = `${postId}/${fileName}`;
+    const resizedUri = manipulated.uri;
+    const fileName = `${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2)}.jpg`;
+    const path = `posts/${postIdForUpload}/${fileName}`;
 
-    const { data, error } = await supabase.storage
-      .from('post_images')
-      .upload(path, blob, {
-        contentType: 'image/jpeg',
-        upsert: false,
-      });
+    const publicUrl = await uploadImageToR2(
+      resizedUri,
+      path,
+      'image/jpeg',
+    );
 
-    if (error) throw error;
-    return data.path;
+    return {
+      url: publicUrl,
+      width: manipulated.width ?? 0,
+      height: manipulated.height ?? 0,
+    };
   };
 
-  // ----------------------------
-  // 저장(업데이트)
-  // ----------------------------
-  const savePost = async () => {
+  /* ---------------- 저장 ----------------- */
+  const savePost = useCallback(async () => {
     if (!postId) return;
+    if (images.length === 0) {
+      Alert.alert('이미지 필요', '사진을 최소 1장은 선택해야 합니다.');
+      return;
+    }
+    if (saving) return;
 
     try {
-      setLoading(true);
+      setSaving(true);
 
-      // posts 업데이트
-      const { error: upErr } = await supabase
+      const user = (await supabase.auth.getUser()).data.user;
+      if (!user) {
+        Alert.alert('오류', '로그인이 필요합니다.');
+        setSaving(false);
+        return;
+      }
+
+      // 1) posts 업데이트
+      const { error: postErr } = await supabase
         .from('posts')
         .update({
           caption,
@@ -289,64 +515,152 @@ export default function EditPostScreen() {
           tab_id: selectedTab,
           visibility,
           allow_comments: allowComments,
+          allow_share: allowShare,
+          business_id: selectedBusiness?.id ?? null,
+          business_name: selectedBusiness?.name ?? null,
         })
-        .eq('id', postId);
+        .eq('id', postId)
+        .eq('user_id', user.id);
 
-      if (upErr) throw upErr;
+      if (postErr) throw postErr;
 
-      // 새 이미지만 업로드
-      for (const img of images) {
-        if (img.isNew) {
-          const filePath = await uploadImageToStorage(
-            postId,
-            img.editedUri || img.uri,
-          );
-          await supabase.from('post_media').insert({
+      // 2) 기존 media / 태그 / 위치 삭제
+      await supabase.from('post_media').delete().eq('post_id', postId);
+      await supabase
+        .from('post_tagged_users')
+        .delete()
+        .eq('post_id', postId);
+      await supabase
+        .from('post_locations')
+        .delete()
+        .eq('post_id', postId);
+
+      // 3) 새 media insert
+      for (let i = 0; i < images.length; i++) {
+        const img = images[i];
+        const { url, width, height } = await uploadImageForPost(
+          postId,
+          img.uri,
+        );
+
+        const { error: mediaErr } = await supabase
+          .from('post_media')
+          .insert({
             post_id: postId,
-            image_path: filePath,
+            file_url: url,
+            media_type: 'image',
+            sort_order: i,
+            width: width || img.width,
+            height: height || img.height,
           });
-        }
+
+        if (mediaErr) throw mediaErr;
       }
 
-      Alert.alert('수정 완료!');
-      navigation.goBack();
+      // 4) 사람 태그 insert
+      if (taggedUsers.length > 0) {
+        const { error: tagErr } = await supabase
+          .from('post_tagged_users')
+          .insert(
+            taggedUsers.map((u) => ({
+              post_id: postId,
+              tagged_user_id: u.id,
+            })),
+          );
+
+        if (tagErr) throw tagErr;
+      }
+
+      // 5) 위치 insert
+      if (selectedLocation) {
+        const { error: locErr } = await supabase
+          .from('post_locations')
+          .insert({
+            post_id: postId,
+            name: selectedLocation.name,
+            address: selectedLocation.address ?? null,
+            lat: selectedLocation.lat ?? null,
+            lng: selectedLocation.lng ?? null,
+          });
+
+        if (locErr) throw locErr;
+      }
+
+      Alert.alert('수정 완료', '게시물이 수정되었습니다.', [
+        {
+          text: '확인',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
     } catch (e: any) {
-      Alert.alert('수정 실패', e?.message ?? '오류');
+      Alert.alert(
+        '수정 실패',
+        e?.message ?? '게시물 수정 중 문제가 발생했습니다.',
+      );
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
+  }, [
+    postId,
+    images,
+    caption,
+    link,
+    selectedTab,
+    visibility,
+    allowComments,
+    allowShare,
+    taggedUsers,
+    selectedLocation,
+    selectedBusiness,
+    navigation,
+    saving,
+  ]);
+
+  const tagSummaryText = () => {
+    const parts: string[] = [];
+    if (taggedUsers.length > 0)
+      parts.push(`사람 ${taggedUsers.length}명`);
+    if (selectedLocation)
+      parts.push(`위치 ${selectedLocation.name}`);
+    if (selectedBusiness)
+      parts.push(`비즈니스 ${selectedBusiness.name}`);
+    if (parts.length === 0) return '태그 없음';
+    return parts.join(' · ');
   };
 
-  const canSave = caption.trim().length > 0 || images.length > 0;
+  /* ---------------- 렌더 ----------------- */
 
-  if (loading && images.length === 0 && !caption && !link) {
-    // 초기 로딩 스피너
+  if (loading) {
     return (
-      <SafeAreaView
-        style={[
-          styles.container,
-          { paddingTop: insets.top, alignItems: 'center', justifyContent: 'center' },
-        ]}
-      >
-        <ActivityIndicator color="#000" />
-        <Text style={{ marginTop: 8 }}>불러오는 중…</Text>
+      <SafeAreaView style={[styles.container, styles.centered]}>
+        <StatusBar
+          backgroundColor="#fff"
+          barStyle="dark-content"
+          translucent={false}
+        />
+        <ActivityIndicator />
+        <Text style={styles.loadingTxt}>불러오는 중…</Text>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView
-      style={[styles.container, { paddingTop: insets.top }]}
-    >
+    <SafeAreaView style={styles.container}>
+      <StatusBar
+        backgroundColor="#fff"
+        barStyle="dark-content"
+        translucent={false}
+      />
+
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={insets.top}
+        keyboardVerticalOffset={insets.top + 48}
       >
         {/* HEADER */}
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()}>
-            <ChevronLeft size={24} color="#000" />
+            <ChevronLeft size={22} color="#000" />
           </Pressable>
 
           <Text style={styles.headerTitle}>게시물 수정</Text>
@@ -355,14 +669,18 @@ export default function EditPostScreen() {
             onPress={canSave ? savePost : undefined}
             disabled={!canSave}
           >
-            <Text
-              style={[
-                styles.uploadBtn,
-                { opacity: canSave ? 1 : 0.3 },
-              ]}
-            >
-              저장
-            </Text>
+            {saving ? (
+              <ActivityIndicator size="small" />
+            ) : (
+              <Text
+                style={[
+                  styles.uploadBtn,
+                  { opacity: canSave ? 1 : 0.3 },
+                ]}
+              >
+                저장
+              </Text>
+            )}
           </Pressable>
         </View>
 
@@ -371,23 +689,18 @@ export default function EditPostScreen() {
           keyboardShouldPersistTaps="handled"
         >
           {/* 큰 미리보기 */}
-          {images.length > 0 && (
-            <View style={styles.previewBox}>
+          {hasImage && (
+            <View
+              style={[
+                styles.previewBox,
+                { aspectRatio: 3 / 4 },
+              ]}
+            >
               <Image
-                source={{
-                  uri:
-                    images[selectedIndex].editedUri ||
-                    images[selectedIndex].uri,
-                }}
+                source={{ uri: activeImage.uri }}
                 style={styles.previewImage}
                 resizeMode="cover"
               />
-              <Pressable
-                style={styles.editBtn}
-                onPress={() => setEditorVisible(true)}
-              >
-                <Edit3 size={20} color="#fff" />
-              </Pressable>
             </View>
           )}
 
@@ -398,33 +711,37 @@ export default function EditPostScreen() {
             style={styles.thumbsWrap}
           >
             {images.map((img, idx) => (
-              <Pressable
-                key={idx}
-                onPress={() => setSelectedIndex(idx)}
-                style={[
-                  styles.thumbItem,
-                  selectedIndex === idx && styles.thumbSelected,
-                ]}
-              >
-                <Image
-                  source={{ uri: img.editedUri || img.uri }}
-                  style={styles.thumbImage}
-                />
-              </Pressable>
+              <View key={idx} style={styles.thumbWrapper}>
+                <Pressable
+                  onPress={() => setSelectedIndex(idx)}
+                  style={[
+                    styles.thumbItem,
+                    selectedIndex === idx &&
+                      styles.thumbSelected,
+                  ]}
+                >
+                  <Image
+                    source={{ uri: img.uri }}
+                    style={styles.thumbImage}
+                  />
+                </Pressable>
+                <Pressable
+                  style={styles.thumbRemoveBtn}
+                  onPress={() => handleRemoveImage(idx)}
+                >
+                  <X size={14} color="#fff" />
+                </Pressable>
+              </View>
             ))}
 
-            <Pressable
-              style={styles.thumbAdd}
-              onPress={pickImages}
-            >
-              <Plus size={26} color="#888" />
+            <Pressable style={styles.thumbAdd} onPress={pickImages}>
+              <Plus size={24} color="#888" />
             </Pressable>
           </ScrollView>
 
           {/* 탭 선택 */}
-          <View style={styles.section}>
+          <View style={[styles.section, { marginTop: 8 }]}>
             <Text style={styles.label}>게시물 저장 탭</Text>
-
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -454,7 +771,7 @@ export default function EditPostScreen() {
             </ScrollView>
           </View>
 
-          {/* 캡션 */}
+          {/* 내용 입력 */}
           <View style={styles.section}>
             <Text style={styles.label}>내용 입력</Text>
             <TextInput
@@ -479,51 +796,72 @@ export default function EditPostScreen() {
             />
           </View>
 
-          {/* 태그 (향후 구현) */}
+          {/* 태그 */}
           <View style={styles.section}>
             <Text style={styles.label}>태그</Text>
+
             <Pressable
               style={styles.optionRow}
-              onPress={() => Alert.alert('사람 태그', '준비 중')}
+              onPress={openPersonTagModal}
             >
-              <Text style={styles.optionText}>사람 태그</Text>
+              <Text style={styles.optionText}>
+                사람 태그
+                {taggedUsers.length > 0
+                  ? ` · ${taggedUsers.length}명`
+                  : ''}
+              </Text>
             </Pressable>
             <Pressable
               style={styles.optionRow}
-              onPress={() => Alert.alert('위치 태그', '준비 중')}
+              onPress={openLocationTagModal}
             >
-              <Text style={styles.optionText}>위치 태그</Text>
+              <Text style={styles.optionText}>
+                위치 태그
+                {selectedLocation
+                  ? ` · ${selectedLocation.name}`
+                  : ''}
+              </Text>
             </Pressable>
             <Pressable
               style={styles.optionRow}
-              onPress={() =>
-                Alert.alert('비즈니스 태그', '준비 중')
-              }
+              onPress={openBusinessTagModal}
             >
-              <Text style={styles.optionText}>비즈니스 태그</Text>
+              <Text style={styles.optionText}>
+                비즈니스 태그
+                {selectedBusiness
+                  ? ` · ${selectedBusiness.name}`
+                  : ''}
+              </Text>
             </Pressable>
+
+            <View style={styles.tagSummaryBox}>
+              <Text style={styles.tagSummaryText}>
+                {tagSummaryText()}
+              </Text>
+            </View>
           </View>
 
           {/* 공개 범위 */}
           <View style={styles.section}>
             <Text style={styles.label}>공개 범위</Text>
-
             {VISIBILITY_OPTIONS.map((opt) => (
               <Pressable
                 key={opt.id}
                 style={styles.visibilityRow}
-                onPress={() => toggleVisibility(opt.id)}
+                onPress={() => setVisibility(opt.id)}
               >
                 <Text style={styles.optionText}>{opt.label}</Text>
-                {visibility.includes(opt.id) && (
+                {visibility === opt.id && (
                   <Check size={20} color="#000" />
                 )}
               </Pressable>
             ))}
           </View>
 
-          {/* 댓글 허용 */}
-          <View style={styles.section}>
+          {/* 고급 설정 */}
+          <View style={[styles.section, { marginBottom: 24 }]}>
+            <Text style={styles.label}>고급 설정</Text>
+
             <Pressable
               style={styles.visibilityRow}
               onPress={() =>
@@ -538,96 +876,310 @@ export default function EditPostScreen() {
                 ]}
               />
             </Pressable>
+
+            <Pressable
+              style={styles.visibilityRow}
+              onPress={() => setAllowShare((prev) => !prev)}
+            >
+              <Text style={styles.optionText}>공유 허용</Text>
+              <View
+                style={[
+                  styles.toggle,
+                  allowShare && styles.toggleOn,
+                ]}
+              />
+            </Pressable>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {/* 사진 편집 모달 */}
-      <Modal visible={editorVisible} animationType="slide">
-        <SafeAreaView style={styles.editorContainer}>
-          <View style={styles.editorHeader}>
-            <Pressable onPress={() => setEditorVisible(false)}>
-              <X size={26} color="#000" />
+      {/* 태그 검색 모달 */}
+      <Modal
+        visible={tagModalVisible}
+        animationType="slide"
+        onRequestClose={closeTagModal}
+      >
+        <SafeAreaView style={styles.tagModalContainer}>
+          <View style={styles.tagModalHeader}>
+            <Pressable onPress={closeTagModal}>
+              <ChevronLeft size={22} color="#000" />
             </Pressable>
-            <Text style={styles.editorTitle}>사진 편집</Text>
-            <Pressable onPress={applyEditor}>
-              <Text style={styles.editorDone}>완료</Text>
-            </Pressable>
+            <Text style={styles.tagModalTitle}>
+              {tagModalMode === 'person'
+                ? '사람 태그'
+                : tagModalMode === 'location'
+                ? '위치 태그'
+                : tagModalMode === 'business'
+                ? '비즈니스 태그'
+                : '태그'}
+            </Text>
+            <View style={{ width: 22 }} />
           </View>
 
-          <View style={styles.editorPreviewWrap}>
-            {images[selectedIndex] && (
-              <Image
-                source={{ uri: images[selectedIndex].uri }}
-                style={styles.editorPreview}
-                resizeMode="contain"
-              />
-            )}
-          </View>
-
-          <View style={styles.ratioRow}>
-            {['original', '1:1', '4:5', '16:9'].map((r) => (
-              <Pressable
-                key={r}
-                onPress={() =>
-                  setSelectedRatio(
-                    r as 'original' | '1:1' | '4:5' | '16:9',
-                  )
+          <View style={styles.tagSearchRow}>
+            <Search
+              size={18}
+              color="#6B7280"
+              style={{ marginRight: 6 }}
+            />
+            <TextInput
+              value={tagSearch}
+              onChangeText={(text) => {
+                setTagSearch(text);
+                if (text.trim().length >= 1) {
+                  runTagSearch(tagModalMode, text);
+                } else {
+                  runTagSearch(tagModalMode, '');
                 }
-                style={[
-                  styles.ratioBtn,
-                  selectedRatio === r && styles.ratioSelected,
-                ]}
-              >
-                <Text style={styles.ratioText}>{r}</Text>
-              </Pressable>
-            ))}
+              }}
+              placeholder="검색어를 입력하세요"
+              placeholderTextColor="#9CA3AF"
+              style={styles.tagSearchInput}
+            />
           </View>
+
+          {tagSearching && (
+            <ActivityIndicator
+              style={{ marginTop: 8 }}
+              size="small"
+            />
+          )}
+
+          <FlatList<TagListItem>
+            data={
+              (tagModalMode === 'person'
+                ? personResults
+                : tagModalMode === 'location'
+                ? locationResults
+                : tagModalMode === 'business'
+                ? businessResults
+                : []) as TagListItem[]
+            }
+            keyExtractor={(item, index) => {
+              const anyItem = item as any;
+              if (anyItem.id) return String(anyItem.id);
+              if (anyItem.name) return String(anyItem.name);
+              return String(index);
+            }}
+            renderItem={({ item }) => {
+              // 사람
+              if (tagModalMode === 'person') {
+                const u = item as TaggedUser;
+                const selected = taggedUsers.some(
+                  (x) => x.id === u.id,
+                );
+                return (
+                  <Pressable
+                    style={styles.tagListItem}
+                    onPress={() => toggleTaggedUser(u)}
+                  >
+                    <View style={styles.tagAvatar}>
+                      {u.avatar_url ? (
+                        <Image
+                          source={{ uri: u.avatar_url }}
+                          style={styles.tagAvatarImg}
+                        />
+                      ) : (
+                        <View
+                          style={styles.tagAvatarPlaceholder}
+                        >
+                          <Text style={styles.tagAvatarInitial}>
+                            {getInitialFromName(
+                              u.nickname ?? u.follow_id,
+                            )}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.tagMainText}>
+                        {u.nickname ?? '이름 없음'}
+                      </Text>
+                      {u.follow_id && (
+                        <Text style={styles.tagSubText}>
+                          @{u.follow_id}
+                        </Text>
+                      )}
+                    </View>
+                    {selected && (
+                      <Check size={20} color="#10B981" />
+                    )}
+                  </Pressable>
+                );
+              }
+
+              // 비즈니스
+              if (tagModalMode === 'business') {
+                const b = item as BusinessTag;
+                const selected =
+                  selectedBusiness?.id === b.id;
+                return (
+                  <Pressable
+                    style={styles.tagListItem}
+                    onPress={() => {
+                      setSelectedBusiness(b);
+                      closeTagModal();
+                    }}
+                  >
+                    <View style={styles.tagAvatar}>
+                      {b.thumbnail_url ? (
+                        <Image
+                          source={{ uri: b.thumbnail_url }}
+                          style={styles.tagAvatarImg}
+                        />
+                      ) : (
+                        <View
+                          style={styles.tagAvatarPlaceholder}
+                        >
+                          <Text style={styles.tagAvatarInitial}>
+                            {getInitialFromName(b.name)}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.tagMainText}>
+                        {b.name}
+                      </Text>
+                      {b.shop_id && (
+                        <Text style={styles.tagSubText}>
+                          @{b.shop_id}
+                        </Text>
+                      )}
+                    </View>
+                    {selected && (
+                      <Check size={20} color="#10B981" />
+                    )}
+                  </Pressable>
+                );
+              }
+
+              // 위치
+              if (tagModalMode === 'location') {
+                const l = item as LocationTag;
+                const selected =
+                  selectedLocation?.name === l.name &&
+                  selectedLocation?.address === l.address;
+                return (
+                  <Pressable
+                    style={styles.tagListItem}
+                    onPress={() => {
+                      setSelectedLocation(l);
+                      closeTagModal();
+                    }}
+                  >
+                    <View style={styles.tagLocationIcon}>
+                      <Text style={styles.tagLocationIconText}>
+                        위치
+                      </Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.tagMainText}>
+                        {l.name}
+                      </Text>
+                      {l.address && (
+                        <Text style={styles.tagSubText}>
+                          {l.address}
+                        </Text>
+                      )}
+                    </View>
+                    {selected && (
+                      <Check size={20} color="#10B981" />
+                    )}
+                  </Pressable>
+                );
+              }
+
+              return null;
+            }}
+            ListEmptyComponent={() =>
+              !tagSearching && tagSearch.trim().length > 0 ? (
+                <View style={styles.tagEmptyBox}>
+                  <Text style={styles.tagEmptyText}>
+                    검색 결과가 없습니다.
+                  </Text>
+                </View>
+              ) : null
+            }
+          />
+
+          {/* 위치 태그: 새 위치 만들기 */}
+          {tagModalMode === 'location' &&
+            tagSearch.trim().length > 0 && (
+              <Pressable
+                style={styles.tagNewLocationBtn}
+                onPress={() => {
+                  setSelectedLocation({
+                    name: tagSearch.trim(),
+                  });
+                  closeTagModal();
+                }}
+              >
+                <Text style={styles.tagNewLocationText}>
+                  “{tagSearch.trim()}” 새 위치로 사용
+                </Text>
+              </Pressable>
+            )}
         </SafeAreaView>
       </Modal>
     </SafeAreaView>
   );
 }
 
-/* Styles (CreatePost와 동일한 느낌 유지) */
+/* ---------------- styles ----------------- */
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  centered: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingTxt: {
+    marginTop: 8,
+    color: '#4b5563',
+  },
 
   header: {
-    height: 52,
+    height: 48,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
     justifyContent: 'space-between',
   },
-  headerTitle: { fontSize: 17, fontWeight: '600', color: '#000' },
-  uploadBtn: { fontSize: 16, fontWeight: '500', color: '#007AFF' },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#000',
+  },
+  uploadBtn: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#007AFF',
+  },
 
   previewBox: {
     width: '100%',
-    height: SCREEN_WIDTH,
     backgroundColor: '#000',
   },
-  previewImage: { width: '100%', height: '100%' },
-  editBtn: {
-    position: 'absolute',
-    bottom: 16,
-    right: 16,
-    padding: 10,
-    backgroundColor: '#0008',
-    borderRadius: 30,
+  previewImage: {
+    width: '100%',
+    height: '100%',
   },
 
   thumbsWrap: {
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 12,
     flexDirection: 'row',
+  },
+  thumbWrapper: {
+    marginRight: 10,
   },
   thumbItem: {
     width: 60,
     height: 60,
     borderRadius: 8,
-    marginRight: 10,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#eee',
@@ -636,7 +1188,10 @@ const styles = StyleSheet.create({
     borderColor: '#007AFF',
     borderWidth: 2,
   },
-  thumbImage: { width: '100%', height: '100%' },
+  thumbImage: {
+    width: '100%',
+    height: '100%',
+  },
   thumbAdd: {
     width: 60,
     height: 60,
@@ -646,9 +1201,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  thumbRemoveBtn: {
+    position: 'absolute',
+    top: -6,
+    right: -6,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#0008',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 
-  section: { paddingHorizontal: 16, marginTop: 20 },
-  label: { fontSize: 15, fontWeight: '600', marginBottom: 8 },
+  section: {
+    paddingHorizontal: 16,
+    marginTop: 16,
+  },
+  label: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#111827',
+  },
+
   captionInput: {
     minHeight: 80,
     fontSize: 15,
@@ -686,13 +1260,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 22,
     borderRadius: 14,
-    backgroundColor: '#ccc',
+    backgroundColor: '#D1D5DB',
   },
   toggleOn: {
     backgroundColor: '#007AFF',
   },
 
-  // 탭 선택
   tabBtn: {
     paddingHorizontal: 14,
     paddingVertical: 8,
@@ -708,42 +1281,120 @@ const styles = StyleSheet.create({
   tabText: { fontSize: 14, color: '#111' },
   tabTextSelected: { color: '#007AFF', fontWeight: '600' },
 
-  // 에디터
-  editorContainer: { flex: 1, backgroundColor: '#fff' },
-  editorHeader: {
-    height: 52,
+  tagSummaryBox: {
+    marginTop: 6,
+    paddingVertical: 6,
+  },
+  tagSummaryText: {
+    fontSize: 13,
+    color: '#6B7280',
+  },
+
+  // 태그 모달
+  tagModalContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  tagModalHeader: {
+    height: 48,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 16,
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
   },
-  editorTitle: { fontSize: 17, fontWeight: '600' },
-  editorDone: { fontSize: 16, fontWeight: '500', color: '#007AFF' },
-
-  editorPreviewWrap: {
+  tagModalTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  tagSearchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  tagSearchInput: {
+    flex: 1,
+    fontSize: 14,
+    paddingVertical: 6,
+    color: '#111827',
+  },
+  tagListItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  tagAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    overflow: 'hidden',
+    marginRight: 10,
+  },
+  tagAvatarImg: {
+    width: '100%',
+    height: '100%',
+  },
+  tagAvatarPlaceholder: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#E5E7EB',
   },
-  editorPreview: { width: '100%', height: '100%' },
-
-  ratioRow: {
-    flexDirection: 'row',
-    padding: 12,
-    justifyContent: 'space-around',
+  tagAvatarInitial: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#4B5563',
+  },
+  tagMainText: {
+    fontSize: 14,
+    color: '#111827',
+    fontWeight: '500',
+  },
+  tagSubText: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 2,
+  },
+  tagLocationIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  tagLocationIconText: {
+    fontSize: 10,
+    color: '#4B5563',
+    fontWeight: '700',
+  },
+  tagEmptyBox: {
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tagEmptyText: {
+    fontSize: 13,
+    color: '#9CA3AF',
+  },
+  tagNewLocationBtn: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
+    borderTopColor: '#E5E7EB',
   },
-  ratioBtn: {
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
+  tagNewLocationText: {
+    fontSize: 14,
+    color: '#007AFF',
+    fontWeight: '600',
   },
-  ratioSelected: {
-    backgroundColor: '#007AFF17',
-    borderColor: '#007AFF',
-  },
-  ratioText: { fontSize: 14, color: '#000' },
 });

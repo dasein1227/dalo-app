@@ -55,6 +55,7 @@ type Profile = {
   hide_all_tab?: boolean | null;
   theme_color?: string | null;
   font_color?: string | null;
+  status_bar_style?: 'light-content' | 'dark-content' | null;
 };
 
 type VisibilityType =
@@ -75,6 +76,7 @@ type ProfileTab = {
 
 const DEFAULT_THEME_COLOR = '#5F5747';
 const DEFAULT_FONT_COLOR = '#F9FAFB';
+const DEFAULT_STATUS_BAR_STYLE_DB: 'light-content' | 'dark-content' = 'light-content';
 
 // ===== 색 관련 유틸 =====
 
@@ -210,7 +212,7 @@ export default function ProfileEdit() {
   const [newTabName, setNewTabName] = useState('');
   const [tabMutatingId, setTabMutatingId] = useState<string | null>(null);
 
-  // 탭 옵션 모달 (각 탭의 위/아래/숨기기/삭제를 한곳에서)
+  // 탭 옵션 모달
   const [tabOptionsTarget, setTabOptionsTarget] =
     useState<ProfileTab | null>(null);
 
@@ -225,6 +227,18 @@ export default function ProfileEdit() {
   const [brightnessPos, setBrightnessPos] = useState(0.5); // 0~1
   const [hueBarWidth, setHueBarWidth] = useState(1);
   const [brightnessBarWidth, setBrightnessBarWidth] = useState(1);
+
+  // ✅ StatusBar 글자색(light / dark) 선택 상태
+  type BarStyle = 'light-content' | 'dark-content';
+  const [statusBarStyle, setStatusBarStyle] =
+    useState<BarStyle>('light-content');
+
+  const toggleStatusBarStyle = () => {
+    setStatusBarStyle((prev) =>
+      prev === 'light-content' ? 'dark-content' : 'light-content',
+    );
+  };
+
 
   // hue 기반 기준색 (밝기 바의 가운데 컬러용)
   const baseHueColor = useMemo(() => {
@@ -244,7 +258,6 @@ export default function ProfileEdit() {
       raw.length === 6
         ? raw
         : DEFAULT_THEME_COLOR.replace('#', '');
-    // top: 완전 투명, middle: 중간 투명, bottom: 불투명
     return [`#${base}00`, `#${base}80`, `#${base}FF`];
   }, [themeColor]);
 
@@ -303,6 +316,7 @@ export default function ProfileEdit() {
             'hide_all_tab',
             'theme_color',
             'font_color',
+            'status_bar_style', // ← StatusBar 스타일
           ].join(','),
         )
         .eq('id', targetUserId)
@@ -334,6 +348,12 @@ export default function ProfileEdit() {
       setFontColor(initialFont);
 
       setTempColor(initialTheme);
+
+      // DB에 저장된 status_bar_style → RN StatusBar 스타일로 변환
+      const dbStyle =
+        (data.status_bar_style as BarStyle | null) ??
+        DEFAULT_STATUS_BAR_STYLE_DB;
+      setStatusBarStyle(dbStyle);
 
       // 탭들
       setTabsLoading(true);
@@ -501,6 +521,7 @@ export default function ProfileEdit() {
                   hide_all_tab: false,
                   theme_color: DEFAULT_THEME_COLOR,
                   font_color: DEFAULT_FONT_COLOR,
+                  status_bar_style: DEFAULT_STATUS_BAR_STYLE_DB,
                 })
                 .eq('id', effectiveUserId);
               if (error) throw error;
@@ -518,8 +539,13 @@ export default function ProfileEdit() {
 
   const saveProfile = useCallback(async () => {
     if (!effectiveUserId || !profile) return;
+
     try {
       setSaving(true);
+
+      const dbStatusBarStyle: 'light' | 'dark' =
+        statusBarStyle === 'dark-content' ? 'dark' : 'light';
+
       const { error } = await supabase
         .from('profiles')
         .update({
@@ -530,6 +556,8 @@ export default function ProfileEdit() {
           hide_all_tab: hideAllTab,
           theme_color: normalizeHex(themeColor),
           font_color: normalizeHex(fontColor),
+
+          status_bar_style: statusBarStyle,
         })
         .eq('id', effectiveUserId);
 
@@ -543,16 +571,17 @@ export default function ProfileEdit() {
       setSaving(false);
     }
   }, [
+    nickname,
+    statusMsg,
     avatarUrl,
     coverUrl,
-    effectiveUserId,
-    navigation,
-    nickname,
-    profile,
-    statusMsg,
     hideAllTab,
     themeColor,
     fontColor,
+    statusBarStyle,
+    effectiveUserId,
+    profile,
+    navigation,
   ]);
 
   const refreshTabs = useCallback(async () => {
@@ -912,7 +941,7 @@ export default function ProfileEdit() {
       <StatusBar
         translucent
         backgroundColor="transparent"
-        barStyle="light-content"
+        barStyle={statusBarStyle}
       />
 
       <SafeAreaView
@@ -1003,6 +1032,24 @@ export default function ProfileEdit() {
                   </View>
 
                   <View style={styles.navRight}>
+                    {/* ✅ StatusBar 글자색 토글 버튼 (휴지통 왼쪽) */}
+                    <Pressable
+                      style={styles.roundBtn}
+                      onPress={toggleStatusBarStyle}
+                    >
+                      <Text
+                        style={{
+                          color: '#F9FAFB',
+                          fontSize: 11,
+                          fontWeight: '700',
+                        }}
+                      >
+                        {statusBarStyle === 'light-content'
+                          ? 'W'
+                          : 'B'}
+                      </Text>
+                    </Pressable>
+
                     <Pressable
                       style={styles.roundBtn}
                       onPress={handleDeleteProfile}
@@ -1428,7 +1475,7 @@ export default function ProfileEdit() {
                       />
                     </View>
 
-                    {/* 👉 한 줄에 버튼 하나만: '옵션' */}
+                    {/* 옵션 버튼 한 개 */}
                     <View style={styles.tabActionsCol}>
                       <Pressable
                         style={[
@@ -1694,7 +1741,7 @@ export default function ProfileEdit() {
                 선택 공개 (중복 선택 가능)
               </Text>
 
-              {/* 친구 / 팔로워 를 하나의 테두리 안에 일렬로 배치 */}
+              {/* 친구 / 팔로워를 하나의 박스 안에 배치 */}
               <View
                 style={{
                   borderWidth: 1,
@@ -1955,8 +2002,6 @@ function DecorIcon({ label, Icon, onPress }: DecorProps) {
   );
 }
 
-// ↓ 여기부터 styles = StyleSheet.create({ ... }) 는 기존 거 그대로 쓰면 됨
-
 const styles = StyleSheet.create({
   page: {
     flex: 1,
@@ -2024,6 +2069,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 6,
+    paddingHorizontal: 4,
   },
   editTitle: {
     color: '#F9FAFB',
@@ -2323,7 +2369,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     backgroundColor: 'rgba(0,0,0,0.2)',
   },
-    tabOptionBtn: {
+  tabOptionBtn: {
     minWidth: 60,
     paddingHorizontal: 14,
     paddingVertical: 8,

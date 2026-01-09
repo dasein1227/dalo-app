@@ -1,343 +1,350 @@
-// src/screens/AddFriendScreen.tsx
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+// src/screens/friends/Edit.tsx
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  View, Text, TextInput, StyleSheet, Pressable, FlatList, Alert, ActivityIndicator, Image,
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ActivityIndicator,
+  Alert,
+  TextInput,
+  Modal,
+  Image,
+  ScrollView,
+  StatusBar,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { supabase } from '../../lib/supabase';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { ChevronLeft, Star, Tag, Shield, UserMinus, Save } from 'lucide-react-native';
 
-type Friendship = {
-  id: number;
-  requester: string;
-  addressee: string;
-  status: 'pending' | 'accepted' | 'blocked';
-  created_at: string;
-};
+import { supabase } from '@/lib/supabase';
 
-type Profile = {
-  id: string;              // ✅ profiles.id 기준(없을 수 있는 user_id 대비)
-  user_id?: string | null; // 호환: 일부 뷰에서 user_id 제공될 수 있음
+type FriendDetail = {
+  friend_id: string;
   nickname: string | null;
-  handle: string | null;   // '@' 없이 저장 (고유)
-  email: string | null;
-  phone_e164?: string | null; // 국제형태(+8210...) 컬럼이 있으면 우선 사용
-  phone?: string | null;      // 레거시 폴백
-  avatar_url?: string | null;
+  follow_id: string | null;
+  friend_code: string | null;
+  phone_number: string | null;
+  avatar_url: string | null;
+
+  alias: string | null;
+  is_favorite: boolean;
+
+  is_blocked_by_me: boolean;
+  is_blocking_me: boolean;
+
+  groups: { id: number; name: string; in_group: boolean }[];
 };
 
-const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const BG = '#fff';
+const TEXT = '#111827';
+const MUTED = '#6B7280';
+const HAIRLINE = '#E5E7EB';
+const ACCENT = '#FF5A7A';
 
-export default function AddFriendScreen() {
-  const [me, setMe] = useState<string>('');
-  const [q, setQ] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<Profile[]>([]);
-  const [incoming, setIncoming] = useState<Array<Friendship & { profile?: Profile }>>([]);
-  const [outgoing, setOutgoing] = useState<Array<Friendship & { profile?: Profile }>>([]);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+async function rpc<T>(fn: string, args?: Record<string, any>): Promise<T> {
+  const { data, error } = await supabase.rpc(fn, args ?? {});
+  if (error) throw error;
+  return data as T;
+}
 
-  // == 유틸 ==
-  const normalizeDigits = (s: string) => s.replace(/[^0-9]/g, '');
-  const toHandle = (s: string) => s.replace(/^@+/, '').toLowerCase();
+function safeMsg(e: any) {
+  return (e?.message ?? String(e)) as string;
+}
 
-  const ensureSession = useCallback(async () => {
-    let { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      const { data } = await supabase.auth.refreshSession();
-      session = data?.session ?? null;
-    }
-    return session;
-  }, []);
+export default function FriendEditScreen() {
+  const navigation = useNavigation<any>();
+  const route = useRoute<any>();
+  const friendId = String(route.params?.friend_id ?? '');
 
-  // == 요청 로드 ==
-  const loadRequests = useCallback(async () => {
-    const session = await ensureSession();
-    if (!session?.user) return;
-    setMe(session.user.id);
+  const [detail, setDetail] = useState<FriendDetail | null>(null);
+  const [loading, setLoading] = useState(true);
 
-    // 내가 관련된 모든 friendship 가져오기
-    const { data, error } = await supabase
-      .from('friendships')
-      .select('*')
-      .or(`requester.eq.${session.user.id},addressee.eq.${session.user.id}`);
-    if (error) {
-      setIncoming([]); setOutgoing([]);
-      return;
-    }
+  const [alias, setAlias] = useState('');
+  const [savingAlias, setSavingAlias] = useState(false);
 
-    const rows = (data ?? []) as Friendship[];
-    const incomingRaw = rows.filter(r => r.status === 'pending' && r.addressee === session.user.id);
-    const outgoingRaw = rows.filter(r => r.status === 'pending' && r.requester === session.user.id);
+  const [groupModal, setGroupModal] = useState(false);
 
-    // 상대 프로필 묶어서 보여주기
-    const counterpartIds = Array.from(new Set([
-      ...incomingRaw.map(r => r.requester),
-      ...outgoingRaw.map(r => r.addressee),
-    ]));
-
-    let profMap: Record<string, Profile> = {};
-    if (counterpartIds.length) {
-      const { data: profs } = await supabase
-        .from('profiles')
-        .select('id,user_id,nickname,handle,email,phone,phone_e164,avatar_url')
-        .in('id', counterpartIds as any);
-      (profs ?? []).forEach((p: any) => { profMap[p.id] = p as Profile; });
-    }
-
-    setIncoming(incomingRaw.map(r => ({ ...r, profile: profMap[r.requester] })));
-    setOutgoing(outgoingRaw.map(r => ({ ...r, profile: profMap[r.addressee] })));
-  }, [ensureSession]);
-
-  useEffect(() => { loadRequests(); }, [loadRequests]);
-
-  // == 검색 ==
-  useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (!q.trim()) { setResults([]); return; }
-
-    debounceRef.current = setTimeout(async () => {
-      try {
-        setLoading(true);
-        const session = await ensureSession();
-        const myId = session?.user?.id ?? '';
-
-        const term = q.trim();
-        const conditions: string[] = [];
-
-        if (term.startsWith('@')) {
-          // 정확 핸들 매칭(고유)
-          const h = toHandle(term);
-          conditions.push(`handle.eq.${h}`);
-        } else if (uuidRe.test(term)) {
-          // id 또는 user_id 어느쪽이든
-          conditions.push(`id.eq.${term}`);
-          conditions.push(`user_id.eq.${term}`);
-        } else if (term.includes('@')) {
-          // email like
-          conditions.push(`email.ilike.%${term}%`);
-        } else {
-          // 숫자 >= 9 → 전화번호
-          const digits = normalizeDigits(term);
-          if (digits.length >= 9) {
-            // phone_e164(우선) 또는 phone (폴백)
-            // e.g. 01012345678 → +821012345678 형태로 전처리되어 저장되어 있을 수 있음
-            conditions.push(`phone.ilike.%${digits}%`);
-            conditions.push(`phone_e164.ilike.%${digits}%`);
-          } else {
-            // 닉네임 like
-            conditions.push(`nickname.ilike.%${term}%`);
-            // 핸들 부분검색 허용 (선택)
-            conditions.push(`handle.ilike.%${toHandle(term)}%`);
-          }
-        }
-
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('id,user_id,nickname,handle,email,phone,phone_e164,avatar_url')
-          .or(conditions.join(','))
-          .limit(30);
-
-        if (error) throw error;
-
-        const rows = (data ?? []).filter((p: any) => (p.id ?? p.user_id) !== myId);
-        setResults(rows as Profile[]);
-      } catch (e: any) {
-        Alert.alert('검색 실패', e.message ?? String(e));
-        setResults([]);
-      } finally {
-        setLoading(false);
-      }
-    }, 320);
-
-    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [q, ensureSession]);
-
-  // == 친구 요청 보내기 ==
-  const sendRequest = useCallback(async (target: string) => {
+  const load = useCallback(async () => {
+    if (!friendId) return;
     try {
-      if (!me) throw new Error('로그인이 필요합니다.');
-      if (target === me) throw new Error('본인에게는 보낼 수 없습니다.');
-
-      // 중복/역방향 존재 여부 검사
-      const { data: exists } = await supabase
-        .from('friendships')
-        .select('id,status,requester,addressee')
-        .or(`and(requester.eq.${me},addressee.eq.${target}),and(requester.eq.${target},addressee.eq.${me})`)
-        .limit(1)
-        .maybeSingle();
-
-      if (exists) {
-        if (exists.status === 'accepted') throw new Error('이미 친구입니다.');
-        if (exists.status === 'pending') {
-          if (exists.requester === me) throw new Error('이미 보낸 요청이 대기 중입니다.');
-          // 역방향(상대가 보낸 요청)이라면 바로 수락 가능
-          const { error: autoAcceptErr } = await supabase
-            .from('friendships')
-            .update({ status: 'accepted' })
-            .eq('id', exists.id);
-          if (autoAcceptErr) throw autoAcceptErr;
-          Alert.alert('완료', '상대의 요청을 수락했습니다.');
-          await loadRequests();
-          return;
-        }
-        if (exists.status === 'blocked') throw new Error('요청을 보낼 수 없습니다.');
-      }
-
-      // 새 요청
-      const { error } = await supabase
-        .from('friendships')
-        .insert({ requester: me, addressee: target, status: 'pending' });
-      if (error) throw error;
-
-      Alert.alert('완료', '요청을 보냈습니다.');
-      await loadRequests();
+      setLoading(true);
+      const d = await rpc<FriendDetail>('get_friend_detail_v1', { friend_id: friendId });
+      setDetail(d);
+      setAlias(d?.alias ?? '');
     } catch (e: any) {
-      Alert.alert('실패', e.message ?? String(e));
+      Alert.alert('불러오기 실패', safeMsg(e).slice(0, 200));
+      setDetail(null);
+    } finally {
+      setLoading(false);
     }
-  }, [me, loadRequests]);
+  }, [friendId]);
 
-  // == 수락 / 거절 ==
-  const accept = useCallback(async (f: Friendship) => {
-    const { error } = await supabase
-      .from('friendships')
-      .update({ status: 'accepted' })
-      .eq('id', f.id);
-    if (!error) loadRequests();
-  }, [loadRequests]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
-  const reject = useCallback(async (f: Friendship) => {
-    const { error } = await supabase
-      .from('friendships')
-      .update({ status: 'blocked' })
-      .eq('id', f.id);
-    if (!error) loadRequests();
-  }, [loadRequests]);
+  const name = useMemo(() => {
+    if (!detail) return '사용자';
+    return detail.alias?.trim() || detail.nickname?.trim() || detail.follow_id?.trim() || detail.friend_code?.trim() || '사용자';
+  }, [detail]);
 
-  // == 렌더링 ==
-  const renderSearchItem = ({ item }: { item: Profile }) => {
-    const title = item.nickname || (item.handle ? `@${item.handle}` : (item.email ?? '사용자'));
-    const sub = item.handle ? `@${item.handle}` : (item.email || item.phone_e164 || item.phone || item.id);
+  const sub = useMemo(() => {
+    if (!detail) return '';
+    return detail.follow_id || detail.friend_code || detail.phone_number || detail.friend_id.slice(0, 8) + '…';
+  }, [detail]);
 
+  const toggleFavorite = useCallback(async () => {
+    if (!detail) return;
+    try {
+      const next = !detail.is_favorite;
+      await rpc('set_friend_favorite', { friend_id: detail.friend_id, favorite: next });
+      setDetail({ ...detail, is_favorite: next });
+    } catch (e: any) {
+      Alert.alert('실패', safeMsg(e).slice(0, 200));
+    }
+  }, [detail]);
+
+  const saveAlias = useCallback(async () => {
+    if (!detail) return;
+    try {
+      setSavingAlias(true);
+      await rpc('set_friend_alias', { friend_id: detail.friend_id, alias: alias.trim() || null });
+      setDetail({ ...detail, alias: alias.trim() || null });
+      Alert.alert('완료', '별칭을 저장했습니다.');
+    } catch (e: any) {
+      Alert.alert('실패', safeMsg(e).slice(0, 200));
+    } finally {
+      setSavingAlias(false);
+    }
+  }, [alias, detail]);
+
+  const toggleBlock = useCallback(async () => {
+    if (!detail) return;
+    try {
+      const next = !detail.is_blocked_by_me;
+      await rpc('set_friend_block', { target_id: detail.friend_id, blocked: next, reason: null });
+      await load();
+    } catch (e: any) {
+      Alert.alert('실패', safeMsg(e).slice(0, 200));
+    }
+  }, [detail, load]);
+
+  const removeFriend = useCallback(async () => {
+    if (!detail) return;
+    Alert.alert('친구 삭제', `${name}님을 친구에서 삭제할까요?`, [
+      { text: '취소', style: 'cancel' },
+      {
+        text: '삭제',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await rpc('remove_friend_v1', { friend_id: detail.friend_id });
+            Alert.alert('완료', '친구를 삭제했습니다.');
+            navigation.goBack();
+          } catch (e: any) {
+            Alert.alert('삭제 실패', safeMsg(e).slice(0, 200));
+          }
+        },
+      },
+    ]);
+  }, [detail, name, navigation]);
+
+  const toggleGroup = useCallback(async (labelId: number, inGroup: boolean) => {
+    if (!detail) return;
+    try {
+      await rpc('set_label_member_v1', { label_id: labelId, friend_id: detail.friend_id, in_group: !inGroup });
+      setDetail({
+        ...detail,
+        groups: detail.groups.map((g) => (g.id === labelId ? { ...g, in_group: !inGroup } : g)),
+      });
+    } catch (e: any) {
+      Alert.alert('실패', safeMsg(e).slice(0, 200));
+    }
+  }, [detail]);
+
+  if (loading) {
     return (
-      <View style={a.row}>
-        {item.avatar_url ? (
-          <Image source={{ uri: item.avatar_url }} style={a.avatar} />
-        ) : (
-          <View style={[a.avatar, { backgroundColor: '#e5e7eb' }]}>
-            <Text style={a.avatarTxt}>{(title?.[0] ?? 'U').toUpperCase()}</Text>
-          </View>
-        )}
-        <View style={{ flex: 1, paddingRight: 8 }}>
-          <Text style={a.name} numberOfLines={1}>{title}</Text>
-          <Text style={a.sub} numberOfLines={1}>{sub}</Text>
-        </View>
-        <Pressable style={a.btn} onPress={() => sendRequest(item.id)}>
-          <Text style={a.btnTxt}>요청</Text>
-        </Pressable>
-      </View>
+      <SafeAreaView style={{ flex: 1, backgroundColor: BG }}>
+        <StatusBar barStyle="dark-content" backgroundColor="#fff" translucent={false} />
+        <View style={st.center}><ActivityIndicator /></View>
+      </SafeAreaView>
     );
-  };
+  }
 
-  const renderIncoming = ({ item }: { item: Friendship & { profile?: Profile } }) => {
-    const nick = item.profile?.nickname || (item.profile?.handle ? `@${item.profile.handle}` : item.requester.slice(0, 8) + '…');
+  if (!detail) {
     return (
-      <View style={a.row}>
-        {item.profile?.avatar_url ? (
-          <Image source={{ uri: item.profile.avatar_url }} style={a.avatar} />
-        ) : (
-          <View style={[a.avatar, { backgroundColor: '#e5e7eb' }]}>
-            <Text style={a.avatarTxt}>{(nick?.[0] ?? 'U').toUpperCase()}</Text>
-          </View>
-        )}
-        <Text style={[a.name, { flex: 1 }]} numberOfLines={1}>from {nick}</Text>
-        <Pressable style={[a.btn, { backgroundColor: '#111827' }]} onPress={() => accept(item)}>
-          <Text style={a.btnTxt}>수락</Text>
-        </Pressable>
-        <Pressable style={[a.btn, { backgroundColor: '#e5e7eb', marginLeft: 8 }]} onPress={() => reject(item)}>
-          <Text style={[a.btnTxt, { color: '#111827' }]}>거절</Text>
-        </Pressable>
-      </View>
+      <SafeAreaView style={{ flex: 1, backgroundColor: BG }}>
+        <StatusBar barStyle="dark-content" backgroundColor="#fff" translucent={false} />
+        <View style={st.center}><Text style={{ color: MUTED }}>사용자를 불러올 수 없습니다.</Text></View>
+      </SafeAreaView>
     );
-  };
-
-  const renderOutgoing = ({ item }: { item: Friendship & { profile?: Profile } }) => {
-    const nick = item.profile?.nickname || (item.profile?.handle ? `@${item.profile.handle}` : item.addressee.slice(0, 8) + '…');
-    return (
-      <View style={a.row}>
-        {item.profile?.avatar_url ? (
-          <Image source={{ uri: item.profile.avatar_url }} style={a.avatar} />
-        ) : (
-          <View style={[a.avatar, { backgroundColor: '#e5e7eb' }]}>
-            <Text style={a.avatarTxt}>{(nick?.[0] ?? 'U').toUpperCase()}</Text>
-          </View>
-        )}
-        <Text style={[a.name, { flex: 1 }]} numberOfLines={1}>to {nick}</Text>
-        <Text style={a.sub}>대기중…</Text>
-      </View>
-    );
-  };
+  }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <Text style={a.title}>친구 추가</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: BG }}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" translucent={false} />
 
-      <View style={a.inputRow}>
-        <TextInput
-          style={a.input}
-          value={q}
-          onChangeText={setQ}
-          placeholder="예) @coonn / someone@email.com / 01000000000 / 닉네임"
-          autoCapitalize="none"
-          autoCorrect={false}
-          returnKeyType="search"
-        />
+      <View style={st.topBar}>
+        <Pressable style={st.topLeft} hitSlop={10} onPress={() => navigation.goBack()}>
+          <ChevronLeft size={22} color={TEXT} />
+        </Pressable>
+        <Text style={st.topTitle}>친구 관리</Text>
+        <View style={st.topRight} />
       </View>
 
-      {loading ? (
-        <ActivityIndicator style={{ marginVertical: 8 }} />
-      ) : (
-        <FlatList
-          data={results}
-          keyExtractor={(i) => i.id}
-          renderItem={renderSearchItem}
-          ListEmptyComponent={<Text style={a.empty}>검색 결과가 없습니다.</Text>}
-        />
-      )}
+      <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 28 }}>
+        <View style={st.card}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            {detail.avatar_url ? (
+              <Image source={{ uri: detail.avatar_url }} style={st.avatar} />
+            ) : (
+              <View style={[st.avatar, st.avatarFallback]}>
+                <Text style={st.initial}>{(name?.[0] ?? 'U').toUpperCase()}</Text>
+              </View>
+            )}
 
-      <Text style={a.section}>받은 요청</Text>
-      <FlatList
-        data={incoming}
-        keyExtractor={(i) => String(i.id)}
-        renderItem={renderIncoming}
-        ListEmptyComponent={<Text style={a.empty}>없습니다.</Text>}
-      />
+            <View style={{ flex: 1 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Text style={st.name}>{name}</Text>
+                <Pressable onPress={toggleFavorite} hitSlop={8}>
+                  <Star size={18} color={detail.is_favorite ? ACCENT : MUTED} fill={detail.is_favorite ? ACCENT : 'transparent'} />
+                </Pressable>
+              </View>
+              <Text style={st.sub}>{sub}</Text>
+              {detail.is_blocking_me ? <Text style={st.warn}>상대가 나를 차단한 상태입니다.</Text> : null}
+            </View>
+          </View>
+        </View>
 
-      <Text style={a.section}>보낸 요청</Text>
-      <FlatList
-        data={outgoing}
-        keyExtractor={(i) => String(i.id)}
-        renderItem={renderOutgoing}
-        ListEmptyComponent={<Text style={a.empty}>없습니다.</Text>}
-      />
+        <View style={st.section}>
+          <Text style={st.sectionTitle}>별칭</Text>
+          <View style={st.inline}>
+            <TextInput
+              style={st.input}
+              value={alias}
+              onChangeText={setAlias}
+              placeholder="별칭 입력"
+              placeholderTextColor="#9CA3AF"
+            />
+            <Pressable style={[st.iconBtn, savingAlias && { opacity: 0.6 }]} disabled={savingAlias} onPress={saveAlias}>
+              <Save size={18} color={TEXT} />
+            </Pressable>
+          </View>
+        </View>
+
+        <View style={st.section}>
+          <Text style={st.sectionTitle}>그룹</Text>
+
+          <Pressable style={st.actionRow} onPress={() => setGroupModal(true)}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <Tag size={18} color={TEXT} />
+              <Text style={st.actionText}>그룹 설정</Text>
+            </View>
+            <Text style={st.actionHint}>
+              {detail.groups.filter((g) => g.in_group).map((g) => g.name).join(', ') || '없음'}
+            </Text>
+          </Pressable>
+        </View>
+
+        <View style={st.section}>
+          <Text style={st.sectionTitle}>보안</Text>
+
+          <Pressable style={st.actionRow} onPress={toggleBlock}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <Shield size={18} color={TEXT} />
+              <Text style={st.actionText}>{detail.is_blocked_by_me ? '차단 해제' : '친구 차단'}</Text>
+            </View>
+            <Text style={st.actionHint}>{detail.is_blocked_by_me ? '현재 차단됨' : '차단 안 됨'}</Text>
+          </Pressable>
+        </View>
+
+        <Pressable style={[st.dangerBtn]} onPress={removeFriend}>
+          <UserMinus size={18} color="#fff" />
+          <Text style={st.dangerTxt}>친구 삭제</Text>
+        </Pressable>
+      </ScrollView>
+
+      {/* Group Modal */}
+      <Modal transparent visible={groupModal} animationType="fade" onRequestClose={() => setGroupModal(false)}>
+        <Pressable style={st.backdrop} onPress={() => setGroupModal(false)}>
+          <Pressable style={[st.modalCard, { maxHeight: 520 }]} onPress={() => {}}>
+            <Text style={st.modalTitle}>그룹 설정</Text>
+
+            <ScrollView>
+              {detail.groups.length === 0 ? (
+                <Text style={{ color: MUTED, lineHeight: 18 }}>그룹이 없습니다. 그룹 화면에서 먼저 그룹을 생성하세요.</Text>
+              ) : (
+                detail.groups.map((g) => (
+                  <Pressable key={g.id} style={st.groupRow} onPress={() => toggleGroup(g.id, g.in_group)}>
+                    <Text style={st.groupName}>{g.name}</Text>
+                    <Text style={[st.groupState, g.in_group ? { color: '#111827' } : { color: MUTED }]}>
+                      {g.in_group ? '포함' : '미포함'}
+                    </Text>
+                  </Pressable>
+                ))
+              )}
+            </ScrollView>
+
+            <Pressable style={[st.btn, st.ghost, { marginTop: 12 }]} onPress={() => setGroupModal(false)}>
+              <Text style={st.btnGhostTxt}>닫기</Text>
+            </Pressable>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
 
-const a = StyleSheet.create({
-  title: { paddingHorizontal: 16, paddingTop: 10, paddingBottom: 6, fontSize: 18, fontWeight: '800', color: '#111827' },
-  inputRow: { paddingHorizontal: 16, paddingBottom: 8 },
-  input: { height: 44, borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 10, paddingHorizontal: 12, backgroundColor: '#fff' },
+const st = StyleSheet.create({
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 
-  section: { paddingHorizontal: 16, paddingVertical: 10, fontSize: 16, fontWeight: '800', color: '#111827' },
-  empty: { paddingHorizontal: 16, color: '#6b7280' },
+  topBar: {
+    height: 54,
+    backgroundColor: '#fff',
+    paddingHorizontal: 14,
+    paddingLeft: 5,
+    paddingTop: Platform.OS === 'ios' ? 8 : 4,
+    paddingBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  topLeft: { width: 44, alignItems: 'flex-start', justifyContent: 'center' },
+  topTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '700', color: TEXT },
+  topRight: { width: 44 },
 
-  row: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16, paddingVertical: 10 },
-  avatar: { width: 40, height: 40, borderRadius: 10, backgroundColor: '#f3f4f6', alignItems: 'center', justifyContent: 'center' },
-  avatarTxt: { color: '#111827', fontWeight: '900' },
+  card: { borderWidth: 1, borderColor: HAIRLINE, borderRadius: 18, backgroundColor: '#fff', padding: 14 },
+  avatar: { width: 56, height: 56, borderRadius: 22, backgroundColor: '#E5E7EB' },
+  avatarFallback: { backgroundColor: '#111827', alignItems: 'center', justifyContent: 'center' },
+  initial: { color: '#fff', fontWeight: '900' },
+  name: { fontSize: 16, fontWeight: '900', color: TEXT },
+  sub: { marginTop: 4, color: MUTED, fontWeight: '700', fontSize: 12 },
+  warn: { marginTop: 6, color: '#EF4444', fontWeight: '800', fontSize: 12 },
 
-  name: { fontSize: 15, fontWeight: '800', color: '#111827' },
-  sub: { fontSize: 12, color: '#6b7280' },
+  section: { marginTop: 14, borderWidth: 1, borderColor: HAIRLINE, borderRadius: 18, backgroundColor: '#fff', padding: 14 },
+  sectionTitle: { fontSize: 14, fontWeight: '900', color: TEXT, marginBottom: 10 },
 
-  btn: { height: 32, paddingHorizontal: 12, borderRadius: 8, backgroundColor: '#111827', alignItems: 'center', justifyContent: 'center' },
-  btnTxt: { color: '#fff', fontWeight: '800' },
+  inline: { flexDirection: 'row', gap: 10, alignItems: 'center' },
+  input: { flex: 1, height: 44, borderRadius: 12, borderWidth: 1, borderColor: HAIRLINE, paddingHorizontal: 12, color: TEXT, backgroundColor: '#fff' },
+  iconBtn: { width: 44, height: 44, borderRadius: 14, borderWidth: 1, borderColor: HAIRLINE, alignItems: 'center', justifyContent: 'center' },
+
+  actionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8 },
+  actionText: { color: TEXT, fontWeight: '900', fontSize: 14 },
+  actionHint: { color: MUTED, fontWeight: '800', fontSize: 12, maxWidth: 160, textAlign: 'right' },
+
+  dangerBtn: { marginTop: 16, height: 46, borderRadius: 16, backgroundColor: '#EF4444', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 10 },
+  dangerTxt: { color: '#fff', fontWeight: '900' },
+
+  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', padding: 20 },
+  modalCard: { width: Math.min(420, 360), borderRadius: 18, backgroundColor: '#fff', borderWidth: 1, borderColor: HAIRLINE, padding: 14 },
+  modalTitle: { fontSize: 16, fontWeight: '900', color: TEXT, marginBottom: 10 },
+
+  groupRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
+  groupName: { color: TEXT, fontWeight: '900' },
+  groupState: { fontWeight: '900' },
+
+  btn: { height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  ghost: { backgroundColor: '#fff', borderWidth: 1, borderColor: HAIRLINE },
+  btnGhostTxt: { color: TEXT, fontWeight: '900' },
 });

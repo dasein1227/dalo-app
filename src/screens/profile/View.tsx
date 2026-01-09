@@ -1,5 +1,10 @@
 // src/screens/profile/View.tsx
-import React, { useState, useCallback, useMemo } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from 'react';
 import {
   View,
   Text,
@@ -13,8 +18,9 @@ import {
   NativeSyntheticEvent,
   ImageStyle,
   ScrollView,
-  StatusBar,
   Platform,
+  Animated,
+  PanResponder,
 } from 'react-native';
 import {
   SafeAreaView,
@@ -25,6 +31,7 @@ import {
   useNavigation,
   useFocusEffect,
 } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
   ChevronLeft,
@@ -34,6 +41,8 @@ import {
   Edit3,
 } from 'lucide-react-native';
 import { supabase } from '@/lib/supabase';
+
+type StatusBarStyleType = 'light-content' | 'dark-content';
 
 type Profile = {
   user_id: string; // ✅ auth.users.id 와 매칭
@@ -47,11 +56,13 @@ type Profile = {
   hide_all_tab?: boolean | null;
   theme_color?: string | null;
   font_color?: string | null;
+  status_bar_style?: StatusBarStyleType | null;
 };
 
 type Post = {
   id: string;
   image_url: string;
+  tab_id: string | null;
 };
 
 type VisibilityType =
@@ -70,13 +81,10 @@ type ProfileTab = {
   visibility: VisibilityType;
 };
 
-type PostTabRow = {
-  tab_id: string;
-  post_id: string;
-};
-
 const DEFAULT_THEME_COLOR = '#5F5747';
 const DEFAULT_FONT_COLOR = '#F9FAFB';
+const DEFAULT_STATUS_BAR_STYLE: StatusBarStyleType =
+  'light-content';
 
 function normalizeHex(hex: string | null | undefined) {
   if (!hex) return '';
@@ -137,10 +145,13 @@ export function ProfileViewInner(props: {
   const [fontColor, setFontColor] =
     useState<string>(DEFAULT_FONT_COLOR);
 
+  const [statusBarStyle, setStatusBarStyle] =
+    useState<StatusBarStyleType>(DEFAULT_STATUS_BAR_STYLE);
+
   // "나와의 채팅" 중복 클릭 방지
   const [openingSelfChat, setOpeningSelfChat] = useState(false);
 
-  // 팔로우 상태
+  // 팔로우 / 친구 상태
   const [currentUserId, setCurrentUserId] = useState<string | null>(
     null,
   );
@@ -148,6 +159,7 @@ export function ProfileViewInner(props: {
     null,
   );
   const [followLoading, setFollowLoading] = useState(false);
+  const [isFriend, setIsFriend] = useState(false);
 
   // 커버 전체용 그라데이션
   const themeGradientColors = useMemo<[string, string, string]>(() => {
@@ -160,21 +172,7 @@ export function ProfileViewInner(props: {
     return [`#${base}00`, `#${base}80`, `#${base}FF`];
   }, [themeColor]);
 
-  // CTA 영역용 그라데이션
-  const ctaGradientColors = useMemo<[string, string, string]>(() => {
-    const normalized = normalizeHex(themeColor) || DEFAULT_THEME_COLOR;
-    const raw = normalized.replace('#', '');
-    const base =
-      raw.length === 6
-        ? raw
-        : DEFAULT_THEME_COLOR.replace('#', '');
-    return [`#${base}00`, `#${base}00`, `#${base}FF`];
-  }, [themeColor]);
-
   const [tabs, setTabs] = useState<ProfileTab[]>([]);
-  const [tabPostMap, setTabPostMap] = useState<
-    Record<string, Set<string>>
-  >({});
   const [selectedTabId, setSelectedTabId] =
     useState<string>('all');
 
@@ -187,6 +185,7 @@ export function ProfileViewInner(props: {
     try {
       setLoading(true);
       setIsFollowing(null);
+      setIsFriend(false);
 
       // 현재 로그인한 유저
       const {
@@ -221,6 +220,7 @@ export function ProfileViewInner(props: {
             'hide_all_tab',
             'theme_color',
             'font_color',
+            'status_bar_style',
           ].join(','),
         )
         .eq('user_id', userId)
@@ -244,10 +244,17 @@ export function ProfileViewInner(props: {
       setThemeColor(theme || DEFAULT_THEME_COLOR);
       setFontColor(font || DEFAULT_FONT_COLOR);
 
-      // 게시물
+      // ✅ StatusBar 스타일도 프로필에서 가져오기
+      const dbStatus: StatusBarStyleType =
+        data.status_bar_style === 'dark-content'
+          ? 'dark-content'
+          : 'light-content';
+      setStatusBarStyle(dbStatus);
+
+      // ✅ 게시물 + tab_id 까지 같이 받아오기
       const { data: postsData, error: postErr } = (await supabase
-        .from('posts_with_first_media')          // ✅ 이 뷰 사용
-        .select('id,image_url')
+        .from('posts_with_first_media') // 이 뷰에 tab_id 도 포함되어 있어야 함
+        .select('id,image_url,tab_id')
         .eq('user_id', userId)
         .order('created_at', { ascending: false })) as {
         data: Post[] | null;
@@ -259,14 +266,17 @@ export function ProfileViewInner(props: {
       setPosts(safePosts);
 
       // 탭
-      const { data: tabsData } = (await supabase
+      const { data: tabsData, error: tabsErr } = await supabase
         .from('profile_tabs')
         .select('id,name,sort_order,is_hidden,visibility')
         .eq('user_id', userId)
-        .order('sort_order', { ascending: true })) as {
-        data: ProfileTab[] | null;
-      };
+        .order('sort_order', { ascending: true });
 
+      if (tabsErr) {
+        console.log('[Profile] tabs select error', tabsErr);
+      }
+
+      console.log('[Profile] tabs len', tabsData?.length ?? 0, { userId, isMe });
       if (tabsData) {
         const visible = isMe
           ? tabsData.filter((t) => !t.is_hidden)
@@ -284,26 +294,6 @@ export function ProfileViewInner(props: {
         setTabs([]);
       }
 
-      // 탭-포스트 매핑
-      if (safePosts.length > 0) {
-        const postIds = safePosts.map((p) => p.id);
-        const { data: mapData } = (await supabase
-          .from('post_tabs')
-          .select('tab_id,post_id')
-          .in('post_id', postIds)) as {
-          data: PostTabRow[] | null;
-        };
-
-        if (mapData) {
-          const map: Record<string, Set<string>> = {};
-          mapData.forEach((row) => {
-            if (!map[row.tab_id]) map[row.tab_id] = new Set();
-            map[row.tab_id].add(row.post_id);
-          });
-          setTabPostMap(map);
-        }
-      }
-
       const hideAll = data.hide_all_tab ?? false;
       if (hideAll && tabsData && tabsData.length > 0) {
         const first = tabsData.find((t) => !t.is_hidden);
@@ -312,7 +302,7 @@ export function ProfileViewInner(props: {
         setSelectedTabId('all');
       }
 
-      // 팔로우 여부 (본인 아닐 때만)
+      // 팔로우 / 친구 여부 (본인 아닐 때만)
       if (me && me.id !== userId) {
         const { data: followRow, error: followErr } = await supabase
           .from('profile_follows')
@@ -326,8 +316,32 @@ export function ProfileViewInner(props: {
         }
 
         setIsFollowing(!!followRow);
+
+        // 친구 여부 (friendships.status = 'accepted')
+        const { data: friendshipRow, error: friendshipErr } =
+          await supabase
+            .from('friendships')
+            .select('id,status')
+            .or(
+              `and(requester.eq.${me.id},addressee.eq.${userId}),and(requester.eq.${userId},addressee.eq.${me.id})`,
+            )
+            .eq('status', 'accepted')
+            .maybeSingle();
+
+        if (
+          friendshipErr &&
+          friendshipErr.code !== 'PGRST116'
+        ) {
+          console.log(
+            'friendship check error',
+            friendshipErr,
+          );
+        }
+
+        setIsFriend(!!friendshipRow);
       } else {
         setIsFollowing(null);
+        setIsFriend(false);
       }
     } catch (e: any) {
       console.log(e);
@@ -388,12 +402,11 @@ export function ProfileViewInner(props: {
 
   const postsCount = posts.length;
 
+  // ✅ 탭 필터: posts.tab_id 로 필터
   const filteredPosts = useMemo(() => {
     if (selectedTabId === 'all') return posts;
-    const set = tabPostMap[selectedTabId];
-    if (!set) return [];
-    return posts.filter((p) => set.has(p.id));
-  }, [posts, selectedTabId, tabPostMap]);
+    return posts.filter((p) => p.tab_id === selectedTabId);
+  }, [posts, selectedTabId]);
 
   const showBack = !embedded;
 
@@ -434,8 +447,8 @@ export function ProfileViewInner(props: {
       }
 
       navigation.navigate('Chat', {
-        mode: 'personal',
         roomId,
+        roomType: 'self',
         selfChat: true,
         fromProfile: true,
       });
@@ -450,19 +463,44 @@ export function ProfileViewInner(props: {
     }
   };
 
-  const openDirectChat = () => {
+  // ✅ 1:1 채팅 진입(Direct): "다이렉트"로 명시, 렌더링 중 자동 navigate 금지
+  const openDirectChat = useCallback(() => {
+    if (isMe) return;
+    if (!userId) return;
+
     navigation.navigate('Chat', {
-      mode: 'personal',
-      targetUserId: userId,
+      peer_id: userId,
+      roomType: 'dm',
       fromProfile: true,
     });
-  };
+  }, [navigation, userId, isMe]);
 
   const openCreatePost = () => {
     navigation.navigate('CreatePost', {
       fromProfile: true,
       user_id: userId,
     });
+  };
+
+  // 통화 (친구 전용, 나중에 일반전화/보이스콜 분기 가능)
+  const openCall = () => {
+    if (!isFriend) {
+      Alert.alert('통화 불가', '통화는 친구에게만 제공됩니다.');
+      return;
+    }
+
+    Alert.alert(
+      '통화',
+      '전화번호 / 보이스콜 기능은 추후 연결 예정입니다.',
+    );
+  };
+
+  // ✅ 팔로워/팔로잉 목록 열기
+  const openFollowList = (initialTab: 'followers' | 'following') => {
+    navigation.navigate('ProfileFollowList', {
+      user_id: userId,
+      initialTab,
+    } as any);
   };
 
   // 팔로우 / 언팔
@@ -561,67 +599,6 @@ export function ProfileViewInner(props: {
     void doFollow();
   };
 
-  const CTABox = () => {
-    if (isMe) {
-      return (
-        <View style={styles.ctaBox}>
-          <Pressable
-            style={[styles.ctaCell, styles.ctaCellBorder]}
-            onPress={openSelfChat}
-            disabled={openingSelfChat}
-          >
-            <MessageCircle size={18} color={fontColor} />
-            <Text style={[styles.ctaText, { color: fontColor }]}>
-              {openingSelfChat ? '열리는 중…' : '나와의 채팅'}
-            </Text>
-          </Pressable>
-          <Pressable
-            style={styles.ctaCell}
-            onPress={openCreatePost}
-          >
-            <Text
-              style={[styles.ctaPlus, { color: fontColor }]}
-            >
-              ＋
-            </Text>
-            <Text style={[styles.ctaText, { color: fontColor }]}>
-              새 게시물
-            </Text>
-          </Pressable>
-        </View>
-      );
-    }
-
-    return (
-      <View style={styles.ctaBox}>
-        <Pressable
-          style={[styles.ctaCell, styles.ctaCellBorder]}
-          onPress={openDirectChat}
-        >
-          <MessageCircle size={18} color={fontColor} />
-          <Text style={[styles.ctaText, { color: fontColor }]}>
-            1:1 채팅
-          </Text>
-        </Pressable>
-
-        {/* 통화 → 팔로우 */}
-        <Pressable
-          style={styles.ctaCell}
-          onPress={handleFollowPress}
-          disabled={followLoading}
-        >
-          <Text style={[styles.ctaText, { color: fontColor }]}>
-            {followLoading
-              ? '처리 중…'
-              : isFollowing
-              ? '팔로우 중'
-              : '팔로우'}
-          </Text>
-        </Pressable>
-      </View>
-    );
-  };
-
   const TabBar = () => {
     const hideAllTabFlag = profile?.hide_all_tab ?? false;
 
@@ -713,6 +690,105 @@ export function ProfileViewInner(props: {
     }
   }, [selectedTabId]);
 
+  // ====== 여기서부터 스와이프용 훅 (항상 호출) ======
+  const swipeX = useRef(new Animated.Value(0)).current;
+
+  const labelOpacityLeft = swipeX.interpolate({
+    inputRange: [0, 40, 120],
+    outputRange: [0, 0.4, 1],
+    extrapolate: 'clamp',
+  });
+
+  const labelOpacityRight = swipeX.interpolate({
+    inputRange: [-120, -40, 0],
+    outputRange: [1, 0.4, 0],
+    extrapolate: 'clamp',
+  });
+
+  // 라벨 텍스트 분기
+  const leftLabelText = useMemo(() => {
+    if (isMe) return '＋ 새 게시물';
+    return '1:1 채팅';
+  }, [isMe]);
+
+  const rightLabelText = useMemo(() => {
+    if (isMe) return '나와의 채팅';
+    if (isFriend) return '통화';
+    return '더보기 →';
+  }, [isMe, isFriend]);
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponder: (_evt, gesture) => {
+        const { dx, dy } = gesture;
+        return (
+          Math.abs(dx) > 20 && Math.abs(dx) > Math.abs(dy)
+        );
+      },
+      onPanResponderMove: (_evt, gesture) => {
+        swipeX.setValue(gesture.dx);
+      },
+      onPanResponderRelease: (_evt, gesture) => {
+        const { dx } = gesture;
+        const threshold = 110;
+
+        // 👉 오른쪽 스와이프
+        if (dx > threshold) {
+          Animated.timing(swipeX, {
+            toValue: 0,
+            duration: 180,
+            useNativeDriver: true,
+          }).start();
+
+          if (isMe) {
+            // 내 프로필: 새 게시물
+            openCreatePost();
+          } else {
+            // 남의 프로필: 1:1 채팅
+            openDirectChat();
+          }
+          return;
+        }
+
+        // 👉 왼쪽 스와이프
+        if (dx < -threshold) {
+          Animated.timing(swipeX, {
+            toValue: 0,
+            duration: 180,
+            useNativeDriver: true,
+          }).start();
+
+          if (isMe) {
+            // 내 프로필: 나와의 채팅
+            void openSelfChat();
+          } else {
+            // 남의 프로필: 친구면 통화, 아니면 ... 화면
+            if (isFriend) {
+              openCall();
+            } else {
+              handleDotsPress();
+            }
+          }
+          return;
+        }
+
+        // 임계값 이하면 원위치
+        Animated.spring(swipeX, {
+          toValue: 0,
+          useNativeDriver: true,
+        }).start();
+      },
+      onPanResponderTerminate: () => {
+        Animated.spring(swipeX, {
+          toValue: 0,
+          useNativeDriver: true,
+        }).start();
+      },
+    }),
+  ).current;
+  // =============================================
+
   const ProfileHeader = () => (
     <View
       style={[
@@ -787,7 +863,7 @@ export function ProfileViewInner(props: {
           </View>
 
           <View style={styles.navRight}>
-            {isMe && (
+            {isMe ? (
               <Pressable
                 style={[styles.roundBtn, { marginRight: 8 }]}
                 onPress={() =>
@@ -798,9 +874,32 @@ export function ProfileViewInner(props: {
               >
                 <Edit3 size={18} color={fontColor} />
               </Pressable>
+            ) : (
+              <Pressable
+                style={[
+                  styles.followBtnSmall,
+                  isFollowing && styles.followBtnSmallActive,
+                ]}
+                onPress={handleFollowPress}
+                disabled={followLoading}
+              >
+                <Text
+                  style={[
+                    styles.followBtnSmallText,
+                    isFollowing && { color: '#111827' },
+                  ]}
+                >
+                  {followLoading
+                    ? '...'
+                    : isFollowing
+                    ? '팔로우 중'
+                    : '팔로우'}
+                </Text>
+              </Pressable>
             )}
+
             <Pressable
-              style={styles.roundBtn}
+              style={[styles.roundBtn, { marginLeft: 8 }]}
               onPress={handleDotsPress}
             >
               <MoreHorizontal size={18} color={fontColor} />
@@ -865,8 +964,11 @@ export function ProfileViewInner(props: {
                 </Text>
               </View>
 
-              {/* 팔로워/팔로잉 숫자는 나중에 집계 로직 붙이자 (지금은 0 고정) */}
-              <View style={styles.statItem}>
+              {/* ✅ 팔로워: 목록으로 이동 */}
+              <Pressable
+                style={styles.statItem}
+                onPress={() => openFollowList('followers')}
+              >
                 <Text
                   style={[
                     styles.statNumber,
@@ -883,9 +985,13 @@ export function ProfileViewInner(props: {
                 >
                   팔로워
                 </Text>
-              </View>
+              </Pressable>
 
-              <View style={styles.statItem}>
+              {/* ✅ 팔로잉: 목록으로 이동 */}
+              <Pressable
+                style={styles.statItem}
+                onPress={() => openFollowList('following')}
+              >
                 <Text
                   style={[
                     styles.statNumber,
@@ -902,7 +1008,7 @@ export function ProfileViewInner(props: {
                 >
                   팔로잉
                 </Text>
-              </View>
+              </Pressable>
             </View>
           </View>
         </View>
@@ -927,29 +1033,15 @@ export function ProfileViewInner(props: {
         )}
       </View>
 
-      {/* CTA */}
-      <View
-        style={[
-          styles.ctaWrapper,
-          { backgroundColor: themeColor },
-        ]}
-      >
-        <LinearGradient
-          colors={ctaGradientColors}
-          locations={[0, 0.5, 1]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={StyleSheet.absoluteFillObject}
-        />
-        <CTABox />
-      </View>
-
       <TabBar />
     </View>
   );
 
   // === 비콘용 ===
   const renderBeaconView = () => {
+    const expoStyle =
+      statusBarStyle === 'dark-content' ? 'dark' : 'light';
+
     if (loading || !profile) {
       const body = (
         <View
@@ -968,21 +1060,20 @@ export function ProfileViewInner(props: {
       if (embedded) return body;
 
       return (
-        <>
+        <SafeAreaView
+          style={[
+            styles.page,
+            { backgroundColor: themeColor },
+          ]}
+          edges={['left', 'right', 'bottom']}
+        >
           <StatusBar
+            style={expoStyle}
             translucent
             backgroundColor="transparent"
-            barStyle="light-content"
           />
-          <SafeAreaView
-            style={[
-              styles.page,
-              { backgroundColor: themeColor },
-            ]}
-          >
-            {body}
-          </SafeAreaView>
-        </>
+          {body}
+        </SafeAreaView>
       );
     }
 
@@ -1009,18 +1100,17 @@ export function ProfileViewInner(props: {
     if (embedded) return body;
 
     return (
-      <>
+      <SafeAreaView
+        style={[styles.page, { backgroundColor: themeColor }]}
+        edges={['left', 'right', 'bottom']}
+      >
         <StatusBar
+          style={expoStyle}
           translucent
           backgroundColor="transparent"
-          barStyle="light-content"
         />
-        <SafeAreaView
-          style={[styles.page, { backgroundColor: themeColor }]}
-        >
-          {body}
-        </SafeAreaView>
-      </>
+        {body}
+      </SafeAreaView>
     );
   };
 
@@ -1029,6 +1119,9 @@ export function ProfileViewInner(props: {
   }
 
   if (loading || !profile) {
+    const expoStyle =
+      statusBarStyle === 'dark-content' ? 'dark' : 'light';
+
     const body = (
       <View
         style={[
@@ -1046,22 +1139,20 @@ export function ProfileViewInner(props: {
     }
 
     return (
-      <>
+      <SafeAreaView
+        style={[
+          styles.page,
+          { backgroundColor: themeColor },
+        ]}
+        edges={['left', 'right', 'bottom']}
+      >
         <StatusBar
+          style={expoStyle}
           translucent
           backgroundColor="transparent"
-          barStyle="light-content"
         />
-        <SafeAreaView
-          style={[
-            styles.page,
-            { backgroundColor: themeColor },
-          ]}
-          edges={['left', 'right', 'bottom']}
-        >
-          {body}
-        </SafeAreaView>
-      </>
+        {body}
+      </SafeAreaView>
     );
   }
 
@@ -1161,6 +1252,7 @@ export function ProfileViewInner(props: {
               <>
                 <Pressable
                   style={styles.compactIconBtn}
+                  onPress={openDirectChat}
                 >
                   <MessageCircle
                     size={20}
@@ -1169,12 +1261,19 @@ export function ProfileViewInner(props: {
                 </Pressable>
                 <Pressable
                   style={styles.compactIconBtn}
+                  onPress={() => {
+                    if (isFriend) openCall();
+                    else handleDotsPress();
+                  }}
                 >
                   <Phone size={20} color={fontColor} />
                 </Pressable>
               </>
             )}
-            <Pressable style={styles.compactIconBtn}>
+            <Pressable
+              style={styles.compactIconBtn}
+              onPress={handleDotsPress}
+            >
               <MoreHorizontal
                 size={20}
                 color={fontColor}
@@ -1196,30 +1295,83 @@ export function ProfileViewInner(props: {
     );
   }
 
+  const expoStyle =
+    statusBarStyle === 'dark-content' ? 'dark' : 'light';
+
   return (
-    <>
+    <SafeAreaView
+      style={[
+        styles.page,
+        { backgroundColor: themeColor },
+      ]}
+      edges={['left', 'right', 'bottom']}
+    >
       <StatusBar
+        style={expoStyle}
         translucent
         backgroundColor="transparent"
-        barStyle="light-content"
       />
-      <SafeAreaView
-        style={[
-          styles.page,
-          { backgroundColor: themeColor },
-        ]}
-        edges={['left', 'right', 'bottom']}
-      >
-        {mainBody}
-      </SafeAreaView>
-    </>
+
+      <View style={{ flex: 1 }}>
+        {/* 뒤에 보이는 라벨 (터치는 안가게) */}
+        <View style={styles.swipeBg} pointerEvents="none">
+          <Animated.View
+            style={[
+              styles.swipeLabelSide,
+              styles.swipeLabelLeft,
+              { opacity: labelOpacityLeft },
+            ]}
+          >
+            <Text style={styles.swipeLabelText}>
+              {leftLabelText}
+            </Text>
+          </Animated.View>
+
+          <Animated.View
+            style={[
+              styles.swipeLabelSide,
+              styles.swipeLabelRight,
+              { opacity: labelOpacityRight },
+            ]}
+          >
+            {isMe ? (
+              <View style={styles.swipeIconRow}>
+                <MessageCircle size={18} color="#F9FAFB" />
+                <Text style={styles.swipeLabelText}>
+                  나와의 채팅
+                </Text>
+              </View>
+            ) : (
+              <Text style={styles.swipeLabelText}>
+                {rightLabelText}
+              </Text>
+            )}
+          </Animated.View>
+        </View>
+
+        {/* 앞에서 움직이는 실제 컨텐츠 */}
+        <Animated.View
+          style={[
+            styles.swipeContent,
+            { transform: [{ translateX: swipeX }] },
+          ]}
+          {...panResponder.panHandlers}
+        >
+          {mainBody}
+        </Animated.View>
+      </View>
+    </SafeAreaView>
   );
 }
 
 export default function ProfileView() {
   const route = useRoute<any>();
 
-  const userId = route.params?.user_id as string; // auth.uid()
+  // ✅ PostDetail 에서 { userId }로도 보내고 있어서 둘 다 지원
+  const userId =
+    (route.params?.user_id as string | undefined) ??
+    (route.params?.userId as string);
+
   const isMe = route.params?.isMe ?? false;
   const isBeacon = route.params?.isBeacon ?? false;
   const isPrivateBeacon = route.params?.isPrivateBeacon ?? false;
@@ -1324,6 +1476,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  followBtnSmall: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#F9FAFB',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  followBtnSmallActive: {
+    backgroundColor: '#F9FAFB',
+  },
+  followBtnSmallText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#F9FAFB',
+  },
   coverBottomContent: {
     position: 'absolute',
     left: 16,
@@ -1384,13 +1552,6 @@ const styles = StyleSheet.create({
   statusBelowText: {
     fontSize: 13,
   },
-  ctaWrapper: {
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 8,
-    position: 'relative',
-    overflow: 'hidden',
-  },
   tabBarWrapper: {
     paddingHorizontal: 16,
     paddingTop: 6,
@@ -1432,36 +1593,6 @@ const styles = StyleSheet.create({
     color: '#111827',
     fontWeight: '700',
     opacity: 1,
-  },
-  ctaBox: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(0,0,0,0.28)',
-    borderRadius: 12,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.35)',
-    minHeight: 44,
-  },
-  ctaCell: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    gap: 6,
-  },
-  ctaCellBorder: {
-    borderRightWidth: 1,
-    borderColor: 'rgba(255,255,255,0.35)',
-  },
-  ctaPlus: {
-    fontSize: 18,
-    marginTop: -1,
-  },
-  ctaText: {
-    fontWeight: '700',
-    fontSize: 15,
   },
   listContent: {
     paddingBottom: 60,
@@ -1511,5 +1642,36 @@ const styles = StyleSheet.create({
   compactIconBtn: {
     paddingHorizontal: 6,
     paddingVertical: 4,
+  },
+
+  // === 스와이프 백그라운드 & 컨텐츠 ===
+  swipeBg: {
+    ...StyleSheet.absoluteFillObject,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+  },
+  swipeLabelSide: {
+    maxWidth: '40%',
+  },
+  swipeLabelLeft: {
+    alignItems: 'flex-start',
+  },
+  swipeLabelRight: {
+    alignItems: 'flex-end',
+  },
+  swipeLabelText: {
+    color: '#F9FAFB',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  swipeIconRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  swipeContent: {
+    flex: 1,
   },
 });

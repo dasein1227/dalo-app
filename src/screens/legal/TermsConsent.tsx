@@ -20,9 +20,50 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
+// ✅ i18n 언어(ko / ko-KR / en-US / zh-Hans 등) → 앱 2자리 코드(KO/EN/JA/...)
+function i18nToLangCode(i18nLang?: string | null) {
+  const raw = String(i18nLang ?? '').trim();
+  const base = raw.split('-')[0]?.toLowerCase().trim() ?? '';
+
+  const map: Record<string, string> = {
+    ko: 'KO',
+    en: 'EN',
+    es: 'ES',
+    fr: 'FR',
+    de: 'DE',
+    it: 'IT',
+    pt: 'PT',
+    nl: 'NL',
+    pl: 'PL',
+    ru: 'RU',
+    ja: 'JA',
+    zh: 'ZH',
+    tr: 'TR',
+    sv: 'SV',
+    id: 'ID',
+    th: 'TH',
+    uk: 'UK',
+    ro: 'RO',
+    cs: 'CS',
+    da: 'DA',
+    el: 'EL',
+    fi: 'FI',
+    hu: 'HU',
+    sk: 'SK',
+    sl: 'SL',
+    bg: 'BG',
+    et: 'ET',
+    lt: 'LT',
+    lv: 'LV',
+    ar: 'AR',
+  };
+
+  return map[base] ?? 'KO';
+}
+
 export default function TermsConsent() {
   const navigation = useNavigation<Nav>();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   // 개별 동의 상태
   const [agreeAll, setAgreeAll] = useState(false);
@@ -79,26 +120,53 @@ export default function TermsConsent() {
 
       const now = new Date().toISOString();
 
-      // 필수 동의 저장 (선택 마케팅은 추후 컬럼 생기면 연동)
-      const { error } = await supabase
+      // ✅ 1) 먼저 update만 시도 (기존 row 있으면 preferred_lang 건드리지 않음)
+      const { data: updatedRows, error: updateErr } = await supabase
         .from('profiles')
-        .upsert(
-          {
-            user_id: uid,
-            terms_accepted: true,
-            terms_accepted_at: now,
-            // marketing_opt_in: agreeMarketing, // 나중에 컬럼 생기면 사용
-          },
-          { onConflict: 'user_id' },
-        );
+        .update({
+          terms_accepted: true,
+          terms_accepted_at: now,
+          // marketing_opt_in: agreeMarketing, // 나중에 컬럼 생기면 사용
+        })
+        .eq('user_id', uid)
+        .select('user_id');
 
-      if (error) {
-        console.warn('terms upsert error:', error);
+      if (updateErr) {
+        console.warn('terms update error:', updateErr);
         Alert.alert(
           t('common.error', '오류'),
           t('legal.error_save', '동의 저장 중 문제가 발생했습니다.'),
         );
         return;
+      }
+
+      // ✅ 2) update된 row가 없으면(프로필이 없으면) insert로 생성
+      if (!updatedRows || updatedRows.length === 0) {
+        const resolved =
+          (i18n as any)?.resolvedLanguage ||
+          (i18n as any)?.language ||
+          'ko';
+
+        const preferredLangDefault = i18nToLangCode(resolved);
+
+        const { error: insertErr } = await supabase
+          .from('profiles')
+          .insert({
+            user_id: uid,
+            preferred_lang: preferredLangDefault, // ✅ NOT NULL 방어 (i18n 기반)
+            terms_accepted: true,
+            terms_accepted_at: now,
+            // marketing_opt_in: agreeMarketing, // 나중에 컬럼 생기면 사용
+          });
+
+        if (insertErr) {
+          console.warn('terms insert error:', insertErr);
+          Alert.alert(
+            t('common.error', '오류'),
+            t('legal.error_save', '동의 저장 중 문제가 발생했습니다.'),
+          );
+          return;
+        }
       }
 
       navigation.reset({

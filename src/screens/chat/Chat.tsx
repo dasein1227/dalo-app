@@ -1,3857 +1,2323 @@
 // src/screens/chat/Chat.tsx
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
+import type { ComponentProps } from 'react';
 import {
   View,
-  Text,
-  TextInput,
-  Pressable,
-  FlatList,
-  Platform,
   StyleSheet,
   ActivityIndicator,
-  Alert,
-  Image,
-  Modal,
-  Share,
-  Linking,
-  ScrollView,
-  StatusBar,
-  Dimensions,
+  FlatList,
+  Text,
   Keyboard,
-  Animated as RNAnimated,
+  BackHandler,
+  DeviceEventEmitter,
+  Animated,
+  Share,
+  Pressable,
 } from 'react-native';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-import { useRoute, useNavigation } from '@react-navigation/native';
-import * as DocumentPicker from 'expo-document-picker';
-import { Audio } from 'expo-av';
-import {
-  GestureHandlerRootView,
-  Gesture,
-  GestureDetector,
-} from 'react-native-gesture-handler';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  runOnJS,
-  useAnimatedScrollHandler,
-  interpolateColor,
-  useDerivedValue,
-  withSpring,
-} from 'react-native-reanimated';
-import {
-  ChevronLeft,
-  MoreHorizontal,
-  Send as SendIcon,
-  Plus,
-  Image as ImageIcon,
-  UserPlus2,
-  MapPin,
-  Link as LinkIcon,
-  Languages,
-  Mic,
-  X,
-  Search,
-} from 'lucide-react-native';
-import * as Haptics from 'expo-haptics';
-import Constants from 'expo-constants';
-// ⛔️ MapView 제거됨
-// import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
+import * as Clipboard from 'expo-clipboard';
 
-import { supabase } from '../../lib/supabase';
-import VoiceRecorderModal from './VoiceRecorderModal';
+import { supabase } from '@/lib/supabase';
+import { database } from '@/lib/chatDB/database';
+import { useChatMessages, type RenderItem } from '@/utils/chat/useChatMessages';
+import { syncInitialRoom, syncOlderForRoom, startRealtime } from '@/lib/chatSync/syncEngine';
+import {
+  sendRoomMessage,
+  deleteMessageMine,
+  deleteMessagesMine,
+  type ProfileLangConfig,
+  type Tier,
+} from '@/lib/chatSync/push';
+
+import ChatHeader from './components/Header/ChatHeader';
+import MessageList from './components/MessageList/MessageList';
+import InputBar from './components/InputBar/InputBar';
+import {
+  useChatUIState,
+  type ReplyInfo,
+  type TranslationTier,
+  type TranslationTone,
+} from './hooks/useChatUIState';
+
+import TranslatePopover from './components/TranslatePopover';
+
 import MediaPickerModal from './MediaPickerModal';
+import VoiceRecorderModal from './VoiceRecorderModal';
 
-type Msg = {
-  id: string;
-  room_id: number;
-  sender: string;
-  content: string;
-  original?: string | null;
-  created_at: string;
-  kind?: string | null;
-};
+import { getChatTheme, type ChatTheme, resolveRoomType } from './theme/chatTheme';
 
-type Member = { user_id: string };
-type ProfLite = {
-  nickname?: string | null;
-  avatar_url?: string | null;
-  follow_id?: string | null;
-};
+import ChatThemeGate from './theme/global/ChatThemeGate';
 
-type Lang = { code: string; native: string };
+import ChatSearchHeader from './components/Search/ChatSearchHeader';
+import ChatSearchBar from './components/Search/ChatSearchBar';
+import SenderPickerSheet from './components/Search/SenderPickerSheet';
+import DatePickerSheet from './components/Search/DatePickerSheet';
+import { useChatInlineSearch } from './hooks/useChatInlineSearch';
 
-const SUPPORTED_LANGS: Lang[] = [
-  { code: 'ar', native: 'العربية' },
-  { code: 'de', native: 'Deutsch' },
-  { code: 'en', native: 'English' },
-  { code: 'es', native: 'Español' },
-  { code: 'fr', native: 'Français' },
-  { code: 'hi', native: 'हिन्दी' },
-  { code: 'id', native: 'Bahasa Indonesia' },
-  { code: 'ja', native: '日本語' },
-  { code: 'ko', native: '한국어' },
-  { code: 'pt', native: 'Português' },
-  { code: 'ru', native: 'Русский' },
-  { code: 'zh', native: '中文' },
-];
+import {
+  type RoomKind,
+  type MemberNick,
+  type PickedAsset,
+  buildChatTitle,
+  coerceKind,
+  safeJsonParse,
+  isProbablyJsonObjectString,
+  toMillis,
+  toTier,
+  toLangCodeUpper,
+  toPushRoomType,
+  normalizeTone,
+  deriveTextPairForReplyPreview,
+  pickThumbUri,
+} from './utils/chatHelpers';
 
-const OUR_RED = '#e74c3c';
-const OUR_BG = '#ffffff';
-const OUR_TEXT_DARK = '#0f172a';
-const OUR_BLUE_BUBBLE = '#2563eb';
+import { fetchRoomSettings, upsertRoomSettings, type RoomSettingsRow } from './services/roomSettings';
 
-const SWIPE_REPLY_THRESHOLD = 40;
-const SCREEN_HEIGHT = Dimensions.get('window').height;
-const HEADER_HEIGHT = 50;
+import { useChatBootAnimation } from './hooks/useChatBootAnimation';
+import { useChatStatusBar } from './hooks/useChatStatusBar';
+import { useUnreadCountsForMyMessages } from './hooks/useUnreadCountsForMyMessages';
 
-/* ===================== Reply util ===================== */
-function parseReplyPrefix(
-  raw: string
-): { replyToId: string | null; rest: string } {
-  const m = raw.match(/^\[reply:([^\]]+)\](.*)$/s);
-  if (!m) return { replyToId: null, rest: raw };
-  return { replyToId: m[1], rest: m[2] ?? '' };
-}
-function getMsgSnippet(m: Msg): string {
-  const parsed = parseReplyPrefix(m.content);
-  const content = parsed.rest || m.content;
+import MessageActionSheet, { type MessageActionKey } from './components/MessageActions/MessageActionSheet';
+import MomentQuickMenu from './components/MessageActions/MomentQuickMenu';
+import DeleteTypeModal, { type MomentDeleteConfig } from './components/MessageActions/DeleteTypeModal';
 
-  if (content.startsWith('[image]')) return '사진';
-  if (content.startsWith('[video]')) return '동영상';
-  if (content.startsWith('[file]')) {
-    const name = content.replace(/^\[file\]/, '').split('|')[1];
-    return `파일 ${name || ''}`.trim();
-  }
-  if (content.startsWith('[loc]')) return '위치 공유';
-  if (content.startsWith('[audio]')) return '음성메시지';
+import { useMessageSelection } from './hooks/useMessageSelection';
+import SelectionTopBar from './components/Selection/SelectionTopBar';
+import SelectionBottomBar from './components/Selection/SelectionBottomBar';
 
-  const base = (m.original ?? content)
-    .replace(/\[reply:[^\]]+\]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+const INLINE_SEARCH_BAR_HEIGHT = 52;
 
-  if (!base) return '메시지';
-  const MAX = 80;
-  return base.length > MAX ? base.slice(0, MAX) + '…' : base;
+function parseRoomId(input: unknown): number | null {
+  const n =
+    typeof input === 'number'
+      ? input
+      : typeof input === 'string' && input.trim() !== ''
+        ? Number(input)
+        : NaN;
+
+  if (!Number.isFinite(n)) return null;
+
+  const id = Math.trunc(n);
+  if (id <= 0) return null;
+
+  return id;
 }
 
-/* ===================== 파일 업로드 유틸 ===================== */
-const extra: any =
-  (Constants as any)?.expoConfig?.extra ||
-  (Constants as any)?.manifest?.extra ||
-  {};
+function parseUuid(input: unknown): string | null {
+  const s = typeof input === 'string' ? input.trim() : '';
+  if (!s) return null;
 
-const rawFnBase =
-  extra.EXPO_PUBLIC_FN_BASE ||
-  (extra.EXPO_PUBLIC_SUPABASE_URL
-    ? `${extra.EXPO_PUBLIC_SUPABASE_URL}/functions/v1`
-    : '');
+  const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (!uuidRe.test(s)) return null;
 
-export const FN_BASE = (rawFnBase || '').replace(/\/+$/, '');
-
-async function fileToBlob(uri: string): Promise<Blob> {
-  const res = await fetch(uri);
-  if (!res.ok) throw new Error(`file fetch failed: ${res.status} ${res.statusText}`);
-  return await res.blob();
-}
-function guessExt(name?: string, fallbackMime?: string): string {
-  const m = name?.match(/\.([a-zA-Z0-9]+)$/);
-  if (m) return m[1].toLowerCase();
-  if (fallbackMime?.includes('jpeg')) return 'jpg';
-  if (fallbackMime?.includes('png')) return 'png';
-  if (fallbackMime?.includes('mp4')) return 'mp4';
-  if (fallbackMime?.includes('m4a')) return 'm4a';
-  return 'bin';
-}
-async function presignUpload({
-  roomId,
-  mime,
-  size,
-  ext,
-  variant = 'medium',
-}: {
-  roomId: number;
-  mime: string;
-  size: number;
-  ext: string;
-  variant?: 'medium' | 'thumb' | 'file' | 'audio' | 'video';
-}) {
-  if (!FN_BASE) throw new Error('FN_BASE is not configured');
-
-  const { data: s } = await supabase.auth.getSession();
-  const jwt = s.session?.access_token ?? '';
-
-  const url = `${FN_BASE}/upload-media`;
-  const r = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(jwt ? { Authorization: `Bearer ${jwt}` } : {}),
-    },
-    body: JSON.stringify({ roomId, mime, size, ext, variant }),
-  });
-  if (!r.ok) throw new Error(`presign failed: ${r.status} ${await r.text().catch(()=> '')}`);
-
-  return (await r.json()) as {
-    msgId: string;
-    objectKey: string;
-    uploadUrl: string;
-    publicUrl: string;
-    meta: any;
-  };
-}
-async function putToR2(uploadUrl: string, blob: Blob, mime: string) {
-  const r = await fetch(uploadUrl, {
-    method: 'PUT',
-    headers: { 'Content-Type': mime },
-    body: blob,
-  });
-  if (!r.ok) throw new Error(`R2 upload failed: ${r.status} ${await r.text().catch(()=> '')}`);
+  return s;
 }
 
-/* ===================== Animated FlatList ===================== */
-const AnimatedFlatList: any = Animated.createAnimatedComponent(FlatList);
+/**
+ * ✅ Room kind coerce (서버 enum/legacy 값이 RoomKind 범위를 벗어나도 안전하게 흡수)
+ * - legacy: 'map' -> 'beacon' (기존 지도/비콘 계열 방 타입 호환)
+ */
+const ROOM_KIND_SET: ReadonlySet<string> = new Set([
+  'self',
+  'dm',
+  'group',
+  'open',
+  'beacon',
+  'business_dm',
+]);
 
-/* ===================== Component ===================== */
-export default function Chat() {
-  const insets = useSafeAreaInsets();
-  const route = useRoute<any>();
-  const navigation = useNavigation<any>();
+function coerceRoomKind(input: unknown): RoomKind | null {
+  const v = typeof input === 'string' ? input.trim() : '';
+  if (!v) return null;
 
-  const roomIdParamRaw = (route?.params?.roomId ?? null) as unknown;
-  const roomIdParamNum =
-    typeof roomIdParamRaw === 'number'
-      ? roomIdParamRaw
-      : typeof roomIdParamRaw === 'string'
-      ? Number(roomIdParamRaw)
-      : NaN;
+  if (v === 'map') return 'beacon';
 
-  const [chatRoomId, setChatRoomId] = useState<number | null>(
-    Number.isFinite(roomIdParamNum) ? roomIdParamNum : null
-  );
+  return ROOM_KIND_SET.has(v) ? (v as RoomKind) : null;
+}
 
-  useEffect(() => {
-    const p: any = route?.params ?? {};
-    const asNum = (v: any) =>
-      typeof v === 'number' ? v : typeof v === 'string' ? Number(v) : NaN;
+async function resolveOrCreateDmRoom(params: { myId: string; peerId: string }): Promise<number | null> {
+  const { myId, peerId } = params;
 
-    const rid = asNum(p?.roomId);
-    if (Number.isFinite(rid)) {
-      if (chatRoomId !== rid) setChatRoomId(rid);
-      return;
+  if (!myId || !peerId || myId === peerId) return null;
+
+  try {
+    const callRpc = async (args: any) => {
+      const { data, error } = await supabase.rpc('get_or_create_dm_room', args);
+      if (error) throw error;
+      return data as any;
+    };
+
+    let data: any = null;
+    try {
+      data = await callRpc({ peer_id: peerId });
+    } catch {
+      try {
+        data = await callRpc({ p_user1: myId, p_user2: peerId });
+      } catch {
+        data = await callRpc({ other_user_id: peerId });
+      }
     }
 
-    const bid = asNum(p?.beaconId);
-    if (!Number.isFinite(bid)) return;
+    const ridRaw =
+      typeof data === 'number'
+        ? data
+        : typeof data === 'string'
+          ? Number(data)
+          : typeof (data as any)?.room_id === 'number'
+            ? (data as any).room_id
+            : typeof (data as any)?.room_id === 'string'
+              ? Number((data as any).room_id)
+              : NaN;
 
-    let alive = true;
-    (async () => {
-      const { data, error } = await supabase
-        .from('chat_rooms')
-        .select('id')
-        .eq('type', 'beacon')
-        .eq('beacon_id', bid)
-        .maybeSingle();
+    const parsed = parseRoomId(ridRaw);
+    if (parsed) return parsed;
 
-      if (!alive) return;
+    console.warn('[Chat] get_or_create_dm_room returned invalid data', { data, myId, peerId });
+    return null;
+  } catch (e: any) {
+    console.warn('[Chat] get_or_create_dm_room RPC error', {
+      message: e?.message ?? String(e),
+      myId,
+      peerId,
+    });
+    return null;
+  }
+}
 
-      if (!error && data?.id) {
-        navigation.setParams?.({ roomId: data.id, beaconId: undefined });
-        setChatRoomId(data.id);
-      } else {
-        Alert.alert('채팅방을 찾을 수 없습니다.', `beaconId=${bid}`);
-      }
-    })();
+export default function Chat() {
+  const route = useRoute<any>();
+  const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
+  const listRef = useRef<FlatList<RenderItem>>(null);
 
-    return () => {
-      alive = false;
-    };
-  }, [route?.params, navigation, chatRoomId]);
+  const routeParams = route.params ?? {};
+
+  // ✅ business DM header override (route params)
+  const businessNameFromParams =
+    typeof (routeParams as any)?.business_name === 'string' && (routeParams as any).business_name.trim()
+      ? (routeParams as any).business_name.trim()
+      : null;
+
+  const businessLogoFromParams =
+    typeof (routeParams as any)?.business_logo_url === 'string' && (routeParams as any).business_logo_url.trim()
+      ? (routeParams as any).business_logo_url.trim()
+      : null;
+
+  const roomIdRaw = routeParams.roomId ?? routeParams.room_id ?? routeParams.id ?? null;
+  const peerIdRaw =
+    routeParams.peer_id ??
+    routeParams.peerId ??
+    routeParams.targetUserId ??
+    routeParams.target_user_id ??
+    routeParams.other_user_id ??
+    routeParams.user_id ??
+    routeParams.userId ??
+    null;
+
+  const roomIdFromParams = parseRoomId(roomIdRaw);
+  const peerIdFromParams = parseUuid(peerIdRaw);
+
+  const [resolvedRoomId, setResolvedRoomId] = useState<number>(roomIdFromParams ?? 0);
+  const resolvedRoomIdOk = resolvedRoomId > 0;
+
+  useEffect(() => {
+    if (roomIdFromParams && roomIdFromParams !== resolvedRoomId) {
+      setResolvedRoomId(roomIdFromParams);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roomIdFromParams]);
+
+  const scrollToBottom = useCallback((animated: boolean = true) => {
+    try {
+      listRef.current?.scrollToOffset?.({ offset: 0, animated });
+    } catch {}
+  }, []);
 
   const [me, setMe] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const [msgs, setMsgs] = useState<Msg[]>([]);
-  const [members, setMembers] = useState<Member[]>([]);
-  const [profiles, setProfiles] = useState<Record<string, ProfLite>>({});
-  const [lastReadAt, setLastReadAt] = useState<string | null>(null);
-
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState('채팅');
+  const [headerAvatarUrl, setHeaderAvatarUrl] = useState<string | null>(businessLogoFromParams);
   const [participantCount, setParticipantCount] = useState(1);
-
-  const [text, setText] = useState('');
-
   const [myLang, setMyLang] = useState('ko');
-  const [autoTranslate, setAutoTranslate] = useState(false);
-  const [showOriginalGlobal, setShowOriginalGlobal] = useState(false);
-  const [tCache, setTCache] = useState<Record<string, string>>({});
-  const [tPending, setTPending] = useState<Record<string, boolean>>({});
+  const [roomType, setRoomType] = useState<RoomKind | null>(null);
 
-  const [replyTo, setReplyTo] = useState<Msg | null>(null);
-  const replyToRef = useRef<Msg | null>(null);
+  const resolvedRoomTypeRef = useRef<RoomKind | null>(null);
+  const [theme, setTheme] = useState<ChatTheme>(() => getChatTheme({ type: 'dm' }));
+
+  const selection = useMessageSelection();
+
+  const {
+    headerAnim,
+    listAnim,
+    listMoveY,
+    inputAnim,
+    inputMoveY,
+    bootCoverAnim,
+    bootCoverVisible,
+  } = useChatBootAnimation({ roomId: resolvedRoomId, loading, me });
+
+  const { expoBarStyle } = useChatStatusBar({ navigation, headerBg: theme.headerBg });
+
+  const [initialSynced, setInitialSynced] = useState(false);
+
   useEffect(() => {
-    replyToRef.current = replyTo;
-  }, [replyTo]);
+    setInitialSynced(false);
+  }, [resolvedRoomId]);
 
-  const [longPressTarget, setLongPressTarget] = useState<Msg | null>(null);
-  const [actionSheetOpen, setActionSheetOpen] = useState(false);
-
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [translatePopoverOpen, setTranslatePopoverOpen] = useState(false);
-  const [mediaModalOpen, setMediaModalOpen] = useState(false);
-  const [voiceVisible, setVoiceVisible] = useState(false);
-  const [roomOwnerId, setRoomOwnerId] = useState<string | null>(null);
-
-  // 🔽 새 메시지 배지 / 바닥 여부
-  const [newMsgCount, setNewMsgCount] = useState(0);
-  const [showNewMsgPill, setShowNewMsgPill] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(true);
+  const [hasNewWhileAway, setHasNewWhileAway] = useState(false);
+  const prevMsgCountRef = useRef(0);
 
+  const [collapseNonce, setCollapseNonce] = useState(0);
+  const [attachmentsOpen, setAttachmentsOpen] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
 
-    // 🔽 멀티 선택 / 삭제 다이얼로그 상태
-  const [selectionMode, setSelectionMode] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [mediaVisible, setMediaVisible] = useState(false);
+  const [voiceVisible, setVoiceVisible] = useState(false);
 
-  type DeleteOption = 'all' | 'me' | 'hide';
-  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-  const [deleteOption, setDeleteOption] = useState<DeleteOption>('all');
-  const [deleteDialogCanAll, setDeleteDialogCanAll] = useState(false);
-  const [deleteDialogCanHide, setDeleteDialogCanHide] = useState(false);
+  const [photoQuality, setPhotoQuality] = useState<any>('high');
+  const [videoQuality, setVideoQuality] = useState<any>('high');
 
+  const THEME_COLOR = theme.headerBg;
+  const expanded = keyboardVisible || attachmentsOpen;
 
-  // 🔎 검색 모달 상태
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchHits, setSearchHits] = useState<string[]>([]);
+  const memberNickMapRef = useRef<Map<string, string | null>>(new Map());
 
-  const listRef = useRef<FlatList<any>>(null);
-  const scrollToEndNow = useCallback(() => {
-    requestAnimationFrame(() => listRef.current?.scrollToEnd({ animated: true }));
-  }, []);
-  const sendingRef = useRef(false);
+  const [myProfileCfg, setMyProfileCfg] = useState<ProfileLangConfig | null>(null);
+  const [peerProfileCfg, setPeerProfileCfg] = useState<ProfileLangConfig | null>(null);
+  const peerIdRef = useRef<string | null>(null);
 
-  const [photoQuality, setPhotoQuality] =
-    useState<'low' | 'standard' | 'original'>('standard');
-  const [videoQuality, setVideoQuality] =
-    useState<'standard' | 'high'>('standard');
+  const [translatePopoverVisible, setTranslatePopoverVisible] = useState(false);
 
- const scrollY = useSharedValue(0);
+  const [actionSheetVisible, setActionSheetVisible] = useState(false);
 
-  // 🔹 스크롤 중인지 여부 (날짜 캡슐 + 새메시지 배지용)
-  const [scrolling, setScrolling] = useState(false);
-  const scrollEndTimer = useRef<any>(null);
+  const [deleteTypeVisible, setDeleteTypeVisible] = useState(false);
+  const [deleteTypeMsg, setDeleteTypeMsg] = useState<any | null>(null);
 
-  // atBottom 여부를 JS로 넘겨주기
-  const onListScroll = useCallback((atBottom: boolean) => {
-    setScrolling(true);
-    setIsAtBottom(atBottom);
-
-    if (scrollEndTimer.current) {
-      clearTimeout(scrollEndTimer.current);
-    }
-    scrollEndTimer.current = setTimeout(() => {
-      setScrolling(false);
-    }, 600);
+  const closeDeleteType = useCallback(() => {
+    setDeleteTypeVisible(false);
+    setTimeout(() => setDeleteTypeMsg(null), 200);
   }, []);
 
-  useEffect(() => {
-    return () => {
-      if (scrollEndTimer.current) {
-        clearTimeout(scrollEndTimer.current);
-      }
-    };
-  }, []);
-
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (e) => {
-      scrollY.value = e.contentOffset.y;
-
-      // 🔽 바닥 근처인지 계산
-      const contentH = e.contentSize.height || 0;
-      const offsetY = e.contentOffset.y || 0;
-      const viewH = e.layoutMeasurement.height || 0;
-
-      const bottomGap = contentH - (offsetY + viewH);
-      const atBottom = bottomGap < 40; // 40px 이내면 바닥으로 간주
-
-      runOnJS(onListScroll)(atBottom);
-    },
-  });
-
-  // 입력창/채팅 같이 이동: 키보드 높이 애니메이션
-  const keyboardBottom = useRef(new RNAnimated.Value(0)).current;
-  const [kbVisible, setKbVisible] = useState(false);
-
-  // 선택 모드에서 개별 메시지 토글
-  const toggleSelectMessage = useCallback((id: string) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  }, []);
-
-  // 선택된 게 0개가 되면 자동으로 선택 모드 종료
-  useEffect(() => {
-    if (selectionMode && selectedIds.length === 0) {
-      setSelectionMode(false);
-    }
-  }, [selectionMode, selectedIds]);
-
-
-  // ✅ 입력 영역 '전체' 높이 (답글 컴포저/패딩/세이프에리어 포함) 측정
-  const [inputAreaH, setInputAreaH] = useState(60);
-  const [floatH, setFloatH] = useState(32);
-
-  useEffect(() => {
-    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
-    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
-
-    const showSub = Keyboard.addListener(showEvent, (e) => {
-      setKbVisible(true);
-      const toValue = e.endCoordinates?.height ?? 0;
-      RNAnimated.timing(keyboardBottom, {
-        toValue,
-        duration: Platform.OS === 'ios' ? e.duration || 220 : 0,
-        useNativeDriver: false,
-      }).start();
-    });
-
-    const hideSub = Keyboard.addListener(hideEvent, (e: any) => {
-      setKbVisible(false);
-      RNAnimated.timing(keyboardBottom, {
-        toValue: 0,
-        duration: Platform.OS === 'ios' ? e?.duration || 220 : 0,
-        useNativeDriver: false,
-      }).start();
-    });
-
-    return () => {
-      showSub.remove();
-      hideSub.remove();
-    };
-  }, [keyboardBottom]);
-
-  const formatTime = (msOrIso: string | number) => {
-    if (typeof msOrIso === 'number') {
-      const secRaw = Math.round(msOrIso / 1000);
-      const sec = secRaw < 0 ? 0 : secRaw;
-      const m = Math.floor(sec / 60)
-        .toString()
-        .padStart(2, '0');
-      const s = (sec % 60).toString().padStart(2, '0');
-      return `${m}:${s}`;
-    }
-    try {
-      return new Date(msOrIso).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-      });
-    } catch {
-      return '';
-    }
-  };
-
-  const dayKey = (iso: string) => new Date(iso).toDateString();
-  const isSameMinute = (a: string, b: string) => {
-  const da = new Date(a);
-  const db = new Date(b);
-  return (
-    da.getFullYear() === db.getFullYear() &&
-    da.getMonth() === db.getMonth() &&
-    da.getDate() === db.getDate() &&
-    da.getHours() === db.getHours() &&
-    da.getMinutes() === db.getMinutes()
+  const [momentMenuVisible, setMomentMenuVisible] = useState(false);
+  const [momentMenuAnchor, setMomentMenuAnchor] = useState<{ x: number; y: number; w: number; h: number } | null>(
+    null,
   );
-};
+  const [momentMenuMsg, setMomentMenuMsg] = useState<any | null>(null);
 
-  const ensureSession = useCallback(async () => {
-    let {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session) {
-      const { data } = await supabase.auth.refreshSession();
-      session = data?.session ?? null;
-    }
-    return session;
+  const closeMomentMenu = useCallback(() => {
+    setMomentMenuVisible(false);
+    setMomentMenuAnchor(null);
+    setMomentMenuMsg(null);
   }, []);
 
-  const ensureMembership = useCallback(async (roomId: number) => {
-    const rid = Number(roomId);
-    try {
-      const { data: roomRow } = await supabase
-        .from('chat_rooms')
-        .select('type, beacon_id')
-        .eq('id', rid)
-        .maybeSingle();
+  const [actionSheetMsg, setActionSheetMsg] = useState<any | null>(null);
 
-      if (roomRow?.type === 'beacon' && roomRow?.beacon_id) {
-        const { data: id } = await supabase.rpc('join_room_beacon', {
-          p_beacon_id: roomRow.beacon_id,
+  const openMessageActions = useCallback(
+    (msg: any) => {
+      if (!msg) return;
+      if (selection.selecting) return;
+      setActionSheetMsg(msg);
+      setActionSheetVisible(true);
+    },
+    [selection.selecting],
+  );
+
+  const closeMessageActions = useCallback(() => {
+    setActionSheetVisible(false);
+    setTimeout(() => setActionSheetMsg(null), 200);
+  }, []);
+
+  const openDeleteTypeForMessage = useCallback((msg: any) => {
+    if (!msg) return;
+    setDeleteTypeMsg(msg);
+    setDeleteTypeVisible(true);
+  }, []);
+
+  const deleteEligibility = useMemo(() => {
+    const msg = deleteTypeMsg;
+    const id = String(msg?.id ?? '').trim();
+    const isMe2 = String(msg?.senderId ?? msg?.sender_id ?? '') === String(me ?? '');
+    const isLocal = !id || id.startsWith('local_');
+    const createdMs = toMillis(msg?.createdAt ?? msg?.created_at ?? null) ?? null;
+
+    const within24h = createdMs != null ? Date.now() - createdMs <= 24 * 3600 * 1000 : false;
+
+    const canDeleteAll = !!me && isMe2 && !isLocal && within24h;
+    const canMomentDelete = canDeleteAll;
+
+    return { canDeleteAll, canMomentDelete };
+  }, [deleteTypeMsg, me]);
+
+  const cancelMomentDelete = useCallback(
+    async (msg: any) => {
+      if (!msg) return;
+      const id = String(msg?.id ?? '').trim();
+      if (!id || id.startsWith('local_')) return;
+
+      try {
+        await database.write(async () => {
+          const collection = database.get<any>('messages');
+          let mLocal: any = null;
+          try {
+            mLocal = await collection.find(id);
+          } catch {
+            mLocal = null;
+          }
+          if (!mLocal) return;
+          await mLocal.update((mm: any) => {
+            if ('delete_at' in mm) mm.delete_at = null;
+          });
         });
-        if (id) await supabase.rpc('join_room', { p_room_id: id });
+      } catch {}
+
+      try {
+        await supabase.from('chat_messages').update({ delete_at: null, moment_config: null }).eq('id', id).eq('sender_id', me);
+      } catch {}
+    },
+    [me],
+  );
+
+  const pickMsgId = useCallback((msg: any) => {
+    const id = String(msg?.id ?? msg?.message_id ?? '').trim();
+    return id || null;
+  }, []);
+
+  const isLocalMsg = useCallback((id: string | null) => {
+    if (!id) return true;
+    return id.startsWith('local_');
+  }, []);
+
+  const updateLocalFields = useCallback(async (id: string, patch: (m: any) => void) => {
+    try {
+      await database.write(async () => {
+        const collection = database.get<any>('messages');
+        let mLocal: any = null;
+        try {
+          mLocal = await collection.find(id);
+        } catch {
+          mLocal = null;
+        }
+        if (!mLocal) return;
+        await mLocal.update((mm: any) => {
+          patch(mm);
+        });
+      });
+    } catch {}
+  }, []);
+
+  const deleteMineLocal = useCallback(
+    async (msg: any) => {
+      const id = pickMsgId(msg);
+      if (!id) return;
+
+      try {
+        await database.write(async () => {
+          const collection = database.get<any>('messages');
+          let mLocal: any = null;
+          try {
+            mLocal = await collection.find(id);
+          } catch {
+            mLocal = null;
+          }
+          if (!mLocal) return;
+          await mLocal.destroyPermanently();
+        });
+      } catch {}
+    },
+    [pickMsgId],
+  );
+
+  const deleteAll = useCallback(
+    async (msg: any) => {
+      if (!msg) return;
+      const id = pickMsgId(msg);
+      if (!id || isLocalMsg(id)) return;
+
+      const nowIso = new Date().toISOString();
+      const nowMs = Date.now();
+
+      await updateLocalFields(id, (mm) => {
+        if ('delete_at' in mm) mm.delete_at = nowMs as any;
+        if ('moment_config' in mm) mm.moment_config = null as any;
+      });
+
+      try {
+        await supabase
+          .from('chat_messages')
+          .update({ delete_at: nowIso, moment_config: null })
+          .eq('id', id)
+          .eq('room_id', resolvedRoomId)
+          .eq('sender_id', me);
+      } catch {}
+    },
+    [me, pickMsgId, isLocalMsg, updateLocalFields, resolvedRoomId],
+  );
+
+  const setMomentDelete = useCallback(
+    async (msg: any, cfg: MomentDeleteConfig) => {
+      if (!msg) return;
+      const id = pickMsgId(msg);
+      if (!id || isLocalMsg(id)) return;
+
+      const now = Date.now();
+      const delayMs = Math.max(0, Math.floor(cfg.delaySeconds * 1000));
+      const deleteAtMs = now + delayMs;
+      const deleteAtIso = new Date(deleteAtMs).toISOString();
+
+      if (cfg.readBased) {
+        const moment_config = {
+          type: 'READ_BASED',
+          delay: Math.max(1, Math.floor(cfg.delaySeconds)),
+        };
+
+        await updateLocalFields(id, (mm) => {
+          if ('moment_config' in mm) mm.moment_config = JSON.stringify(moment_config) as any;
+          if ('delete_at' in mm) mm.delete_at = null as any;
+        });
+
+        try {
+          await supabase
+            .from('chat_messages')
+            .update({ moment_config, delete_at: null })
+            .eq('id', id)
+            .eq('room_id', resolvedRoomId)
+            .eq('sender_id', me);
+        } catch {}
         return;
       }
 
-      await supabase.rpc('join_room', { p_room_id: rid });
-    } catch (err) {
-      console.warn('ensureMembership failed', err);
+      await updateLocalFields(id, (mm) => {
+        if ('delete_at' in mm) mm.delete_at = deleteAtMs as any;
+        if ('moment_config' in mm) mm.moment_config = null as any;
+      });
+
+      try {
+        await supabase
+          .from('chat_messages')
+          .update({ delete_at: deleteAtIso, moment_config: null })
+          .eq('id', id)
+          .eq('room_id', resolvedRoomId)
+          .eq('sender_id', me);
+      } catch {}
+    },
+    [me, pickMsgId, isLocalMsg, updateLocalFields, resolvedRoomId],
+  );
+
+  useEffect(() => {
+    const sub = DeviceEventEmitter.addListener('chat:openMessageActions', (payload: any) => {
+      try {
+        const msg = payload?.message ?? null;
+        if (!msg) return;
+        openMessageActions(msg);
+      } catch {}
+    });
+
+    const subMoment = DeviceEventEmitter.addListener('chat:openMomentQuickMenu', (payload: any) => {
+      try {
+        const msg = payload?.message ?? null;
+        const anchor = payload?.anchor ?? null;
+        if (!msg) return;
+        setMomentMenuMsg(msg);
+        setMomentMenuAnchor(anchor);
+        setMomentMenuVisible(true);
+      } catch {}
+    });
+
+    return () => {
+      sub.remove();
+      subMoment.remove();
+    };
+  }, [openMessageActions]);
+
+  const [searchMembers, setSearchMembers] = useState<{ id: string; name: string; avatarUrl?: string | null }[]>([]);
+
+  const [viewLangLocal, setViewLangLocal] = useState<string | null>(null);
+  const [preferredLangLocal, setPreferredLangLocal] = useState<string | null>(null);
+
+  const [showTranslatedOnly, setShowTranslatedOnly] = useState<boolean>(false);
+
+  const openTranslatePopover = useCallback(() => setTranslatePopoverVisible(true), []);
+  const closeTranslatePopover = useCallback(() => setTranslatePopoverVisible(false), []);
+
+  const {
+    text,
+    setText,
+    replyTo,
+    handleReply,
+    cancelReply,
+    autoTranslate,
+    setAutoTranslate,
+    translationTier,
+    translationTone,
+    setTranslationTier,
+    setTranslationTone,
+  } = useChatUIState();
+
+  const { items } = useChatMessages(resolvedRoomIdOk ? resolvedRoomId : 0, me);
+
+  const inlineSearchRaw =
+    (useChatInlineSearch({
+      roomId: resolvedRoomIdOk ? resolvedRoomId : 0,
+      me,
+      items,
+      listRef,
+      scrollToBottom,
+    } as any) as any) ?? ({} as any);
+
+  const inlineSearch = useMemo(() => {
+    const r: any = inlineSearchRaw ?? {};
+    return {
+      open: !!r.open,
+      openSearch: typeof r.openSearch === 'function' ? r.openSearch : () => {},
+      closeSearch: typeof r.closeSearch === 'function' ? r.closeSearch : () => {},
+
+      q: typeof r.q === 'string' ? r.q : '',
+      setQ: typeof r.setQ === 'function' ? r.setQ : (_v: any) => {},
+      clearQ: typeof r.clearQ === 'function' ? r.clearQ : () => {},
+      removeMember: typeof r.removeMember === 'function' ? r.removeMember : () => {},
+
+      selectedMember: r.selectedMember ?? null,
+
+      countLabel: typeof r.countLabel === 'string' ? r.countLabel : '',
+      hasSenderFilter: !!r.hasSenderFilter,
+      hasDateFilter: !!r.hasDateFilter,
+
+      openSender: typeof r.openSender === 'function' ? r.openSender : () => {},
+      closeSender: typeof r.closeSender === 'function' ? r.closeSender : () => {},
+      senderSheetOpen: !!r.senderSheetOpen,
+      members: Array.isArray(r.members) ? r.members : [],
+      setMember: typeof r.setMember === 'function' ? r.setMember : (_m: any) => {},
+
+      openDate: typeof r.openDate === 'function' ? r.openDate : () => {},
+      closeDate: typeof r.closeDate === 'function' ? r.closeDate : () => {},
+      dateSheetOpen: !!r.dateSheetOpen,
+      dateRange: r.dateRange ?? null,
+      setDates: typeof r.setDates === 'function' ? r.setDates : (_range: any) => {},
+
+      prev: typeof r.prev === 'function' ? r.prev : () => {},
+      next: typeof r.next === 'function' ? r.next : () => {},
+
+      setOpen: typeof r.setOpen === 'function' ? r.setOpen : undefined,
+    };
+  }, [inlineSearchRaw]);
+
+  const itemById = useMemo(() => {
+    const m = new Map<string, any>();
+    for (const it of items as any[]) {
+      if ((it as any)?.type !== 'message') continue;
+      const msg: any = (it as any)?.data;
+      const id = String(msg?.id ?? '').trim();
+      if (id) m.set(id, msg);
     }
+    return m;
+  }, [items]);
+
+  const selectedMsgs = useMemo(() => {
+    const out: any[] = [];
+    selection.selectedIds.forEach((id) => {
+      const msg = itemById.get(String(id));
+      if (msg) out.push(msg);
+    });
+    return out;
+  }, [selection.selectedIds, itemById]);
+
+  const bulkEligibility = useMemo(() => {
+    if (!selectedMsgs.length) return { canDeleteAll: false, canMomentDelete: false };
+
+    const allOk = selectedMsgs.every((msg) => {
+      const id = String(msg?.id ?? '').trim();
+      const isMe2 = String(msg?.senderId ?? msg?.sender_id ?? '') === String(me ?? '');
+      const isLocal2 = !id || id.startsWith('local_');
+      const createdMs = toMillis(msg?.createdAt ?? msg?.created_at ?? null) ?? null;
+      const within24h = createdMs != null ? Date.now() - createdMs <= 24 * 3600 * 1000 : false;
+      return !!me && isMe2 && !isLocal2 && within24h;
+    });
+
+    return { canDeleteAll: allOk, canMomentDelete: allOk };
+  }, [selectedMsgs, me]);
+
+  /**
+   * ✅ READ SYNC (서버 chat_members.last_read_seq/at 업데이트)
+   * - 로컬 items에서 최신 room_seq를 계산
+   * - room_seq가 로컬에 없으면 서버에서 1번 조회(최신 seq)
+   * - 디바운스로 "한 번만" 서버에 보냄
+   */
+  const computeLatestSeqFromItems = useCallback((): number => {
+    let maxSeq = 0;
+    for (const it of items as any[]) {
+      if ((it as any)?.type !== 'message') continue;
+      const msg: any = (it as any)?.data ?? null;
+      const raw = msg?.roomSeq ?? msg?.room_seq ?? 0;
+      const n = Math.trunc(Number(raw ?? 0) || 0);
+      if (Number.isFinite(n) && n > maxSeq) maxSeq = n;
+    }
+    return maxSeq;
+  }, [items]);
+
+  const fetchLatestSeqFromServer = useCallback(async (): Promise<number> => {
+    if (!resolvedRoomIdOk) return 0;
+    try {
+      const { data, error } = await supabase
+        .from('chat_messages')
+        .select('room_seq')
+        .eq('room_id', resolvedRoomId)
+        .order('room_seq', { ascending: false })
+        .limit(1);
+
+      if (error) {
+        console.warn('[readSync] fetchLatestSeqFromServer error', error?.message ?? String(error));
+        return 0;
+      }
+
+      const seq = Math.trunc(Number((data as any)?.[0]?.room_seq ?? 0) || 0);
+      return Number.isFinite(seq) ? seq : 0;
+    } catch (e: any) {
+      console.warn('[readSync] fetchLatestSeqFromServer exception', e?.message ?? String(e));
+      return 0;
+    }
+  }, [resolvedRoomId, resolvedRoomIdOk]);
+
+  const latestRoomSeq = useMemo(() => computeLatestSeqFromItems(), [computeLatestSeqFromItems]);
+
+  const lastReadPushedRef = useRef<number>(0);
+  const readPushInFlightRef = useRef<boolean>(false);
+  const readPushTimerRef = useRef<any>(null);
+
+  useEffect(() => {
+    // 방 바뀌면 리셋
+    lastReadPushedRef.current = 0;
+    if (readPushTimerRef.current) {
+      clearTimeout(readPushTimerRef.current);
+      readPushTimerRef.current = null;
+    }
+  }, [resolvedRoomId]);
+
+  useEffect(() => {
+    return () => {
+      if (readPushTimerRef.current) {
+        clearTimeout(readPushTimerRef.current);
+        readPushTimerRef.current = null;
+      }
+    };
   }, []);
 
-  /* initial */
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      if (!Number.isFinite(Number(chatRoomId))) return;
-
-      try {
-        const session = await ensureSession();
-        if (!session) throw new Error('로그인이 필요합니다.');
-
-        await ensureMembership(Number(chatRoomId));
-
-        const { data: prof } = await supabase
-          .from('profiles')
-          .select(
-            'preferred_lang, auto_translate_default, show_original_default'
-          )
-          .eq('user_id', session.user.id)
-          .maybeSingle();
-
-        if (mounted) {
-          setMe(session.user.id);
-          if (prof?.preferred_lang) setMyLang(prof.preferred_lang);
-          if (typeof prof?.auto_translate_default === 'boolean')
-            setAutoTranslate(!!prof.auto_translate_default);
-          if (typeof prof?.show_original_default === 'boolean')
-            setShowOriginalGlobal(!!prof.show_original_default);
-        }
-      } catch {
-        if (mounted) setMe(null as any);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    })();
-
-    return () => {
-      mounted = false;
-    };
-  }, [ensureSession, ensureMembership, chatRoomId]);
-
-  /* load room data */
-  useEffect(() => {
-    if (!chatRoomId) return;
-    let mounted = true;
-    const roomPk = Number(chatRoomId);
-
-    (async () => {
-      const { data: m } = await supabase
-        .from('chat_messages')
-        .select('id, room_id, sender_id, content, original, created_at, kind')
-        .eq('room_id', roomPk)
-        .order('created_at', { ascending: true });
-
-    if (mounted && m) {
-      const mapped = (m as any[]).map((row) => ({
-        ...row,
-        sender: row.sender_id,
-      }));
-      const visible = mapped.filter((row: any) => row.kind !== 'hidden');
-      setMsgs(visible as Msg[]);
-      requestAnimationFrame(() =>
-        listRef.current?.scrollToEnd({ animated: false })
-      );
-    }
-
-      const { data: mems } = await supabase
+  const fetchMyLastReadSeqFromServer = useCallback(async (): Promise<number> => {
+    if (!me || !resolvedRoomIdOk) return 0;
+    try {
+      const { data, error } = await supabase
         .from('chat_members')
-        .select('user_id,last_read_at')
-        .eq('room_id', roomPk);
-
-
-      const ids = Array.from(
-        new Set(((mems as any[]) ?? []).map((x) => x.user_id as string))
-      );
-
-      if (me) {
-        const myRow = (mems as any[])?.find((x) => x.user_id === me);
-        if (myRow?.last_read_at && mounted) {
-          setLastReadAt(myRow.last_read_at as string);
-        }
-        if (!ids.includes(me)) ids.push(me);
-      }
-
-      if (mounted) {
-        setMembers(ids.map((user_id) => ({ user_id })));
-        setParticipantCount(ids.length || 1);
-      }
-
-      if (ids.length) {
-        const { data: profRows } = await supabase
-          .from('profiles')
-          .select('user_id,nickname,avatar_url,follow_id')
-          .in('user_id', ids);
-
-        const map: Record<string, ProfLite> = {};
-        (profRows ?? []).forEach((p: any) => {
-          map[p.user_id] = {
-            nickname: p.nickname ?? null,
-            avatar_url: p.avatar_url ?? null,
-            follow_id: p.follow_id ?? null,
-          };
-        });
-        if (mounted) setProfiles(map);
-      } else if (mounted) {
-        setProfiles({});
-      }
-    })();
-
-    return () => {
-      mounted = false;
-    };
-  }, [chatRoomId, me]);
-
-  /* title watch */
-  useEffect(() => {
-    if (!chatRoomId) return;
-    const roomPk = Number(chatRoomId);
-    let mounted = true;
-    let unsub: any;
-
-    (async () => {
-      const { data: roomRow } = await supabase
-        .from('chat_rooms')
-        .select('id, type, custom_title, beacon_id, created_by')
-        .eq('id', roomPk)
+        .select('last_read_seq')
+        .eq('room_id', resolvedRoomId)
+        .eq('user_id', me)
         .maybeSingle();
 
-      if (!mounted) return;
+      if (error) return 0;
 
-      const roomType = roomRow?.type ?? null;
-      const customTitle = roomRow?.custom_title?.trim() || '';
+      const seq = Math.trunc(Number((data as any)?.last_read_seq ?? 0) || 0);
+      return Number.isFinite(seq) ? seq : 0;
+    } catch {
+      return 0;
+    }
+  }, [me, resolvedRoomId, resolvedRoomIdOk]);
 
-      // 현재 방 멤버 / 나를 제외한 상대들
-      const memberIds = members.map((m) => m.user_id);
-      const otherIds = me
-        ? memberIds.filter((uid) => uid !== me)
-        : memberIds;
+  const pushReadNow = useCallback(
+    async (seqHint?: number, reason: string = 'ui') => {
+      if (!me || !resolvedRoomIdOk) return;
+      if (readPushInFlightRef.current) return;
 
-      const getNickname = (uid: string | null | undefined) => {
-        if (!uid) return '';
-        const nick = profiles[uid]?.nickname;
-        return (nick ?? '').trim();
-      };
+      let seq = Math.trunc(Number(seqHint ?? 0) || 0);
+      if (!seq) seq = computeLatestSeqFromItems();
+      if (!seq) seq = await fetchLatestSeqFromServer();
 
-      let resolvedTitle = '';
+      if (seq <= 0) return;
+      if (seq <= lastReadPushedRef.current) return;
 
-      // 1순위: 내가 직접 또는 방장이 설정한 custom_title
-      if (customTitle) {
-        resolvedTitle = customTitle;
-      } else if (roomType === 'self') {
-        // 나와의 채팅 방
-        const myNick = getNickname(me);
-        resolvedTitle = myNick || '나와의 채팅';
-      } else if (
-        roomType === 'dm' ||
-        roomType === 'personal' || // 기존 personal 타입도 1:1 취급
-        (!roomType && otherIds.length === 1) // type이 안들어왔지만 멤버가 2명뿐인 경우
-      ) {
-        // 🔹 1:1 채팅 방 제목: 상대 닉네임 (없으면 '대화상대')
-        if (otherIds.length === 1) {
-          const nick = getNickname(otherIds[0]);
-          resolvedTitle = nick || '대화상대';
-        } else {
-          resolvedTitle = '1:1 채팅';
-        }
-      } else if (roomType === 'group') {
-        // 🔹 그룹 채팅: 닉네임들 + "외 N"
-        const nicks = memberIds
-          .map((id) => getNickname(id))
-          .filter((s) => !!s);
+      readPushInFlightRef.current = true;
 
-        if (nicks.length) {
-          resolvedTitle =
-            nicks.slice(0, 3).join(', ') +
-            (nicks.length > 3 ? ` 외 ${nicks.length - 3}` : '');
-        }
+      const nowIso = new Date().toISOString();
 
-        if (!resolvedTitle.trim()) {
-          resolvedTitle = `그룹채팅 #${roomPk}`;
-        }
-      } else if (roomType === 'open') {
-        // 🔹 오픈 채팅: custom_title 없으면 기본 형식
-        resolvedTitle = `오픈채팅 #${roomPk}`;
-      } else if (roomType === 'beacon') {
-        // 🔹 비콘 채팅: 비콘 제목 우선
-        let beaconTitle = '';
+      try {
+        const { data, error } = await supabase
+          .from('chat_members')
+          .update({ last_read_seq: seq, last_read_at: nowIso })
+          .eq('room_id', resolvedRoomId)
+          .eq('user_id', me)
+          .lt('last_read_seq', seq) // ✅ 중복/역전 업데이트 방지
+          .select('last_read_seq');
 
-        if (roomRow?.beacon_id != null) {
-          const beaconPk = Number(roomRow.beacon_id);
-
-          try {
-            // beacons_visible 우선
-            const { data: vrow } = await supabase
-              .from('beacons_visible')
-              .select('title')
-              .eq('id', beaconPk)
-              .maybeSingle();
-
-            if (vrow?.title?.trim()) {
-              beaconTitle = vrow.title.trim();
-            }
-          } catch {}
-
-          if (!beaconTitle) {
-            try {
-              // 원본 beacons 테이블 fallback
-              const { data: brow } = await supabase
-                .from('beacons')
-                .select('title')
-                .eq('id', beaconPk)
-                .maybeSingle();
-
-              if (brow?.title?.trim()) {
-                beaconTitle = brow.title.trim();
-              }
-            } catch {}
-          }
-
-          if (!beaconTitle) {
-            beaconTitle = `비콘채팅 #${roomPk}`;
-          }
-
-          if (mounted) {
-            setTitle(beaconTitle);
-            setRoomOwnerId(roomRow?.created_by ?? null);
-          }
-
-          // 비콘 제목 변경 실시간 반영
-          const ch = supabase
-            .channel(`beacon_title_${beaconPk}`)
-            .on(
-              'postgres_changes',
-              {
-                event: 'UPDATE',
-                schema: 'public',
-                table: 'beacons',
-                filter: `id=eq.${beaconPk}`,
-              },
-              (payload) => {
-                const nt = (payload.new as any)?.title;
-                if (typeof nt === 'string' && nt.trim()) {
-                  setTitle(nt.trim());
-                }
-              },
-            )
-            .subscribe();
-
-          unsub = ch;
+        if (error) {
+          console.warn('[readSync] push error', {
+            reason,
+            roomId: resolvedRoomId,
+            me,
+            seq,
+            message: (error as any)?.message ?? String(error),
+          });
           return;
         }
+
+        // ✅ 서버가 이미 더 큰 값(다른 기기)이라 update=0이어도, 로컬은 seq까지는 올려서 재시도 폭주를 막는다.
+        lastReadPushedRef.current = Math.max(lastReadPushedRef.current, seq);
+
+        // (옵션) data 기반 디버그가 필요하면 여기에 로그 추가
+        // console.warn('[readSync] push ok', { reason, seq, data });
+      } catch (e: any) {
+        console.warn('[readSync] push exception', e?.message ?? String(e));
+      } finally {
+        readPushInFlightRef.current = false;
       }
+    },
+    [me, resolvedRoomId, resolvedRoomIdOk, computeLatestSeqFromItems, fetchLatestSeqFromServer],
+  );
 
-      if (!resolvedTitle) {
-        resolvedTitle = `채팅방 #${roomPk}`;
-      }
+  const scheduleReadSync = useCallback(
+    (seq: number) => {
+      const s = Math.trunc(Number(seq ?? 0) || 0);
+      if (s <= 0) return;
 
-      if (mounted) {
-        setTitle(resolvedTitle);
-        setRoomOwnerId(roomRow?.created_by ?? null);
-      }
-    })();
+      if (readPushTimerRef.current) clearTimeout(readPushTimerRef.current);
+      readPushTimerRef.current = setTimeout(() => {
+        pushReadNow(s, 'debounce');
+      }, 250);
+    },
+    [pushReadNow],
+  );
 
-    return () => {
-      mounted = false;
-      try {
-        if (unsub) supabase.removeChannel(unsub);
-      } catch {}
-    };
-  }, [chatRoomId, members, profiles, me]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!me || !resolvedRoomIdOk) return;
+      const t = setTimeout(() => {
+        pushReadNow(undefined, 'focus').catch(() => {});
+      }, 250);
+      return () => clearTimeout(t);
+    }, [me, resolvedRoomIdOk, pushReadNow]),
+  );
 
-
-  /* realtime messages */
   useEffect(() => {
-    if (!chatRoomId) return;
-    const roomPk = Number(chatRoomId);
+    if (!me || !resolvedRoomIdOk) return;
+    if (!isAtBottom) return;
+    if (latestRoomSeq > 0) scheduleReadSync(latestRoomSeq);
+  }, [me, resolvedRoomIdOk, isAtBottom, latestRoomSeq, scheduleReadSync]);
 
-    const ch = supabase
-      .channel(`chat_${roomPk}`)
-      // INSERT: 새 메시지
+  const { emitUnreadCountsForMyMessages } = useUnreadCountsForMyMessages({
+    roomId: resolvedRoomIdOk ? resolvedRoomId : 0,
+    me,
+    items,
+    DeviceEventEmitter,
+  });
+
+  /**
+   * ✅ chat_members 실시간 구독 → 상대가 읽으면 내 메시지의 "1"이 즉시 사라지게 함
+   * - UPDATE/INSERT 수신 시 unread counts 재계산을 디바운스로 1회만 실행
+   */
+  const memberReadChannelRef = useRef<any>(null);
+  const unreadRecalcTimerRef = useRef<any>(null);
+
+  const scheduleUnreadRecalc = useCallback(
+    (reason: string) => {
+      if (unreadRecalcTimerRef.current) clearTimeout(unreadRecalcTimerRef.current);
+      unreadRecalcTimerRef.current = setTimeout(() => {
+        try {
+          emitUnreadCountsForMyMessages();
+        } catch {}
+      }, 120);
+    },
+    [emitUnreadCountsForMyMessages],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (unreadRecalcTimerRef.current) {
+        clearTimeout(unreadRecalcTimerRef.current);
+        unreadRecalcTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!me || !resolvedRoomIdOk) return;
+
+    // 1) 방 진입 시 내 last_read_seq를 1회 로드해서 불필요한 push 반복 방지
+    (async () => {
+      const s = await fetchMyLastReadSeqFromServer();
+      if (s > 0) {
+        lastReadPushedRef.current = Math.max(lastReadPushedRef.current, s);
+      }
+      scheduleUnreadRecalc('init');
+    })().catch(() => {});
+
+    // 2) 기존 채널 정리
+    try {
+      memberReadChannelRef.current?.unsubscribe?.();
+    } catch {}
+    memberReadChannelRef.current = null;
+
+    const channel = supabase
+      .channel(`chat_members:reads:${resolvedRoomId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'chat_members',
+          filter: `room_id=eq.${resolvedRoomId}`,
+        },
+        (payload: any) => {
+          try {
+            const row = payload?.new ?? null;
+            const uid = String(row?.user_id ?? '').trim();
+            const seq = Math.trunc(Number(row?.last_read_seq ?? 0) || 0);
+
+            if (uid && uid === String(me)) {
+              // 내 row가 다른 경로(다른 기기/서버)로 올라온 경우 로컬 ref도 동기화
+              if (seq > 0) lastReadPushedRef.current = Math.max(lastReadPushedRef.current, seq);
+            }
+
+            // 상대가 읽음 → 내 메시지 unread 카운트 즉시 재계산
+            scheduleUnreadRecalc('realtime_update');
+          } catch {}
+        },
+      )
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'chat_messages',
-          filter: `room_id=eq.${roomPk}`,
+          table: 'chat_members',
+          filter: `room_id=eq.${resolvedRoomId}`,
         },
-        (payload) => {
-          const incoming = {
-            ...(payload.new as any),
-            sender: (payload.new as any).sender_id,
-          } as Msg;
+        () => {
+          // 멤버가 새로 생기는 케이스도 카운트에 영향 가능
+          scheduleUnreadRecalc('realtime_insert');
+        },
+      )
+      .subscribe((status: any) => {
+        if (status === 'SUBSCRIBED') {
+          scheduleUnreadRecalc('subscribed');
+        }
+      });
 
-          // hidden 으로 들어오는 건 안 보이게
-          if (incoming.kind === 'hidden') return;
+    memberReadChannelRef.current = channel;
 
-          // 🔹 그냥 리스트에만 추가 (자동 스크롤 X)
-          setMsgs((prev) => [...prev, incoming]);
+    return () => {
+      try {
+        channel?.unsubscribe?.();
+      } catch {}
+      if (memberReadChannelRef.current === channel) memberReadChannelRef.current = null;
+    };
+  }, [
+    me,
+    resolvedRoomId,
+    resolvedRoomIdOk,
+    fetchMyLastReadSeqFromServer,
+    scheduleUnreadRecalc,
+  ]);
 
-          // 🔹 상대방(또는 시스템) 메시지면 새 메시지 배지 증가
-          if (!me || incoming.sender !== me) {
-            setNewMsgCount((prev) => prev + 1);
-            setShowNewMsgPill(true);
+  type HeaderRoomType = ComponentProps<typeof ChatHeader>['roomType'];
+  const headerRoomType = useMemo<HeaderRoomType>(() => {
+    if (!roomType) return undefined;
+    if (roomType === 'business_dm') return 'dm' as HeaderRoomType;
+    return roomType as unknown as HeaderRoomType;
+  }, [roomType]);
+
+  const translateFn = useCallback(
+    async (args: { text: string; targetLang: string; tier: Tier; tone?: string | null; sourceLang?: string | null }) => {
+      const payload = {
+        text: args.text,
+        target_lang: args.targetLang,
+        tier: args.tier,
+        tone: args.tone ?? null,
+        source_lang: args.sourceLang ?? null,
+      };
+
+      const pickOut = (data: any): string | null => {
+        if (!data) return null;
+
+        if (typeof data === 'string') {
+          const s = data.trim();
+          if (!s) return null;
+          if ((s.startsWith('{') && s.endsWith('}')) || (s.startsWith('[') && s.endsWith(']'))) {
+            try {
+              data = JSON.parse(s);
+            } catch {
+              return s;
+            }
+          } else {
+            return s;
           }
         }
-      )
-  // UPDATE: 방장이 가린 메시지 등
-  .on(
-    'postgres_changes',
-    {
-      event: 'UPDATE',
-      schema: 'public',
-      table: 'chat_messages',
-      filter: `room_id=eq.${roomPk}`,
-    },
-    (payload) => {
-      const updated = payload.new as any;
 
-      // hidden 으로 바뀐 경우 → 리스트에서 제거
-      if (updated.kind === 'hidden') {
-        setMsgs((prev) =>
-          prev.filter((x) => String(x.id) !== String(updated.id))
-        );
-      } else {
-        // 그 외 업데이트는 내용만 교체
-        setMsgs((prev) =>
-          prev.map((x) =>
-            String(x.id) === String(updated.id)
-              ? ({
-                  ...x,
-                  ...updated,
-                  sender: updated.sender_id,
-                } as Msg)
-              : x
-          )
-        );
-      }
-    }
-  )
-  // DELETE: 본인이 1일 내 모두삭제한 경우
-  .on(
-    'postgres_changes',
-    {
-      event: 'DELETE',
-      schema: 'public',
-      table: 'chat_messages',
-      filter: `room_id=eq.${roomPk}`,
-    },
-    (payload) => {
-      const deleted = payload.old as any;
-      setMsgs((prev) =>
-        prev.filter((x) => String(x.id) !== String(deleted.id))
-      );
-    }
-  )
-  .subscribe();
+        const out =
+          (data as any)?.translated_text ??
+          (data as any)?.text ??
+          (data as any)?.result ??
+          (data as any)?.translation ??
+          null;
 
+        return out && String(out).trim() ? String(out) : null;
+      };
 
-    return () => {
-      try {
-        supabase.removeChannel(ch);
-      } catch {}
-    };
-  }, [chatRoomId, me]);
+      const tryInvoke = async (fnName: string) => {
+        try {
+          const { data, error } = await supabase.functions.invoke(fnName, { body: payload });
 
-  /* realtime members */
-  useEffect(() => {
-    if (!chatRoomId) return;
-    const roomPk = Number(chatRoomId);
+          console.warn('[translateFn] invoke', fnName, {
+            ok: !error,
+            error: error ? ((error as any).message ?? error) : null,
+            data,
+            payload,
+          });
 
-    const ch = supabase
-      .channel(`chat_members_${roomPk}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'chat_members',
-          filter: `room_id=eq.${roomPk}`,
-        },
-        async () => {
-          try {
-            const { data: mems } = await supabase
-              .from('chat_members')
-              .select('user_id')
-              .eq('room_id', roomPk);
-            const ids = Array.from(
-              new Set((mems ?? []).map((x: any) => x.user_id))
-            );
-            if (me && !ids.includes(me)) ids.push(me);
-            setMembers(ids.map((user_id: string) => ({ user_id })));
-            setParticipantCount(ids.length || 1);
-
-            if (ids.length) {
-              const { data: profRows } = await supabase
-                .from('profiles')
-                .select('user_id,nickname,avatar_url,follow_id')
-                .in('user_id', ids);
-
-              const map: Record<string, ProfLite> = {};
-              (profRows ?? []).forEach((p: any) => {
-                map[p.user_id] = {
-                  nickname: p.nickname ?? null,
-                  avatar_url: p.avatar_url ?? null,
-                  follow_id: p.follow_id ?? null, 
-                };
-              });
-              setProfiles(map);
-            } else {
-              setProfiles({});
-            }
-          } catch {}
+          if (error) return null;
+          return pickOut(data);
+        } catch (e: any) {
+          console.warn('[translateFn] invoke EXCEPTION', fnName, {
+            message: e?.message ?? String(e),
+            payload,
+          });
+          return null;
         }
-      )
-      .subscribe();
+      };
 
-    return () => {
-      try {
-        supabase.removeChannel(ch);
-      } catch {}
-    };
-  }, [chatRoomId, me]);
+      const a = await tryInvoke('chat-translate');
+      if (a) return a;
 
-  /* helpers */
-  const canDeleteMessage = useCallback(
-    (m: Msg) =>
-      !!me &&
-      (m.sender === me || (roomOwnerId != null && roomOwnerId === me)),
-    [me, roomOwnerId]
+      const b = await tryInvoke('translate');
+      if (b) return b;
+
+      return null;
+    },
+    [],
   );
 
-  const triggerReplyFromSwipe = useCallback((m: Msg) => {
-    setReplyTo(m);
-    try {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    } catch {}
+  const applyDefaultsFromProfile = useCallback((prof: any) => {
+    const settingLang = String(prof?.setting_lang ?? 'ko');
+    const settingUpper = toLangCodeUpper(settingLang) ?? 'KO';
+
+    const userTier: Tier = toTier(prof?.user_tier ?? 'free');
+    const baseTier: Tier = toTier(prof?.translation_tier ?? userTier);
+
+    const baseTone = normalizeTone(prof?.translation_tone_default ?? 'nature');
+
+    const baseView = toLangCodeUpper(prof?.view_lang ?? null) ?? settingUpper;
+    const basePreferred = toLangCodeUpper(prof?.preferred_lang ?? null) ?? baseView;
+
+    return { settingLang, settingUpper, userTier, baseTier, baseTone, baseView, basePreferred };
   }, []);
 
-  const openPublicProfile = useCallback(
-    (userId: string) => {
-      navigation.navigate('ProfileView', { userId, publicView: true });
-    },
-    [navigation]
-  );
+  const loadAndApplyRoomSettings = useCallback(
+    async (roomIdArg: number, myId: string, base: ReturnType<typeof applyDefaultsFromProfile>) => {
+      const row = await fetchRoomSettings(roomIdArg, myId);
 
-  const firstDateLabel = useMemo(() => {
-    if (!msgs.length) return null;
+      const finalAuto = row?.auto_translate ?? true;
+      const finalShowTranslatedOnly = row?.show_translated_only ?? false;
 
-    const d = new Date(msgs[0].created_at);
-    if (Number.isNaN(d.getTime())) return null;
+      const finalTier: Tier = toTier(row?.translation_tier ?? base.baseTier);
+      const finalTone: string = normalizeTone(row?.translation_tone ?? base.baseTone);
 
-    return `${d.getFullYear()}.${(d.getMonth() + 1)
-      .toString()
-      .padStart(2, '0')}.${d
-      .getDate()
-      .toString()
-      .padStart(2, '0')}`;
-  }, [msgs]);
+      const finalView = toLangCodeUpper(row?.view_lang ?? base.baseView) ?? base.baseView;
+      const finalPreferred = toLangCodeUpper(row?.preferred_lang ?? base.basePreferred) ?? base.basePreferred;
 
-  const withSeparators = useMemo(() => {
-    const out: Array<Msg | { __sep: string; key: string }> = [];
-    if (!msgs.length) return out;
+      setAutoTranslate(!!finalAuto);
+      setTranslationTier(finalTier as any);
+      setTranslationTone(finalTone as any);
 
-    let prev: string | null = null;
+      setViewLangLocal(finalView);
+      setPreferredLangLocal(finalPreferred);
+      setShowTranslatedOnly(!!finalShowTranslatedOnly);
 
-    for (const m of msgs) {
-      const k = dayKey(m.created_at);
+      setMyProfileCfg((prev) => {
+        const p = (prev ?? {}) as any;
+        return {
+          ...p,
+          translation_tier: finalTier,
+          translation_tone_default: finalTone,
+          view_lang: finalView,
+          preferred_lang: finalPreferred,
+          user_tier: (p?.user_tier ?? base.userTier) as any,
+        } as any;
+      });
 
-      if (k !== prev) {
-        out.push({ __sep: k, key: `sep-${k}-${out.length}` } as any);
-        prev = k;
+      if (!row) {
+        await upsertRoomSettings(roomIdArg, myId, {
+          auto_translate: finalAuto,
+          show_translated_only: finalShowTranslatedOnly,
+          translation_tier: finalTier,
+          translation_tone: finalTone,
+          view_lang: finalView,
+          preferred_lang: finalPreferred,
+        });
       }
 
-      out.push(m);
-    }
-
-    return out;
-  }, [msgs]);
-
-  const withSeparatorsRef = useRef<any[]>([]);
-  useEffect(() => {
-    withSeparatorsRef.current = withSeparators as any[];
-  }, [withSeparators]);
-
-  const scrollToMessage = useCallback((msgId: string) => {
-    if (!listRef.current) return;
-    const data = withSeparatorsRef.current;
-    const idx = data.findIndex((x: any) => x && !x.__sep && x.id === msgId);
-    if (idx < 0) return;
-    try {
-      listRef.current.scrollToIndex({
-        index: idx,
-        animated: true,
+      console.warn('[roomSettings] applied', {
+        roomId: roomIdArg,
+        auto_translate: finalAuto,
+        show_translated_only: finalShowTranslatedOnly,
+        translation_tier: finalTier,
+        translation_tone: finalTone,
+        view_lang: finalView,
+        preferred_lang: finalPreferred,
       });
-    } catch {
-      listRef.current.scrollToEnd({ animated: true });
+    },
+    [applyDefaultsFromProfile, setAutoTranslate, setTranslationTier, setTranslationTone],
+  );
+
+  useEffect(() => {
+    const v = toLangCodeUpper((myProfileCfg as any)?.view_lang ?? null);
+    setViewLangLocal(v);
+
+    const p = toLangCodeUpper((myProfileCfg as any)?.preferred_lang ?? null);
+    setPreferredLangLocal(p);
+  }, [myProfileCfg]);
+
+  useEffect(() => {
+    if (!peerProfileCfg) return;
+    if (preferredLangLocal) return;
+    if (!resolvedRoomIdOk) return;
+
+    const peerView = toLangCodeUpper((peerProfileCfg as any)?.view_lang ?? (peerProfileCfg as any)?.setting_lang ?? null);
+    if (!peerView) return;
+
+    setPreferredLangLocal(peerView);
+
+    if (me) {
+      upsertRoomSettings(resolvedRoomId, me, { preferred_lang: peerView }).catch(() => {});
     }
-  }, []);
+  }, [peerProfileCfg, preferredLangLocal, me, resolvedRoomId, resolvedRoomIdOk]);
 
-  /* 번역 */
-  const callTranslate = useCallback(async (text0: string, target: string) => {
-    const { data, error } = await supabase.functions.invoke('translate-text', {
-      body: { text: text0, to: target },
+  const persistRoomSettingPatch = useCallback(
+    async (patch: Partial<RoomSettingsRow>) => {
+      if (!me || !resolvedRoomIdOk) return;
+      await upsertRoomSettings(resolvedRoomId, me, patch);
+    },
+    [me, resolvedRoomId, resolvedRoomIdOk],
+  );
+
+  const toggleShowTranslatedOnly = useCallback(() => {
+    setShowTranslatedOnly((v) => {
+      const next = !v;
+      persistRoomSettingPatch({ show_translated_only: next });
+      return next;
     });
-    if (error) throw error;
-    return (data?.result as string) ?? '';
-  }, []);
+  }, [persistRoomSettingPatch]);
 
-  const translateMessageIfNeeded = useCallback(
-    async (m: Msg) => {
-      if (m.sender === me) return;
+  const toggleAutoTranslate = useCallback(() => {
+    setAutoTranslate((v) => {
+      const next = !v;
+      persistRoomSettingPatch({ auto_translate: next });
+      return next;
+    });
+  }, [persistRoomSettingPatch, setAutoTranslate]);
 
-      const { rest } = parseReplyPrefix(m.content);
+  const setTierWithPersist = useCallback(
+    (tier: any) => {
+      const t: Tier = toTier(tier);
+      setTranslationTier(t as any);
+      persistRoomSettingPatch({ translation_tier: t });
 
-      if (
-        rest.startsWith('[image]') ||
-        rest.startsWith('[video]') ||
-        rest.startsWith('[file]') ||
-        rest.startsWith('[loc]') ||
-        rest.startsWith('[audio]')
-      )
-        return;
+      setMyProfileCfg((prev) => {
+        if (!prev) return prev;
+        return { ...(prev as any), translation_tier: t } as any;
+      });
+    },
+    [persistRoomSettingPatch, setTranslationTier],
+  );
 
-      if (tCache[m.id] || tPending[m.id]) return;
+  const setToneWithPersist = useCallback(
+    (tone: any) => {
+      const tt = normalizeTone(tone);
+      setTranslationTone(tt as any);
+      persistRoomSettingPatch({ translation_tone: tt });
+
+      setMyProfileCfg((prev) => {
+        if (!prev) return prev;
+        return { ...(prev as any), translation_tone_default: tt } as any;
+      });
+    },
+    [persistRoomSettingPatch, setTranslationTone],
+  );
+
+  const handleChangeViewLang = useCallback(
+    async (lang: string) => {
+      const upper = toLangCodeUpper(lang) ?? 'KO';
+      setViewLangLocal(upper);
+
+      setMyProfileCfg((prev) => {
+        if (!prev) return prev;
+        return { ...(prev as any), view_lang: upper } as any;
+      });
+
+      persistRoomSettingPatch({ view_lang: upper });
 
       try {
-        setTPending((p) => ({ ...p, [m.id]: true }));
-        const result = await callTranslate(m.original ?? rest, myLang);
-        if (result && result.trim().length > 0) {
-          setTCache((p) => ({ ...p, [m.id]: result }));
+        if (!me) return;
+        await supabase.from('profiles').update({ view_lang: upper }).eq('user_id', me);
+      } catch {}
+    },
+    [me, persistRoomSettingPatch],
+  );
+
+  const handleChangePreferredLang = useCallback(
+    async (lang: string) => {
+      const upper = toLangCodeUpper(lang) ?? 'KO';
+      setPreferredLangLocal(upper);
+
+      setMyProfileCfg((prev) => {
+        if (!prev) return prev;
+        return { ...(prev as any), preferred_lang: upper } as any;
+      });
+
+      persistRoomSettingPatch({ preferred_lang: upper });
+
+      try {
+        if (!me) return;
+        await supabase.from('profiles').update({ preferred_lang: upper }).eq('user_id', me);
+      } catch {}
+    },
+    [me, persistRoomSettingPatch],
+  );
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
+    const hideSub = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    const onBackPress = () => {
+      if (selection.selecting) {
+        selection.exit();
+        return true;
+      }
+      if (inlineSearch.open) {
+        inlineSearch.closeSearch();
+        return true;
+      }
+      if (actionSheetVisible) {
+        closeMessageActions();
+        return true;
+      }
+      if (momentMenuVisible) {
+        closeMomentMenu();
+        return true;
+      }
+      if (expanded) {
+        Keyboard.dismiss();
+        setCollapseNonce((v) => v + 1);
+        return true;
+      }
+      if (translatePopoverVisible) {
+        setTranslatePopoverVisible(false);
+        return true;
+      }
+      return false;
+    };
+
+    const sub = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    return () => sub.remove();
+  }, [
+    selection,
+    expanded,
+    translatePopoverVisible,
+    inlineSearch.open,
+    inlineSearch.closeSearch,
+    actionSheetVisible,
+    closeMessageActions,
+    momentMenuVisible,
+    closeMomentMenu,
+  ]);
+
+  useEffect(() => {
+    const unsub = navigation.addListener('beforeRemove', (e: any) => {
+      if (selection.selecting) {
+        e.preventDefault();
+        selection.exit();
+        return;
+      }
+
+      if (inlineSearch.open) {
+        e.preventDefault();
+        inlineSearch.closeSearch();
+        return;
+      }
+
+      if (actionSheetVisible) {
+        e.preventDefault();
+        closeMessageActions();
+        return;
+      }
+
+      if (momentMenuVisible) {
+        e.preventDefault();
+        closeMomentMenu();
+        return;
+      }
+
+      if (!expanded && !translatePopoverVisible) return;
+
+      e.preventDefault();
+      if (translatePopoverVisible) setTranslatePopoverVisible(false);
+
+      Keyboard.dismiss();
+      setCollapseNonce((v) => v + 1);
+    });
+    return unsub;
+  }, [
+    navigation,
+    selection,
+    expanded,
+    translatePopoverVisible,
+    inlineSearch.open,
+    inlineSearch.closeSearch,
+    actionSheetVisible,
+    closeMessageActions,
+    momentMenuVisible,
+    closeMomentMenu,
+  ]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      if (!roomIdFromParams && !peerIdFromParams && !resolvedRoomIdOk) {
+        console.warn('[Chat] invalid params: need roomId or peer_id', routeParams);
+      }
+
+      const { data } = await supabase.auth.getUser();
+      const user = data?.user;
+      if (!user) {
+        if (!cancelled) setLoading(false);
+        return;
+      }
+
+      const myId = user.id;
+      if (!cancelled) setMe(myId);
+
+      if (!resolvedRoomIdOk) {
+        if (!peerIdFromParams) {
+          console.warn('[Chat] invalid roomId from route.params', routeParams);
+          if (!cancelled) setLoading(false);
+          return;
+        }
+
+        const rid = await resolveOrCreateDmRoom({ myId, peerId: peerIdFromParams });
+        if (!rid) {
+          console.warn('[Chat] cannot resolve DM roomId for peer_id (RPC-only)', { peer_id: peerIdFromParams });
+          if (!cancelled) setLoading(false);
+          return;
+        }
+
+        if (cancelled) return;
+
+        setResolvedRoomId(rid);
+
+        try {
+          navigation.setParams?.({ roomId: rid });
+        } catch {}
+
+        return;
+      }
+
+      const roomId = resolvedRoomId;
+
+      let baseDefaults: ReturnType<typeof applyDefaultsFromProfile> | null = null;
+
+      try {
+        const { data: prof } = await supabase
+          .from('profiles')
+          .select('setting_lang, view_lang, preferred_lang, translation_tier, translation_tone_default, user_tier')
+          .eq('user_id', myId)
+          .maybeSingle();
+
+        if (!cancelled && prof) {
+          baseDefaults = applyDefaultsFromProfile(prof);
+
+          setMyLang(baseDefaults.settingLang ?? 'ko');
+
+          setMyProfileCfg({
+            translation_tier: baseDefaults.baseTier,
+            view_lang: baseDefaults.baseView,
+            preferred_lang: baseDefaults.basePreferred,
+            translation_tone_default: baseDefaults.baseTone,
+            user_tier: baseDefaults.userTier,
+          } as any);
+
+          setAutoTranslate(true);
+          setTranslationTier(baseDefaults.baseTier as any);
+          setTranslationTone(baseDefaults.baseTone as any);
+          setViewLangLocal(baseDefaults.baseView);
+          setPreferredLangLocal(baseDefaults.basePreferred);
+        }
+      } catch {}
+
+      try {
+        const fallbackBase = baseDefaults ?? {
+          settingLang: myLang ?? 'ko',
+          settingUpper: (toLangCodeUpper(myLang ?? 'ko') ?? 'KO') as any,
+          userTier: ('free' as Tier) as any,
+          baseTier: ('free' as Tier) as any,
+          baseTone: 'nature',
+          baseView: toLangCodeUpper(myLang ?? 'ko') ?? 'KO',
+          basePreferred: toLangCodeUpper(myLang ?? 'ko') ?? 'KO',
+        };
+
+        await loadAndApplyRoomSettings(roomId, myId, fallbackBase as any);
+      } catch (e: any) {
+        console.warn('[roomSettings] load/apply error', e?.message ?? String(e));
+      }
+
+      let fetchedRoomType: RoomKind | null = null;
+      let customTitle: string | null =
+        (typeof routeParams?.business_name === 'string' && routeParams.business_name.trim()
+          ? routeParams.business_name.trim()
+          : typeof routeParams?.businessName === 'string' && routeParams.businessName.trim()
+            ? routeParams.businessName.trim()
+            : typeof routeParams?.customTitle === 'string' && routeParams.customTitle.trim()
+              ? routeParams.customTitle.trim()
+              : typeof routeParams?.beaconTitle === 'string' && routeParams.beaconTitle.trim()
+                ? routeParams.beaconTitle.trim()
+                : null);
+
+      let dmKey: string | null = null;
+
+      try {
+        const { data: roomHeader } = await supabase
+          .from('chat_rooms_header')
+          .select('type, custom_title')
+          .eq('room_id', roomId)
+          .maybeSingle();
+
+        if (roomHeader) {
+          fetchedRoomType = coerceRoomKind(roomHeader.type);
+          if (roomHeader.custom_title) customTitle = roomHeader.custom_title;
+        }
+      } catch {}
+
+      try {
+        const { data: roomRow } = await supabase.from('chat_rooms').select('type, dm_key').eq('id', roomId).maybeSingle();
+
+        if (!fetchedRoomType) fetchedRoomType = coerceRoomKind((roomRow as any)?.type);
+        dmKey = typeof (roomRow as any)?.dm_key === 'string' ? (roomRow as any).dm_key : null;
+      } catch {}
+
+      let members: MemberNick[] = [];
+      let userIds: string[] = [];
+
+      try {
+        const { data: memberRows } = await supabase.from('chat_members').select('user_id').eq('room_id', roomId).eq('active', true);
+
+        userIds = memberRows?.map((m: any) => String(m.user_id)) ?? [];
+
+        const treatAsDm =
+          fetchedRoomType === 'dm' ||
+          !!peerIdFromParams ||
+          (typeof dmKey === 'string' && dmKey.includes(':'));
+
+        const parsePeerFromDmKey = (key: string | null): string | null => {
+          if (!key) return null;
+          const parts = String(key)
+            .split(':')
+            .map((s) => s.trim())
+            .filter(Boolean);
+          if (parts.length !== 2) return null;
+          const a = parts[0];
+          const b = parts[1];
+          if (a === myId) return b;
+          if (b === myId) return a;
+          return null;
+        };
+
+        const peerFromKey = parsePeerFromDmKey(dmKey);
+        const peerIdCandidateRaw = (peerIdFromParams ? String(peerIdFromParams) : null) ?? peerFromKey;
+
+        // ✅ 방어: 잘못된 peer_id(=내 uuid)가 들어오면 "나와의 채팅"으로 오염되는 걸 차단
+        const peerIdCandidate = peerIdCandidateRaw && peerIdCandidateRaw !== myId ? peerIdCandidateRaw : null;
+
+        if (!userIds.includes(myId)) userIds.unshift(myId);
+        if (treatAsDm && peerIdCandidate && !userIds.includes(peerIdCandidate)) userIds.push(peerIdCandidate);
+
+        if (!cancelled) setParticipantCount(userIds.length || 1);
+
+        if (userIds.length) {
+          const idsCsv = userIds.join(',');
+
+          const { data: profiles } = await supabase
+            .from('profiles')
+            .select('id, user_id, nickname, avatar_url, setting_lang, view_lang, preferred_lang, translation_tier, translation_tone_default')
+            .or(`user_id.in.(${idsCsv}),id.in.(${idsCsv})`);
+
+          const nickMap = new Map<string, string | null>();
+          const avatarMap = new Map<string, string | null>();
+          (profiles ?? []).forEach((p: any) => {
+            const uid = String(p?.user_id ?? p?.id ?? '');
+            if (!uid) return;
+            nickMap.set(uid, p.nickname ?? null);
+            avatarMap.set(uid, p.avatar_url ?? null);
+          });
+
+          members = userIds.map((uid) => ({
+            user_id: uid,
+            nickname: nickMap.get(uid) ?? null,
+            avatar_url: avatarMap.get(uid) ?? null,
+          }));
+
+          memberNickMapRef.current = nickMap;
+
+          if (!cancelled) {
+            setSearchMembers(
+              userIds.map((uid) => ({
+                id: String(uid),
+                name: uid === myId ? '나' : String(nickMap.get(uid) ?? '사용자'),
+                avatarUrl: avatarMap.get(uid) ?? null,
+              })),
+            );
+          }
+
+          const otherId = (treatAsDm ? peerIdCandidate : null) ?? userIds.find((uid) => uid !== myId) ?? null;
+          peerIdRef.current = otherId;
+
+          if (otherId) {
+            const other = (profiles ?? []).find((p: any) => String(p?.user_id ?? p?.id) === String(otherId)) ?? null;
+            if (!cancelled) {
+              setPeerProfileCfg(
+                other
+                  ? {
+                      setting_lang: other.setting_lang ?? null,
+                      translation_tier: toTier(other.translation_tier),
+                      view_lang: other.view_lang ?? null,
+                      preferred_lang: other.preferred_lang ?? null,
+                      translation_tone_default: other.translation_tone_default ?? null,
+                    }
+                  : null,
+              );
+            }
+          } else {
+            if (!cancelled) setPeerProfileCfg(null);
+          }
+        } else {
+          if (!cancelled) setSearchMembers([]);
         }
       } catch {
-      } finally {
-        setTPending((p) => {
-          const { [m.id]: _, ...restP } = p;
-          return restP;
-        });
+        if (!cancelled) setSearchMembers([]);
       }
-    },
-    [me, myLang, tCache, tPending, callTranslate]
-  );
+
+      let effectiveRoomType: RoomKind | null = fetchedRoomType;
+
+      const isBeaconEntry =
+        routeParams?.isBeacon === true ||
+        routeParams?.fromBeacon === true ||
+        routeParams?.roomType === 'beacon' ||
+        typeof routeParams?.beaconId === 'string' ||
+        typeof routeParams?.beaconId === 'number' ||
+        typeof routeParams?.beacon_id === 'string' ||
+        typeof routeParams?.beacon_id === 'number';
+
+      const isSelfChatEntry = routeParams?.selfChat === true || routeParams?.self_chat === true;
+
+      if (isSelfChatEntry) {
+        effectiveRoomType = 'self';
+      } else if (isBeaconEntry) {
+        effectiveRoomType = 'beacon';
+      } else if (!effectiveRoomType) {
+        const treatAsDmFallback =
+          fetchedRoomType === 'dm' ||
+          !!peerIdFromParams ||
+          (typeof dmKey === 'string' && dmKey.includes(':'));
+
+        const n = Array.isArray(userIds) ? userIds.length : 0;
+
+        if (treatAsDmFallback) effectiveRoomType = 'dm';
+        else if (n >= 3) effectiveRoomType = 'group';
+        else if (n === 2) effectiveRoomType = 'dm';
+        else effectiveRoomType = 'group';
+      }
+
+      if (!cancelled) {
+        setRoomType(effectiveRoomType);
+        resolvedRoomTypeRef.current = effectiveRoomType;
+
+        setTheme(
+          getChatTheme({
+            type: (effectiveRoomType ?? 'dm') as any,
+          }),
+        );
+
+        const builtTitle = buildChatTitle({
+          roomType: effectiveRoomType,
+          meId: myId,
+          members,
+          customTitle,
+        });
+
+        const hasBusinessTitle =
+          (typeof routeParams?.business_name === 'string' && routeParams.business_name.trim()) ||
+          (typeof routeParams?.businessName === 'string' && routeParams.businessName.trim());
+
+        let finalTitle = builtTitle;
+
+        // ✅ business_dm 진입(route params로 business_name 전달) 시: 상대 프로필 닉네임으로 덮어쓰지 않음
+        if (
+          !hasBusinessTitle &&
+          (effectiveRoomType === 'dm' || (!effectiveRoomType && peerIdRef.current && String(peerIdRef.current) !== String(myId))) &&
+          peerIdRef.current
+        ) {
+          const peerId = String(peerIdRef.current);
+          const peerNick = members.find((m) => String(m.user_id) === peerId)?.nickname ?? null;
+          if (peerNick) finalTitle = peerNick;
+        }
+
+        setTitle(finalTitle);
+        // ✅ header avatar (business DM): route.params.business_logo_url only
+        setHeaderAvatarUrl(businessLogoFromParams ?? null);
+
+        setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolvedRoomId, resolvedRoomIdOk, peerIdFromParams]);
+
+  const resolveRoomTypeForSend = useCallback(async (): Promise<RoomKind | null> => {
+    if (!resolvedRoomIdOk) return null;
+
+    const cur = roomType ?? resolvedRoomTypeRef.current;
+    if (cur) return cur;
+
+    try {
+      const { data: roomHeader } = await supabase.from('chat_rooms_header').select('type').eq('room_id', resolvedRoomId).maybeSingle();
+
+      const t1 = coerceRoomKind((roomHeader as any)?.type);
+      if (t1) {
+        resolvedRoomTypeRef.current = t1;
+        setRoomType(t1);
+        return t1;
+      }
+    } catch {}
+
+    try {
+      const { data: roomRow } = await supabase.from('chat_rooms').select('type').eq('id', resolvedRoomId).maybeSingle();
+      const t2 = coerceRoomKind((roomRow as any)?.type);
+      if (t2) {
+        resolvedRoomTypeRef.current = t2;
+        setRoomType(t2);
+        return t2;
+      }
+    } catch {}
+
+    return null;
+  }, [resolvedRoomId, resolvedRoomIdOk, roomType]);
 
   useEffect(() => {
-    if (!autoTranslate) return;
-    msgs.slice(-100).forEach((m) => translateMessageIfNeeded(m));
-  }, [msgs, myLang, autoTranslate, translateMessageIfNeeded]);
+    if (!me || !resolvedRoomIdOk || initialSynced) return;
 
-  // ✅ 이 방의 마지막 메시지까지 읽음 처리
-  const markAllRead = useCallback(async () => {
-    if (!chatRoomId || !me) return;
-    const roomPk = Number(chatRoomId);
-    const nowIso = new Date().toISOString();
+    let channel: any;
+    setInitialSynced(true);
 
-    // UI 에서도 바로 반영
-    setLastReadAt(nowIso);
+    (async () => {
+      await syncInitialRoom(resolvedRoomId);
+      channel = startRealtime(resolvedRoomId);
+    })();
 
-    try {
-      await supabase
-        .from('chat_members')
-        .update({ last_read_at: nowIso })
-        .eq('room_id', roomPk)
-        .eq('user_id', me);
-    } catch (e) {
-      console.log('markAllRead error', e);
-    }
-  }, [chatRoomId, me]);
-
-    useEffect(() => {
-    if (!isAtBottom) return;
-
-    // 바닥이면 새 메시지 배지 지우고
-    setShowNewMsgPill(false);
-    setNewMsgCount(0);
-
-    // 메시지가 하나라도 있으면 읽음 처리
-    if (msgs.length > 0) {
-      markAllRead();
-    }
-  }, [isAtBottom, msgs.length, markAllRead]);
-
-  
-
-  /* send text / structured */
-  const send = useCallback(
-    async (content: string) => {
-      if (!content.trim() || !chatRoomId || !me) return;
-
-      const roomPk = Number(chatRoomId);
-      if (sendingRef.current) return;
-
-      const currentReply = replyToRef.current;
-      const replyPrefix = currentReply ? `[reply:${String(currentReply.id)}]` : '';
-
-      const tagged = content.match(/^\[(image|video|file|loc|audio)\]/)?.[1];
-      const kind =
-        tagged === 'image'
-          ? 'image'
-          : tagged === 'video'
-          ? 'video'
-          : tagged === 'file'
-          ? 'file'
-          : tagged === 'loc'
-          ? 'loc'
-          : tagged === 'audio'
-          ? 'audio'
-          : 'text';
-
+    return () => {
       try {
-        sendingRef.current = true;
-        setText('');
+        channel?.unsubscribe?.();
+      } catch {}
+    };
+  }, [resolvedRoomId, resolvedRoomIdOk, me, initialSynced]);
 
-        await ensureMembership(roomPk);
+  useEffect(() => {
+    const msgCount = items.filter((it) => it.type === 'message').length;
+    const prev = prevMsgCountRef.current;
+    prevMsgCountRef.current = msgCount;
 
-        let finalContent = content;
-        let originalForSave: string | null = null;
-        const isPlainText = kind === 'text';
+    if (prev === 0) return;
 
-        if (isPlainText && autoTranslate) {
-          try {
-            const translated = await callTranslate(content, myLang);
-            if (translated) {
-              finalContent = translated;
-              originalForSave = content;
-            }
-          } catch {}
-        }
-
-        if (originalForSave) {
-          originalForSave = replyPrefix + originalForSave;
-        }
-        finalContent = replyPrefix + finalContent;
-
-        const optimistic: Msg = {
-          id: `temp-${Date.now()}`,
-          room_id: roomPk,
-          sender: me,
-          content: finalContent,
-          original: originalForSave,
-          created_at: new Date().toISOString(),
-        };
-        setMsgs((prev) => [...prev, optimistic]);
-        scrollToEndNow();
-        setShowNewMsgPill(false);
-        setNewMsgCount(0);
-
-        const { error } = await supabase.from('chat_messages').insert({
-          room_id: roomPk,
-          sender_id: me,
-          content: finalContent,
-          original: originalForSave ?? null,
-          kind,
-        } as any);
-
-        if (error) {
-          if ((error as any)?.message?.includes('row-level security')) {
-            throw new Error(
-              '메시지를 보낼 권한이 없습니다. (RLS)\n' +
-                '→ chat_members에 내가 포함되어 있는지, chat_messages 정책을 확인하세요.'
-            );
-          }
-          throw error;
-        }
-
-        if (currentReply) setReplyTo(null);
-      } catch (e: any) {
-        Alert.alert('전송 실패', e?.message ?? '메시지 전송 실패');
-      } finally {
-        sendingRef.current = false;
-      }
-    },
-    [chatRoomId, me, ensureMembership, autoTranslate, myLang, callTranslate, scrollToEndNow]
-  );
-
-  /* 파일 전송 */
-  const pickAndSendFile = useCallback(async () => {
-    try {
-      const res = await DocumentPicker.getDocumentAsync({
-        copyToCacheDirectory: true,
-      });
-      if (res.canceled) return;
-
-      const f = res.assets[0];
-      const fileName = f.name ?? 'file.bin';
-      const mime = f.mimeType ?? 'application/octet-stream';
-
-      if (!chatRoomId) throw new Error('방 정보가 없습니다.');
-      const blob = await fileToBlob(f.uri);
-      const ext = guessExt(fileName, mime);
-
-      const { uploadUrl, publicUrl } = await presignUpload({
-        roomId: Number(chatRoomId),
-        mime,
-        size: blob.size,
-        ext,
-        variant: 'file',
-      });
-      await putToR2(uploadUrl, blob, mime);
-
-      await send(`[file]${publicUrl}|${fileName}`);
-    } catch (e: any) {
-      Alert.alert('업로드 실패', e?.message ?? String(e));
+    if (msgCount > prev) {
+      if (isAtBottom) scrollToBottom(true);
+      else setHasNewWhileAway(true);
     }
-  }, [chatRoomId, send]);
+  }, [items, isAtBottom, scrollToBottom]);
 
-  /* 위치/초대/링크 */
-  const openMapPicker = useCallback(() => {
-    if (!chatRoomId) return;
-    const roomPk = Number(chatRoomId);
-    setSheetOpen(false);
-    navigation.navigate('MapPicker', {
-      roomId: roomPk,
-      onPick: async ({ lat, lng, address }: { lat: number; lng: number; address?: string }) => {
-        // [loc]lat,lng|주소  형식으로 저장
-        const addr = address && address.trim().length > 0 ? address.trim() : '';
-        await send(`[loc]${lat},${lng}${addr ? `|${addr}` : ''}`);
-      },
-    });
-  }, [chatRoomId, navigation, send]);
+  const handleLoadMore = useCallback(async () => {
+    if (!resolvedRoomIdOk) return;
 
-  const openInviteFriends = useCallback(() => {
-    if (!chatRoomId) return;
-    const roomPk = Number(chatRoomId);
-    setSheetOpen(false);
-    navigation.navigate('ChatInvite', { roomId: roomPk });
-  }, [chatRoomId, navigation]);
+    const reversed = [...items].reverse();
+    const oldest = reversed.find((it) => it.type === 'message');
+    if (!oldest || oldest.type !== 'message') return;
 
-  const shareInviteLink = useCallback(async () => {
-    try {
-      if (!chatRoomId) return;
-      const url = `https://co-onn.app/join-room/${encodeURIComponent(
-        String(chatRoomId)
-      )}`;
-      await Share.share({ message: url });
-      setSheetOpen(false);
-    } catch (e: any) {
-      Alert.alert('공유 실패', e.message ?? String(e));
-    }
-  }, [chatRoomId]);
-
-    // 🔽 멀티 선택 후, 어떤 삭제 옵션이 가능한지 계산하고 다이얼로그 오픈
-  const openDeleteDialog = useCallback(() => {
-    const selectedMsgs = msgs.filter((m) => selectedIds.includes(m.id));
-    if (!selectedMsgs.length) return;
-
-    const now = Date.now();
-    const ONE_DAY_MS = 24 * 60 * 60 * 1000;
-
-    const isOwner = !!me && !!roomOwnerId && roomOwnerId === me;
-    const allMine = !!me && selectedMsgs.every((m) => m.sender === me);
-    const allOthers = !!me && selectedMsgs.every((m) => m.sender !== me);
-
-    const canAllDelete =
-      allMine &&
-      selectedMsgs.every((m) => {
-        const t = new Date(m.created_at).getTime();
-        return Number.isFinite(t) && now - t < ONE_DAY_MS;
-      });
-
-    const canHideAsOwner = isOwner && allOthers;
-
-    setDeleteDialogCanAll(canAllDelete);
-    setDeleteDialogCanHide(canHideAsOwner);
-
-    if (canAllDelete) setDeleteOption('all');
-    else if (canHideAsOwner) setDeleteOption('hide');
-    else setDeleteOption('me');
-
-    setDeleteDialogVisible(true);
-  }, [msgs, selectedIds, me, roomOwnerId]);
-
-  // 🔽 실제 삭제 실행
-  const performDelete = useCallback(async () => {
-    const selectedMsgs = msgs.filter((m) => selectedIds.includes(m.id));
-    if (!selectedMsgs.length) return;
-
-    const mode = deleteOption; // 'all' | 'me' | 'hide'
-    setDeleteDialogVisible(false);
-
-    // 1) 나에게서만 삭제: 클라이언트에서만 제거
-    if (mode === 'me') {
-      setMsgs((prev) => prev.filter((m) => !selectedIds.includes(m.id)));
-      setSelectedIds([]);
-      setSelectionMode(false);
-      return;
-    }
+    const beforeMs = oldest.data.createdAt;
+    const beforeSeqRaw = (oldest.data as any).roomSeq ?? (oldest.data as any).room_seq ?? 0;
+    const beforeSeq = Math.max(0, Math.trunc(Number(beforeSeqRaw ?? 0) || 0));
 
     try {
-      const numericIds = selectedMsgs
-        .map((m) => Number(m.id))
-        .filter((id) => Number.isFinite(id)) as number[];
-
-      if (mode === 'all') {
-        if (numericIds.length && me) {
-          const { error } = await supabase
-            .from('chat_messages')
-            .delete()
-            .in('id', numericIds)
-            .eq('sender_id', me); // 안전장치
-
-          if (error) throw error;
-        }
-
-        setMsgs((prev) => prev.filter((m) => !selectedIds.includes(m.id)));
-
-        if (chatRoomId && me) {
-          await supabase.from('chat_messages').insert({
-            room_id: Number(chatRoomId),
-            sender_id: me,
-            content: `[deleted]|${me}`,
-            original: null,
-            kind: 'system_deleted',
-            is_notice: true,
-          } as any);
-        }
-      } else if (mode === 'hide') {
-        if (numericIds.length && me) {
-          await supabase
-            .from('chat_messages')
-            .update({ kind: 'hidden', content: '' })
-            .in('id', numericIds);
-        }
-
-        setMsgs((prev) => prev.filter((m) => !selectedIds.includes(m.id)));
-
-        if (chatRoomId && me) {
-          await supabase.from('chat_messages').insert({
-            room_id: Number(chatRoomId),
-            sender_id: me,
-            content: `[deleted]|${me}`,
-            original: null,
-            kind: 'system_deleted',
-            is_notice: true,
-          } as any);
-        }
-      }
-    } catch (e: any) {
-      Alert.alert('삭제 실패', e?.message ?? '메시지 삭제에 실패했습니다.');
-    } finally {
-      setSelectedIds([]);
-      setSelectionMode(false);
+      await (syncOlderForRoom as any)(resolvedRoomId, { beforeMs, beforeSeq });
+    } catch {
+      await (syncOlderForRoom as any)(resolvedRoomId, beforeMs);
     }
-  }, [msgs, selectedIds, deleteOption, chatRoomId, me]);
+  }, [items, resolvedRoomId, resolvedRoomIdOk]);
 
+  function mergeOriginalWithReply(original: string | null | undefined, reply: ReplyInfo | null | undefined, fallbackText?: string | null) {
+    const raw = typeof original === 'string' ? original : '';
+    const rawTrim = raw.trim();
 
-  /* 이미지 프리뷰 핀치줌 */
-  const scale = useSharedValue(1);
-  const pinch = Gesture.Pinch()
-    .onUpdate((e) => {
-      scale.value = e.scale;
-    })
-    .onEnd(() => {
-      scale.value = withTiming(Math.min(3, Math.max(1, scale.value)), {
-        duration: 150,
-      });
-    })
-    .onFinalize(() => {
-      if (!previewImage) scale.value = 1;
-    });
+    const originalIsJson = isProbablyJsonObjectString(rawTrim);
+    const base = originalIsJson ? safeJsonParse(rawTrim) : null;
+    const obj: any = base && typeof base === 'object' ? { ...(base as any) } : {};
 
-  const previewStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
+    const preservedOriginalText = !originalIsJson && rawTrim ? rawTrim : typeof fallbackText === 'string' ? fallbackText.trim() : '';
 
-  const onMessageLongPress = useCallback((m: Msg) => {
-    setLongPressTarget(m);
-    setActionSheetOpen(true);
-    try {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    } catch {}
-  }, []);
+    if (preservedOriginalText) {
+      if (typeof obj.text_original !== 'string' || !obj.text_original.trim()) obj.text_original = preservedOriginalText;
+      if (typeof obj.original_text !== 'string' || !obj.original_text.trim()) obj.original_text = preservedOriginalText;
+      if (typeof obj.originalText !== 'string' || !obj.originalText.trim()) obj.originalText = preservedOriginalText;
+      if (typeof obj.text !== 'string' || !obj.text.trim()) obj.text = preservedOriginalText;
+      if (typeof obj.content_original !== 'string' || !obj.content_original.trim()) obj.content_original = preservedOriginalText;
+      if (typeof obj.contentOriginal !== 'string' || !obj.contentOriginal.trim()) obj.contentOriginal = preservedOriginalText;
+    }
 
-  /* ===================== MessageRow ===================== */
-  const MessageRow = React.useCallback(
-    ({ item, index }: { item: any; index: number }) => {
-      // 날짜 구분자
-      if ((item as any).__sep) {
-        const d = new Date((item as any).__sep);
-        const label = `${d.getFullYear()}.${(d.getMonth() + 1)
-          .toString()
-          .padStart(2, '0')}.${d
-          .getDate()
-          .toString()
-          .padStart(2, '0')}`;
-        return (
-          <View style={styles.sepWrap}>
-            <Text style={styles.sepTxt}>{label}</Text>
-          </View>
-        );
-      }
+    if (!reply) {
+      if (Object.keys(obj).length) return JSON.stringify(obj);
+      return rawTrim || null;
+    }
 
-      const m = item as Msg;
-            // 🔹 이전/다음 실제 메시지 찾기 (날짜 구분자 제외)
-      const data = withSeparatorsRef.current as any[];
-      let prevMsg: Msg | null = null;
-      let nextMsg: Msg | null = null;
+    obj.reply = {
+      id: (reply as any).id,
+      sender: (reply as any).sender,
+      senderName: (reply as any).senderName,
+      kind: (reply as any).kind ?? 'text',
+      content: (reply as any).content ?? '',
+      contentOriginal: (reply as any).contentOriginal ?? null,
+      contentTranslated: (reply as any).contentTranslated ?? null,
+      original: (reply as any).original ?? null,
+      thumbUri: (reply as any).thumbUri ?? null,
+    };
 
-      for (let i = index - 1; i >= 0; i--) {
-        const row = data[i];
-        if (row && !(row as any).__sep) {
-          prevMsg = row as Msg;
-          break;
-        }
-      }
-      for (let i = index + 1; i < data.length; i++) {
-        const row = data[i];
-        if (row && !(row as any).__sep) {
-          nextMsg = row as Msg;
-          break;
-        }
-      }
+    return JSON.stringify(obj);
+  }
 
-      const mine = m.sender === me;
+  const handleSendMessage = useCallback(
+    async (opts: { content: string; original?: string | null; kind?: string; replyTo?: ReplyInfo | null }) => {
+      if (!me || !resolvedRoomIdOk) return;
 
-      const hasPrevSameBlock =
-        !!prevMsg &&
-        prevMsg.sender === m.sender &&
-        isSameMinute(prevMsg.created_at, m.created_at);
+      setIsAtBottom(true);
+      setHasNewWhileAway(false);
 
-      const hasNextSameBlock =
-        !!nextMsg &&
-        nextMsg.sender === m.sender &&
-        isSameMinute(nextMsg.created_at, m.created_at);
-              // 🔹 블럭/블럭내 간격 통일
-      const rowSpacingStyle = {
-        // 바로 위 메시지가 같은 블럭이면 3, 다른 블럭이면 12
-        marginTop: hasPrevSameBlock ? 4 : 12,
-        // 바로 아래 메시지가 같은 블럭이면 3, 블럭 끝이면 8
-        marginBottom: hasNextSameBlock ? 4 : 8,
-      };
+      const mergedOriginal = mergeOriginalWithReply(opts.original ?? null, opts.replyTo ?? null, opts.content ?? null);
 
-      const showNick = !mine && !hasPrevSameBlock;   // 닉네임은 블럭 첫 메시지에만
-      const showTime = !hasNextSameBlock;            // 시간은 블럭 마지막 메시지만
-      const isSelected = selectionMode && selectedIds.includes(m.id);
+      const senderSelectedTier = toTier(translationTier);
 
-      const prof = profiles[m.sender];
-      const nickname = prof?.nickname?.trim() || '익명';
-      const initial =
-        (prof?.nickname?.trim?.()?.[0] ?? 'U').toUpperCase?.() ?? 'U';
+      const finalView = toLangCodeUpper(viewLangLocal ?? (myProfileCfg as any)?.view_lang ?? null);
+      const finalPreferred = toLangCodeUpper(preferredLangLocal ?? (myProfileCfg as any)?.preferred_lang ?? null);
 
-      const { replyToId, rest } = parseReplyPrefix(m.content);
-      const replyMsg = replyToId
-        ? msgs.find((x) => String(x.id) === String(replyToId))
-        : undefined;
-      const contentForKind = rest;
+      const finalTone = normalizeTone(translationTone ?? (myProfileCfg as any)?.translation_tone_default ?? 'nature');
 
-      const isImage = contentForKind.startsWith('[image]');
-      const isVideo = contentForKind.startsWith('[video]');
-      const isFile = contentForKind.startsWith('[file]');
-      const isLoc = contentForKind.startsWith('[loc]');
-      const isAudio = contentForKind.startsWith('[audio]');
-      const isImageGroup = contentForKind.startsWith('[images]');
-      const isMedia = isImage || isVideo || isImageGroup;
+      const myCfg: ProfileLangConfig | null = {
+        ...(myProfileCfg as any),
+        translation_tier: senderSelectedTier,
+        view_lang: finalView ?? null,
+        preferred_lang: finalPreferred ?? null,
+        translation_tone_default: finalTone,
+      } as any;
 
-      let locLat: number | null = null;
-      let locLng: number | null = null;
-      let locAddress: string | null = null;
+      const peerCfg: ProfileLangConfig | null = peerProfileCfg
+        ? ({
+            ...(peerProfileCfg as any),
+            translation_tier: toTier((peerProfileCfg as any).translation_tier),
+          } as any)
+        : null;
 
-      if (isLoc) {
-        try {
-          const raw = contentForKind.replace('[loc]', '').trim();
-          const [coordPart, addrPart] = raw.split('|'); // [loc]lat,lng|주소
-          const [latStr, lngStr] = (coordPart || '').split(',');
-          const latN = Number(latStr);
-          const lngN = Number(lngStr);
-          if (Number.isFinite(latN) && Number.isFinite(lngN)) {
-            locLat = latN;
-            locLng = lngN;
-          }
-          if (addrPart && addrPart.trim()) {
-            locAddress = addrPart.trim();
-          }
-        } catch {}
-      }
+      const rt = await resolveRoomTypeForSend();
+      const rawPushRt = toPushRoomType(rt);
 
-      const rawAfterTag = contentForKind.replace(
-        /^\[(image|images|video|file|loc|audio)\]/,
-        '',
-      );
-      const parts = rawAfterTag.split('|');
-      const payloadUrl = parts[0];
-      const payloadName = parts[1];
-      const payloadDurMs = isAudio ? Number(parts[2] ?? 0) : 0;
-      const locLabel = isLoc ? payloadName : undefined;
+      const isDirectLike = rt === 'dm' || rt === 'business_dm' || rt === 'self' || rawPushRt === 'direct' || !!peerIdRef.current;
 
-      // 🔁 묶음 이미지 파싱
-      let multiImages: { url: string; name?: string }[] = [];
-      if (isImageGroup) {
-        multiImages = rawAfterTag
-          .split(';;;')
-          .map((chunk) => {
-            const [u, n] = chunk.split('|');
-            return { url: u, name: n };
-          })
-          .filter((it) => it.url);
-      }
+      const pushRt = (isDirectLike ? 'direct' : rawPushRt) as any;
 
-      const doOpenLoc = () => {
-        try {
-          if (locLat == null || locLng == null) return;
-          const lat = locLat,
-            lng = locLng;
-          const deep = Platform.select({
-            ios: `comgooglemaps://?q=${lat},${lng}`,
-            android: `geo:${lat},${lng}?q=${lat},${lng}`,
-          })!;
-          const web = `https://maps.google.com/?q=${lat},${lng}`;
-          Linking.openURL(deep).catch(() => Linking.openURL(web));
-        } catch {
-          Alert.alert('열기 실패', '지도를 열 수 없습니다.');
-        }
-      };
-
-      const isRead = lastReadAt
-        ? new Date(m.created_at) <= new Date(lastReadAt)
-        : false;
-
-      const isStructured =
-        isImage || isVideo || isFile || isLoc || isAudio || isImageGroup;
-
-      const translatedText = tCache[m.id];
-      let primaryText = contentForKind;
-      let secondaryText: string | null = null;
-
-      if (!isStructured) {
-        if (!mine) {
-          if (translatedText) {
-            if (showOriginalGlobal) {
-              primaryText = m.original ?? contentForKind;
-              secondaryText = translatedText;
-            } else {
-              primaryText = translatedText;
-              secondaryText = m.original ?? contentForKind;
-            }
-          }
-        } else if (m.original && m.original !== contentForKind) {
-          if (showOriginalGlobal) {
-            primaryText = m.original;
-            secondaryText = contentForKind;
-          } else {
-            primaryText = contentForKind;
-            secondaryText = m.original;
-          }
-        }
-      }
-
-      const canShowTranslateActions = !mine && !isStructured;
-
-      const handleRowPress = () => {
-        // ✅ 선택 모드일 때: 줄 전체 눌러도 토글
-        if (selectionMode) {
-          toggleSelectMessage(m.id);
-        }
-      };
-
-      const handleBubbleLongPress = () => {
-        if (selectionMode) {
-          toggleSelectMessage(m.id);
-        } else {
-          onMessageLongPress(m);
-        }
-      };
-
-      // ===== 음성 버블 내부 컴포넌트 =====
-      const AudioBubble = () => {
-        const [localSound, setLocalSound] = useState<Audio.Sound | null>(null);
-        const [localPlaying, setLocalPlaying] = useState(false);
-        const [localPos, setLocalPos] = useState(0);
-        const [localDur, setLocalDur] = useState(payloadDurMs || 0);
-
-        useEffect(() => {
-          return () => {
-            (async () => {
-              try {
-                await localSound?.unloadAsync();
-              } catch {}
-            })();
-          };
-        }, [localSound]);
-
-        const onStatusUpdate = (st: any) => {
-          if (!st.isLoaded) return;
-          if (typeof st.durationMillis === 'number')
-            setLocalDur(st.durationMillis);
-          setLocalPlaying(!!st.isPlaying);
-          setLocalPos(st.positionMillis ?? 0);
-          if (st.didJustFinish) {
-            setLocalPlaying(false);
-            setLocalPos(st.durationMillis ?? localDur ?? 0);
-          }
-        };
-
-        const toggleLocalPlay = async () => {
-          if (!payloadUrl) return;
-          if (!localSound) {
-            const s = new Audio.Sound();
-            await s.loadAsync({ uri: payloadUrl }, {}, false);
-            s.setOnPlaybackStatusUpdate(onStatusUpdate);
-            setLocalSound(s);
-            await s.playAsync();
-          } else {
-            const st: any = await localSound.getStatusAsync();
-            if (!st.isLoaded) return;
-            if (st.isPlaying) {
-              await localSound.pauseAsync();
-              setLocalPlaying(false);
-            } else {
-              if (
-                st.didJustFinish ||
-                (typeof st.positionMillis === 'number' &&
-                  typeof st.durationMillis === 'number' &&
-                  st.positionMillis >= st.durationMillis - 250)
-              ) {
-                await localSound.setPositionAsync(0);
-              }
-              await localSound.playAsync();
-              setLocalPlaying(true);
-            }
-          }
-        };
-
-        const total = localDur || payloadDurMs || 1;
-        const ratio = Math.max(
-          0,
-          Math.min(1, (localPos || 0) / total),
-        );
-
-        return (
-          <View style={styles.audioBubbleWrap}>
-            <Pressable onPress={toggleLocalPlay} style={styles.audioPlayBtn}>
-              <View
-                style={[
-                  styles.audioPlayIconCircle,
-                  mine
-                    ? { backgroundColor: 'rgba(255,255,255,0.2)' }
-                    : { backgroundColor: 'rgba(0,0,0,0.08)' },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.audioPlayIcon,
-                    mine ? { color: '#fff' } : { color: OUR_TEXT_DARK },
-                  ]}
-                >
-                  {localPlaying ? '❚❚' : '▶'}
-                </Text>
-              </View>
-            </Pressable>
-
-            <View style={styles.audioBarOuter}>
-              <View
-                style={[
-                  styles.audioBar,
-                  mine
-                    ? {
-                        backgroundColor: 'rgba(255,255,255,0.3)',
-                        minWidth: 130,
-                      }
-                    : { backgroundColor: '#e2e8f0', minWidth: 130 },
-                ]}
-              >
-                <View
-                  style={[
-                    styles.audioBarFill,
-                    { width: `${ratio * 100}%` },
-                    mine
-                      ? { backgroundColor: '#fff' }
-                      : { backgroundColor: '#0f172a' },
-                  ]}
-                />
-              </View>
-              <Text
-                style={[
-                  styles.audioDur,
-                  mine
-                    ? { color: 'rgba(255,255,255,0.9)' }
-                    : { color: '#0f172a' },
-                ]}
-              >
-                {formatTime(localPlaying ? localPos : total)}
-              </Text>
-            </View>
-          </View>
-        );
-      };
-
-      // ===== 버블 공통 스타일 + 그라데이션 색 =====
-      let bubbleBaseStyle: any;
-      if (isAudio) {
-        bubbleBaseStyle = mine ? styles.voiceMine : styles.voiceTheirs;
-      } else if (!isMedia) {
-        bubbleBaseStyle = [styles.msgBubble, mine ? styles.mine : styles.theirs];
-      }
-
-      const rowY = useSharedValue(0);
-      const ref = useRef<View>(null);
-
-      useEffect(() => {
-        const updatePosition = () => {
-          if (ref.current) {
-            ref.current.measureInWindow((_x, y) => {
-              rowY.value = withTiming(y, { duration: 100 });
-            });
-          }
-        };
-        updatePosition();
-        const id = setInterval(updatePosition, 80);
-        return () => clearInterval(id);
-      }, []);
-
-      const animatedColor = useDerivedValue(() => {
-        const relativeY =
-          (rowY.value % (SCREEN_HEIGHT * 1.2)) / (SCREEN_HEIGHT * 1.2);
-        const t = Math.max(0, Math.min(1, relativeY));
-
-        const mineColor = interpolateColor(
-          t,
-          [0, 0.5, 1],
-          ['#833ab4', '#fd1d1d', '#fcb045'],
-        );
-        const theirsColor = interpolateColor(
-          t,
-          [0, 0.5, 1],
-          [
-            'rgba(131,58,180,0.08)',
-            'rgba(253,29,29,0.08)',
-            'rgba(252,176,69,0.08)',
-          ],
-        );
-
-        return mine ? mineColor : theirsColor;
+      await sendRoomMessage({
+        roomId: resolvedRoomId,
+        senderId: me,
+        content: opts.content ?? null,
+        original: mergedOriginal,
+        kind: coerceKind(opts.kind),
+        roomType: pushRt,
+        my: myCfg,
+        peer: isDirectLike ? peerCfg : null,
+        senderSelectedTier,
+        translateFn: autoTranslate ? translateFn : undefined,
       });
 
-      const bubblePositionStyle = useAnimatedStyle(() => ({
-        backgroundColor: withSpring(animatedColor.value, {
-          stiffness: 200,
-          damping: 15,
-          mass: 0.5,
-        }),
-      }));
-
-      const translateX = useSharedValue(0);
-      const rowGesture = Gesture.Pan()
-        .activeOffsetX([-10, 10])
-        .failOffsetY([-10, 10])
-        .onUpdate((e) => {
-          if (selectionMode) return; // 선택 모드에서는 스와이프 비활성
-          const dx = e.translationX;
-          if (dx < 0)
-            translateX.value = Math.max(dx, -SWIPE_REPLY_THRESHOLD);
-          else translateX.value = 0;
-        })
-        .onEnd(() => {
-          if (selectionMode) {
-            translateX.value = withTiming(0, { duration: 150 });
-            return;
-          }
-          if (translateX.value <= -SWIPE_REPLY_THRESHOLD)
-            runOnJS(triggerReplyFromSwipe)(m);
-          translateX.value = withTiming(0, { duration: 150 });
-        });
-
-      const rowStyle = useAnimatedStyle(() => ({
-        transform: [{ translateX: translateX.value }],
-      }));
-
-      const replyLabel =
-        replyMsg &&
-        (replyMsg.sender === me
-          ? '나에게 답장'
-          : `${profiles[replyMsg.sender]?.nickname || '익명'}에게 답장`);
-
-      const replySnippet = replyMsg && getMsgSnippet(replyMsg as Msg);
-
-      // ===== system_deleted 시스템 메시지 =====
-      if (m.kind === 'system_deleted') {
-        const raw = m.content || '';
-        let actorId: string | null = null;
-
-        if (raw.startsWith('[deleted]|')) {
-          const parts2 = raw.split('|');
-          actorId = parts2[1] || null;
-        }
-
-        const actorNick =
-          actorId && profiles[actorId]?.nickname?.trim()
-            ? profiles[actorId]!.nickname!.trim()
-            : null;
-
-        const text = actorNick
-          ? `${actorNick}님이 메시지를 삭제했습니다.`
-          : '메시지가 삭제되었습니다.';
-
-        return (
-          <View style={[styles.msgRow, { justifyContent: 'center' }]}>
-            <View style={styles.systemDeletedBubble}>
-              <Text style={styles.systemDeletedText}>{text}</Text>
-            </View>
-          </View>
-        );
-      }
-
-        return (
-          <GestureDetector gesture={rowGesture}>
-            <Pressable
-              style={{ width: '100%' }}
-              onPress={selectionMode ? () => toggleSelectMessage(m.id) : undefined}
-            >
-            <Animated.View
-              ref={ref}
-              style={[
-                styles.msgRow,
-                rowSpacingStyle,
-                rowStyle,
-              ]}
-            >
-              {/* 선택 모드일 때 왼쪽 원형 선택 마커 */}
-              {selectionMode && (
-                <View style={styles.selectMarkerWrap}>
-                  <View
-                    style={[
-                      styles.selectMarkerOuter,
-                      isSelected && styles.selectMarkerOuterOn,
-                    ]}
-                  >
-                    {isSelected && <View style={styles.selectMarkerInner} />}
-                  </View>
-                </View>
-              )}
-
-              {/* 선택 모드가 아닐 때만 아바타 노출 */}
-              {!selectionMode && !mine && (
-                <View style={{ alignItems: 'center' }}>
-                  {prof?.avatar_url ? (
-                    <Pressable onPress={() => openPublicProfile(m.sender)}>
-                      <Image
-                        source={{ uri: prof.avatar_url }}
-                        style={styles.avatarImg}
-                      />
-                    </Pressable>
-                  ) : (
-                    <Pressable onPress={() => openPublicProfile(m.sender)}>
-                      <View style={styles.avatar}>
-                        <Text style={styles.avatarTxt}>{initial}</Text>
-                      </View>
-                    </Pressable>
-                  )}
-                </View>
-              )}
-
-              {/* 메시지 전체 영역 */}
-              <View
-                style={[
-                  { flex: 1, maxWidth: '88%' },
-                  mine && { marginLeft: 'auto' },
-                ]}
-              >
-              {/* 닉네임 (상대방, 블럭 첫 메시지만) */}
-              {showNick && (
-                <Text style={styles.nickText} numberOfLines={1}>
-                  {nickname}
-                </Text>
-              )}
-
-                {/* 말풍선 + 시간 한 줄 정렬 (카카오 스타일) */}
-                <View
-                  style={{
-                    flexDirection: mine ? 'row-reverse' : 'row',
-                    alignItems: 'flex-end',
-                    alignSelf: mine ? 'flex-end' : 'flex-start',
-                  }}
-                >
-                  {/* 말풍선 / 미디어 영역 */}
-                  <View
-                    style={[
-                      // 🔹 이미지/음성/지도는 살짝 더 좁게
-                      { maxWidth: isStructured ? '85%' : '78%' },
-                    ]}
-                  >
-                    {/* ===== 실제 메시지 컨텐츠 ===== */}
-                    {/* ===== 실제 메시지 컨텐츠 ===== */}
-                    {isAudio ? (
-                      <Pressable
-                        onPress={() => {
-                          if (selectionMode) {
-                            toggleSelectMessage(m.id);
-                            return;
-                          }
-                        }}
-                        onLongPress={handleBubbleLongPress}
-                        delayLongPress={250}
-                      >
-                        <Animated.View
-                          style={[bubbleBaseStyle, bubblePositionStyle]}
-                        >
-                          <AudioBubble />
-                        </Animated.View>
-                      </Pressable>
-                    ) : isImage ? (
-                      // 🔹 단일 이미지
-                      <Pressable
-                        onPress={() => {
-                          if (selectionMode) {
-                            toggleSelectMessage(m.id);
-                            return;
-                          }
-
-                          // ✅ 단일 이미지 → MediaViewer로 이동
-                          navigation.navigate('MediaViewer', {
-                            roomId: Number(chatRoomId),
-                            row: {
-                              id: Number(m.id) || Date.now(),
-                              type: 'image',
-                              file_bucket: '',       // 지금은 사용 안 함
-                              file_key: payloadUrl,  // 실제 이미지 URL
-                              mime: 'image/jpeg',
-                              sender: m.sender,
-                              nickname: profiles[m.sender]?.nickname ?? '익명',
-                              created_at: m.created_at,
-                            
-                            },
-                          });
-                        }}
-                        onLongPress={handleBubbleLongPress}
-                        delayLongPress={250}
-                        style={[
-                          styles.mediaShadowWrap,
-                          { alignSelf: mine ? 'flex-end' : 'flex-start' },
-                        ]}
-                      >
-                        <Image
-                          source={{ uri: payloadUrl }}
-                          style={styles.msgImage}
-                          resizeMode="cover"
-                        />
-                      </Pressable>
-                    ) : isVideo ? (
-                      // 🔹 동영상 (기존 그대로, 링크로 열기)
-                      <Pressable
-                        onPress={() => {
-                          if (selectionMode) {
-                            toggleSelectMessage(m.id);
-                            return;
-                          }
-                          if (payloadUrl) Linking.openURL(payloadUrl);
-                        }}
-                        onLongPress={handleBubbleLongPress}
-                        delayLongPress={250}
-                        style={[
-                          styles.mediaShadowWrap,
-                          { alignSelf: mine ? 'flex-end' : 'flex-start' },
-                        ]}
-                      >
-                        <View style={[styles.msgImage, styles.videoThumb]}>
-                          <View style={styles.videoBadge}>
-                            <Text style={styles.videoTxt}>▶ 동영상 재생</Text>
-                          </View>
-                        </View>
-                      </Pressable>
-                    ) : isImageGroup ? (
-                      // 🔹 묶음 이미지 (여러 장)
-                      <View
-                        style={[
-                          styles.mediaShadowWrap,
-                          { alignSelf: mine ? 'flex-end' : 'flex-start' },
-                        ]}
-                      >
-                        <View style={styles.multiImgGrid}>
-                          {multiImages.map((img, idx) => (
-                            <Pressable
-                              key={img.url + idx}
-                              style={styles.multiImgCell}
-                              onPress={() => {
-                                if (selectionMode) {
-                                  toggleSelectMessage(m.id);
-                                  return;
-                                }
-
-                                // ✅ 이 메시지의 묶음 이미지 전체를 MediaViewer에 rows로 넘김
-                              const rowsForViewer = multiImages.map((it, index) => ({
-                                id: Number(m.id) * 1000 + index,
-                                type: 'image' as const,
-                                file_bucket: '',
-                                file_key: it.url, // 각 이미지 URL
-                                mime: 'image/jpeg',
-                                sender: m.sender,
-                                nickname: profiles[m.sender]?.nickname ?? '익명',
-                                created_at: m.created_at,
-                              }));
-
-                              navigation.navigate('MediaViewer', {
-                                roomId: Number(chatRoomId),
-                                rows: rowsForViewer,
-                                index: idx, // 사용자가 누른 사진 인덱스
-                              });
-                              }}
-                              onLongPress={handleBubbleLongPress}
-                              delayLongPress={250}
-                            >
-                              <Image
-                                source={{ uri: img.url }}
-                                style={styles.multiImg}
-                                resizeMode="cover"
-                              />
-                            </Pressable>
-                          ))}
-                        </View>
-                      </View>
-                    ) : isFile ? (
-                      <Pressable
-                        onPress={() => {
-                          if (selectionMode) {
-                            toggleSelectMessage(m.id);
-                            return;
-                          }
-                          if (payloadUrl) Linking.openURL(payloadUrl);
-                        }}
-                        onLongPress={handleBubbleLongPress}
-                        delayLongPress={250}
-                      >
-                        <Animated.View
-                          style={[
-                            styles.msgBubble,
-                            mine ? styles.mine : styles.theirs,
-                            bubblePositionStyle,
-                          ]}
-                        >
-                          {replyMsg && (
-                            <Pressable
-                              style={[
-                                styles.replyInline,
-                                mine
-                                  ? styles.replyInlineMine
-                                  : styles.replyInlineTheirs,
-                                {
-                                  alignSelf: 'flex-start',
-                                  maxWidth: '90%',
-                                },
-                              ]}
-                              onPress={() => scrollToMessage(replyMsg.id)}
-                            >
-                              <View style={styles.replyInlineBar} />
-                              <View>
-                                <Text
-                                  style={[
-                                    styles.replyInlineLabel,
-                                    mine && {
-                                      color: 'rgba(255,255,255,0.7)',
-                                    },
-                                  ]}
-                                  numberOfLines={1}
-                                >
-                                  {replyLabel}
-                                </Text>
-                                <Text
-                                  style={[
-                                    styles.replyInlineText,
-                                    mine && {
-                                      color: 'rgba(255,255,255,0.98)',
-                                    },
-                                  ]}
-                                  numberOfLines={1}
-                                >
-                                  {replySnippet}
-                                </Text>
-                              </View>
-                            </Pressable>
-                          )}
-
-                          <Text
-                            style={[
-                              styles.msgTxt,
-                              mine
-                                ? { color: 'rgba(255,255,255,0.98)' }
-                                : { color: '#0f172a' },
-                            ]}
-                          >
-                            📎 {payloadName || '파일 열기'}
-                          </Text>
-                        </Animated.View>
-                      </Pressable>
-                    ) : isLoc ? (
-                      <Pressable
-                        onPress={() => {
-                          if (selectionMode) {
-                            toggleSelectMessage(m.id);
-                            return;
-                          }
-                          doOpenLoc();
-                        }}
-                        onLongPress={handleBubbleLongPress}
-                        delayLongPress={250}
-                      >
-                        {replyMsg && (
-                          <Pressable
-                            style={[
-                              styles.replyInline,
-                              mine ? styles.replyInlineMine : styles.replyInlineTheirs,
-                              { alignSelf: 'flex-start', maxWidth: '90%' },
-                            ]}
-                            onPress={() => scrollToMessage(replyMsg.id)}
-                          >
-                            <View style={styles.replyInlineBar} />
-                            <View>
-                              <Text
-                                style={[
-                                  styles.replyInlineLabel,
-                                  mine && { color: 'rgba(255,255,255,0.7)' },
-                                ]}
-                                numberOfLines={1}
-                              >
-                                {replyLabel}
-                              </Text>
-                              <Text
-                                style={[
-                                  styles.replyInlineText,
-                                  mine && { color: 'rgba(255,255,255,0.98)' },
-                                ]}
-                                numberOfLines={1}
-                              >
-                                {replySnippet}
-                              </Text>
-                            </View>
-                          </Pressable>
-                        )}
-
-                        <View
-                          style={[
-                            styles.mediaShadowWrap,
-                            { alignSelf: mine ? 'flex-end' : 'flex-start' },
-                          ]}
-                        >
-                          <View style={styles.mapCard}>
-                            <View style={styles.mapCardTop}>
-                              <View style={styles.mapShape1} />
-                              <View style={styles.mapShape2} />
-                              <View style={styles.mapShape3} />
-
-                              <View style={styles.mapCenterBadge}>
-                                <View style={styles.mapCenterPinCircle}>
-                                  <MapPin size={18} color={OUR_RED} strokeWidth={2.4} />
-                                </View>
-                                <Text style={styles.mapTitle}>위치가 공유되었습니다</Text>
-                                <Text style={styles.mapSubTitle}>탭하여 지도 열기</Text>
-                              </View>
-                            </View>
-
-                            <View style={styles.mapCardBottom}>
-                              <Text
-                                style={styles.mapAddr}
-                                numberOfLines={2}
-                                ellipsizeMode="tail"
-                              >
-                                {locLabel
-                                  ? locLabel
-                                  : locAddress
-                                  ? locAddress
-                                  : locLat != null && locLng != null
-                                  ? `${locLat.toFixed(4)}, ${locLng.toFixed(4)}`
-                                  : '좌표 정보 없음'}
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                      </Pressable>
-                    ) : (
-                      <Pressable
-                        onPress={() => {
-                          if (selectionMode) {
-                            toggleSelectMessage(m.id);
-                            return;
-                          }
-                        }}
-                        onLongPress={handleBubbleLongPress}
-                        delayLongPress={250}
-                      >
-                        <Animated.View style={[bubbleBaseStyle, bubblePositionStyle]}>
-                          {replyMsg && (
-                            <Pressable
-                              style={[
-                                styles.replyInline,
-                                mine ? styles.replyInlineMine : styles.replyInlineTheirs,
-                                { alignSelf: 'flex-start', maxWidth: '90%' },
-                              ]}
-                              onPress={() => scrollToMessage(replyMsg.id)}
-                            >
-                              <View style={styles.replyInlineBar} />
-                              <View>
-                                <Text
-                                  style={[
-                                    styles.replyInlineLabel,
-                                    mine && { color: 'rgba(255,255,255,0.7)' },
-                                  ]}
-                                  numberOfLines={1}
-                                >
-                                  {replyLabel}
-                                </Text>
-                                <Text
-                                  style={[
-                                    styles.replyInlineText,
-                                    mine && { color: 'rgba(255,255,255,0.98)' },
-                                  ]}
-                                  numberOfLines={1}
-                                >
-                                  {replySnippet}
-                                </Text>
-                              </View>
-                            </Pressable>
-                          )}
-
-                          <Text
-                            style={[
-                              styles.msgTxt,
-                              mine
-                                ? { color: 'rgba(255,255,255,0.98)' }
-                                : { color: '#0f172a' },
-                            ]}
-                          >
-                            {primaryText}
-                          </Text>
-
-                          {!!secondaryText && (
-                            <Text
-                              style={[
-                                styles.metaSmall,
-                                { marginTop: 4 },
-                                mine
-                                  ? { color: 'rgba(255,255,255,0.8)' }
-                                  : { color: '#475569' },
-                              ]}
-                              numberOfLines={3}
-                            >
-                              {secondaryText}
-                            </Text>
-                          )}
-                        </Animated.View>
-                      </Pressable>
-                    )}
-                  </View>
-
-                  {/* 시간 + 번역 텍스트 (버블 옆) */}
-                  <View
-                    style={{
-                      marginHorizontal: 4,
-                      alignItems: mine ? 'flex-end' : 'flex-start',
-                    }}
-                  >
-                    {showTime && (
-                      <Text
-                        style={[
-                          styles.time,
-                          mine
-                            ? { color: '#94a3b8', textAlign: 'left' }
-                            : { color: '#64748b', textAlign: 'right' },
-                        ]}
-                      >
-                        {formatTime(m.created_at)} {mine && isRead ? '✓' : ''}
-                      </Text>
-                    )}
-
-                    {canShowTranslateActions && showTime && (
-                      <View
-                        style={{
-                          marginTop: 2,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                        }}
-                      >
-                        {tPending[m.id] ? (
-                          <Text style={[styles.metaSmall, { color: '#64748b' }]}>
-                            번역 중…
-                          </Text>
-                        ) : tCache[m.id] ? (
-                          <Pressable onPress={() => setShowOriginalGlobal(v => !v)}>
-                            <Text
-                              style={[
-                                styles.metaSmall,
-                                { color: '#2563eb', fontWeight: '800' },
-                              ]}
-                            >
-                              {showOriginalGlobal ? '번역 보기' : '원문 보기'}
-                            </Text>
-                          </Pressable>
-                        ) : autoTranslate ? null : (
-                          <Pressable onPress={() => translateMessageIfNeeded(m)}>
-                            <Text
-                              style={[
-                                styles.metaSmall,
-                                { color: '#2563eb', fontWeight: '800' },
-                              ]}
-                            >
-                              번역하기({myLang.toUpperCase()})
-                            </Text>
-                          </Pressable>
-                        )}
-                      </View>
-                    )}
-                  </View>
-                </View>
-              </View>
-            </Animated.View>
-          </Pressable>
-        </GestureDetector>
-      );
+      emitUnreadCountsForMyMessages();
     },
     [
       me,
-      msgs,
-      profiles,
-      lastReadAt,
-      tCache,
-      tPending,
+      resolvedRoomId,
+      resolvedRoomIdOk,
       autoTranslate,
-      myLang,
-      showOriginalGlobal,
-      openPublicProfile,
-      onMessageLongPress,
-      translateMessageIfNeeded,
-      triggerReplyFromSwipe,
-      scrollToMessage,
-      selectionMode,
-      selectedIds,
-      toggleSelectMessage,
+      translateFn,
+      emitUnreadCountsForMyMessages,
+      resolveRoomTypeForSend,
+      myProfileCfg,
+      peerProfileCfg,
+      translationTier,
+      translationTone,
+      viewLangLocal,
+      preferredLangLocal,
     ],
   );
 
+  const handleSendSelectedMedia = useCallback(
+    async (assets: PickedAsset[], bundleSend: boolean) => {
+      if (!me || !resolvedRoomIdOk) return;
 
+      setIsAtBottom(true);
+      setHasNewWhileAway(false);
 
-  const renderItem = useCallback(
-  ({ item, index }: { item: any; index: number }) => (
-    <MessageRow item={item} index={index} />
-  ),
-  [MessageRow],
-);
+      const imagesMeta = assets.map((a) => ({
+        uri: a.uri,
+        width: typeof a.width === 'number' ? a.width : null,
+        height: typeof a.height === 'number' ? a.height : null,
+        filename: a.filename,
+        isVideo: !!a.isVideo,
+        durationSec: typeof a.durationSec === 'number' ? a.durationSec : null,
+      }));
 
+      const allImages = imagesMeta.every((m) => !m.isVideo);
+      const doBundle = !!bundleSend && imagesMeta.length > 1 && allImages;
 
-  const showSend = text.trim().length > 0;
+      if (doBundle) {
+        await sendRoomMessage({
+          roomId: resolvedRoomId,
+          senderId: me,
+          kind: 'image',
+          content: null,
+          original: JSON.stringify({ images: imagesMeta }),
+        });
+      } else {
+        for (const m of imagesMeta) {
+          await sendRoomMessage({
+            roomId: resolvedRoomId,
+            senderId: me,
+            kind: m.isVideo ? 'video' : 'image',
+            content: m.uri,
+            original: JSON.stringify({ images: [m] }),
+          });
+        }
+      }
 
-  // 🔎 검색: 쿼리 변경 시 결과 갱신
-  useEffect(() => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) {
-      setSearchHits([]);
+      setMediaVisible(false);
+      scrollToBottom(true);
+      emitUnreadCountsForMyMessages();
+    },
+    [me, resolvedRoomId, resolvedRoomIdOk, scrollToBottom, emitUnreadCountsForMyMessages],
+  );
+
+  const handleSendVoice = useCallback(
+    async (uri: string, durationMs: number) => {
+      if (!me || !resolvedRoomIdOk) return;
+
+      setIsAtBottom(true);
+      setHasNewWhileAway(false);
+
+      await sendRoomMessage({
+        roomId: resolvedRoomId,
+        senderId: me,
+        kind: 'audio',
+        content: uri,
+        original: JSON.stringify({ durationMs }),
+      });
+
+      setVoiceVisible(false);
+      scrollToBottom(true);
+      emitUnreadCountsForMyMessages();
+    },
+    [me, resolvedRoomId, resolvedRoomIdOk, scrollToBottom, emitUnreadCountsForMyMessages],
+  );
+
+  const handleReplyFromList = useCallback(
+    (msg: any) => {
+      const senderId = msg.senderId;
+      const nickMap = memberNickMapRef.current;
+
+      const resolvedName = senderId === me ? '나' : msg.senderName ?? msg.nickname ?? nickMap.get(senderId) ?? null;
+
+      const pair = deriveTextPairForReplyPreview({ msg, meId: me });
+      const previewText = showTranslatedOnly ? pair.altText : pair.primaryText;
+
+      handleReply({
+        id: msg.id,
+        sender: senderId,
+        senderName: resolvedName,
+        kind: String(msg.kind ?? 'text'),
+        original: msg.original ?? null,
+        thumbUri: pickThumbUri(msg),
+        content: previewText,
+        ...(pair.originalText ? { contentOriginal: pair.originalText } : {}),
+        ...(pair.translatedText ? { contentTranslated: pair.translatedText } : {}),
+      } as any);
+    },
+    [handleReply, me, showTranslatedOnly],
+  );
+
+  const openSearch = useCallback(() => {
+    if (selection.selecting) return;
+
+    if (typeof inlineSearch?.openSearch === 'function') {
+      inlineSearch.openSearch();
       return;
     }
-    const ids: string[] = [];
-    for (const m of msgs) {
-      const { rest } = parseReplyPrefix(m.content);
-      if (
-        rest.startsWith('[image]') ||
-        rest.startsWith('[video]') ||
-        rest.startsWith('[file]') ||
-        rest.startsWith('[loc]') ||
-        rest.startsWith('[audio]')
-      ) continue;
-
-      const hay = ((m.original ?? rest) || '').toLowerCase();
-      if (hay.includes(q)) ids.push(m.id);
+    if (typeof inlineSearch?.setOpen === 'function') {
+      inlineSearch.setOpen(true);
+      return;
     }
-    setSearchHits(ids);
-  }, [searchQuery, msgs]);
 
-  // 🔁 헤더 번역 토글 핸들러(탭: ON/OFF, 길게: 설정 팝업)
-  const toggleTranslate = useCallback(async () => {
-    const next = !autoTranslate;
-    setAutoTranslate(next);
-    try {
-      if (me) {
-        await supabase.from('profiles').update({ auto_translate_default: next }).eq('user_id', me);
-      }
-    } catch {}
-    try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); } catch {}
-  }, [autoTranslate, me]);
+    DeviceEventEmitter.emit('chat:openSearchModal', { roomId: resolvedRoomIdOk ? resolvedRoomId : 0 });
+  }, [resolvedRoomId, resolvedRoomIdOk, selection.selecting, inlineSearch]);
 
-  if (loading || !chatRoomId) {
+  const gateRoomType = (roomType ?? 'dm') as string;
+
+  if (loading || !me) {
     return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <SafeAreaView style={styles.center}>
-          <ActivityIndicator />
-        </SafeAreaView>
-      </GestureHandlerRootView>
+      <View style={[styles.center, { backgroundColor: theme.background }]}>
+        <ExpoStatusBar style={expoBarStyle} translucent={true} backgroundColor="transparent" />
+        <ActivityIndicator size="small" />
+      </View>
     );
   }
 
-  return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <StatusBar translucent={false} backgroundColor="#fff" barStyle="dark-content" />
-
-      {/* 상단 헤더 (absolute) */}
-      <View
-        style={[
-          styles.header,
-          { paddingTop: Math.max(0, insets.top - 8),
-            height: HEADER_HEIGHT + Math.max(0, insets.top - 8) },
-        ]}
-      >
-      <Pressable
-        style={styles.headerBtn}
-        onPress={() => {
-          // 🔁 삭제 선택 모드일 때는 채팅방 나가는 게 아니라 선택모드 종료
-          if (selectionMode) {
-            setSelectionMode(false);
-            setSelectedIds([]);
-          } else {
-            navigation.goBack();
-          }
-        }}
-      >
-        <ChevronLeft size={22} color={OUR_TEXT_DARK} strokeWidth={2.4} />
-      </Pressable>
-
-        <View style={styles.headerTitleWrap}>
-          <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-            <Text style={styles.title} numberOfLines={1}>
-              {title || `채팅방 #${chatRoomId}`}
-            </Text>
-            <Text style={styles.memberCount}>
-              {'  '}
-              {participantCount || 1}
-            </Text>
-          </View>
-        </View>
-
-        {/* 👉 오른쪽 아이콘들: 번역 토글(아이콘색으로 on/off), 검색, 설정(…) */}
-<View style={styles.headerRightRow}>
-  <View style={{ position: 'relative', justifyContent: 'center', alignItems: 'center' }}>
-    {autoTranslate && (
-      <View style={styles.langBadgeGlass}>
-        <Text style={styles.langBadgeGlassTxt}>{myLang.toUpperCase()}</Text>
-      </View>
-    )}
-
-    <Pressable
-      style={styles.headerBtn}
-      onPress={toggleTranslate}
-      onLongPress={() => setTranslatePopoverOpen(true)}
-    >
-      <Languages
-        size={18}
-        strokeWidth={2.6}
-        color={autoTranslate ? OUR_RED : '#64748b'}
-      />
-    </Pressable>
-  </View>
-
-  <Pressable
-    style={styles.headerBtn}
-    onPress={() => {
-      setSearchQuery('');
-      setSearchOpen(true);
-    }}
-  >
-    <Search size={18} color={OUR_TEXT_DARK} strokeWidth={2.6} />
-  </Pressable>
-
-  <Pressable
-    style={styles.headerBtn}
-    onPress={() =>
-      navigation.navigate('ChatManage', { roomId: Number(chatRoomId) })
-    }
-  >
-    <MoreHorizontal size={22} color={OUR_TEXT_DARK} strokeWidth={2.4} />
-  </Pressable>
-</View>
-
-      </View>
-
-      {/* 헤더 아래 영역 */}
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: '#fff',
-          paddingTop: HEADER_HEIGHT + insets.top - 8,
-        }}
-        edges={['left', 'right', 'bottom']}
-      >
-        <View
-          style={[styles.floatingBarFixed, { top: HEADER_HEIGHT + insets.top }]}
-          pointerEvents="box-none"
-          onLayout={(e) => setFloatH(Math.max(32, Math.round(e.nativeEvent.layout.height)))}
-        >
-          {firstDateLabel && scrolling && (
-            <View style={styles.floatingDate} pointerEvents="none">
-              <View style={styles.datePill}>
-                <Text style={styles.datePillTxt}>{firstDateLabel}</Text>
-              </View>
-            </View>
-          )}
-        </View>
-
-
-        {/* 리스트+입력줄 묶음: 키보드 높이만큼 같이 이동 */}
-         <RNAnimated.View
-          style={{ flex: 1, transform: [{ translateY: RNAnimated.multiply(keyboardBottom, -1) }] }}
-        >
-          <View style={styles.chatBody}>
-            {selectionMode && (
-              <View style={styles.selectionBanner}>
-                <Text style={styles.selectionBannerTxt}>
-                  삭제할 메시지를 눌러 선택하세요.
-                </Text>
-              </View>
-            )}
-            <AnimatedFlatList
-              ref={listRef}
-              data={withSeparators as any}
-              keyExtractor={(m: any, idx) => (m?.id ? String(m.id) : m?.key ?? String(idx))}
-              renderItem={renderItem}
-              style={{ flex: 1 }}
-              contentContainerStyle={{
-                paddingHorizontal: 12,
-                paddingTop: floatH + 20,
-                paddingBottom: kbVisible ? 8 : (inputAreaH + 6),
-                flexGrow: 1,
-                justifyContent: 'flex-end',
-              }}
-              onScroll={scrollHandler as any}
-              scrollEventThrottle={16}
-              keyboardShouldPersistTaps="handled"
-            />
-          </View>
-
-          {/* 🔹 새 메시지 플로팅 배지 (선택 모드 아닐 때만) */}
-          {showNewMsgPill && !selectionMode && (
-            <View
-              pointerEvents="box-none"
-              style={{
-                position: 'absolute',
-                left: 0,
-                right: 0,
-                bottom: (inputAreaH || 60) + (insets.bottom ?? 0) + 8,
-                alignItems: 'center',
-              }}
-            >
-              <Pressable
-                style={styles.newMsgPill}
-                onPress={() => {
-                  scrollToEndNow();
-                  setShowNewMsgPill(false);
-                  setNewMsgCount(0);
-                }}
-              >
-                <Text style={styles.newMsgPillTxt}>
-                  {newMsgCount > 1
-                    ? `새 메시지 ${newMsgCount}개`
-                    : '새 메시지 1개'}
-                </Text>
-              </Pressable>
-            </View>
-          )}
-                    {/* 입력 / 선택 영역(전체) */}
-          {selectionMode ? (
-            // ✅ 선택 모드: 삭제하기 바
-            <View
-              style={[
-                styles.selectionFooter,
-                { paddingBottom: insets.bottom ?? 0 },
-              ]}
-              onLayout={(e) =>
-                setInputAreaH(Math.max(44, Math.round(e.nativeEvent.layout.height)))
-              }
-            >
-              <View style={styles.selectionFooterTop}>
-                <Text style={styles.selectionFooterTxt}>
-                  선택된 메시지 {selectedIds.length}개
-                </Text>
-                <Pressable
-                  onPress={() => {
-                    setSelectedIds([]);
-                    setSelectionMode(false);
-                  }}
-                >
-                  <Text style={styles.selectionFooterClear}>선택 해제</Text>
-                </Pressable>
-              </View>
-
-              <View style={styles.selectionFooterBar}>
-                <Pressable
-                  style={[
-                    styles.selectionDeleteBtn,
-                    selectedIds.length === 0 && { opacity: 0.4 },
-                  ]}
-                  disabled={selectedIds.length === 0}
-                  onPress={openDeleteDialog}
-                >
-                  <Text style={styles.selectionDeleteTxt}>
-                    삭제하기 {selectedIds.length}
-                  </Text>
-                </Pressable>
-              </View>
-            </View>
-          ) : (
-            // ✅ 평소: 기존 입력창
-            <RNAnimated.View
-              style={[
-                styles.inputWrap,
-                { paddingBottom: insets.bottom ?? 0 },
-              ]}
-              onLayout={(e) =>
-                setInputAreaH(Math.max(44, Math.round(e.nativeEvent.layout.height)))
-              }
-            >
-              {/* 답글 컴포저 바 */}
-            {replyTo ? (
-              <View style={styles.replyComposer}>
-                <View style={styles.replyComposerBar} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.replyComposerLabel}>
-                    {replyTo.sender === me
-                      ? '내 메시지에 답장'
-                      : `${profiles[replyTo.sender]?.nickname || '익명'}에게 답장`}
-                  </Text>
-                  <Text
-                    style={styles.replyComposerText}
-                    numberOfLines={2}
-                    ellipsizeMode="tail"
-                  >
-                    {getMsgSnippet(replyTo)}
-                  </Text>
-                </View>
-                <Pressable
-                  style={styles.replyComposerClose}
-                  onPress={() => setReplyTo(null)}
-                >
-                  <X size={16} color="#475569" />
-                </Pressable>
-              </View>
-            ) : null}
-
-
-            <View style={styles.inputRow}>
-              {/* + 버튼 (사진/파일/위치/친구초대) */}
-              <Pressable
-                style={styles.roundBtn}
-                onPress={() => setSheetOpen(true)}
-              >
-                <Plus size={18} color={OUR_TEXT_DARK} strokeWidth={2.4} />
-              </Pressable>
-
-              {/* 텍스트 입력 */}
-              <View style={styles.inputPill}>
-                <TextInput
-                  style={styles.input}
-                  value={text}
-                  onChangeText={setText}
-                  placeholder="메시지 보내기"
-                  placeholderTextColor="#9ca3af"
-                  multiline
-                  returnKeyType="send"
-                  onSubmitEditing={() => {
-                    if (showSend) send(text);
-                  }}
-                />
-              </View>
-
-              {/* 오른쪽: 전송 or 음성 버튼 */}
-              {showSend ? (
-                <Pressable
-                  style={[styles.roundBtn, styles.sendBtnRound]}
-                  onPress={() => send(text)}
-                >
-                  <SendIcon size={18} color="#ffffff" strokeWidth={2.2} />
-                </Pressable>
-              ) : (
-                <Pressable
-                  style={styles.roundBtn}
-                  onPress={() => setVoiceVisible(true)}
-                >
-                  <Mic size={18} color={OUR_RED} strokeWidth={2.4} />
-                </Pressable>
-              )}
-            </View>
-
-            </RNAnimated.View>
-          )}
-
-        </RNAnimated.View>
-      </SafeAreaView>
-
-      {/* (+) 액션시트 */}
-      <Modal visible={sheetOpen} transparent animationType="fade" onRequestClose={() => setSheetOpen(false)}>
-        <GestureHandlerRootView style={StyleSheet.absoluteFillObject}>
-          <Pressable style={styles.backdrop} onPress={() => setSheetOpen(false)} />
-          <View style={styles.sheet} accessible accessibilityRole="menu">
-            <Text style={styles.sheetTitle}>추가 동작</Text>
-
-            <View style={styles.sheetRow}>
-              <Pressable
-                style={styles.tile}
-                onPress={() => {
-                  setSheetOpen(false);
-                  setMediaModalOpen(true);
-                }}
-              >
-                <ImageIcon size={22} color={OUR_TEXT_DARK} />
-                <Text style={styles.tileTxt}>사진/영상</Text>
-              </Pressable>
-
-              <Pressable style={styles.tile} onPress={pickAndSendFile}>
-                <LinkIcon size={22} color={OUR_TEXT_DARK} />
-                <Text style={styles.tileTxt}>파일</Text>
-              </Pressable>
-
-              <Pressable style={styles.tile} onPress={openMapPicker}>
-                <MapPin size={22} color={OUR_TEXT_DARK} />
-                <Text style={styles.tileTxt}>위치공유</Text>
-              </Pressable>
-
-              <Pressable style={styles.tile} onPress={openInviteFriends}>
-                <UserPlus2 size={22} color={OUR_TEXT_DARK} />
-                <Text style={styles.tileTxt}>친구초대</Text>
-              </Pressable>
-
-              <Pressable style={styles.tile} onPress={shareInviteLink}>
-                <LinkIcon size={22} color={OUR_TEXT_DARK} />
-                <Text style={styles.tileTxt}>초대링크</Text>
-              </Pressable>
-
-              <Pressable
-                style={styles.tile}
-                onPress={() => {
-                  setSheetOpen(false);
-                  setTranslatePopoverOpen(true);
-                }}
-              >
-                <Languages size={22} color={OUR_TEXT_DARK} />
-                <Text style={styles.tileTxt}>번역</Text>
-              </Pressable>
-            </View>
-
-            <Pressable style={styles.sheetClose} onPress={() => setSheetOpen(false)}>
-              <Text style={styles.sheetCloseTxt}>닫기</Text>
-            </Pressable>
-          </View>
-        </GestureHandlerRootView>
-      </Modal>
-
-      {/* 메시지 액션 시트 */}
-      <Modal
-        visible={actionSheetOpen && !!longPressTarget}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setActionSheetOpen(false)}
-      >
-        <Pressable style={styles.popMask} onPress={() => setActionSheetOpen(false)} />
-        <View style={styles.replyActionSheet}>
-          <Pressable
-            style={styles.replyActionRow}
-            onPress={() => {
-              if (longPressTarget) {
-                setReplyTo(longPressTarget);
-                try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); } catch {}
-              }
-              setActionSheetOpen(false);
-            }}
-          >
-            <Text style={styles.replyActionTxt}>답장</Text>
-          </Pressable>
-
-          <Pressable
-            style={styles.replyActionRow}
-            onPress={async () => {
-              if (!longPressTarget) return;
-              const snippet = getMsgSnippet(longPressTarget);
-              try { await Share.share({ message: snippet }); } catch {}
-              setActionSheetOpen(false);
-            }}
-          >
-            <Text style={styles.replyActionTxt}>공유</Text>
-          </Pressable>
-
-          <Pressable
-            style={styles.replyActionRow}
-            onPress={() => {
-              setActionSheetOpen(false);
-              Alert.alert('공지', '공지 기능은 추후 구현 예정입니다.');
-            }}
-          >
-            <Text style={styles.replyActionTxt}>공지</Text>
-          </Pressable>
-
-        {longPressTarget && (
-          <Pressable
-            style={styles.replyActionRow}
-            onPress={() => {
-              const m = longPressTarget;
-              if (!m) return;
-
-              // 👉 카톡처럼 "선택 모드"로 진입 + 해당 메시지 선택
-              setSelectionMode(true);
-              setSelectedIds((prev) =>
-                prev.includes(m.id) ? prev : [...prev, m.id]
-              );
-              setActionSheetOpen(false);
-            }}
-          >
-            <Text style={[styles.replyActionTxt, { color: '#ef4444' }]}>삭제</Text>
-          </Pressable>
-        )}
-        </View>
-      </Modal>
-
-      {/* 🔴 삭제 옵션 팝업 (라디오) */}
-      <Modal
-        visible={deleteDialogVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setDeleteDialogVisible(false)}
-      >
+  if (!resolvedRoomIdOk) {
+    return (
+      <View style={[styles.center, { backgroundColor: theme.background, paddingHorizontal: 18 }]}>
+        <ExpoStatusBar style={expoBarStyle} translucent={true} backgroundColor="transparent" />
+        <Text style={{ fontSize: 16, fontWeight: '700', marginBottom: 8, color: '#111827' }}>채팅방을 만들 수 없습니다</Text>
+        <Text style={{ fontSize: 13, color: '#6B7280', textAlign: 'center', marginBottom: 14 }}>
+          peer_id는 받았지만 DM room_id 생성/조회에 실패했습니다. 현재 앱은 RPC-only 정책입니다. 서버에 get_or_create_dm_room RPC가 반드시 존재해야
+          합니다.
+        </Text>
         <Pressable
-          style={styles.popMask}
-          onPress={() => setDeleteDialogVisible(false)}
-        />
-        <View style={styles.deleteDialogCard}>
-          <Text style={styles.deleteDialogTitle}>메시지 삭제</Text>
-          <Text style={styles.deleteDialogDesc}>삭제 방법을 선택하세요.</Text>
-
-          {deleteDialogCanAll && (
-            <Pressable
-              style={styles.deleteRadioRow}
-              onPress={() => setDeleteOption('all')}
-            >
-              <View
-                style={[
-                  styles.deleteRadioOuter,
-                  deleteOption === 'all' && styles.deleteRadioOuterOn,
-                ]}
-              >
-                {deleteOption === 'all' && <View style={styles.deleteRadioInner} />}
-              </View>
-              <Text style={styles.deleteRadioLabel}>모두에게서 삭제</Text>
-            </Pressable>
-          )}
-
-          {deleteDialogCanHide && (
-            <Pressable
-              style={styles.deleteRadioRow}
-              onPress={() => setDeleteOption('hide')}
-            >
-              <View
-                style={[
-                  styles.deleteRadioOuter,
-                  deleteOption === 'hide' && styles.deleteRadioOuterOn,
-                ]}
-              >
-                {deleteOption === 'hide' && <View style={styles.deleteRadioInner} />}
-              </View>
-              <Text style={styles.deleteRadioLabel}>메시지 가리기 (모두에게서 숨기기)</Text>
-            </Pressable>
-          )}
-
-          <Pressable
-            style={styles.deleteRadioRow}
-            onPress={() => setDeleteOption('me')}
-          >
-            <View
-              style={[
-                styles.deleteRadioOuter,
-                deleteOption === 'me' && styles.deleteRadioOuterOn,
-              ]}
-            >
-              {deleteOption === 'me' && <View style={styles.deleteRadioInner} />}
-            </View>
-            <Text style={styles.deleteRadioLabel}>나에게서만 삭제</Text>
-          </Pressable>
-
-          {!deleteDialogCanAll && !deleteDialogCanHide && (
-            <Text style={styles.deleteDialogHint}>
-              선택한 메시지는 나에게서만 삭제할 수 있습니다.
-            </Text>
-          )}
-
-          <View style={styles.deleteDialogButtonsRow}>
-            <Pressable
-              style={styles.deleteDialogBtn}
-              onPress={() => setDeleteDialogVisible(false)}
-            >
-              <Text
-                style={[styles.deleteDialogBtnText, { color: '#64748b' }]}
-              >
-                취소
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[styles.deleteDialogBtn, { backgroundColor: OUR_RED }]}
-              onPress={performDelete}
-            >
-              <Text
-                style={[styles.deleteDialogBtnText, { color: '#ffffff' }]}
-              >
-                확인
-              </Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
-
-      {/* 번역 팝업 */}
-      <Modal
-        visible={translatePopoverOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setTranslatePopoverOpen(false)}
-      >
-        <Pressable style={styles.popMask} onPress={() => setTranslatePopoverOpen(false)} />
-        <View style={styles.popCard}>
-          <View style={styles.popHeaderRow}>
-            <Text style={styles.popHeaderTxt}>번역</Text>
-            <View style={styles.currLangPill}>
-              <View style={styles.redDot} />
-              <Text style={styles.currLangTxt}>현재: {myLang.toUpperCase()}</Text>
-            </View>
-          </View>
-
-          <View style={styles.popToggles}>
-            <Pressable
-              style={[styles.popToggleBtn, autoTranslate && styles.popToggleOn]}
-              onPress={async () => {
-                const next = !autoTranslate;
-                setAutoTranslate(next);
-                try {
-                  if (me) await supabase.from('profiles').update({ auto_translate_default: next }).eq('user_id', me);
-                } catch {}
-              }}
-            >
-              <Text style={[styles.popToggleTxt, autoTranslate && styles.popToggleTxtOn]}>
-                실시간 번역 {autoTranslate ? 'ON' : 'OFF'}
-              </Text>
-            </Pressable>
-
-            <Pressable style={styles.popGhostBtn} onPress={() => setShowOriginalGlobal((v) => !v)}>
-              <Text style={styles.popGhostTxt}>{showOriginalGlobal ? '번역 보기' : '원문 보기'}</Text>
-            </Pressable>
-          </View>
-
-          <View style={styles.popLangList}>
-            <ScrollView>
-              {SUPPORTED_LANGS.map((l) => {
-                const active = l.code === myLang;
-                return (
-                  <Pressable
-                    key={l.code}
-                    style={[styles.langRow, active && styles.langRowActive]}
-                    onPress={async () => {
-                      setMyLang(l.code);
-                      setTranslatePopoverOpen(false);
-                      try {
-                        if (me) await supabase.from('profiles').update({ preferred_lang: l.code }).eq('user_id', me);
-                      } catch {}
-                    }}
-                  >
-                    <Text style={[styles.langRowTxt, active && styles.langRowTxtActive]}>
-                      ({l.code}) {l.native}
-                    </Text>
-                    {active ? <View style={styles.redDotSmall} /> : null}
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
-
-      {/* 🔎 검색 모달 */}
-      <Modal
-        visible={searchOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setSearchOpen(false)}
-      >
-        <Pressable style={styles.popMask} onPress={() => setSearchOpen(false)} />
-        <View style={styles.searchCard}>
-          <View style={styles.searchHeaderRow}>
-            <View style={styles.searchInputWrap}>
-              <Search size={16} color="#64748b" />
-              <TextInput
-                style={styles.searchInput}
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                placeholder="메시지 검색"
-                autoFocus
-              />
-            </View>
-            <Pressable style={styles.searchClose} onPress={() => setSearchOpen(false)}>
-              <X size={18} color="#334155" />
-            </Pressable>
-          </View>
-
-          <Text style={styles.searchMeta}>
-            {searchQuery.trim() ? `결과 ${searchHits.length}개` : '검색어를 입력하세요'}
-          </Text>
-
-          <ScrollView style={{ maxHeight: 320 }}>
-            {searchHits.map((id) => {
-              const m = msgs.find((x) => x.id === id);
-              if (!m) return null;
-              return (
-                <Pressable
-                  key={id}
-                  style={styles.searchItem}
-                  onPress={() => {
-                    setSearchOpen(false);
-                    setTimeout(() => scrollToMessage(id), 50);
-                  }}
-                >
-                  <Text style={styles.searchItemTxt} numberOfLines={2}>
-                    {getMsgSnippet(m)}
-                  </Text>
-                  <Text style={styles.searchItemTime}>{formatTime(m.created_at)}</Text>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        </View>
-      </Modal>
-
-      {/* 음성 녹음 모달 */}
-      <VoiceRecorderModal
-        visible={voiceVisible}
-        onClose={() => setVoiceVisible(false)}
-        onSend={async (uri: string, durationMs: number) => {
-          try {
-            if (!chatRoomId || !me) return;
-            const fileName = 'voice_' + Date.now() + '.m4a';
-
-            const blob = await fileToBlob(uri);
-            const mime = 'audio/m4a';
-            const ext = 'm4a';
-
-            const { uploadUrl, publicUrl } = await presignUpload({
-              roomId: Number(chatRoomId),
-              mime,
-              size: blob.size,
-              ext,
-              variant: 'audio',
-            });
-            await putToR2(uploadUrl, blob, mime);
-
-            const payload = `[audio]${publicUrl}|${fileName}|${durationMs}`;
-            await send(payload);
-          } catch (e: any) {
-            Alert.alert('오디오 전송 실패', e.message ?? String(e));
-          }
-        }}
-        themeColor={OUR_RED}
-      />
-
-      {/* 이미지 프리뷰 */}
-      <Modal
-        visible={!!previewImage}
-        transparent
-        onRequestClose={() => {
-          setPreviewImage(null);
-          scale.value = 1;
-        }}
-      >
-        <GestureHandlerRootView style={styles.previewWrap}>
-          <Pressable
-            style={StyleSheet.absoluteFillObject as any}
-            onPress={() => {
-              setPreviewImage(null);
-              scale.value = 1;
-            }}
-          />
-          {previewImage ? (
-            <GestureDetector gesture={pinch}>
-              <Animated.Image source={{ uri: previewImage }} style={[styles.previewImg, previewStyle]} />
-            </GestureDetector>
-          ) : null}
-        </GestureHandlerRootView>
-      </Modal>
-
-      {/* MediaPickerModal */}
-      <MediaPickerModal
-        visible={mediaModalOpen}
-        onClose={() => setMediaModalOpen(false)}
-        photoQuality={photoQuality}
-        videoQuality={videoQuality}
-        onChangePhotoQuality={setPhotoQuality}
-        onChangeVideoQuality={setVideoQuality}
-onSendSelected={async (assets, bundleSend) => {
-  try {
-    const uploadedList: string[] = [];
-
-    for (const a of assets) {
-      const blob = await fileToBlob(a.uri);
-      const mime = a.isVideo ? 'video/mp4' : 'image/jpeg';
-      const ext = guessExt(a.filename, mime);
-
-      const { uploadUrl, publicUrl } = await presignUpload({
-        roomId: Number(chatRoomId),
-        mime,
-        size: blob.size,
-        ext,
-        variant: a.isVideo ? 'video' : 'medium',
-      });
-
-      await putToR2(uploadUrl, blob, mime);
-
-      // 💡 여러 개를 하나로 묶기 위해 리스트에 추가
-      uploadedList.push(`${publicUrl}|${a.filename}`);
-    }
-
-
-    if (uploadedList.length === 1) {
-      // 이미지 1장일 때 기존처럼 단일 전송
-      await send(`[image]${uploadedList[0]}`);
-    } else {
-      // 여러 장일 때 묶어서 하나의 메시지
-      const payload = `[images]` + uploadedList.join(';;;');
-      await send(payload);
-    }
-
-  } catch (e: any) {
-    Alert.alert('업로드 실패', e.message ?? String(e));
+          onPress={() => navigation.goBack?.()}
+          style={{ paddingHorizontal: 14, paddingVertical: 10, borderRadius: 10, backgroundColor: '#111827' }}
+        >
+          <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>뒤로가기</Text>
+        </Pressable>
+      </View>
+    );
   }
-}}
-        themeColor={OUR_RED}
-      />
-    </GestureHandlerRootView>
+
+  const userTierForPopover = toTier((myProfileCfg as any)?.user_tier ?? 'free') as unknown as TranslationTier;
+  const settingLangForPopover = (myLang ?? 'ko').toUpperCase();
+
+  const viewLangForPopover = viewLangLocal;
+  const preferredLangForPopover = preferredLangLocal;
+
+  const peerViewLangForPopover = toLangCodeUpper((peerProfileCfg as any)?.view_lang ?? null);
+  const peerSettingLangForPopover = toLangCodeUpper((peerProfileCfg as any)?.setting_lang ?? null);
+
+  const newPillBottom = 76 + Math.max(insets.bottom, 0) + (inlineSearch.open ? INLINE_SEARCH_BAR_HEIGHT : 0);
+
+  const isBulk = !!(deleteTypeMsg as any)?.__bulk;
+
+  return (
+    <ChatThemeGate theme={theme} roomType={gateRoomType}>
+      <View style={[styles.container, { backgroundColor: 'transparent' }]}>
+        <ExpoStatusBar style={expoBarStyle} translucent={true} backgroundColor="transparent" />
+
+        <View style={[styles.headerWrap, { backgroundColor: theme.headerBg }]} pointerEvents="box-none">
+          <Animated.View style={{ opacity: headerAnim }}>
+            {selection.selecting ? (
+              <SelectionTopBar
+                theme={theme}
+                insetsTop={Math.max(insets.top, 0)}
+                count={selection.count}
+                onExit={() => selection.exit()}
+              />
+            ) : inlineSearch.open ? (
+              <ChatSearchHeader
+                theme={theme}
+                insetsTop={Math.max(insets.top, 0)}
+                selectedMember={inlineSearch.selectedMember}
+                q={inlineSearch.q}
+                onChangeQ={inlineSearch.setQ}
+                onClose={inlineSearch.closeSearch}
+                onClearQ={inlineSearch.clearQ}
+                onRemoveMember={inlineSearch.removeMember}
+              />
+            ) : (
+              <ChatHeader
+                theme={theme}
+                title={title}
+                avatarUrl={headerAvatarUrl}
+                participantCount={participantCount}
+                autoTranslate={autoTranslate}
+                myLang={(viewLangLocal ?? settingLangForPopover).toString()}
+                onToggleTranslate={toggleAutoTranslate}
+                onOpenTranslateSettings={openTranslatePopover}
+                roomType={headerRoomType}
+                onPressSearch={openSearch}
+              />
+            )}
+          </Animated.View>
+        </View>
+
+        <View style={[styles.listWrap, { backgroundColor: 'transparent' }]}>
+          <Animated.View style={{ flex: 1, opacity: listAnim, transform: [{ translateY: listMoveY }] }}>
+            <MessageList
+              items={items}
+              me={me}
+              listRef={listRef}
+              loadMore={handleLoadMore}
+              onReply={handleReplyFromList}
+              onScrolledToBottom={() => {
+                setIsAtBottom(true);
+                setHasNewWhileAway(false);
+                if (latestRoomSeq > 0) scheduleReadSync(latestRoomSeq);
+                else pushReadNow(undefined, 'scrollBottom').catch(() => {});
+              }}
+              onScrolledAway={() => setIsAtBottom(false)}
+              showOriginalGlobal={true}
+              theme={theme}
+              {...({ showTranslatedOnlyGlobal: showTranslatedOnly } as any)}
+              {...({
+                selectionMode: selection.selecting,
+                selectedIdSet: selection.selectedIds,
+                isSelected: (id: string) => selection.selectedIds.has(String(id)),
+                onToggleSelectById: (id: string) => selection.toggle(String(id)),
+              } as any)}
+            />
+          </Animated.View>
+
+          {hasNewWhileAway && !selection.selecting && (
+            <View style={[styles.newPill, { bottom: newPillBottom }]}>
+              <Text
+                style={styles.newPillText}
+                onPress={() => {
+                  scrollToBottom(true);
+                  setIsAtBottom(true);
+                  setHasNewWhileAway(false);
+                  if (latestRoomSeq > 0) scheduleReadSync(latestRoomSeq);
+                  else pushReadNow(undefined, 'newPill').catch(() => {});
+                }}
+              >
+                새 메시지
+              </Text>
+            </View>
+          )}
+        </View>
+
+        <View style={[styles.inputWrap, { backgroundColor: theme.inputBg }]}>
+          {selection.selecting ? (
+            <SelectionBottomBar
+              theme={theme}
+              insetsBottom={Math.max(insets.bottom, 0)}
+              count={selection.count}
+              onPressDelete={() => {
+                if (!selectedMsgs.length) return;
+                setDeleteTypeMsg({ __bulk: true });
+                setDeleteTypeVisible(true);
+              }}
+            />
+          ) : (
+            <>
+              {inlineSearch.open && (
+                <ChatSearchBar
+                  theme={theme}
+                  countLabel={inlineSearch.countLabel}
+                  hasSenderFilter={inlineSearch.hasSenderFilter}
+                  hasDateFilter={inlineSearch.hasDateFilter}
+                  onOpenSender={inlineSearch.openSender}
+                  onOpenDate={inlineSearch.openDate}
+                  onPrev={inlineSearch.prev}
+                  onNext={inlineSearch.next}
+                />
+              )}
+
+              <Animated.View style={{ opacity: inputAnim, transform: [{ translateY: inputMoveY }] }}>
+                <InputBar
+                  theme={theme}
+                  collapseNonce={collapseNonce}
+                  onAttachmentsOpenChange={setAttachmentsOpen}
+                  text={text}
+                  setText={setText}
+                  replyTo={replyTo}
+                  cancelReply={cancelReply}
+                  sendMessage={handleSendMessage}
+                  openMedia={() => setMediaVisible(true)}
+                  openVoice={() => setVoiceVisible(true)}
+                  autoTranslate={autoTranslate}
+                  setAutoTranslate={(v) => {
+                    setAutoTranslate(v);
+                    persistRoomSettingPatch({ auto_translate: !!v });
+                  }}
+                  translationTier={translationTier}
+                  translationTone={translationTone as TranslationTone}
+                  onOpenTranslateSettings={openTranslatePopover}
+                />
+              </Animated.View>
+            </>
+          )}
+        </View>
+
+        <SenderPickerSheet
+          visible={inlineSearch.senderSheetOpen}
+          onClose={inlineSearch.closeSender}
+          theme={theme}
+          members={inlineSearch.members}
+          selectedMember={inlineSearch.selectedMember}
+          onSelect={(m) => {
+            inlineSearch.setMember(m);
+            inlineSearch.closeSender();
+          }}
+        />
+
+        <DatePickerSheet
+          visible={inlineSearch.dateSheetOpen}
+          onClose={inlineSearch.closeDate}
+          theme={theme}
+          dateRange={inlineSearch.dateRange}
+          onApply={(range) => {
+            inlineSearch.setDates(range);
+          }}
+        />
+
+        <MediaPickerModal
+          visible={mediaVisible}
+          onClose={() => setMediaVisible(false)}
+          photoQuality={photoQuality}
+          videoQuality={videoQuality}
+          onChangePhotoQuality={setPhotoQuality}
+          onChangeVideoQuality={setVideoQuality}
+          onSendSelected={handleSendSelectedMedia}
+          themeColor={THEME_COLOR}
+        />
+
+        <VoiceRecorderModal
+          visible={voiceVisible}
+          onClose={() => setVoiceVisible(false)}
+          onSend={handleSendVoice}
+          themeColor={THEME_COLOR}
+          roomType={resolveRoomType({ type: roomType ?? 'dm' })}
+        />
+
+        <TranslatePopover
+          visible={translatePopoverVisible}
+          onClose={closeTranslatePopover}
+          roomType={resolveRoomType({ type: roomType ?? 'dm' })}
+          theme={theme}
+          autoTranslate={autoTranslate}
+          onToggleAutoTranslate={toggleAutoTranslate}
+          userTier={userTierForPopover}
+          translationTier={translationTier}
+          setTranslationTier={setTierWithPersist as any}
+          translationTone={translationTone as TranslationTone}
+          setTranslationTone={setToneWithPersist as any}
+          viewLang={viewLangForPopover}
+          settingLang={settingLangForPopover}
+          onChangeViewLang={handleChangeViewLang}
+          preferredLang={preferredLangForPopover}
+          onChangePreferredLang={handleChangePreferredLang}
+          peerViewLang={peerViewLangForPopover}
+          peerSettingLang={peerSettingLangForPopover}
+          onPressUpgrade={() => {}}
+          {...({
+            showTranslatedOnly,
+            onToggleShowTranslatedOnly: toggleShowTranslatedOnly,
+          } as any)}
+        />
+
+        <MessageActionSheet
+          visible={actionSheetVisible}
+          onClose={closeMessageActions}
+          theme={theme}
+          meId={me}
+          message={actionSheetMsg}
+          onReact={(emoji: string, msg: any) => {
+            console.warn('[react]', emoji, msg?.id);
+          }}
+          onAction={async (key: MessageActionKey, msg: any) => {
+            try {
+              const pair = deriveTextPairForReplyPreview({ msg, meId: me });
+              const displayText = showTranslatedOnly ? pair.altText : pair.primaryText;
+
+              switch (key) {
+                case 'copy': {
+                  const toCopy = displayText || String(msg?.content ?? '');
+                  await Clipboard.setStringAsync(String(toCopy ?? '').trim());
+                  closeMessageActions();
+                  return;
+                }
+                case 'select_copy': {
+                  console.warn('[select_copy] not implemented');
+                  closeMessageActions();
+                  return;
+                }
+                case 'reply': {
+                  handleReplyFromList(msg);
+                  closeMessageActions();
+                  return;
+                }
+                case 'share': {
+                  const toShare = displayText || String(msg?.content ?? '');
+                  await Share.share({ message: String(toShare ?? '') });
+                  closeMessageActions();
+                  return;
+                }
+                case 'cancel_moment': {
+                  closeMessageActions();
+                  requestAnimationFrame(() => cancelMomentDelete(msg).catch(() => {}));
+                  return;
+                }
+                case 'delete': {
+                  closeMessageActions();
+                  Keyboard.dismiss();
+                  requestAnimationFrame(() => selection.enter(String(msg?.id ?? '').trim() || null));
+                  return;
+                }
+                default:
+                  closeMessageActions();
+                  return;
+              }
+            } catch (e: any) {
+              console.warn('[MessageActionSheet] onAction error', e?.message ?? String(e));
+              closeMessageActions();
+            }
+          }}
+        />
+
+        <MomentQuickMenu
+          visible={momentMenuVisible}
+          theme={theme}
+          anchor={momentMenuAnchor}
+          canCancel={!!momentMenuMsg && String(momentMenuMsg?.senderId ?? momentMenuMsg?.sender_id ?? '') === String(me)}
+          onClose={closeMomentMenu}
+          onCancelMoment={() => {
+            const msg = momentMenuMsg;
+            closeMomentMenu();
+            requestAnimationFrame(() => cancelMomentDelete(msg).catch(() => {}));
+          }}
+        />
+
+        <DeleteTypeModal
+          visible={deleteTypeVisible}
+          onClose={closeDeleteType}
+          theme={theme}
+          canDeleteAll={isBulk ? bulkEligibility.canDeleteAll : deleteEligibility.canDeleteAll}
+          canMomentDelete={isBulk ? bulkEligibility.canMomentDelete : deleteEligibility.canMomentDelete}
+          onDeleteMine={() => {
+            closeDeleteType();
+            requestAnimationFrame(() => {
+              const roomId = Number(resolvedRoomId);
+              if (!Number.isFinite(roomId) || roomId <= 0) return;
+
+              if (isBulk) {
+                const ids = selectedMsgs
+                  .map((m) => pickMsgId(m))
+                  .filter((id): id is string => !!id);
+
+                // local_* 은 서버 tombstone 불가 → 로컬만 삭제
+                const localIds = ids.filter((id) => isLocalMsg(id));
+                localIds.forEach((id) => deleteMineLocal({ id }).catch(() => {}));
+
+                // 서버 메시지는 tombstone(chat_message_deletions) 기록 + 로컬 삭제
+                const serverIds = ids.filter((id) => !isLocalMsg(id));
+                if (serverIds.length) {
+                  deleteMessagesMine({ roomId, messageIds: serverIds }).catch(() => {});
+                }
+
+                selection.exit();
+              } else {
+                const id = pickMsgId(deleteTypeMsg);
+                if (!id) return;
+
+                if (isLocalMsg(id)) {
+                  deleteMineLocal({ id }).catch(() => {});
+                } else {
+                  deleteMessageMine({ roomId, messageId: id }).catch(() => {});
+                }
+              }
+            });
+          }}
+          onDeleteAll={() => {
+            closeDeleteType();
+            requestAnimationFrame(() => {
+              if (isBulk) {
+                selectedMsgs.forEach((m) => deleteAll(m).catch(() => {}));
+                selection.exit();
+              } else {
+                deleteAll(deleteTypeMsg).catch(() => {});
+              }
+            });
+          }}
+          onConfirmMoment={(cfg) => {
+            closeDeleteType();
+            requestAnimationFrame(() => {
+              if (isBulk) {
+                selectedMsgs.forEach((m) => setMomentDelete(m, cfg).catch(() => {}));
+                selection.exit();
+              } else {
+                setMomentDelete(deleteTypeMsg, cfg).catch(() => {});
+              }
+            });
+          }}
+        />
+
+        {bootCoverVisible && (
+          <Animated.View
+            pointerEvents="auto"
+            style={[StyleSheet.absoluteFillObject, styles.bootCover, { backgroundColor: theme.background, opacity: bootCoverAnim }]}
+          >
+            <ActivityIndicator size="small" />
+          </Animated.View>
+        )}
+      </View>
+    </ChatThemeGate>
   );
 }
 
-/* ===================== Styles ===================== */
-const COLS = 4;
-const TILE_MIN_WIDTH =
-  (Dimensions.get('window').width - 14 * 2 - 12 * (COLS - 1)) / COLS;
-  const MEDIA_BASE_W = Math.min(Dimensions.get('window').width * 0.7, 260);
-
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: '#f8f9fa' },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#ffffff' },
+  container: { flex: 1 },
 
-  header: {
-    backgroundColor: '#fff',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 10,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    zIndex: 100,
-    position: 'absolute',
-    top: 0, left: 0, right: 0,
-  },
-  headerBtn: {
-    width: 36, height: 36, borderRadius: 18,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  headerTitleWrap: { flex: 1, justifyContent: 'center', marginHorizontal: 4 },
-  headerRightRow: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  title: { fontSize: 18, fontWeight: '800', color: OUR_TEXT_DARK, textAlign: 'left' },
-  memberCount: { fontSize: 15, fontWeight: '700', color: '#c4c4c4', marginLeft: 2, marginTop: 2 },
-
-  floatingBarFixed: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    height: 32,
-    zIndex: 30,
-    pointerEvents: 'box-none',
-  },
-  floatingDate: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    alignItems: 'center',
-  },
-  datePill: {
-    paddingHorizontal: 14,
-    paddingVertical: 4,
-    borderRadius: 999,
-    backgroundColor: 'rgba(15,23,42,0.65)',
-  },
-  datePillTxt: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#ffffff',
+  headerWrap: {
+    zIndex: 50,
+    elevation: 0,
+    shadowColor: 'transparent',
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 0 },
+    borderBottomWidth: 0,
   },
 
-  sepWrap: {
-    alignSelf: 'center',
-    backgroundColor: 'rgba(241, 245, 249, 0.7)',
-    paddingHorizontal: 10, paddingVertical: 4,
-    borderRadius: 10, marginVertical: 10,
-  },
-  sepTxt: { fontSize: 11, color: '#64748b', fontWeight: '700' },
+  listWrap: { flex: 1 },
 
-  msgRow: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: 8,
-  },
-  nickText: { marginLeft: 4, marginBottom: 4, fontSize: 11, fontWeight: '800', color: '#475569' },
-
-  avatar: {
-    width: 32, height: 32, borderRadius: 16,
-    backgroundColor: OUR_TEXT_DARK, alignItems: 'center', justifyContent: 'center',
-  },
-  avatarImg: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#e5e7eb' },
-  avatarTxt: { color: '#fff', fontSize: 12, fontWeight: '800' },
-
-  msgBubble: {
-    maxWidth: '100%',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 18,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)',
-  },
-  mine: { borderTopRightRadius: 8, alignSelf: 'flex-end', backgroundColor: OUR_BLUE_BUBBLE },
-  theirs: { borderTopLeftRadius: 8, alignSelf: 'flex-start', backgroundColor: '#ffffff' },
-
-  msgTxt: { fontSize: 16, lineHeight: 22 },
-  msgImage: {
-    width: MEDIA_BASE_W,
-    height: MEDIA_BASE_W,
-    borderRadius: 20,
-    backgroundColor: 'transparent',
-  },
-
-  videoThumb: {
-    width: MEDIA_BASE_W,
-    height: MEDIA_BASE_W,
-    borderRadius: 20,
-    backgroundColor: '#e5e7eb',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  videoBadge: {
-    backgroundColor: '#111827cc', paddingHorizontal: 10, paddingVertical: 6,
-    borderRadius: 999, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 4,
-    shadowOffset: { width: 0, height: 1 }, elevation: 2,
-  },
-  videoTxt: { color: '#fff', fontWeight: '900', fontSize: 12 },
-
-  time: { fontSize: 11, alignSelf: 'flex-end' },
-  metaSmall: { fontSize: 12, fontWeight: '700' },
-
-  chatBody: { flex: 1, backgroundColor: '#f8f9fa' },
-
-  // ===== 입력 영역 =====
   inputWrap: {
-    borderTopWidth: 1,
-    borderColor: 'rgba(229, 231, 235, 0.3)',
-    backgroundColor: '#ffffff',
-    zIndex: 200,
-    paddingHorizontal: 10,
-    paddingTop: 6,
-    paddingBottom: 0,
-    marginBottom: -8,
-  },
-  inputRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: 8,
-  },
-  roundBtn: {
-    width: 40, height: 40, borderRadius: 20,
-    alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: 'rgba(229, 231, 235, 0.5)',
-    backgroundColor: '#ffffff',
-  },
-  sendBtnRound: {
-    backgroundColor: OUR_BLUE_BUBBLE,
-    borderColor: OUR_BLUE_BUBBLE,
-  },
-  inputPill: {
-    flex: 1,
-    borderWidth: 1, borderColor: 'rgba(229, 231, 235, 0.5)',
-    borderRadius: 20, paddingLeft: 12, paddingRight: 12,
-    minHeight: 44, backgroundColor: '#ffffff',
-  },
-  input: {
-    paddingTop: 10, paddingBottom: 10,
-    maxHeight: 120,
+    paddingTop: 0,
+    marginTop: 0,
   },
 
-  // 답글 컴포저
-  replyComposer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: '#f1f5f9',
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    marginBottom: 6,
-  },
-  replyComposerBar: { width: 3, alignSelf: 'stretch', borderRadius: 3, backgroundColor: '#94a3b8' },
-  replyComposerLabel: { fontSize: 11, fontWeight: '800', color: '#64748b', marginBottom: 2 },
-  replyComposerText: { fontSize: 13, color: '#111827' },
-  replyComposerClose: {
-    width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#e2e8f0',
-  },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 
-  backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.25)' },
-
-  sheet: {
-    position: 'absolute', left: 0, right: 0, bottom: 0,
-    backgroundColor: '#fff', borderTopLeftRadius: 16, borderTopRightRadius: 16,
-    padding: 14, borderTopWidth: 1, borderColor: '#eef0f2',
-  },
-  sheetTitle: { fontWeight: '800', color: OUR_TEXT_DARK, marginBottom: 10, fontSize: 16 },
-  sheetRow: { flexDirection: 'row', flexWrap: 'wrap', columnGap: 12, rowGap: 16, justifyContent: 'flex-start' },
-  tile: { width: TILE_MIN_WIDTH, alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 6, paddingHorizontal: 4, borderRadius: 10 },
-  tileTxt: { fontSize: 12, fontWeight: '700', color: OUR_TEXT_DARK, textAlign: 'center' },
-  sheetClose: { marginTop: 12, height: 40, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: OUR_TEXT_DARK },
-  sheetCloseTxt: { color: '#fff', fontWeight: '800' },
-
-  popMask: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.25)' },
-  popCard: {
-    position: 'absolute', left: 16, right: 16, bottom: 80,
-    backgroundColor: '#fff', borderRadius: 14, padding: 12,
-    borderWidth: 1, borderColor: '#eef0f2',
-    shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 10, elevation: 3,
-  },
-  popHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
-  popHeaderTxt: { fontSize: 16, fontWeight: '800', color: OUR_TEXT_DARK },
-  currLangPill: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    backgroundColor: '#fff1f2', borderWidth: 1, borderColor: '#ffe4e6',
-    paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999,
-  },
-  redDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: OUR_RED },
-  currLangTxt: { color: OUR_RED, fontWeight: '800', fontSize: 12 },
-  popToggles: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
-  popToggleBtn: {
-    flex: 1, alignItems: 'center', justifyContent: 'center',
-    borderRadius: 10, paddingVertical: 10, borderWidth: 1, borderColor: '#e5e7eb', backgroundColor: '#fff',
-  },
-  popToggleOn: { backgroundColor: OUR_TEXT_DARK, borderColor: OUR_TEXT_DARK },
-  popToggleTxt: { fontWeight: '800', color: OUR_TEXT_DARK },
-  popToggleTxtOn: { color: '#fff' },
-  popGhostBtn: { paddingHorizontal: 10, paddingVertical: 10, borderRadius: 10, backgroundColor: '#f1f5f9' },
-  popGhostTxt: { fontWeight: '800', color: OUR_TEXT_DARK },
-  popLangList: { maxHeight: 260 },
-  langRow: {
-    paddingVertical: 10, paddingHorizontal: 10, borderRadius: 10,
-    borderWidth: 1, borderColor: '#eef0f2', marginBottom: 6,
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-  },
-  langRowActive: { backgroundColor: '#fff1f2', borderColor: '#ffe4e6' },
-  langRowTxt: { fontSize: 14, fontWeight: '700', color: OUR_TEXT_DARK },
-  langRowTxtActive: { color: OUR_RED },
-  redDotSmall: { width: 6, height: 6, borderRadius: 3, backgroundColor: OUR_RED },
-
-  // 검색 모달
-  searchCard: {
-    position: 'absolute', left: 16, right: 16, top: 90,
-    backgroundColor: '#fff', borderRadius: 14, padding: 12,
-    borderWidth: 1, borderColor: '#eef0f2',
-    shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 10, elevation: 3,
-  },
-  searchHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
-  searchInputWrap: {
-    flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8,
-    backgroundColor: '#f1f5f9', borderWidth: 1, borderColor: '#e2e8f0',
-    paddingHorizontal: 10, paddingVertical: 8, borderRadius: 10,
-  },
-  searchInput: { flex: 1, paddingVertical: 0 },
-  searchClose: {
-    marginLeft: 8, width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#e5e7eb',
-  },
-  searchMeta: { fontSize: 12, color: '#64748b', marginBottom: 6, fontWeight: '700' },
-  searchItem: {
-    paddingVertical: 10, paddingHorizontal: 10, borderRadius: 10,
-    borderWidth: 1, borderColor: '#eef0f2', marginBottom: 6,
-    backgroundColor: '#fff',
-  },
-  searchItemTxt: { fontSize: 14, color: OUR_TEXT_DARK, fontWeight: '700' },
-  searchItemTime: { fontSize: 11, color: '#64748b', marginTop: 4 },
-
-  previewWrap: { flex: 1, backgroundColor: 'rgba(0,0,0,0.9)', alignItems: 'center', justifyContent: 'center' },
-  previewImg: { width: '92%', height: '72%', resizeMode: 'contain' },
-
-  audioBubbleWrap: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  audioPlayBtn: { height: 40, justifyContent: 'center' },
-  voiceMine: {
-    backgroundColor: 'rgba(37, 99, 235, 0.95)',
-    paddingVertical: 10, paddingHorizontal: 14, borderRadius: 999,
-    flexDirection: 'row', alignItems: 'center', gap: 10, alignSelf: 'flex-end',
-    borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.15)',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 3,
-  },
-  voiceTheirs: {
-    backgroundColor: 'rgba(241, 245, 249, 0.96)',
-    paddingVertical: 10, paddingHorizontal: 14, borderRadius: 999,
-    flexDirection: 'row', alignItems: 'center', gap: 10, alignSelf: 'flex-start',
-    borderWidth: 1, borderColor: 'rgba(148, 163, 253, 0.15)',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 3,
-  },
-  audioPlayIconCircle: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },
-  audioPlayIcon: { fontSize: 13, fontWeight: '800', color: '#fff' },
-  audioBarOuter: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  audioBar: { height: 6, borderRadius: 999, overflow: 'hidden' },
-  audioBarFill: { height: '100%', borderRadius: 999 },
-  audioDur: { fontSize: 12, fontWeight: '700', color: 'rgba(255,255,255,0.9)' },
-
-  replyInline: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8, paddingVertical: 4,
-    borderRadius: 10, marginBottom: 4, gap: 6,
-  },
-  replyInlineMine: { backgroundColor: 'rgba(0,0,0,0.12)' },
-  replyInlineTheirs: { backgroundColor: '#e5e7eb' },
-  replyInlineBar: { width: 3, height: '100%', borderRadius: 999, backgroundColor: '#94a3b8' },
-  replyInlineLabel: { fontSize: 10, fontWeight: '700', color: '#6b7280', marginBottom: 1 },
-  replyInlineText: { fontSize: 12, color: '#111827' },
-
-  replyActionSheet: {
-    position: 'absolute', left: 16, right: 16, bottom: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 16, paddingVertical: 8,
-    borderWidth: 1, borderColor: 'rgba(229, 231, 235, 0.5)',
-    shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 8, elevation: 4,
-  },
-  replyActionRow: { paddingHorizontal: 16, paddingVertical: 12 },
-  replyActionTxt: { fontSize: 15, fontWeight: '700', color: OUR_TEXT_DARK },
-
-  mediaShadowWrap: {
-    borderRadius: 20, overflow: 'hidden', backgroundColor: '#ffffff',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 3,
-    alignSelf: 'flex-start',
-  },
-
-  // 지도 스냅샷 스타일
-mapSnapWrap: {
-  width: MEDIA_BASE_W,
-  height: MEDIA_BASE_W,
-  borderRadius: 20,
-  overflow: 'hidden',
-  backgroundColor: '#e5e7eb',
-},
-mapSnap: { width: '100%', height: '100%' },
-
-mapPill: {
-  position: 'absolute',
-  bottom: 8,
-  left: 8,
-  backgroundColor: 'rgba(17,24,39,0.82)',
-  borderRadius: 999,
-  paddingHorizontal: 10,
-  paddingVertical: 6,
-},
-mapPillTxt: { color: '#fff', fontWeight: '800', fontSize: 12 },
-
-mapSnapInner: {
-  flex: 1,
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: 12,
-},
-mapSnapIconCircle: {
-  width: 40,
-  height: 40,
-  borderRadius: 20,
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: 'rgba(248, 250, 252, 0.9)',
-  marginBottom: 8,
-},
-mapSnapTitle: {
-  fontSize: 14,
-  fontWeight: '800',
-  color: '#111827',
-  marginBottom: 4,
-},
-mapSnapSub: {
-  fontSize: 11,
-  fontWeight: '700',
-  color: '#6b7280',
-},
-mapTop: {
-  flex: 2,
-  backgroundColor: '#dbeafe',      // 연한 파란색 (지도 느낌)
-  position: 'relative',
-},
-mapBottom: {
-  flex: 1,
-  backgroundColor: '#f9fafb',
-  paddingHorizontal: 14,
-  paddingVertical: 10,
-  justifyContent: 'center',
-},
-
-mapPattern: {
-  ...StyleSheet.absoluteFillObject,
-},
-mapRoad: {
-  position: 'absolute',
-  height: 14,
-  borderRadius: 999,
-  backgroundColor: '#f9fafb',
-  borderWidth: 1,
-  borderColor: 'rgba(148,163,184,0.35)',
-},
-mapCircle: {
-  position: 'absolute',
-  width: 80,
-  height: 80,
-  borderRadius: 40,
-  borderWidth: 1,
-  borderColor: 'rgba(37,99,235,0.25)',
-  backgroundColor: 'rgba(191,219,254,0.6)',
-  top: '32%',
-  left: '32%',
-},
-
-mapHint: {
-  marginTop: 4,
-  fontSize: 11,
-  fontWeight: '700',
-  color: '#9ca3af',
-},
- 
-langBadgeGlass: {
-  position: 'absolute',
-  left: -20,
-  top: 8,
-  paddingHorizontal: 6,
-  paddingVertical: 1.5,
-  borderRadius: 8,
-  backgroundColor: 'rgba(231, 76, 60, 0.25)', // OUR_RED 기반 유리 느낌
-  borderWidth: 1,
-  borderColor: 'rgba(231, 77, 60, 0)',
-  shadowColor: '#e74c3c',
-  shadowOpacity: 0.25,
-  shadowRadius: 4,
-  shadowOffset: { width: 0, height: 1 },
-  elevation: 3,
-},
-langBadgeGlassTxt: {
-  fontSize: 9,
-  fontWeight: '800',
-  color: OUR_RED,
-  letterSpacing: 0.6,
-},
-  // ===== 위치 공유 카드 (가짜 지도 + 주소 바) =====
-// ===== 위치 공유 카드 (가짜 지도 + 주소 바) =====
-  mapCard: {
-    width: MEDIA_BASE_W,
-    height: MEDIA_BASE_W * 0.8,
-    borderRadius: 22,
-    overflow: 'hidden',
-    backgroundColor: '#ffffff',  // 👉 전체 카드는 흰색
-    borderWidth: 1,
-    borderColor: 'rgba(148,163,184,0.25)', // 연한 테두리
-  },
-  mapCardTop: {
-    flex: 3,
-    backgroundColor: '#f5f7fb',  // 아주 옅은 파란기 섞인 회색
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
-  mapCardBottom: {
-    flex: 2,
-    backgroundColor: '#f3f4f6',  // 주소 영역은 살짝만 진한 회색
-    justifyContent: 'center',
-    paddingHorizontal: 18,
-    borderTopWidth: 1,
-    borderColor: 'rgba(148,163,184,0.28)',
-  },
-  mapCenterBadge: {
-    alignItems: 'center',
-  },
-  mapCenterPinCircle: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    backgroundColor: '#ffffff',
+  bootCover: {
+    zIndex: 9999,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.05,          // 🔹 그림자 살짝만
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  mapTitle: {
-    marginTop: 10,
-    fontSize: 14,
-    fontWeight: '700',            // 🔹 900 → 700
-    color: '#1f2933',             // 완전검정보다 살짝 부드러운 색
-  },
-  mapSubTitle: {
-    marginTop: 3,
-    fontSize: 11,
-    fontWeight: '500',            // 🔹 힘 빼기
-    color: '#9ca3af',
-  },
-  mapAddr: {
-    fontSize: 13,                 // 🔹 살짝 줄임
-    fontWeight: '600',            // 주소가 주인공이지만 너무 무겁지 않게
-    color: '#111827',
   },
 
-  // 흐릿한 지도 라인 (카톡 초록 물결 느낌, 색은 더 옅게)
-  mapShape1: {
+  newPill: {
     position: 'absolute',
-    width: '150%',
-    height: 70,
-    borderRadius: 40,
-    backgroundColor: 'rgba(148,163,184,0.10)',   // 0.22 → 0.10
-    top: 4,
-    left: -30,
-    transform: [{ rotate: '6deg' }],
-  },
-  mapShape2: {
-    position: 'absolute',
-    width: '145%',
-    height: 60,
-    borderRadius: 40,
-    backgroundColor: 'rgba(52,211,153,0.10)',    // 0.18 → 0.10
-    top: 40,
-    right: -40,
-    transform: [{ rotate: '-8deg' }],
-  },
-  mapShape3: {
-    position: 'absolute',
-    width: '140%',
-    height: 52,
-    borderRadius: 40,
-    backgroundColor: 'rgba(148,163,184,0.08)',   // 0.15 → 0.08
-    bottom: 6,
-    left: -20,
-    transform: [{ rotate: '4deg' }],
-  },
-  multiImgGrid: {
-    width: MEDIA_BASE_W,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    overflow: 'hidden',
-  },
-  multiImgCell: {
-    width: '50%',   // 2열 그리드
-    aspectRatio: 1, // 정사각형
-  },
-  multiImg: {
-    width: '100%',
-    height: '100%',
-  },
-  systemDeletedBubble: {
-    paddingHorizontal: 16,
+    alignSelf: 'center',
+    paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 999,
-    backgroundColor: '#e5e7eb',
-    alignItems: 'center',
-    justifyContent: 'center',
-    maxWidth: '80%',
+    backgroundColor: '#111827',
+    opacity: 0.92,
   },
-  systemDeletedText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#4b5563',
-  },
-  selectMarkerWrap: {
-    width: 26,
-    alignItems: 'center',
-    justifyContent: 'flex-end', 
-    alignSelf: 'center',        // ⬅️ 세로 중앙
-    marginRight: 6,
-  },
-  selectMarkerOuter: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#d1d5db',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f9fafb',
-  },
-  selectMarkerOuterOn: {
-    borderColor: OUR_RED,
-    backgroundColor: '#fee2e2',
-  },
-  selectMarkerInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: OUR_RED,
-  },
-
-  selectionBanner: {
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    backgroundColor: '#f9fafb',
-    borderBottomWidth: 1,
-    borderColor: '#e5e7eb',
-  },
-  selectionBannerTxt: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#6b7280',
-  },
-
-  selectionFooter: {
-    borderTopWidth: 1,
-    borderColor: 'rgba(229,231,235,0.7)',
-    backgroundColor: '#ffffff',
-    paddingHorizontal: 14,
-    paddingTop: 8,
-  },
-  selectionFooterTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 6,
-  },
-  selectionFooterTxt: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#4b5563',
-  },
-  selectionFooterClear: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#9ca3af',
-  },
-  selectionFooterBar: {
-    paddingVertical: 6,
-  },
-  selectionDeleteBtn: {
-    height: 42,
-    borderRadius: 999,
-    backgroundColor: OUR_RED,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  selectionDeleteTxt: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: '800',
-  },
-  deleteDialogCard: {
-    position: 'absolute',
-    left: 32,
-    right: 32,
-    top: '32%',
-    backgroundColor: '#ffffff',
-    borderRadius: 14,
-    paddingHorizontal: 18,
-    paddingTop: 18,
-    paddingBottom: 10,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 6,
-  },
-  deleteDialogTitle: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#111827',
-    marginBottom: 4,
-  },
-  deleteDialogDesc: {
-    fontSize: 13,
-    color: '#4b5563',
-    marginBottom: 10,
-  },
-  deleteRadioRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  deleteRadioOuter: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    borderWidth: 2,
-    borderColor: '#d1d5db',
-    marginRight: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  deleteRadioOuterOn: {
-    borderColor: OUR_RED,
-  },
-  deleteRadioInner: {
-    width: 9,
-    height: 9,
-    borderRadius: 4.5,
-    backgroundColor: OUR_RED,
-  },
-  deleteRadioLabel: {
-    fontSize: 14,
-    color: '#111827',
-    fontWeight: '700',
-  },
-  deleteDialogHint: {
-    marginTop: 6,
-    fontSize: 11,
-    color: '#9ca3af',
-  },
-  deleteDialogButtonsRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: 12,
-  },
-  deleteDialogBtn: {
-    minWidth: 70,
-    height: 34,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 8,
-    paddingHorizontal: 10,
-  },
-  deleteDialogBtnText: {
-    fontSize: 13,
-    fontWeight: '800',
-  },
-  newMsgPill: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 999,
-    backgroundColor: '#0f172acc', // 진한 남색 + 약간 투명
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 4,
-  },
-  newMsgPillTxt: {
-    color: '#ffffff',
-    fontSize: 12,
-    fontWeight: '800',
-  },
-
+  newPillText: { color: '#ffffff', fontSize: 12, fontWeight: '600' },
 });

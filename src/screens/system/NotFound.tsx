@@ -4,10 +4,10 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AppHeader from '@/components/AppHeader';
+import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
 
-type RetryRoute =
-  | { name: string; params?: Record<string, any> }
-  | null;
+type RetryRoute = { name: string; params?: Record<string, any> } | null;
 
 export default function NotFound() {
   const navigation = useNavigation<any>();
@@ -33,7 +33,6 @@ export default function NotFound() {
         // 실패 시 홈으로
       }
     }
-    // 안전 폴백: 홈 탭(또는 메인)으로
     navigation.reset({ index: 0, routes: [{ name: 'Home' as any }] });
   };
 
@@ -47,71 +46,124 @@ export default function NotFound() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <AppHeader title="Not Found" showBack />
-      <View style={s.wrap}>
-        <Text style={s.title}>페이지를 찾을 수 없어요</Text>
-        <Text style={s.sub} numberOfLines={3}>{desc}</Text>
+    <View style={styles.root}>
+      {/* ✅ SplashGate/Login과 동일: StatusBar 투명 */}
+      <StatusBar translucent backgroundColor="transparent" style="light" />
 
-        <View style={{ height: 12 }} />
+      {/* ✅ 동일 톤의 그라데이션 배경 */}
+      <LinearGradient
+        colors={['#833ab4', '#fd1d1d', '#fcb045']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
 
-        <Pressable style={[s.btn, s.primary]} onPress={onRetry}>
-          <Text style={s.primaryTxt}>{retryRoute?.name ? '다시 시도' : '홈으로 이동'}</Text>
-        </Pressable>
-
-        <View style={{ height: 8 }} />
-
-        <Pressable style={[s.btn, s.ghost]} onPress={goBackSafe}>
-          <Text style={s.ghostTxt}>{canGoBack ? '이전으로' : '홈으로'}</Text>
-        </Pressable>
-
-        {/* (선택) 빠른 이동 단축키들 */}
-        <View style={s.quickRow}>
-          <Pressable style={s.quick} onPress={() => navigation.navigate('Friends' as any)}>
-            <Text style={s.quickTxt}>친구</Text>
-          </Pressable>
-          <Pressable style={s.quick} onPress={() => navigation.navigate('MeStack' as any)}>
-            <Text style={s.quickTxt}>설정</Text>
-          </Pressable>
+      <SafeAreaView style={styles.safe}>
+        {/* 헤더가 흰 배경 전제일 수 있어 대비 보강 */}
+        <View style={styles.headerBg}>
+          <AppHeader title="Not Found" showBack />
         </View>
 
-        {/* 디버그 힌트(개발 중 도움) */}
-        {!!__DEV__ && (
-          <View style={s.debug}>
-            <Text style={s.debugTxt}>route.name: {String(route?.name ?? '-')}</Text>
-            <Text style={s.debugTxt}>retryRoute: {retryRoute ? JSON.stringify(retryRoute) : '(none)'}</Text>
+        <View style={s.wrap}>
+          <Text style={s.title}>페이지를 찾을 수 없어요</Text>
+          <Text style={s.sub} numberOfLines={3}>
+            {desc}
+          </Text>
+
+          <View style={{ height: 12 }} />
+
+          <Pressable style={[s.btn, s.primary]} onPress={onRetry}>
+            <Text style={s.primaryTxt}>
+              {retryRoute?.name ? '다시 시도' : '홈으로 이동'}
+            </Text>
+          </Pressable>
+
+          <View style={{ height: 8 }} />
+
+          <Pressable style={[s.btn, s.ghost]} onPress={goBackSafe}>
+            <Text style={s.ghostTxt}>{canGoBack ? '이전으로' : '홈으로'}</Text>
+          </Pressable>
+
+          {/* (선택) 빠른 이동 단축키들 */}
+          <View style={s.quickRow}>
+            <Pressable style={s.quick} onPress={() => navigation.navigate('Friends' as any)}>
+              <Text style={s.quickTxt}>친구</Text>
+            </Pressable>
+            <Pressable style={s.quick} onPress={() => navigation.navigate('MeStack' as any)}>
+              <Text style={s.quickTxt}>설정</Text>
+            </Pressable>
           </View>
-        )}
-      </View>
-    </SafeAreaView>
+
+          {/* 디버그 힌트(개발 중 도움) */}
+          {!!__DEV__ && (
+            <View style={s.debug}>
+              <Text style={s.debugTxt}>route.name: {String(route?.name ?? '-')}</Text>
+              <Text style={s.debugTxt}>
+                retryRoute: {retryRoute ? JSON.stringify(retryRoute) : '(none)'}
+              </Text>
+            </View>
+          )}
+        </View>
+      </SafeAreaView>
+    </View>
   );
 }
 
+const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: '#000' },
+  safe: { flex: 1 },
+  headerBg: {
+    backgroundColor: 'rgba(0,0,0,0.25)',
+  },
+});
+
 const s = StyleSheet.create({
   wrap: { flex: 1, padding: 16, alignItems: 'center', justifyContent: 'center' },
-  title: { fontSize: 18, fontWeight: '800', color: '#111827', textAlign: 'center' },
-  sub: { marginTop: 6, color: '#6b7280', textAlign: 'center' },
+
+  // 대비 강화
+  title: { fontSize: 18, fontWeight: '800', color: '#fff', textAlign: 'center' },
+  sub: { marginTop: 6, color: 'rgba(255,255,255,0.85)', textAlign: 'center' },
 
   btn: {
-    height: 44, borderRadius: 10, alignItems: 'center', justifyContent: 'center',
+    height: 44,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
     minWidth: 180,
   },
-  primary: { backgroundColor: '#111827' },
+  primary: {
+    backgroundColor: 'rgba(17,24,39,0.92)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.18)',
+  },
   primaryTxt: { color: '#fff', fontWeight: '800' },
-  ghost: { borderWidth: 1, borderColor: '#e5e7eb', backgroundColor: '#fff' },
-  ghostTxt: { color: '#111827', fontWeight: '800' },
+  ghost: {
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.35)',
+    backgroundColor: 'rgba(255,255,255,0.14)',
+  },
+  ghostTxt: { color: '#fff', fontWeight: '800' },
 
   quickRow: { flexDirection: 'row', gap: 10, marginTop: 14 },
   quick: {
-    paddingHorizontal: 12, height: 36, borderRadius: 10,
-    borderWidth: 1, borderColor: '#e5e7eb', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#fff',
+    paddingHorizontal: 12,
+    height: 36,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.35)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.14)',
   },
-  quickTxt: { color: '#111827', fontWeight: '800' },
+  quickTxt: { color: '#fff', fontWeight: '800' },
 
   debug: {
-    marginTop: 16, padding: 10, borderRadius: 8,
-    borderWidth: 1, borderColor: '#fde68a', backgroundColor: '#fef3c7',
+    marginTop: 16,
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(253,230,138,0.6)',
+    backgroundColor: 'rgba(254,243,199,0.92)',
     alignSelf: 'stretch',
   },
   debugTxt: { color: '#92400e', fontSize: 12 },

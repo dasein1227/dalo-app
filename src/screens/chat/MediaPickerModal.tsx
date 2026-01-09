@@ -1,13 +1,35 @@
 // src/screens/chat/MediaPickerModal.tsx
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Modal, View, Text, Pressable, StyleSheet, FlatList, Image, Alert,
-  Animated, PanResponder, Dimensions, ImageSourcePropType, Platform,
+  Modal,
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  FlatList,
+  Image,
+  Alert,
+  Animated,
+  PanResponder,
+  Dimensions,
+  ImageSourcePropType,
+  Platform,
 } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import * as ImageManipulator from 'expo-image-manipulator';
 
-type PickedAsset = { uri: string; filename: string; isVideo: boolean };
+type PickedAsset = {
+  uri: string;
+  filename: string;
+  isVideo: boolean;
+
+  /** ✅ 레이아웃(깜빡임 제거)용 메타 */
+  width?: number;
+  height?: number;
+
+  /** (선택) 영상 길이도 원하면 여기 */
+  durationSec?: number;
+};
 
 type Props = {
   visible: boolean;
@@ -26,18 +48,26 @@ type Props = {
 };
 
 export default function MediaPickerModal({
-  visible, onClose, photoQuality, videoQuality,
-  onChangePhotoQuality, onChangeVideoQuality, onSendSelected, themeColor,
-  downArrowSource, editIconSource, qualityIconSource,
+  visible,
+  onClose,
+  photoQuality,
+  videoQuality,
+  onChangePhotoQuality,
+  onChangeVideoQuality,
+  onSendSelected,
+  themeColor,
+  downArrowSource,
+  editIconSource,
+  qualityIconSource,
 }: Props) {
   if (!visible) return null;
 
   const { width: W, height: H } = Dimensions.get('window');
 
   /** ===== Sheet geometry ===== */
-  const SHEET_MAX = Math.round(H * 0.90); // 시트 전체 높이
+  const SHEET_MAX = Math.round(H * 0.9); // 시트 전체 높이
   const SHEET_MIN = Math.round(H * 0.45); // 축소 상태의 전체 보이는 높이(하단바 별개)
-  const BOTTOM_BAR_H = 56;                // 고정 하단 바 높이
+  const BOTTOM_BAR_H = 56; // 고정 하단 바 높이
 
   const _rawOffset = SHEET_MAX - (SHEET_MIN + Math.floor(BOTTOM_BAR_H * 0.35));
   const COMPACT_OFFSET = Math.max(0, _rawOffset);
@@ -66,16 +96,19 @@ export default function MediaPickerModal({
   /** ===== translateY 애니메이션 ===== */
   const ty = useRef(new Animated.Value(COMPACT_OFFSET)).current;
 
-  const springTo = useCallback((expanded: boolean) => {
-    Animated.spring(ty, {
-      toValue: expanded ? 0 : COMPACT_OFFSET,
-      useNativeDriver: true,
-      damping: 22,
-      stiffness: 180,
-      mass: 0.7,
-      velocity: 0.4,
-    }).start();
-  }, [ty, COMPACT_OFFSET]);
+  const springTo = useCallback(
+    (expanded: boolean) => {
+      Animated.spring(ty, {
+        toValue: expanded ? 0 : COMPACT_OFFSET,
+        useNativeDriver: true,
+        damping: 22,
+        stiffness: 180,
+        mass: 0.7,
+        velocity: 0.4,
+      }).start();
+    },
+    [ty, COMPACT_OFFSET],
+  );
 
   /** ===== 초기화 + 권한 ===== */
   useEffect(() => {
@@ -121,8 +154,7 @@ export default function MediaPickerModal({
   const start = useRef({ y: 0, ty0: 0 }).current;
 
   const pan = PanResponder.create({
-    onMoveShouldSetPanResponder: (_, g) =>
-      Math.abs(g.dy) > 2 && Math.abs(g.dy) > Math.abs(g.dx),
+    onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dy) > 2 && Math.abs(g.dy) > Math.abs(g.dx),
     onStartShouldSetPanResponder: () => false,
     onPanResponderGrant: (_, g) => {
       start.y = g.y0;
@@ -141,18 +173,23 @@ export default function MediaPickerModal({
       });
     },
     onPanResponderRelease: (_, g) => {
-      if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
       // @ts-ignore
       ty.stopAnimation((v: number) => {
         const goExpanded =
-          g.vy < -0.45 || v < COMPACT_OFFSET * 0.45 || (v < COMPACT_OFFSET * 0.60 && g.dy < -64);
+          g.vy < -0.45 || v < COMPACT_OFFSET * 0.45 || (v < COMPACT_OFFSET * 0.6 && g.dy < -64);
         springTo(goExpanded);
       });
     },
   });
   const dragHandlers = pan.panHandlers;
 
-  useEffect(() => () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); }, []);
+  useEffect(() => () => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+  }, []);
 
   /** ===== select / send ===== */
   const isSelected = useCallback((u: string) => selectedUris.includes(u), [selectedUris]);
@@ -170,31 +207,50 @@ export default function MediaPickerModal({
     if (sel.length === 0) return;
 
     const packed: PickedAsset[] = [];
+
     for (const a of sel) {
       const isVideo = a.mediaType === MediaLibrary.MediaType.video;
+
       let uri = a.uri;
       let filename = a.filename || (isVideo ? `video_${Date.now()}.mp4` : `image_${Date.now()}.jpg`);
+
+      // ✅ 원본 메타 (expo-media-library Asset에 width/height 존재)
+      let outW = typeof (a as any).width === 'number' ? (a as any).width : undefined;
+      let outH = typeof (a as any).height === 'number' ? (a as any).height : undefined;
 
       // 사진 화질 옵션 적용 (original 아닐 때 압축)
       if (!isVideo && photoQuality !== 'original') {
         const q = photoQuality === 'low' ? 0.3 : 0.7;
         try {
-          const m = await ImageManipulator.manipulateAsync(
-            a.uri,
-            [],
-            { compress: q, format: ImageManipulator.SaveFormat.JPEG }
-          );
+          const m = await ImageManipulator.manipulateAsync(a.uri, [], {
+            compress: q,
+            format: ImageManipulator.SaveFormat.JPEG,
+          });
+
           uri = m.uri;
           filename = filename.replace(/\.\w+$/, '.jpg');
-        } catch {}
+
+          // ✅ 조작 결과 메타가 있으면 그걸 우선 사용 (없으면 원본 메타 유지)
+          if (typeof (m as any).width === 'number') outW = (m as any).width;
+          if (typeof (m as any).height === 'number') outH = (m as any).height;
+        } catch {
+          // silent
+        }
       }
 
-      packed.push({ uri, filename, isVideo });
+      packed.push({
+        uri,
+        filename,
+        isVideo,
+        width: outW,
+        height: outH,
+        durationSec: isVideo ? (typeof a.duration === 'number' ? a.duration : undefined) : undefined,
+      });
     }
 
     // ✅ Chat.tsx 쪽에서 "[images]"로 묶을지 판단할 수 있도록
     // "사진만 2장 이상 & 묶어보내기 ON" 인 경우에만 bundle 플래그를 true로 보냄
-    const allImages = packed.every(p => !p.isVideo);
+    const allImages = packed.every((p) => !p.isVideo);
     const effectiveBundleSend = bundleSend && packed.length > 1 && allImages;
 
     await onSendSelected(packed, effectiveBundleSend);
@@ -207,8 +263,8 @@ export default function MediaPickerModal({
   const albumTitle = currentAlbum ? currentAlbum.title : '전체보기';
   const titleWithCount = `${albumTitle} ${totalCount.toLocaleString()}`;
   const selectedAssets = useMemo(
-    () => selectedUris.map(u => assets.find(a => a.uri === u)).filter(Boolean) as MediaLibrary.Asset[],
-    [selectedUris, assets]
+    () => selectedUris.map((u) => assets.find((a) => a.uri === u)).filter(Boolean) as MediaLibrary.Asset[],
+    [selectedUris, assets],
   );
 
   // 그리드가 고정 하단 바와 겹치지 않도록 항상 패딩 확보
@@ -250,7 +306,7 @@ export default function MediaPickerModal({
               </Pressable>
 
               <Pressable
-                onPress={() => setShowAlbumDropdown(v => !v)}
+                onPress={() => setShowAlbumDropdown((v) => !v)}
                 style={S.centerTapArea}
                 hitSlop={{ top: 10, bottom: 10, left: 24, right: 24 }}
               >
@@ -314,7 +370,7 @@ export default function MediaPickerModal({
                       const count: number | undefined =
                         typeof (item as any).assetCount === 'number'
                           ? (item as any).assetCount
-                          : (item as MediaLibrary.Album).assetCount as any;
+                          : ((item as MediaLibrary.Album).assetCount as any);
                       return (
                         <Pressable
                           onPress={() => {
@@ -388,11 +444,7 @@ export default function MediaPickerModal({
             </Pressable>
 
             <View style={{ marginLeft: 'auto', flexDirection: 'row', alignItems: 'center' }}>
-              <Pressable
-                style={S.iconBtn}
-                onPress={() => Alert.alert('편집', '추후 제공 예정')}
-                hitSlop={8}
-              >
+              <Pressable style={S.iconBtn} onPress={() => Alert.alert('편집', '추후 제공 예정')} hitSlop={8}>
                 {editIconSource ? (
                   <Image source={editIconSource} style={S.iconImg} resizeMode="contain" />
                 ) : (
@@ -424,9 +476,7 @@ export default function MediaPickerModal({
             <Text style={S.qSec}>사진</Text>
             {(['low', 'standard', 'original'] as const).map((opt) => (
               <Pressable key={opt} style={S.qRow} onPress={() => onChangePhotoQuality(opt)}>
-                <Text style={S.qTxt}>
-                  {opt === 'low' ? '저용량' : opt === 'standard' ? '일반 화질' : '원본'}
-                </Text>
+                <Text style={S.qTxt}>{opt === 'low' ? '저용량' : opt === 'standard' ? '일반 화질' : '원본'}</Text>
                 <View style={[S.radio, photoQuality === opt && { borderColor: themeColor }]}>
                   {photoQuality === opt && <View style={[S.radioDot, { backgroundColor: themeColor }]} />}
                 </View>
@@ -459,33 +509,49 @@ const S = StyleSheet.create({
   /** 움직이는 시트 (위치만 애니메이션) */
   sheet: {
     position: 'absolute',
-    left: 0, right: 0, bottom: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 
   /** 시트 마스크 (모서리/배경/클리핑) */
   sheetMask: {
     flex: 1,
     backgroundColor: '#fff',
-    borderTopLeftRadius: 16, borderTopRightRadius: 16,
-    borderTopWidth: 1, borderColor: '#ecedf0',
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    borderTopWidth: 1,
+    borderColor: '#ecedf0',
     overflow: 'hidden',
   },
 
   /** Top bar */
   topBar: { height: 48, justifyContent: 'center', zIndex: 5 },
   topLeftBtn: {
-    position: 'absolute', left: 6, top: 2,
-    width: 44, height: 44, alignItems: 'center', justifyContent: 'center', zIndex: 6,
+    position: 'absolute',
+    left: 6,
+    top: 2,
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 6,
   },
   topX: { fontSize: 26, color: '#111827' },
 
   centerTapArea: {
-    position: 'absolute', left: 0, right: 0,
-    height: 48, alignItems: 'center', justifyContent: 'center', zIndex: 5,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 5,
   },
   centerRow: { flexDirection: 'row', alignItems: 'center', maxWidth: '80%' },
   centerTitle: {
-    fontSize: 18, color: '#111827',
+    fontSize: 18,
+    color: '#111827',
     fontWeight: Platform.OS === 'ios' ? ('600' as any) : ('700' as any),
     textAlign: 'center',
   },
@@ -493,9 +559,16 @@ const S = StyleSheet.create({
   downArrowTxt: { marginLeft: 6, fontSize: 16, color: '#111827' },
 
   topRightSend: {
-    position: 'absolute', right: 8, top: 8,
-    paddingHorizontal: 16, minWidth: 74,
-    height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center', zIndex: 6,
+    position: 'absolute',
+    right: 8,
+    top: 8,
+    paddingHorizontal: 16,
+    minWidth: 74,
+    height: 34,
+    borderRadius: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 6,
   },
   sendPillTxt: { fontSize: 15, fontWeight: '700' },
 
@@ -508,27 +581,46 @@ const S = StyleSheet.create({
   selItem: { width: 52, height: 52, marginRight: 8, borderRadius: 8, overflow: 'hidden' },
   selImg: { width: '100%', height: '100%' },
   selClose: {
-    position: 'absolute', right: 2, top: 2,
-    width: 18, height: 18, borderRadius: 9,
-    backgroundColor: '#0008', alignItems: 'center', justifyContent: 'center',
+    position: 'absolute',
+    right: 2,
+    top: 2,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: '#0008',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   selCloseTxt: { color: '#fff', fontSize: 12, fontWeight: '700' },
 
   /** Dropdown */
   dropdownWrap: {
-    position: 'absolute', left: 0, right: 0, top: 66,
-    alignItems: 'center', zIndex: 10,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 66,
+    alignItems: 'center',
+    zIndex: 10,
   },
   dropdown: {
-    width: '86%', maxHeight: 280,
-    backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#ecedf0',
-    paddingVertical: 6, elevation: 6,
-    shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 10,
+    width: '86%',
+    maxHeight: 280,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#ecedf0',
+    paddingVertical: 6,
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
     shadowOffset: { width: 0, height: 6 },
   },
   dropdownRow: {
-    paddingHorizontal: 14, paddingVertical: 10,
-    flexDirection: 'row', alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   dropdownTxt: { fontSize: 16, color: '#111827', flex: 1 },
   dropdownCnt: { fontSize: 16, color: '#9ca3af' },
@@ -544,18 +636,28 @@ const S = StyleSheet.create({
 
   /** Video duration */
   durationBadge: {
-    position: 'absolute', right: 4, bottom: 4,
-    backgroundColor: '#00000099', borderRadius: 4,
-    paddingHorizontal: 5, paddingVertical: 2,
+    position: 'absolute',
+    right: 4,
+    bottom: 4,
+    backgroundColor: '#00000099',
+    borderRadius: 4,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
   },
   durationTxt: { color: '#fff', fontSize: 11, fontWeight: '600' },
 
   /** 선택 원 & 순번 */
   checkCircle: {
-    position: 'absolute', right: 6, top: 6,
-    width: 22, height: 22, borderRadius: 11,
-    borderWidth: 2, borderColor: '#fff',
-    alignItems: 'center', justifyContent: 'center',
+    position: 'absolute',
+    right: 6,
+    top: 6,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: 'rgba(0,0,0,0.35)',
   },
   checkMark: { color: '#fff', fontWeight: '800', fontSize: 12, includeFontPadding: false },
@@ -564,16 +666,23 @@ const S = StyleSheet.create({
   /** === 고정 하단 바 (시트 밖) === */
   bottomBarFixed: {
     position: 'absolute',
-    left: 0, right: 0, bottom: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     zIndex: 50,
   },
   bottomBarCard: {
     height: 56,
-    borderTopWidth: 1, borderColor: '#ecedf0',
+    borderTopWidth: 1,
+    borderColor: '#ecedf0',
     backgroundColor: '#fff',
-    flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
     elevation: 8,
-    shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
     shadowOffset: { width: 0, height: -3 },
   },
   bundleBtn: { flexDirection: 'row', alignItems: 'center' },
@@ -588,26 +697,37 @@ const S = StyleSheet.create({
   /** Quality popup */
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center', alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.35)', zIndex: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    zIndex: 100,
   },
   qCard: {
-    width: '80%', maxWidth: 360,
-    backgroundColor: '#fff', borderRadius: 12,
-    borderWidth: 1, borderColor: '#ecedf0',
+    width: '80%',
+    maxWidth: 360,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#ecedf0',
     padding: 16,
   },
   qHeader: { fontSize: 18, color: '#111827', marginBottom: 10, fontWeight: '600' },
   qSec: { fontSize: 15, color: '#111827', marginBottom: 6, marginTop: 2, fontWeight: '500' },
   qRow: {
-    flexDirection: 'row', alignItems: 'center',
-    justifyContent: 'space-between', paddingVertical: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
   },
   qTxt: { fontSize: 15, color: '#111827' },
   radio: {
-    width: 22, height: 22, borderRadius: 11,
-    borderWidth: 2, borderColor: '#cbd5e1',
-    alignItems: 'center', justifyContent: 'center',
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: '#cbd5e1',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   radioDot: { width: 10, height: 10, borderRadius: 5 },
   qConfirmWrap: { alignItems: 'flex-end', paddingTop: 6 },
