@@ -1,0 +1,14 @@
+{
+  "title": "Bild bearbeiten",
+  "ratio_original": "Original",
+  "ratio_free": "Frei",
+  "rotate": "Drehen",
+  "ratio": "Verhältnis",
+  "invert": "Horizontal/vertikal",
+  "orientation": "Ausrichtung",
+  "reset": "Zurücksetzen",
+  "error_load_title": "Fehler",
+  "error_load_msg": "Bild konnte nicht geladen werden.",
+  "error_save_title": "Speichern fehlgeschlagen",
+  "error_save_msg": "Bitte später erneut versuchen."
+}

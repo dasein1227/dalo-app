@@ -1,0 +1,27 @@
+{
+  "splash_loading": "Start wird vorbereitet…",
+  "offline": "Du bist offline. Prüfe deine Verbindung.",
+  "not_found": "Seite nicht gefunden.",
+  "notFound": {
+    "header": "Seite nicht gefunden",
+    "title": "Diese Seite wurde nicht gefunden",
+    "desc": "Der angeforderte Bildschirm wurde nicht gefunden. Prüfe Pfad oder Details.",
+    "retry": "Erneut versuchen",
+    "home": "Zur Startseite",
+    "homeShort": "Startseite",
+    "previous": "Zurück",
+    "quick": {
+      "friends": "Freunde",
+      "settings": "Einstellungen"
+    }
+  },
+  "offlineScreen": {
+    "header": "Offline",
+    "title": "Du bist offline",
+    "desc": "Prüfe deine Netzwerkverbindung.\nWLAN oder mobile Daten sind möglicherweise deaktiviert.",
+    "retry": "Erneut versuchen",
+    "check": "Verbindung prüfen",
+    "openSettings": "Einstellungen öffnen",
+    "home": "Startseite"
+  }
+}

@@ -1,0 +1,193 @@
+﻿C:\dalo-app\src\lib\chatSync\pull.ts:355: function normalizeReplyTarget(row: ChatMessageRow): string | null {
+C:\dalo-app\src\lib\chatSync\pull.ts:378: __replyToMessageUid: normalizeReplyTarget(row) ?? base.__replyToMessageUid ?? inc.__replyToMessageUid ?? null,
+C:\dalo-app\src\lib\chatSync\pull.ts:752: let replyTarget = normalizeReplyTarget(row);
+C:\dalo-app\src\lib\chatSync\pull.ts:792: replyTarget = null;
+C:\dalo-app\src\lib\chatSync\pull.ts:863: if ('reply_to_message_uid' in m) (m as any).reply_to_message_uid = replyTarget;
+C:\dalo-app\src\lib\chatSync\pull.ts:864: if ('reply_to_message_id' in m) (m as any).reply_to_message_id = replyTarget;
+C:\dalo-app\src\screens\chat\components\InputBar\InputBar.tsx:8: import InputReplyPreview from './InputReplyPreview';
+C:\dalo-app\src\screens\chat\components\InputBar\InputBar.tsx:135: <InputReplyPreview
+C:\dalo-app\src\screens\chat\components\InputBar\InputBar3.tsx:8: import InputReplyPreview from './InputReplyPreview';
+C:\dalo-app\src\screens\chat\components\InputBar\InputBar3.tsx:48: senderName: replyTo.senderName ?? null,
+C:\dalo-app\src\screens\chat\components\InputBar\InputBar3.tsx:164: <InputReplyPreview
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview.tsx:1: // src/screens/chat/components/InputBar/InputReplyPreview.tsx
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview.tsx:52: export default function InputReplyPreview({ replyTo, onCancel, theme }: Props) {
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview.tsx:56: const labelName = String(senderName || t('chat:replyPreview.peer'));
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview.tsx:80: labelName,
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview.tsx:89: const bg = theme.replyPreviewBg;
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview.tsx:116: {t('chat:replyPreview.replyTo', { name: labelName })}
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview.tsx:146: console.log('[reply-cancel-source] InputReplyPreview.closePress', {
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview.tsx:150: labelName,
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview.tsx:157: accessibilityLabel={t('chat:replyPreview.cancel')}
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview2.tsx:1: // src/screens/chat/components/InputBar/InputReplyPreview.tsx
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview2.tsx:52: export default function InputReplyPreview({ replyTo, onCancel, theme }: Props) {
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview2.tsx:56: const labelName = String(senderName || t('chat:replyPreview.peer'));
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview2.tsx:77: const bg = theme.replyPreviewBg;
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview2.tsx:104: {t('chat:replyPreview.replyTo', { name: labelName })}
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview2.tsx:136: accessibilityLabel={t('chat:replyPreview.cancel')}
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:4: export type ReplyTargetLite = {
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:16: const __replyTargetCache = new Map<string, ReplyTargetLite>();
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:17: const __replyTargetInflight = new Map<string, Promise<ReplyTargetLite | null>>();
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:23: export function readReplyTargetCache(replyId: string): ReplyTargetLite | null {
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:24: return __replyTargetCache.get(String(replyId ?? '').trim()) ?? null;
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:27: export function primeReplyTargetCache(replyId: string, target: ReplyTargetLite | null) {
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:30: __replyTargetCache.set(rid, target);
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:33: export async function fetchReplyTargetLiteCached(replyId: string): Promise<ReplyTargetLite | null> {
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:36: const cached = __replyTargetCache.get(rid);
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:38: const inflight = __replyTargetInflight.get(rid);
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:54: const out: ReplyTargetLite = {
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:70: __replyTargetCache.set(rid, out);
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:75: __replyTargetInflight.delete(rid);
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:79: __replyTargetInflight.set(rid, p);
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:86: injectedReplyTarget?: ReplyTargetLite | null;
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:90: export function useReplyTargetLite(
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:99: const { replyId, injectedReplyTarget } = args;
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:101: return useMemo<ReplyTargetLite | null>(() => {
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:102: if (injectedReplyTarget !== undefined) return injectedReplyTarget ?? null;
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:104: return readReplyTargetCache(replyId) ?? null;
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useReplyTargetLite.ts:105: }, [injectedReplyTarget, replyId]);
+C:\dalo-app\src\screens\chat\components\MessageList\ui\ReplyBlock.tsx:5: import type { ReplyPreviewModel } from '../utils/resolveReplyPreview';
+C:\dalo-app\src\screens\chat\components\MessageList\ui\ReplyBlock.tsx:8: reply: ReplyPreviewModel;
+C:\dalo-app\src\screens\chat\components\MessageList\utils\getMessageItemInjectedProps.ts:6: replyTargetByMessageId: Record<string, any>;
+C:\dalo-app\src\screens\chat\components\MessageList\utils\getMessageItemInjectedProps.ts:23: injectedReplyTarget: injected.replyTargetByMessageId[key] ?? undefined,
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:3: export type ReplyTargetLike = {
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:32: export type ReplyPreviewModel = {
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:325: export function buildReplyPreviewModel(args: {
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:328: replyTarget?: ReplyTargetLike | null;
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:332: }): ReplyPreviewModel | null {
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:333: const { replyId, replyRawObj, replyTarget, meta, isLocalFlipped, meUid } = args;
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:340: replyTarget?.senderName ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:341: replyTarget?.sender_name ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:355: replyTarget?.kind ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:356: replyTarget?.type ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:368: resolveIsMeFromAnyRow(replyTarget as any, meUid) ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:372: const targetMeta = replyTarget ? safePickMetaForMessage(replyTarget as any) : null;
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:375: const c = String(replyTarget?.content ?? '').trim();
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:381: const targetOriginalClean = replyTarget
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:383: rawOriginal: replyTarget.original,
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:384: rawContent: String(replyTarget.content ?? ''),
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:392: replyTarget?.translatedText ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:393: replyTarget?.translated_text ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:401: // ★ 추가된 핵심 로직: replyTarget이 없을 때 rRaw나 meta에서 텍스트를 무조건 찾아냄
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:419: replyTarget?.thumbUri ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:420: replyTarget?.thumb_uri ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:421: replyTarget?.thumbnail ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:422: replyTarget?.thumb ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:3: export type ReplyTargetLike = {
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:32: export type ReplyPreviewModel = {
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:345: export function buildReplyPreviewModel(args: {
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:348: replyTarget?: ReplyTargetLike | null;
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:352: }): ReplyPreviewModel | null {
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:353: const { replyId, replyRawObj, replyTarget, meta, isLocalFlipped, meUid } = args;
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:360: replyTarget?.senderName ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:361: replyTarget?.sender_name ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:375: replyTarget?.kind ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:376: replyTarget?.type ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:388: resolveIsMeFromAnyRow(replyTarget as any, meUid) ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:392: const targetMeta = replyTarget ? safePickMetaForMessage(replyTarget as any) : null;
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:395: const c = String(replyTarget?.content ?? '').trim();
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:401: const targetOriginalClean = replyTarget
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:403: rawOriginal: replyTarget.original,
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:404: rawContent: String(replyTarget.content ?? ''),
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:412: replyTarget?.translatedText ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:413: replyTarget?.translated_text ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:421: // ★ 추가된 핵심 로직: replyTarget이 없을 때 rRaw나 meta에서 텍스트를 무조건 찾아냄
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:439: replyTarget?.thumbUri ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:440: replyTarget?.thumb_uri ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:441: replyTarget?.thumbnail ??
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:442: replyTarget?.thumb ??
+C:\dalo-app\src\screens\chat\components\MessageList\MessageItemView.tsx:25: import { buildReplyPreviewModel, resolveReplyRefForMessage } from './utils/resolveReplyPreview';
+C:\dalo-app\src\screens\chat\components\MessageList\MessageItemView.tsx:28: import { useReplyTargetLite, type ReplyTargetLite } from './hooks/useReplyTargetLite';
+C:\dalo-app\src\screens\chat\components\MessageList\MessageItemView.tsx:152: injectedReplyTarget?: ReplyTargetLite | null;
+C:\dalo-app\src\screens\chat\components\MessageList\MessageItemView.tsx:518: injectedReplyTarget?: ReplyTargetLite | null;
+C:\dalo-app\src\screens\chat\components\MessageList\MessageItemView.tsx:779: injectedReplyTarget,
+C:\dalo-app\src\screens\chat\components\MessageList\MessageItemView.tsx:781: const replyTarget = useReplyTargetLite({
+C:\dalo-app\src\screens\chat\components\MessageList\MessageItemView.tsx:784: injectedReplyTarget,
+C:\dalo-app\src\screens\chat\components\MessageList\MessageItemView.tsx:785: disableFetch: injectedReplyTarget !== undefined,
+C:\dalo-app\src\screens\chat\components\MessageList\MessageItemView.tsx:790: buildReplyPreviewModel({
+C:\dalo-app\src\screens\chat\components\MessageList\MessageItemView.tsx:793: replyTarget,
+C:\dalo-app\src\screens\chat\components\MessageList\MessageItemView.tsx:798: [replyId, replyRawObj, replyTarget, meta, isLocalFlipped, meUid],
+C:\dalo-app\src\screens\chat\components\MessageList\MessageItemView.tsx:840: injectedReplyTarget,
+C:\dalo-app\src\screens\chat\components\MessageList\MessageItemView.tsx:1046: injectedReplyTarget={injectedReplyTarget}
+C:\dalo-app\src\screens\chat\components\MessageList\MessageItemView.tsx:1050: injectedReplyTarget,
+C:\dalo-app\src\screens\chat\components\MessageList\useMessageListRender.tsx:11: import type { ReplyTargetLite } from "./hooks/useReplyTargetLite";
+C:\dalo-app\src\screens\chat\components\MessageList\useMessageListRender.tsx:12: import { resolveReplyRefForMessage } from "./utils/resolveReplyPreview";
+C:\dalo-app\src\screens\chat\components\MessageList\useMessageListRender.tsx:190: function buildReplyTargetLiteFromMessage(msg: any): ReplyTargetLite | null {
+C:\dalo-app\src\screens\chat\components\MessageList\useMessageListRender.tsx:251: function addReplyTargetLookupKeys(map: Map<string, ReplyTargetLite>, msg: any, target: ReplyTargetLite | null) {
+C:\dalo-app\src\screens\chat\components\MessageList\useMessageListRender.tsx:280: function resolveInjectedReplyTargetForMessage(
+C:\dalo-app\src\screens\chat\components\MessageList\useMessageListRender.tsx:281: lookup: Map<string, ReplyTargetLite>,
+C:\dalo-app\src\screens\chat\components\MessageList\useMessageListRender.tsx:283: ): ReplyTargetLite | null {
+C:\dalo-app\src\screens\chat\components\MessageList\useMessageListRender.tsx:389: const replyTargetLookupRef = useRef<Map<string, ReplyTargetLite>>(new Map());
+C:\dalo-app\src\screens\chat\components\MessageList\useMessageListRender.tsx:534: const replyTargetMap = new Map<string, ReplyTargetLite>();
+C:\dalo-app\src\screens\chat\components\MessageList\useMessageListRender.tsx:543: addReplyTargetLookupKeys(replyTargetMap, msg, buildReplyTargetLiteFromMessage(msg));
+C:\dalo-app\src\screens\chat\components\MessageList\useMessageListRender.tsx:548: replyTargetLookupRef.current = replyTargetMap;
+C:\dalo-app\src\screens\chat\components\MessageList\useMessageListRender.tsx:552: chatPerfMax("lookup.replyTargetKeys", replyTargetMap.size);
+C:\dalo-app\src\screens\chat\components\MessageList\useMessageListRender.tsx:642: const injectedReplyTarget = resolveInjectedReplyTargetForMessage(
+C:\dalo-app\src\screens\chat\components\MessageList\useMessageListRender.tsx:643: replyTargetLookupRef.current,
+C:\dalo-app\src\screens\chat\components\MessageList\useMessageListRender.tsx:675: injectedReplyTarget={injectedReplyTarget}
+C:\dalo-app\src\screens\chat\components\TranslationSettingsPanel.theme.ts:44: const surfaceRaised = base.inputFieldBg || base.replyPreviewBg || surface;
+C:\dalo-app\src\screens\chat\components\TranslationSettingsPanel.theme.ts:45: const surfaceSubtle = base.replyPreviewBg || base.inputBg || surfaceRaised;
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:51: replyPreviewBg: string;
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:163: replyPreviewBg: '#E4E9E0',
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:200: replyPreviewBg: '#E8EAED',
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:237: replyPreviewBg: '#E1E4E8',
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:274: replyPreviewBg: '#F1F3F4',
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:311: replyPreviewBg: '#EFE9DC',
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:348: replyPreviewBg: '#D6D6E0',
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:385: replyPreviewBg: '#F1F3F5',
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:422: replyPreviewBg: '#2C2C2E',
+C:\dalo-app\src\screens\chat\utils\chatHelpers.ts:196: export function deriveTextPairForReplyPreview(opts: {
+C:\dalo-app\src\screens\chat\Chat.tsx:99: deriveTextPairForReplyPreview,
+C:\dalo-app\src\screens\chat\Chat.tsx:1075: const lastReplyTargetIdRef = useRef<string | null>(null);
+C:\dalo-app\src\screens\chat\Chat.tsx:1784: const currentReplyTargetId = replyTo?.id ? String(replyTo.id) : null;
+C:\dalo-app\src\screens\chat\Chat.tsx:1798: const prevReplyId = lastReplyTargetIdRef.current;
+C:\dalo-app\src\screens\chat\Chat.tsx:1799: lastReplyTargetIdRef.current = currentReplyTargetId;
+C:\dalo-app\src\screens\chat\Chat.tsx:1801: if (prevReplyId === currentReplyTargetId) return;
+C:\dalo-app\src\screens\chat\Chat.tsx:1814: currentReplyTargetId,
+C:\dalo-app\src\screens\chat\Chat.tsx:1830: if (currentReplyTargetId) {
+C:\dalo-app\src\screens\chat\Chat.tsx:1842: currentReplyTargetId,
+C:\dalo-app\src\screens\chat\Chat.tsx:2613: const pair = deriveTextPairForReplyPreview({ msg, meId: me });
+C:\dalo-app\src\screens\chat\Chat.tsx:3443: const pair = deriveTextPairForReplyPreview({ msg, meId: me });
+C:\dalo-app\src\screens\chat\ChatMenu.theme.ts:18: const surfaceSubtle = chatTheme.replyPreviewBg || chatTheme.inputBg || surface;
+C:\dalo-app\src\screens\chat\ChatMenu.theme.ts:19: const surfaceRaised = chatTheme.inputFieldBg || chatTheme.replyPreviewBg || surface;
+C:\dalo-app\src\screens\chat\ChatRoomData.theme.ts:23: const surfaceSubtle = chatTheme.replyPreviewBg || chatTheme.inputBg || surface;
+C:\dalo-app\src\screens\chat\ChatRoomData.theme.ts:24: const surfaceRaised = chatTheme.inputFieldBg || chatTheme.replyPreviewBg || surface;
+C:\dalo-app\src\screens\chat\ChatRoomEdit.theme.ts:17: const surfaceSubtle = chatTheme.replyPreviewBg || chatTheme.inputBg || surface;
+C:\dalo-app\src\screens\chat\ChatRoomEdit.theme.ts:18: const surfaceRaised = chatTheme.inputFieldBg || chatTheme.replyPreviewBg || surface;
+C:\dalo-app\src\screens\chat\ChatSetting.theme.ts:19: const surfaceSubtle = chatTheme.replyPreviewBg || chatTheme.inputBg || surface;
+C:\dalo-app\src\screens\chat\ChatSetting.theme.ts:20: const surfaceRaised = chatTheme.inputFieldBg || chatTheme.replyPreviewBg || surface;
+C:\dalo-app\src\screens\chat\Collection.theme.ts:19: const surfaceSubtle = chatTheme.replyPreviewBg || chatTheme.inputBg || surface;
+C:\dalo-app\src\screens\chat\Collection.theme.ts:20: const surfaceRaised = chatTheme.inputFieldBg || chatTheme.replyPreviewBg || surface;
+C:\dalo-app\src\screens\chat\Invite.theme.ts:21: const surfaceSubtle = chatTheme.replyPreviewBg || chatTheme.inputBg || surface;
+C:\dalo-app\src\screens\chat\Invite.theme.ts:22: const surfaceRaised = chatTheme.inputFieldBg || chatTheme.replyPreviewBg || surface;
+C:\dalo-app\src\screens\friends\GroupMembers.tsx:43: labelName?: string;
+C:\dalo-app\src\screens\friends\GroupMembers.tsx:106: const labelName = String(props.labelName ?? route.params?.labelName ?? t('friends:group.title'));
+C:\dalo-app\src\screens\friends\GroupMembers.tsx:221: <Text style={styles.topTitle}>{labelName}</Text>
+C:\dalo-app\src\screens\friends\Groups.tsx:165: labelName={embeddedLabel.name}
+C:\dalo-app\src\screens\friends\List.tsx:777: onPress={() => navigateKnown(navigation, ['FriendGroupMembers', 'GroupMembers'], { labelId: item.id, labelName: item.name })}
+C:\dalo-app\src\screens\profile\postDetail\hooks\usePostComments.ts:617: const replyTargetCommentId =
+C:\dalo-app\src\screens\profile\postDetail\hooks\usePostComments.ts:630: replyTargetCommentId,
+C:\dalo-app\src\screens\profile\postDetail\hooks\usePostComments.ts:643: p_reply_target_comment_id: replyTargetCommentId,
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:5: export type ReplyTargetLike = {
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:30: export type ReplyPreviewModel = {
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:303: export function buildReplyPreviewModel(args: {
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:306: replyTarget?: ReplyTargetLike | null;
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:310: }): ReplyPreviewModel | null {
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:311: const { replyId, replyRawObj, replyTarget, meta, isLocalFlipped, meUid } = args;
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:318: replyTarget?.senderName ??
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:319: replyTarget?.sender_name ??
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:329: chatText('replyPreview.unknownSender', '상대방'),
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:333: replyTarget?.kind ??
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:334: replyTarget?.type ??
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:346: resolveIsMeFromAnyRow(replyTarget as any, meUid) ??
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:350: const targetMeta = replyTarget ? safePickMetaForMessage(replyTarget as any) : null;
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:353: const c = String(replyTarget?.content ?? '').trim();
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:359: const targetOriginalClean = replyTarget
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:361: rawOriginal: replyTarget.original,
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:362: rawContent: String(replyTarget.content ?? ''),
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:370: replyTarget?.translatedText ??
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:371: replyTarget?.translated_text ??
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:389: replyTarget?.thumbUri ??
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:390: replyTarget?.thumb_uri ??
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:391: replyTarget?.thumbnail ??
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:392: replyTarget?.thumb ??
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:407: senderName: senderName.trim() || chatText('replyPreview.unknownSender', '상대방'),

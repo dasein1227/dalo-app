@@ -1,4 +1,4 @@
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 
 /**
  * Extract local file paths (file://, documentDirectory, cacheDirectory) from message payload.

@@ -1,17 +1,25 @@
 // src/screens/MyBeaconRoomsScreen.tsx
 import React from 'react';
 import {
-  View, Text, StyleSheet, FlatList, Pressable,
-  ActivityIndicator, RefreshControl, Alert, Platform, StatusBar, Image,
+  View,
+  Text,
+  FlatList,
+  Pressable,
+  ActivityIndicator,
+  RefreshControl,
+  Alert,
+  StatusBar,
+  Image,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeScreen } from '../../components/layout';
+import { useAppTheme } from '../../theme/useAppTheme';
+import { createMyBeaconRoomsTheme, createMyBeaconRoomsStyles, type MyBeaconRoomsTheme } from './MyRooms.theme';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import PagerView from 'react-native-pager-view';
 import { Search, MessageSquarePlus, Settings } from 'lucide-react-native';
 import { supabase } from '../../lib/supabase';
-import { ensureChatRoom } from '../../utils/ensureChatRoom';
+import { useTranslation } from 'react-i18next';
 
-/** 공통 스레드 타입(카톡 셀 표현을 위해 정규화) */
 type ThreadRow = {
   id: string | number;
   title: string;
@@ -19,35 +27,109 @@ type ThreadRow = {
   updated_at?: string | null;
   unread?: number | null;
   avatar_url?: string | null;
-  // 비콘 전용
   is_beacon?: boolean;
   beacon_owner_id?: string | null;
   is_owner?: boolean;
+  is_member?: boolean;
   pending?: boolean;
+  visibility?: string | null;
+  active?: boolean;
+  expires_at?: string | null;
 };
 
-// Supabase room_beacons 응답 안전 사용용(최소 컬럼)
-type BeaconDB = {
-  id: string | number;
-  owner_id: string;
-  status: string | null;
+type BeaconRow = {
+  id: number;
+  host_id: string;
+  title: string | null;
+  description: string | null;
+  visibility: 'public' | 'friends' | 'labels' | 'custom' | string;
+  require_approval: boolean;
+  active: boolean;
   expires_at: string | null;
-  is_closed: boolean | null;
-  created_at: string | null;
   updated_at: string | null;
+  created_at: string | null;
+};
+
+type ProfileRow = {
+  user_id?: string | null;
+  id?: string | null;
+  nickname?: string | null;
+  avatar_url?: string | null;
 };
 
 type TabKey = 'dm' | 'group' | 'open' | 'beacon';
-const TAB_LABEL: Record<TabKey, string> = {
-  dm: '개인', group: '그룹', open: '오픈', beacon: '비콘',
+const TAB_LABEL_KEY: Record<TabKey, string> = {
+  dm: 'beacons:tabs.dm',
+  group: 'beacons:tabs.group',
+  open: 'beacons:tabs.open',
+  beacon: 'beacons:tabs.beacon',
 };
 const TABS: TabKey[] = ['dm', 'group', 'open', 'beacon'];
 
+const VIS_LABEL_KEY: Record<string, string> = {
+  public: 'beacons:visibilityLabel.publicCompact',
+  friends: 'beacons:visibilityLabel.friendsCompact',
+  labels: 'beacons:visibilityLabel.labelsCompact',
+  custom: 'beacons:visibilityLabel.customCompact',
+};
+
+function formatKTime(iso: string | null | undefined, t: (key: string, options?: Record<string, unknown>) => string) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const now = new Date();
+
+  const isToday =
+    d.getFullYear() === now.getFullYear() &&
+    d.getMonth() === now.getMonth() &&
+    d.getDate() === now.getDate();
+
+  if (isToday) {
+    let h = d.getHours();
+    const m = d.getMinutes().toString().padStart(2, '0');
+    const ampm = h < 12 ? t('beacons:time.am') : t('beacons:time.pm');
+    if (h === 0) h = 12;
+    else if (h > 12) h -= 12;
+    return `${ampm} ${h}:${m}`;
+  }
+
+  if (d.getFullYear() === now.getFullYear()) {
+    return t('beacons:time.monthDay', { month: d.getMonth() + 1, day: d.getDate() });
+  }
+  return `${d.getFullYear()}. ${d.getMonth() + 1}. ${d.getDate()}.`;
+}
+
+function minutesLeft(iso?: string | null) {
+  if (!iso) return 0;
+  return Math.max(0, Math.ceil((new Date(iso).getTime() - Date.now()) / 60000));
+}
+
+function tryNavigate(nav: any, candidates: string[], params?: any) {
+  for (const name of candidates) {
+    try {
+      nav.navigate(name, params);
+      return true;
+    } catch {
+      // continue
+    }
+  }
+  return false;
+}
+
 export default function MyBeaconRoomsScreen() {
   const nav = useNavigation<any>();
+  const { t } = useTranslation();
+  const appTheme = useAppTheme();
+  const C = React.useMemo(() => createMyBeaconRoomsTheme(appTheme), [appTheme]);
+  const s = React.useMemo(() => createMyBeaconRoomsStyles(C), [C]);
   const pagerRef = React.useRef<PagerView | null>(null);
 
-  const [tabIdx, setTabIdx] = React.useState(3); // 기본 비콘 탭
+  const getVisibilityLabel = React.useCallback((value?: string | null) => {
+    const raw = String(value ?? '');
+    const key = VIS_LABEL_KEY[raw];
+    return key ? t(key) : (raw || t('beacons:common.beacon'));
+  }, [t]);
+
+  const [tabIdx, setTabIdx] = React.useState(3);
   const tabKey = TABS[tabIdx];
 
   const [loading, setLoading] = React.useState(true);
@@ -59,22 +141,10 @@ export default function MyBeaconRoomsScreen() {
   const [opens, setOpens] = React.useState<ThreadRow[]>([]);
   const [beacons, setBeacons] = React.useState<ThreadRow[]>([]);
 
-  // 🔎 진단용 상태(비어있을 때 카드로 보여줌)
-  const [diag, setDiag] = React.useState<{
-    mineCount: number;
-    joinedCount: number;
-    invCount: number;
-    othersCount: number;
-    pendingCount: number;
-    mergedCount: number;
-    mineSample?: any;
-    othersSample?: any;
-    note?: string;
-  } | null>(null);
-
-  // ===== 세션 확보 =====
   const ensureSession = React.useCallback(async () => {
-    let { data: { session } } = await supabase.auth.getSession();
+    let {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       const { data } = await supabase.auth.refreshSession();
       session = data?.session ?? null;
@@ -82,7 +152,6 @@ export default function MyBeaconRoomsScreen() {
     return session;
   }, []);
 
-  // ===== 개인(1:1) =====
   const fetchDM = React.useCallback(async () => {
     try {
       const { data, error } = await supabase
@@ -97,11 +166,10 @@ export default function MyBeaconRoomsScreen() {
     }
   }, []);
 
-  // ===== 그룹 =====
   const fetchGroup = React.useCallback(async () => {
     try {
       const { data, error } = await supabase
-        .from('group_threads') // 프로젝트 테이블명에 맞춰 사용
+        .from('group_threads')
         .select('id,title,last_msg,updated_at,unread,avatar_url')
         .order('updated_at', { ascending: false })
         .limit(200);
@@ -112,7 +180,6 @@ export default function MyBeaconRoomsScreen() {
     }
   }, []);
 
-  // ===== 오픈 =====
   const fetchOpen = React.useCallback(async () => {
     try {
       const { data, error } = await supabase
@@ -127,225 +194,250 @@ export default function MyBeaconRoomsScreen() {
     }
   }, []);
 
-  // ===== 비콘 =====
   const fetchBeacon = React.useCallback(async () => {
     const session = await ensureSession();
     const userId = session?.user?.id;
-    if (!userId) throw new Error('로그인이 필요합니다.');
+    if (!userId) throw new Error(t('beacons:error.loginRequired'));
 
-    let note = '';
+    const nowIso = new Date().toISOString();
 
-    // 1) 내가 만든 비콘 (최소 컬럼만)
-    const { data: mineRows, error: errMine } = await supabase
-      .from('room_beacons')
-      .select('id,owner_id,status,expires_at,is_closed,created_at,updated_at')
-      .eq('owner_id', userId)
+    const { data: mineData, error: mineErr } = await supabase
+      .from('beacons')
+      .select('id,host_id,title,description,visibility,require_approval,active,expires_at,updated_at,created_at')
+      .eq('host_id', userId)
+      .eq('active', true)
+      .gt('expires_at', nowIso)
+      .order('updated_at', { ascending: false });
+    if (mineErr) throw mineErr;
+    const mine = (mineData ?? []) as BeaconRow[];
+
+    const { data: myRooms, error: memberErr } = await supabase
+      .from('chat_members')
+      .select('room_id')
+      .eq('user_id', userId)
+      .eq('active', true)
+      .is('left_at', null);
+    if (memberErr) throw memberErr;
+
+    const memberRoomIds = Array.from(
+      new Set((myRooms ?? []).map((r: any) => Number(r.room_id)).filter(Boolean))
+    );
+
+    let memberBeaconIds: number[] = [];
+    if (memberRoomIds.length > 0) {
+      const { data: roomsData, error: roomsErr } = await supabase
+        .from('chat_rooms')
+        .select('id,beacon_id,type')
+        .in('id', memberRoomIds)
+        .eq('type', 'beacon');
+      if (roomsErr) throw roomsErr;
+      memberBeaconIds = Array.from(
+        new Set((roomsData ?? []).map((r: any) => Number(r.beacon_id)).filter(Boolean))
+      );
+    }
+
+    let memberBeacons: BeaconRow[] = [];
+    if (memberBeaconIds.length > 0) {
+      const { data, error } = await supabase
+        .from('beacons')
+        .select('id,host_id,title,description,visibility,require_approval,active,expires_at,updated_at,created_at')
+        .in('id', memberBeaconIds)
+        .eq('active', true)
+        .gt('expires_at', nowIso);
+      if (error) throw error;
+      memberBeacons = ((data ?? []) as BeaconRow[]).filter((b) => b.host_id !== userId);
+    }
+
+    const { data: pendingReqs, error: reqErr } = await supabase
+      .from('beacon_join_requests')
+      .select('beacon_id,created_at')
+      .eq('requester_id', userId)
+      .eq('status', 'pending')
       .order('created_at', { ascending: false });
-    if (errMine) note += `mine error: ${errMine.message}\n`;
-    const mine = (mineRows ?? []) as BeaconDB[];
+    if (reqErr) throw reqErr;
 
-    // 2) 내가 참여(입장/멤버십)한 비콘 — ✅ 현재 정책: room_beacon_members 사용
-    const { data: joinedList, error: errJoined } = await supabase
-      .from('room_beacon_members')
-      .select('beacon_id')
-      .eq('user_id', userId);
-    if (errJoined) note += `members error: ${errJoined.message}\n`;
-    const joinedIds = new Set((joinedList ?? []).map(r => r.beacon_id as string | number));
-
-    // 3) 초대/허가 상태(대기/요청/수락/입장 포함)
-    const { data: inv, error: errInv } = await supabase
-      .from('room_beacon_invites')
-      .select('beacon_id,status')
-      .eq('target_user_id', userId)
-      .in('status', ['pending', 'requested', 'accepted', 'joined']);
-    if (errInv) note += `invites error: ${errInv.message}\n`;
-    const pendingIds = new Set(
-      (inv ?? [])
-        .filter(v => v.status === 'pending' || v.status === 'requested')
-        .map(v => v.beacon_id as string | number)
+    const pendingBeaconIds = Array.from(
+      new Set((pendingReqs ?? []).map((r: any) => Number(r.beacon_id)).filter(Boolean))
     );
-    const invitedIds = new Set((inv ?? []).map(v => v.beacon_id as string | number));
 
-    // 4) “내가 만든 것” 제외한 외부 비콘 상세(최소 컬럼로 안전 조회)
-    const targetIds = Array.from(new Set([...joinedIds, ...invitedIds]));
-    let othersRows: BeaconDB[] = [];
-    if (targetIds.length) {
-      const { data, error: errOthers } = await supabase
-        .from('room_beacons')
-        .select('id,owner_id,status,expires_at,is_closed,created_at,updated_at')
-        .in('id', targetIds as any)
-        .neq('owner_id', userId);
-      if (errOthers) note += `others error: ${errOthers.message}\n`;
-      othersRows = (data ?? []) as BeaconDB[];
+    let pendingBeacons: BeaconRow[] = [];
+    if (pendingBeaconIds.length > 0) {
+      const { data, error } = await supabase
+        .from('beacons')
+        .select('id,host_id,title,description,visibility,require_approval,active,expires_at,updated_at,created_at')
+        .in('id', pendingBeaconIds)
+        .eq('active', true)
+        .gt('expires_at', nowIso);
+      if (error) throw error;
+      pendingBeacons = ((data ?? []) as BeaconRow[]).filter((b) => b.host_id !== userId);
     }
 
-    // 5) 프로필(선택) — 실패해도 무시
-    const ownerIds = Array.from(
-      new Set([...(mine ?? []).map(b => b.owner_id), ...othersRows.map(b => b.owner_id)])
+    const hostIds = Array.from(
+      new Set([
+        ...mine.map((b) => b.host_id),
+        ...memberBeacons.map((b) => b.host_id),
+        ...pendingBeacons.map((b) => b.host_id),
+      ])
     );
-    let profiles: Record<string, { nickname?: string | null; avatar_url?: string | null }> = {};
-    try {
-      if (ownerIds.length) {
-        const { data: pf, error } = await supabase
-          .from('profiles')
-          .select('id,nickname,avatar_url')
-          .in('id', ownerIds as any);
-        if (!error) {
-          for (const p of (pf ?? []) as any[]) {
-            profiles[p.id] = { nickname: p.nickname, avatar_url: p.avatar_url };
-          }
-        } else {
-          note += `profiles error: ${error.message}\n`;
-        }
+
+    const profileMap: Record<string, { nickname?: string | null; avatar_url?: string | null }> = {};
+    if (hostIds.length > 0) {
+      const orFilter = `user_id.in.(${hostIds.join(',')}),id.in.(${hostIds.join(',')})`;
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('user_id,id,nickname,avatar_url')
+        .or(orFilter);
+
+      for (const p of (profileData ?? []) as ProfileRow[]) {
+        const key = (p.user_id || p.id || '').trim();
+        if (!key) continue;
+        profileMap[key] = {
+          nickname: p.nickname ?? null,
+          avatar_url: p.avatar_url ?? null,
+        };
       }
-    } catch (e: any) {
-      note += `profiles catch: ${e?.message}\n`;
     }
 
-    // 6) 표시용 매핑
-    const mapRow = (b: BeaconDB, is_owner: boolean): ThreadRow => ({
-      id: b.id,
-      title: (profiles[b.owner_id]?.nickname)
-        || (is_owner ? '내 비콘' : '비콘'),
-      last_msg: (pendingIds.has(b.id) && !is_owner) ? '수락 대기중' : (b.status || ''),
-      updated_at: b.updated_at || b.created_at || b.expires_at,
-      unread: null,
-      avatar_url: profiles[b.owner_id]?.avatar_url || null,
-      is_beacon: true,
-      beacon_owner_id: b.owner_id,
-      is_owner,
-      pending: pendingIds.has(b.id) && !is_owner,
-    });
+    const rowsById = new Map<number, ThreadRow>();
 
-    const mappedMine = mine.map(b => mapRow(b, true));
-    const mappedOthers = othersRows.map(b => mapRow(b, false));
+    const upsertBeacon = (b: BeaconRow, kind: 'owner' | 'member' | 'pending') => {
+      const existing = rowsById.get(b.id);
+      const priority = kind === 'owner' ? 3 : kind === 'member' ? 2 : 1;
+      const existingPriority = existing?.is_owner ? 3 : existing?.is_member ? 2 : existing?.pending ? 1 : 0;
+      if (existing && existingPriority >= priority) return;
 
-    // 7) 최신순 정렬
-    const merged = [...mappedMine, ...mappedOthers].sort((a, b) => {
+      const hostProfile = profileMap[b.host_id] ?? {};
+      const left = minutesLeft(b.expires_at);
+      const visibilityLabel = getVisibilityLabel(b.visibility);
+
+      let lastMsg: string;
+      if (kind === 'pending') {
+        lastMsg = t('beacons:myRooms.status.pending');
+      } else if (kind === 'member') {
+        lastMsg = t('beacons:myRooms.status.joined', { visibility: visibilityLabel });
+      } else {
+        lastMsg = t('beacons:myRooms.status.owner', { visibility: visibilityLabel, minutes: left });
+      }
+
+      rowsById.set(b.id, {
+        id: b.id,
+        title: (b.title ?? '').trim() || (kind === 'owner' ? t('beacons:myRooms.title.mine') : t('beacons:myRooms.title.fallback')),
+        last_msg: lastMsg,
+        updated_at: b.updated_at ?? b.created_at ?? b.expires_at,
+        unread: null,
+        avatar_url: hostProfile.avatar_url ?? null,
+        is_beacon: true,
+        beacon_owner_id: b.host_id,
+        is_owner: kind === 'owner',
+        is_member: kind === 'member' || kind === 'owner',
+        pending: kind === 'pending',
+        visibility: b.visibility,
+        active: b.active,
+        expires_at: b.expires_at,
+      });
+    };
+
+    for (const b of pendingBeacons) upsertBeacon(b, 'pending');
+    for (const b of memberBeacons) upsertBeacon(b, 'member');
+    for (const b of mine) upsertBeacon(b, 'owner');
+
+    const merged = Array.from(rowsById.values()).sort((a, b) => {
       const ta = a.updated_at ? new Date(a.updated_at).getTime() : 0;
       const tb = b.updated_at ? new Date(b.updated_at).getTime() : 0;
       return tb - ta;
     });
 
     setBeacons(merged);
+  }, [ensureSession, getVisibilityLabel, t]);
 
-    // 🔎 진단 정보 저장(목록 비었을 때 화면에 표시)
-    setDiag({
-      mineCount: mine.length,
-      joinedCount: joinedList?.length ?? 0,
-      invCount: inv?.length ?? 0,
-      pendingCount: Array.from(pendingIds).length,
-      othersCount: othersRows.length,
-      mergedCount: merged.length,
-      mineSample: mine[0]?.id ? { id: mine[0].id, owner: mine[0].owner_id } : undefined,
-      othersSample: othersRows[0]?.id ? { id: othersRows[0].id, owner: othersRows[0].owner_id } : undefined,
-      note: note || undefined,
-    });
-  }, [ensureSession]);
-
-  // ===== 전체 로드 =====
   const fetchAll = React.useCallback(async () => {
     try {
       setErr(null);
       setLoading(true);
       await Promise.all([fetchDM(), fetchGroup(), fetchOpen(), fetchBeacon()]);
     } catch (e: any) {
-      setErr(e?.message ?? '목록을 불러오지 못했습니다.');
+      setErr(e?.message ?? t('beacons:myRooms.error.loadFail'));
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
   }, [fetchDM, fetchGroup, fetchOpen, fetchBeacon]);
 
-  React.useEffect(() => { fetchAll(); }, [fetchAll]);
-  useFocusEffect(React.useCallback(() => { fetchAll(); }, [fetchAll]));
+  React.useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchAll();
+    }, [fetchAll])
+  );
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     await fetchAll();
   }, [fetchAll]);
 
-  // ===== 시간 포맷(카톡식) =====
-  const formatKTime = (iso?: string | null) => {
-    if (!iso) return '';
-    const d = new Date(iso);
-    const now = new Date();
-
-    const isToday =
-      d.getFullYear() === now.getFullYear() &&
-      d.getMonth() === now.getMonth() &&
-      d.getDate() === now.getDate();
-
-    if (isToday) {
-      let h = d.getHours();
-      const m = d.getMinutes().toString().padStart(2, '0');
-      const ampm = h < 12 ? '오전' : '오후';
-      if (h === 0) h = 12;
-      else if (h > 12) h -= 12;
-      return `${ampm} ${h}:${m}`;
-    }
-
-    if (d.getFullYear() === now.getFullYear()) {
-      return `${d.getMonth() + 1}월 ${d.getDate()}일`;
-    }
-    return `${d.getFullYear()}. ${d.getMonth() + 1}. ${d.getDate()}.`;
-  };
-
-  // ===== 셀 터치 -> 입장 =====
-  const enterThread = React.useCallback(async (row: ThreadRow) => {
-    if (row.is_beacon) {
-      if (row.pending) {
-        Alert.alert('입장 대기', '방장의 수락을 기다리는 중입니다.');
+  const onPressThread = React.useCallback(
+    (row: ThreadRow) => {
+      if (row.is_beacon) {
+        nav.navigate('BeaconDetail', { beaconId: Number(row.id) });
         return;
       }
-      try {
-        const session = await ensureSession();
-        if (!session?.user) {
-          Alert.alert('채팅방 준비 실패', '로그인이 필요합니다.');
-          return;
-        }
-        const room = await ensureChatRoom(String(row.id), session.user.id);
-        if (!room?.id) throw new Error('채팅방을 준비하지 못했습니다.');
-        nav.navigate('ChatRoom', { roomId: String(room.id) });
-      } catch (e: any) {
-        Alert.alert('채팅방 준비 실패', e?.message ?? String(e));
-      }
+      nav.navigate('ChatRoom', { roomId: String(row.id) });
+    },
+    [nav]
+  );
+
+  const onPressCreate = React.useCallback(() => {
+    if (tabKey === 'beacon') {
+      if (tryNavigate(nav, ['BeaconCreate', 'CreateBeacon', 'CreateBeaconRoom'])) return;
+      Alert.alert(t('common:notice'), t('beacons:myRooms.alert.routeCreate'));
       return;
     }
-    nav.navigate('ChatRoom', { roomId: String(row.id) });
-  }, [ensureSession, nav]);
+    Alert.alert(t('common:notice'), t('beacons:myRooms.alert.routeChatCreate'));
+  }, [nav, tabKey, t]);
 
-  // ===== 카톡형 리스트 셀 =====
+  const onPressSearch = React.useCallback(() => {
+    if (tabKey === 'beacon') {
+      if (tryNavigate(nav, ['SearchModal', 'BeaconSearch', 'MapMain'])) return;
+      Alert.alert(t('common:notice'), t('beacons:myRooms.alert.routeBeaconSearch'));
+      return;
+    }
+    Alert.alert(t('common:notice'), t('beacons:myRooms.alert.routeSearch'));
+  }, [nav, tabKey, t]);
+
   const renderThreadItem = ({ item }: { item: ThreadRow }) => {
-    const unread = item.unread && item.unread > 0;
-    const isPending = !!item.pending;
+    const unread = !!item.unread && item.unread > 0;
+    const statusTag = item.is_owner ? t('beacons:myRooms.status.host') : item.pending ? t('beacons:myRooms.status.waiting') : item.is_member ? t('beacons:myRooms.status.member') : null;
+
     return (
-      <Pressable style={s.row} onPress={() => enterThread(item)}>
-        <Image
-          source={item.avatar_url ? { uri: item.avatar_url } : undefined}
-          style={s.avatar}
-        />
+      <Pressable style={s.row} onPress={() => onPressThread(item)}>
+        {item.avatar_url ? (
+          <Image source={{ uri: item.avatar_url }} style={s.avatar} />
+        ) : (
+          <View style={[s.avatar, s.avatarFallback]}>
+            <Text style={s.avatarTxt}>{(item.title?.trim()?.[0] ?? 'B').toUpperCase()}</Text>
+          </View>
+        )}
+
         <View style={{ flex: 1, marginLeft: 10 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text style={s.rowTitle} numberOfLines={1}>{item.title}</Text>
-            {item.is_beacon && item.is_owner && (
-              <Text style={s.beaconTag}> 방장</Text>
-            )}
+            {!!statusTag && <Text style={s.beaconTag}> {statusTag}</Text>}
           </View>
-          <Text
-            style={[s.rowSnippet, isPending && { color: '#9ca3af', fontWeight: '700' }]}
-            numberOfLines={1}
-          >
-            {isPending ? '수락 대기중' : (item.last_msg ?? '')}
+          <Text style={[s.rowSnippet, item.pending && s.pendingSnippet]} numberOfLines={1}>
+            {item.last_msg ?? ''}
           </Text>
         </View>
+
         <View style={{ alignItems: 'flex-end', marginLeft: 8 }}>
-          {!!unread && (
+          {unread && (
             <View style={s.badge}>
               <Text style={s.badgeTxt}>{item.unread! > 99 ? '99+' : item.unread}</Text>
             </View>
           )}
-          <Text style={s.timeTxt}>{formatKTime(item.updated_at)}</Text>
+          <Text style={s.timeTxt}>{formatKTime(item.updated_at, t)}</Text>
         </View>
       </Pressable>
     );
@@ -353,49 +445,48 @@ export default function MyBeaconRoomsScreen() {
 
   const ListArea = (data: ThreadRow[]) => (
     loading ? (
-      <View style={s.center}><ActivityIndicator /><Text style={s.muted}>불러오는 중…</Text></View>
+      <View style={s.center}>
+        <ActivityIndicator color={C.primary} />
+        <Text style={s.muted}>{t('beacons:common.loading')}</Text>
+      </View>
     ) : (
       <FlatList
         data={data}
         keyExtractor={(i) => String(i.id)}
         renderItem={renderThreadItem}
         ItemSeparatorComponent={() => <View style={s.sep} />}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={C.primary} colors={[C.primary]} progressBackgroundColor={C.surface} />}
         ListEmptyComponent={
           <View style={s.empty}>
-            <Text style={s.muted}>{err ?? '대화가 없습니다.'}</Text>
-            {/* 🔎 진단 카드: 비어있을 때만 표시 */}
-            {diag && (
-              <View style={s.diagCard}>
-                <Text style={s.diagTitle}>진단</Text>
-                <Text style={s.diagText}>mine(내 비콘): {diag.mineCount} {diag.mineSample ? `(예: #${diag.mineSample.id})` : ''}</Text>
-                <Text style={s.diagText}>members(참여 rows): {diag.joinedCount}</Text>
-                <Text style={s.diagText}>invites(초대 rows): {diag.invCount} / pending: {diag.pendingCount}</Text>
-                <Text style={s.diagText}>others(상세 조회): {diag.othersCount} {diag.othersSample ? `(예: #${diag.othersSample.id})` : ''}</Text>
-                <Text style={s.diagText}>merged(표시 최종): {diag.mergedCount}</Text>
-                {!!diag.note && <Text style={[s.diagText, { marginTop: 6 }]}>{diag.note}</Text>}
-              </View>
+            <Text style={s.emptyTitle}>{err ?? t('beacons:myRooms.empty.title')}</Text>
+            {tabKey === 'beacon' && (
+              <Text style={s.emptySub}>
+                {t('beacons:myRooms.empty.beaconDesc')}
+              </Text>
             )}
           </View>
         }
-        contentContainerStyle={{ paddingBottom: 16 }}
+        contentContainerStyle={{ paddingBottom: 16, flexGrow: 1 }}
       />
     )
   );
 
-  // ===== Header / MiniTabs =====
   const Header = () => (
     <View style={s.header}>
-      <StatusBar backgroundColor="#fff" translucent={false} barStyle="dark-content" />
+      <StatusBar backgroundColor={C.background} translucent={false} barStyle={C.statusBarStyle} />
       <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-        <Text style={s.headerTitle}>채팅</Text>
-        <Text style={s.headerSmall}> {TAB_LABEL[tabKey]}</Text>
+        <Text style={s.headerTitle}>{t('beacons:myRooms.headerTitle')}</Text>
+        <Text style={s.headerSmall}> {t(TAB_LABEL_KEY[tabKey])}</Text>
       </View>
       <View style={s.iconRow}>
-        <Pressable style={s.iconBtn}><Search size={21} color="#111827" strokeWidth={2.2} /></Pressable>
-        <Pressable style={s.iconBtn}><MessageSquarePlus size={21} color="#111827" strokeWidth={2.2} /></Pressable>
+        <Pressable style={s.iconBtn} onPress={onPressSearch}>
+          <Search size={20} color={C.icon} strokeWidth={1.9} />
+        </Pressable>
+        <Pressable style={s.iconBtn} onPress={onPressCreate}>
+          <MessageSquarePlus size={20} color={C.icon} strokeWidth={1.9} />
+        </Pressable>
         <Pressable style={s.iconBtn} onPress={() => nav.navigate('MeStack')}>
-          <Settings size={21} color="#111827" strokeWidth={2.2} />
+          <Settings size={20} color={C.icon} strokeWidth={1.9} />
         </Pressable>
       </View>
     </View>
@@ -408,11 +499,14 @@ export default function MyBeaconRoomsScreen() {
         return (
           <Pressable
             key={k}
-            onPress={() => { setTabIdx(i); pagerRef.current?.setPage(i); }}
+            onPress={() => {
+              setTabIdx(i);
+              pagerRef.current?.setPage(i);
+            }}
             style={[s.miniTabBtn, active ? s.miniTabActive : s.miniTabInactive]}
           >
             <Text style={[s.miniTabTxt, active ? s.miniTabTxtActive : s.miniTabTxtInactive]}>
-              {TAB_LABEL[k]}
+              {t(TAB_LABEL_KEY[k])}
             </Text>
           </Pressable>
         );
@@ -421,7 +515,13 @@ export default function MyBeaconRoomsScreen() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+    <SafeScreen
+      backgroundColor={C.background}
+      includeTopInset
+      includeBottomInset
+      style={s.screen}
+      contentStyle={s.screenContent}
+    >
       <View style={s.headerWrap}>
         <Header />
         <MiniTabs />
@@ -438,84 +538,8 @@ export default function MyBeaconRoomsScreen() {
         <View key="open">{ListArea(opens)}</View>
         <View key="beacon">{ListArea(beacons)}</View>
       </PagerView>
-    </SafeAreaView>
+    </SafeScreen>
   );
 }
 
-const s = StyleSheet.create({
-  headerWrap: {
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderColor: '#f3f4f6',
-  },
-  header: {
-    height: 54,
-    backgroundColor: '#fff',
-    paddingHorizontal: 14,
-    paddingLeft: 5,
-    paddingTop: Platform.OS === 'ios' ? 8 : 4,
-    paddingBottom: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  headerTitle: { fontSize: 22, fontWeight: '900', color: '#111827' },
-  headerSmall: { fontSize: 15, fontWeight: '600', color: '#6b7280', marginLeft: 6 },
-  iconRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  iconBtn: { padding: 6, borderRadius: 999 },
 
-  // 미니 탭(두 글자)
-  miniTabs: {
-    flexDirection: 'row',
-    paddingHorizontal: 10,
-    paddingBottom: 6,
-    gap: 8,
-  },
-  miniTabBtn: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, borderWidth: 1 },
-  miniTabActive: { backgroundColor: '#111827', borderColor: '#111827' },
-  miniTabInactive: { backgroundColor: '#fff', borderColor: '#e5e7eb' },
-  miniTabTxt: { fontWeight: '800' },
-  miniTabTxtActive: { color: '#fff' },
-  miniTabTxtInactive: { color: '#111827' },
-
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  muted: { color: '#6b7280', marginTop: 6 },
-  empty: { padding: 20, alignItems: 'center' },
-  sep: { height: 10 },
-
-  // 카톡형 row
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-  },
-  avatar: {
-    width: 52, height: 52, borderRadius: 12, backgroundColor: '#e5e7eb',
-  },
-  rowTitle: { fontSize: 16, fontWeight: '800', color: '#111827', maxWidth: '75%' },
-  rowSnippet: { fontSize: 13, color: '#6b7280', marginTop: 2 },
-  badge: {
-    minWidth: 18, height: 18, paddingHorizontal: 4, borderRadius: 9,
-    backgroundColor: '#EF4444', alignItems: 'center', justifyContent: 'center',
-  },
-  badgeTxt: { color: '#fff', fontSize: 11, fontWeight: '900' },
-  timeTxt: { fontSize: 11, color: '#9ca3af', marginTop: 4 },
-
-  // 비콘 표시용 태그
-  beaconTag: { marginLeft: 6, fontSize: 11, color: '#6b7280', fontWeight: '900' },
-
-  // 🔎 진단 카드
-  diagCard: {
-    marginTop: 12,
-    padding: 12,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    backgroundColor: '#fafafa',
-    width: '95%',
-  },
-  diagTitle: { fontSize: 13, fontWeight: '900', color: '#111827', marginBottom: 6 },
-  diagText: { fontSize: 12, color: '#6b7280' },
-});

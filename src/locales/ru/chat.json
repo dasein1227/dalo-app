@@ -1,0 +1,1293 @@
+{
+  "title": "Чат",
+  "send": "Отправить",
+  "attach": "Файл",
+  "gallery": "Галерея",
+  "invite": "Пригласить",
+  "manage": "Управление",
+  "members": "Участники",
+  "placeholder": "Введите сообщение…",
+  "date": {
+    "today": "Сегодня",
+    "yesterday": "Вчера",
+    "separatorLabel": "{{weekday}}, {{day}} {{month}} {{year}} г.",
+    "floatingLabel": "{{day}} {{month}} {{year}} · {{weekday}}"
+  },
+  "all": "Все",
+  "and_others_n": "+ N",
+  "others_suffix": "ещё",
+  "anonymous": "Анонимно",
+  "message": "Сообщение",
+  "message_search": "Поиск сообщений",
+  "message_send": "Отправить сообщение",
+  "message_send_failed": "Не удалось отправить сообщение",
+  "message_delete_failed": "Не удалось удалить сообщение.",
+  "message_deleted": "Сообщение удалено.",
+  "new_message_one": "1 новое сообщение",
+  "new_messages_count": "Новых сообщений: {{count}}",
+  "chat_with_me": "Чат с собой",
+  "self_badge": "Я",
+  "chat_room_title": "Чат",
+  "one_to_one_chat": "Чат 1:1",
+  "group_chat_title": "Групповой чат",
+  "open_chat_title": "Открытый чат",
+  "beacon_chat_title": "Бикон-чат",
+  "room_not_found": "Информация о комнате недоступна.",
+  "chat_room_not_found": "Чат не найден.",
+  "conversation_partner": "Собеседник",
+  "audio_send_failed": "Не удалось отправить аудио",
+  "video": "Видео",
+  "photo": "Фото",
+  "file_label": "Файл",
+  "open_file": "Открыть файл",
+  "play_video": "Воспроизвести видео",
+  "voice_message": "Голосовое сообщение",
+  "share_location": "Поделиться местоположением",
+  "map_location_shared_title": "Местоположение отправлено",
+  "map_tap_to_open": "Нажмите, чтобы открыть карту.",
+  "cannot_open_map": "Не удалось открыть карту.",
+  "no_coordinate_info": "Нет координат",
+  "send_failed": "Не удалось отправить",
+  "share": "Поделиться",
+  "share_failed": "Не удалось поделиться",
+  "delete_failed": "Не удалось удалить",
+  "upload_failed": "Не удалось загрузить",
+  "selection_mode": "Режим выбора",
+  "selection_mode_hint": "Выберите сообщения для удаления.",
+  "selection_clear": "Сбросить выбор",
+  "delete_dialog_title": "Удалить сообщение",
+  "delete_dialog_desc": "Выберите способ удаления.",
+  "delete_for_everyone": "Удалить у всех",
+  "delete_hide_for_everyone": "Скрыть у всех",
+  "delete_for_me": "Удалить у меня",
+  "delete_for_me_hint": "Выбранные сообщения можно удалить только у вас.",
+  "reply": "Ответить",
+  "reply_to_me": "Ответить на моё сообщение",
+  "reply_to_user": "Ответить {{nickname}}",
+  "msg_deleted_by_user": "{{nickname}} удалил(а) сообщение.",
+  "notice": "Объявление",
+  "notice_coming_soon": "Скоро.",
+  "korean_label": "Корейская",
+  "auto_translate_paid_only": "Автоперевод доступен в Standard или Premium.",
+  "translation_paid_only": "Перевод доступен только платным участникам.",
+  "premium_only": "Только Premium",
+  "premium_only_feature_hint": "Доступно с Premium.",
+  "tone_neutral": "Нейтрально",
+  "tone_casual": "Неформально",
+  "tone_formal": "Формально",
+  "tone_business": "Бизнес",
+  "tone_playful": "Игриво",
+  "tone_change_premium_only": "Настройки тона доступны с Premium.",
+  "tone_premium_only_hint": "Доступно в Premium-переводе.",
+  "login_required": "Требуется вход.",
+  "no_permission_send_rls": "У вас нет прав отправлять сообщения. (RLS)\n",
+  "rls_help_chat_members": "→ Проверьте, что вы есть в chat_members, и политики chat_messages.",
+  "search_placeholder": "Введите запрос",
+  "search_result_count": "{{count}} результатов",
+  "show_original": "Показать оригинал",
+  "show_translation": "Показать перевод",
+  "translating": "Перевод…",
+  "input": {
+    "placeholder": "Отправить сообщение",
+    "placeholderLong": "Введите сообщение…"
+  },
+  "hold_to_unlock": "Удерживайте, чтобы разблокировать ввод",
+  "error": {
+    "loginRequired": "Требуется вход.",
+    "roomNotFound": "Чат не найден.",
+    "createRoomTitle": "Не удалось открыть чат.",
+    "createRoomMessage": "Попробуйте позже."
+  },
+  "sheet": {
+    "moreActions": "Ещё действия",
+    "media": "Фото/Видео",
+    "file": "Файл",
+    "location": "Поделиться местоположением",
+    "inviteFriend": "Пригласить друга",
+    "inviteLink": "Ссылка-приглашение",
+    "translate": "Перевод"
+  },
+  "translate": {
+    "title": "Перевод",
+    "current_lang_prefix": "Сейчас: {{code}}",
+    "tone_label": "Тон",
+    "toneNeutral": "Нейтрально",
+    "toneNeutralDesc": "Естественный базовый перевод",
+    "toneCasual": "Неформально",
+    "toneCasualDesc": "Для дружеских чатов",
+    "toneFormal": "Формально",
+    "toneFormalDesc": "Вежливо и уважительно",
+    "toneBusiness": "Бизнес",
+    "toneBusinessDesc": "Для работы, писем и отчётов",
+    "tonePlayful": "Игриво",
+    "tonePlayfulDesc": "Для лёгких шуток и мемов"
+  },
+  "unknown": "Неизвестно",
+  "voice": "Голос",
+  "list": {
+    "tab": {
+      "chat": "Чат",
+      "open": "Открыть",
+      "beacon": "Бикон",
+      "business": "Бизнес"
+    },
+    "empty": {
+      "chatTitle": "Нет чатов",
+      "chatSub": "Напишите другу.",
+      "openTitle": "Нет открытых чатов",
+      "openSub": "Найдите интересные темы.",
+      "beaconTitle": "Нет активных биконов",
+      "beaconSub": "Ищите биконы рядом.",
+      "businessTitle": "Нет бизнес-чатов",
+      "businessSub": "Здесь появятся обращения."
+    },
+    "leaveConfirmTitle": "Выйти из чата?",
+    "leaveConfirmMessage": "Этот чат исчезнет из вашего списка.",
+    "leaveConfirmAction": "Выйти"
+  },
+  "menu": {
+    "title": "Меню чата",
+    "joinedDate": "Вступили {{date}}",
+    "media": "Фото/Видео",
+    "mediaEmpty": "Здесь появятся недавние медиа.",
+    "noticeSchedule": "Объявления и расписания",
+    "me": "Я"
+  },
+  "membersScreen": {
+    "title": "Участники",
+    "loading": "Загрузка…",
+    "empty": "Нет участников",
+    "owner": "Владелец",
+    "participant": "Участник",
+    "remove": "Удалить",
+    "removeTitle": "Удалить",
+    "removeMessage": "Удалить {{name}}?",
+    "loadFail": "Не удалось загрузить",
+    "noName": "Без имени"
+  },
+  "inviteScreen": {
+    "title": "Пригласить друзей",
+    "roomMissingTitle": "Нет данных комнаты",
+    "roomMissingMessage": "Войдите снова и повторите.",
+    "tryAgain": "Попробуйте позже.",
+    "loadFailTitle": "Не удалось загрузить друзей.",
+    "selectFriend": "Выберите друга.",
+    "selectForAdd": "Выберите друзей для добавления.",
+    "selectForNewGroup": "Выберите друзей.",
+    "addSuccessTitle": "Друзья добавлены.",
+    "addSuccessMessage": "Добавлено: {{count}}.",
+    "addFailTitle": "Не удалось добавить друзей.",
+    "createFailTitle": "Не удалось создать групповой чат.",
+    "friendRowAdd": "Добавить в эту группу",
+    "friendRowNewGroup": "Добавить в новую группу",
+    "groupAddTitle": "Добавить друзей в группу",
+    "newGroupTitle": "Новый групповой чат",
+    "groupAddDesc": "Добавить выбранных друзей в текущую группу.",
+    "newGroupDesc": "Создать новую группу с выбранными друзьями.",
+    "loading": "Загрузка друзей",
+    "emptyTitle": "Нет друзей для приглашения",
+    "emptyDesc": "Друзья, которые уже в комнате, скрыты.",
+    "addCount": "Добавить {{count}}",
+    "makeGroupCount": "Создать группу с {{count}}",
+    "noName": "Без имени",
+    "groupFallbackTitle": "Групповой чат",
+    "groupTitleWithOthers": "{{names}} + {{count}}"
+  },
+  "roomEdit": {
+    "title": "Информация о чате",
+    "nameLabel": "Название чата",
+    "hidePhoto": "Скрыть фото",
+    "hidePhotoDesc": "Показывать стандартное изображение в списке.",
+    "helperLine1": "Фото и имя видны только вам.",
+    "helperLine2": "Это не влияет на собеседника.",
+    "alertTitle": "Объявление",
+    "unhideBeforeChange": "Отключите скрытие фото перед изменением.",
+    "saveFail": "Не удалось сохранить"
+  },
+  "roomData": {
+    "title": "Управление данными",
+    "ratioTitle": "Данные по типам",
+    "noMedia": "Нет сохранённых медиа",
+    "savedCount": "Сохранено: {{value}}",
+    "deleteAllWithSize": "Удалить все медиа ({{size}})",
+    "photoData": "Фото",
+    "videoData": "Видео",
+    "audioData": "Голос",
+    "fileData": "Файлы",
+    "storageCenter": "Хранилище CO·ONN",
+    "loadFail": "Не удалось загрузить данные.",
+    "actionFail": "Не удалось выполнить действие.",
+    "clear": {
+      "photoTitle": "Удалить фото",
+      "photoMessage": "Удаляет фото на этом устройстве. Сообщения и галерея сохраняются.",
+      "photoSuccess": "Фото удалены.",
+      "videoTitle": "Удалить видео",
+      "videoMessage": "Удаляет видео на этом устройстве. Сообщения и галерея сохраняются.",
+      "videoSuccess": "Видео удалены.",
+      "audioTitle": "Удалить голосовые данные",
+      "audioMessage": "Удаляет голосовые данные на устройстве. Сообщения сохраняются.",
+      "audioSuccess": "Голосовые данные удалены.",
+      "fileTitle": "Удалить файлы",
+      "fileMessage": "Удаляет файлы на устройстве. Сообщения сохраняются.",
+      "fileSuccess": "Файлы удалены.",
+      "allTitle": "Удалить все медиа",
+      "allMessage": "Удаляет фото, видео, голос и файлы на этом устройстве. Сообщения и галерея сохраняются.",
+      "allSuccess": "Медиа удалены."
+    }
+  },
+  "collection": {
+    "title": "Коллекция",
+    "count": "{{count}}",
+    "total": "Всего {{value}}",
+    "tabs": {
+      "links": "Ссылки",
+      "schedules": "Расписание",
+      "bookmarks": "Закладки"
+    },
+    "empty": {
+      "media": "Нет фото и видео",
+      "files": "Нет файлов",
+      "links": "Нет ссылок",
+      "notices": "Нет объявлений",
+      "schedules": "Нет расписаний",
+      "bookmarks": "Нет закладок"
+    },
+    "noDate": "Нет даты",
+    "tapToView": "Нажмите для просмотра",
+    "bookmarkMissingMessage": "Сообщение",
+    "scheduleEmptyBody": "Нет деталей расписания.",
+    "secureRecovery": {
+      "completedBody": "Старые ключи безопасности импортированы.",
+      "rejectedBody": "Запрос старых ключей отклонён."
+    },
+    "scheduleStatus": {
+      "cancelled": "Отменено",
+      "completed": "Завершено",
+      "joined": "Участвует",
+      "joinedOngoing": "Участвует"
+    },
+    "section": {
+      "latestNotice": "Последнее объявление",
+      "previousNotice": "Предыдущие объявления",
+      "activeSchedules": "Активные / открытые",
+      "closedSchedules": "Завершённые / отменённые"
+    }
+  },
+  "settings": {
+    "title": "Настройки чата",
+    "memberCount": "{{count}} участников",
+    "startedAt": "Начато {{date}}",
+    "inputLock": "Блокировка ввода",
+    "theme": {
+      "title": "Тема чата",
+      "default": "По умолчанию",
+      "byRoomType": "По типу комнаты"
+    },
+    "themePreview": {
+      "other": "Хорошо",
+      "mine": "Понял(а)"
+    },
+    "translation": {
+      "title": "Перевод"
+    },
+    "sound": {
+      "title": "Звук уведомления",
+      "default": "По умолчанию",
+      "clear": "Чистый сигнал",
+      "calm": "Спокойный сигнал",
+      "short": "Короткий сигнал",
+      "soft": "Мягкий сигнал",
+      "quiet": "Тихий сигнал",
+      "deep": "Глубокий сигнал",
+      "light": "Светлая",
+      "mute": "Без звука"
+    },
+    "data": {
+      "section": "Данные",
+      "manage": "Управление данными"
+    },
+    "export": {
+      "title": "Экспорт чата",
+      "message": "Сообщение",
+      "saveFile": "Сохранить файл",
+      "share": "Поделиться",
+      "saveSuccess": "Файл сохранён.",
+      "shareSuccess": "Окно отправки открыто.",
+      "saveCancelled": "Сохранение отменено.",
+      "fail": "Не удалось экспортировать.",
+      "deletedMessage": "[Удалённое сообщение]",
+      "secureExcluded": "[Безопасное сообщение — исключено]",
+      "imageLabel": "[Изображение]",
+      "videoLabel": "[Видео]",
+      "audioLabel": "[Аудио]",
+      "fileLabel": "[Файл]",
+      "unknownSender": "Неизвестно",
+      "meSender": "Я",
+      "userSender": "Пользователь",
+      "fileTitle": "Экспорт чата CO·ONN",
+      "roomLine": "Чат: {{roomTitle}}",
+      "exportedAtLine": "Экспортировано: {{exportedAt}}",
+      "noteLocal": "※ Файл основан на чатах, сохранённых на этом устройстве.",
+      "noteText": "※ Мои сообщения экспортируются в оригинале, сообщения других — в текущем отображаемом виде.",
+      "noteSecure": "Защита",
+      "noteGallery": "※ Файлы, сохранённые в галерею, управляются отдельно от кэша приложения.",
+      "attachmentLine": "- Вложение: {{type}}{{fileNamePart}}{{mimePart}}",
+      "shareDialogTitle": "Поделиться чатом"
+    },
+    "leave": {
+      "title": "Выйти из чата",
+      "action": "Выйти",
+      "rejectInvite": "Отклонить приглашение и выйти",
+      "reportAndLeave": "Пожаловаться и выйти",
+      "groupMessage": "Сообщение",
+      "reportMessage": "Сообщение",
+      "defaultMessage": "Сообщение",
+      "fail": "Не удалось выполнить действие.",
+      "selfBlocked": "Нельзя выйти из чата с собой."
+    },
+    "secure": {
+      "section": "Ключи безопасности",
+      "me": "Я",
+      "peer": "Собеседник",
+      "authCancelled": "Аутентификация отменена.",
+      "decline": "Отклонить",
+      "newKey": "Создать новый ключ",
+      "newKeyDesc": "Создать новый ключ для будущих сообщений.",
+      "newKeyConfirmTitle": "Создать новый ключ безопасности?",
+      "newKeyConfirmMessage": "Сообщение",
+      "create": "Создать",
+      "newKeySuccessTitle": "Новый ключ создан",
+      "newKeySuccessMessage": "Новые сообщения будут шифроваться ключом epoch {{epoch}}.",
+      "newKeyFailTitle": "Не удалось выполнить",
+      "newKeyFail": "Не удалось выполнить действие.",
+      "historyRequest": "Запросить старые ключи",
+      "historyRequestDesc": "Запросить ключи старых сообщений.",
+      "historyRequestConfirmTitle": "Запросить старые ключи?",
+      "historyRequestConfirmMessage": "Сообщение",
+      "request": "Запросить",
+      "historyRequestSuccessTitle": "Запрос отправлен",
+      "historyRequestSuccessMessage": "Запрос отправлен: {{count}}.",
+      "historyRequestEmpty": "Нет данных.",
+      "historyRequestFailTitle": "Запрос не удался",
+      "historyRequestFail": "Не удалось выполнить действие.",
+      "claimApproved": "Импортировать одобренные ключи",
+      "claimApprovedDesc": "Сохранить одобренные старые ключи.",
+      "claimSuccessTitle": "Ключи импортированы",
+      "claimSuccessMessage": "Сохранено {{imported}} · уже есть {{skipped}}{{conflictText}}",
+      "claimFailTitle": "Не удалось импортировать",
+      "claimFail": "Не удалось выполнить действие.",
+      "incomingRequestTitle": "Запрос старых ключей от {{name}}",
+      "shareApprovedDesc": "После подтверждения будут отправлены старые ключи.",
+      "historyShareConfirmTitle": "Поделиться старыми ключами?",
+      "historyShareConfirmMessage": "Поделиться старыми ключами с {{name}}?",
+      "historyShareSuccessTitle": "Отправлено",
+      "historyShareSuccessMessage": "Отправлено {{name}}.",
+      "historyShareFailTitle": "Не удалось поделиться",
+      "historyShareFail": "Не удалось выполнить действие.",
+      "historyRejectConfirmTitle": "Отклонить запрос?",
+      "historyRejectConfirmMessage": "Отклонить запрос от {{name}}?",
+      "rejectSuccessTitle": "Отклонено",
+      "rejectSuccessMessage": "Запрос от {{name}} отклонён.",
+      "rejectFailTitle": "Не удалось отклонить",
+      "rejectFail": "Не удалось выполнить действие.",
+      "backupSection": "Резервная копия ключей",
+      "backup": "Резервная копия ключей",
+      "backupSummary": "Резервная копия · комнат {{rooms}} · ключей {{keys}}",
+      "noBackup": "Нет копии",
+      "backupConfirmTitle": "Создать резервную копию ключей?",
+      "backupCreateMessage": "Сообщение",
+      "backupReplaceMessage": "Сообщение",
+      "backupAction": "Создать копию",
+      "backupFailTitle": "Копирование не удалось",
+      "backupCreateFail": "Не удалось выполнить действие.",
+      "restore": "Магазин",
+      "restoreDesc": "Импортировать старые ключи по коду восстановления.",
+      "restoreMessage": "Введите код восстановления, полученный при создании копии.",
+      "restoreAction": "Восстановить",
+      "restoreCodeRequired": "Введите код восстановления.",
+      "restoreSuccessTitle": "Восстановлено",
+      "restoreSuccessMessage": "Импортировано {{imported}} · уже есть {{skipped}}{{conflictText}}",
+      "restoreFail": "Не удалось восстановить копию ключей.",
+      "conflictText": " · конфликты {{conflicts}}\nСохранены текущие локальные ключи.",
+      "conflictShort": " · конфликты {{conflicts}}",
+      "recoveryCodeTitle": "Код восстановления ключей",
+      "recoveryCodeMessage": "Сообщение",
+      "copyRecoveryCode": "Скопировать код",
+      "codeStored": "Код восстановления сохранён.",
+      "codeCopied": "Код восстановления скопирован.",
+      "codeCopyFail": "Не удалось скопировать.",
+      "codeConfirmRequired": "Скопируйте код восстановления или подтвердите, что сохранили его.",
+      "deleteServerBackup": "Удалить копию на сервере",
+      "deleteServerBackupDesc": "Удаляет только зашифрованную копию на сервере.",
+      "backupDeleteConfirmTitle": "Удалить резервную копию ключей?",
+      "backupDeleteConfirmMessage": "Сообщение",
+      "backupDeleteSuccessTitle": "Копия удалена",
+      "backupDeleteSuccessMessage": "Сообщение",
+      "backupDeleteFailTitle": "Не удалось выполнить",
+      "backupDeleteFail": "Не удалось выполнить действие."
+    },
+    "openProfileEditAccessibility": "Изменить публичную информацию открытого чата"
+  },
+  "me": "Я",
+  "noticePromote": {
+    "unsupported": "Нельзя добавить в объявления.",
+    "ownerOnly": "Только владелец может добавлять объявления.",
+    "noPermission": "Нет прав для объявления.",
+    "secureBlocked": "Защищённые сообщения нельзя делать объявлением.",
+    "systemBlocked": "Системные сообщения нельзя делать объявлением.",
+    "deletedBlocked": "Удалённые сообщения нельзя делать объявлением.",
+    "missingMessage": "Не удалось выполнить действие."
+  },
+  "secure": {
+    "promptAuth": "Подтвердите вход для отправки защищённого сообщения.",
+    "on": "Защищённый режим включён",
+    "off": "Защищённый режим выключен",
+    "readyFail": "Не удалось выполнить",
+    "sendReadyFail": "Не удалось выполнить",
+    "mediaUnsupported": "Пока не поддерживается в защищённом режиме.",
+    "fileUnsupported": "Файлы не поддерживаются в защищённом режиме.",
+    "content": {
+      "image": "🔐 Зашифрованное изображение",
+      "video": "🔐 Зашифрованное видео",
+      "audio": "🔐 Зашифрованный голос",
+      "location": "🔐 Зашифрованное местоположение"
+    },
+    "enabled": "Защищённый режим включён",
+    "disabled": "Защищённый режим выключен",
+    "lockedLabel": "🔐 Зашифрованное сообщение",
+    "prompt": {
+      "keyUse": "Подтвердите вход для ключей защищённых сообщений.",
+      "deviceRegister": "Подтвердите вход для регистрации защищённого устройства.",
+      "backupCreate": "Подтвердите вход для копии ключей.",
+      "backupRestore": "Подтвердите вход для восстановления ключей.",
+      "newRoomKey": "Подтвердите вход для создания ключа.",
+      "historyRequest": "Подтвердите вход для запроса старых ключей.",
+      "historyShare": "Подтвердите вход для отправки старых ключей.",
+      "historyReject": "Подтвердите вход для отклонения запроса старых ключей.",
+      "historyClaim": "Подтвердите вход для импорта одобренных старых ключей.",
+      "decrypt": "Подтвердите вход для просмотра защищённого сообщения."
+    },
+    "error": {
+      "loginRequired": "Требуется вход.",
+      "backupEmpty": "Нет ключей для копирования. Повторите после защищённых сообщений.",
+      "backupMissing": "Нет сохранённой копии ключей.",
+      "backupWrongAccount": "Аккаунт",
+      "requesterDeviceMissing": "Активное защищённое устройство запросившего не найдено.",
+      "noHistoryKeyToShare": "Нет данных.",
+      "parcelCreateFailed": "Не удалось создать данные ключей для отправки."
+    }
+  },
+  "jump": {
+    "newMessage": "Новое сообщение",
+    "newMessageAccessibility": "Перейти к новому сообщению",
+    "latestAccessibility": "К последнему сообщению"
+  },
+  "permission": {
+    "cameraTitle": "Требуется разрешение",
+    "cameraMessage": "Нужен доступ к камере.",
+    "contactsTitle": "Требуется разрешение",
+    "contactsMessage": "Нужен доступ к контактам."
+  },
+  "filePick": {
+    "failTitle": "Не удалось выбрать файл",
+    "failMessage": "Не удалось выбрать файл."
+  },
+  "newChat": {
+    "title": "Новый чат",
+    "create": "Создать",
+    "start": "Начало",
+    "noName": "Без имени",
+    "selectPartnerRequired": "Выберите собеседника.",
+    "openTitleRequired": "Введите название открытого чата.",
+    "modeNormal": "Обычное",
+    "modeOpen": "Открыть",
+    "openSectionTitle": "Создать открытый чат",
+    "openNamePlaceholder": "Название открытого чата",
+    "openHelper": "Создать публичный чат без выбора друзей.",
+    "partnerSectionTitle": "Выберите собеседника",
+    "groupTitlePlaceholder": "Название группы",
+    "searchNamePlaceholder": "Поиск имени",
+    "emptyFriends": "Нет друзей",
+    "userFallback": "Пользователь",
+    "privateChatTitle": "Личный чат",
+    "groupChatTitle": "Групповой чат",
+    "openChatTitle": "Открытый чат",
+    "coverPhoto": "Обложка",
+    "selectPhoto": "Фото",
+    "openDescriptionPlaceholder": "Описание комнаты",
+    "openTagsPlaceholder": "например: район, кофе, бег",
+    "searchVisible": "Видимость в поиске",
+    "searchVisibleDesc": "Поиск по названию, описанию и тегам.",
+    "groupModeTitle": "Групповой чат",
+    "groupModeAutoDesc": "Если выбрано 2+ человека, создаётся группа.",
+    "groupModeSingleDesc": "Группу можно создать даже с одним выбранным другом."
+  },
+  "menuModal": {
+    "markRead": "Отметить прочитанным",
+    "roomInfo": "Информация о чате",
+    "pin": "Закрепить сверху",
+    "unpin": "Открепить",
+    "mute": "Без звука",
+    "unmute": "Включить уведомления",
+    "leave": "Выйти",
+    "selfRoomTitle": "Чат с собой"
+  },
+  "roomCard": {
+    "pending": "Ожидает",
+    "emptyMessage": "Нет сообщений",
+    "messageFallback": "Сообщение",
+    "am": "AM",
+    "pm": "PM",
+    "date": "{{day}}.{{month}}",
+    "preview": {
+      "image": "[Фото]",
+      "video": "[Видео]",
+      "audio": "[Голос]",
+      "file": "[Файл]",
+      "map": "[Место]",
+      "notice": "[Уведомление]"
+    }
+  },
+  "searchModal": {
+    "rooms": "Чаты",
+    "messages": "Сообщения",
+    "placeholder": "Поиск",
+    "emptyTitle": "Поиск",
+    "emptyDesc": "Ищите чаты и сообщения.",
+    "noResultTitle": "Нет результатов",
+    "noResultDesc": "Попробуйте другой запрос.",
+    "roomPrefix": "Чат",
+    "visibleName": "Отображаемое имя",
+    "messageSender": "Отправитель",
+    "filterNormal": "Обычное",
+    "filterOpen": "Открыть",
+    "filterBeacon": "Бикон",
+    "filterBusiness": "Бизнес",
+    "dateAll": "Все",
+    "dateToday": "Сегодня",
+    "date7d": "Дата",
+    "date30d": "Дата",
+    "tabChat": "Чат",
+    "tabParticipant": "Участники",
+    "tabOpen": "Открытые чаты",
+    "participants": "Участники",
+    "openRooms": "Открытые чаты",
+    "participantEmptyTitle": "Поиск участников",
+    "participantEmptyDesc": "Поиск по отображаемым именам в ваших чатах.",
+    "participantNoResultTitle": "Нет участников",
+    "participantNoResultDesc": "Попробуйте другое имя.",
+    "openEmptyTitle": "Поиск открытых чатов",
+    "openEmptyDesc": "Поиск по названию, описанию и тегам.",
+    "openNoResultTitle": "Нет открытых чатов",
+    "openNoResultDesc": "Попробуйте другой запрос.",
+    "typeFilter": "Тип",
+    "dateFilter": "Дата",
+    "openJoined": "Участвует",
+    "openPublic": "Открытый чат",
+    "participatingRoom": "Участвующая комната"
+  },
+  "location": {
+    "fallbackTitle": "Местоположение",
+    "selectMapApp": "Выберите карту",
+    "openMapHint": "Нажмите карту для маршрута"
+  },
+  "translationPanel": {
+    "title": "Настройки перевода",
+    "subtitle": "Применяется только к этой комнате.",
+    "autoTranslate": {
+      "title": "Автоперевод",
+      "desc": "Показывать входящие сообщения на выбранном языке."
+    },
+    "showTranslatedOnly": {
+      "title": "Только перевод",
+      "desc": "Показывать перевод первым."
+    },
+    "tier": {
+      "title": "Тариф",
+      "desc": "Выберите качество перевода.",
+      "upgrade": "Обновить",
+      "options": {
+        "free": {
+          "label": "Basic",
+          "desc": "Базовый перевод"
+        },
+        "mid": {
+          "label": "Standard",
+          "desc": "Естественный перевод чата"
+        },
+        "high": {
+          "label": "Premium",
+          "desc": "С учётом контекста и тона"
+        }
+      }
+    },
+    "tone": {
+      "title": "Тон",
+      "desc": "Настройка тона для Premium",
+      "disabled": "Доступно с Premium.",
+      "options": {
+        "business": {
+          "label": "Бизнес",
+          "desc": "Аккуратный деловой стиль"
+        },
+        "polite": {
+          "label": "Вежливо",
+          "desc": "Мягкий и уважительный тон"
+        },
+        "casual": {
+          "label": "Неформально",
+          "desc": "Естественная повседневная речь"
+        },
+        "neutral": {
+          "label": "Нейтрально",
+          "desc": "Фокус на смысле"
+        },
+        "creative": {
+          "label": "Креативно",
+          "desc": "Более выразительная подача"
+        }
+      }
+    },
+    "sendLang": {
+      "title": "Язык отправки",
+      "desc": "Авто следует языку получения собеседника.",
+      "auto": "Авто",
+      "autoDesc": "Автоматически подбирается под язык собеседника.",
+      "autoPeerDesc": "Сейчас по собеседнику: {{label}} ({{code}})",
+      "peerBase": "По собеседнику",
+      "peerDefault": "По умолчанию"
+    },
+    "receiveLang": {
+      "title": "Язык получения",
+      "desc": "Полученные сообщения отображаются на этом языке."
+    },
+    "status": {
+      "off": "Выкл.",
+      "on": "Вкл.",
+      "auto": "Авто",
+      "receive": "Получать",
+      "send": "Отправить",
+      "translatedOnly": "Только перевод"
+    },
+    "language": {
+      "EN": "Английский",
+      "ES": "Испанский",
+      "FR": "Французский",
+      "DE": "Немецкий",
+      "IT": "Итальянский",
+      "PT": "Португальский",
+      "NL": "Нидерландский",
+      "PL": "Польский",
+      "RU": "Русский",
+      "JA": "Японский",
+      "KO": "Корейский",
+      "ZH": "Китайский",
+      "TR": "Турецкий",
+      "SV": "Шведский",
+      "ID": "Индонезийский",
+      "TH": "Тайский",
+      "UK": "Украинский",
+      "RO": "Румынский",
+      "CS": "Чешский",
+      "DA": "Датский",
+      "EL": "Греческий",
+      "FI": "Финский",
+      "HU": "Венгерский",
+      "SK": "Словацкий",
+      "SL": "Словенский",
+      "BG": "Болгарский",
+      "ET": "Эстонский",
+      "LT": "Литовский",
+      "LV": "Латышский",
+      "AR": "Арабский",
+      "ZH_HANS": "Китайский (упрощенный)",
+      "ZH_HANT": "Китайский (традиционный)",
+      "VI": "Вьетнамский",
+      "HI": "Хинди",
+      "HE": "Иврит"
+    }
+  },
+  "header": {
+    "searchPlaceholder": "Введите текст",
+    "advanced": "Расширенное",
+    "sender": "Отправитель",
+    "date": "Дата"
+  },
+  "attachment": {
+    "photo": "Фото",
+    "camera": "Камера",
+    "call": "Звонок",
+    "pay": "Оплата",
+    "map": "Карта",
+    "music": "Музыка",
+    "file": "Файл",
+    "cloud": "Облако",
+    "contact": "Контакт",
+    "recentPhotos": "Недавние фото",
+    "send": "Отправить",
+    "photoPermissionRequired": "Нужен доступ к фото.",
+    "openSettings": "Открыть настройки",
+    "callUnavailable": "Не удалось начать звонок.",
+    "phoneMissing": "Телефон не указан.",
+    "phoneOpenFail": "Не удалось выполнить действие.",
+    "voiceCallUnavailable": "Голосовой звонок скоро будет доступен.",
+    "contactEmpty": "Нет данных контакта для отправки.",
+    "contactShareTitle": "Контакт",
+    "contactName": "Имя",
+    "contactPhone": "Телефон",
+    "contactShareFail": "Не удалось отправить контакт.",
+    "voiceMessage": "Голос",
+    "capture": "Снимок",
+    "schedule": "Расписание"
+  },
+  "accessibility": {
+    "attachmentClose": "Закрыть вложения",
+    "attachmentOpen": "Открыть вложения",
+    "messageInput": "Поле сообщения",
+    "sendMessage": "Отправить сообщение",
+    "voiceMessage": "Голосовое сообщение"
+  },
+  "replyPreview": {
+    "peer": "Собеседник",
+    "replyTo": "Ответить {{name}}",
+    "cancel": "Отменить ответ"
+  },
+  "mediaKind": {
+    "image": "Фото",
+    "video": "Видео",
+    "audio": "Голосовое сообщение",
+    "file": "Файл",
+    "map": "Местоположение",
+    "notice": "Объявление",
+    "text": "Текст"
+  },
+  "deleteModal": {
+    "title": "Удалить",
+    "mine": "Удалить у меня",
+    "all": "Удалить у всех",
+    "moment": "Отложенное удаление",
+    "sectionTitle": "Время удаления",
+    "selectTime": "Выберите вариант.",
+    "readBased": "После прочтения",
+    "readAfterWithDelay": "После прочтения +{{delay}}",
+    "afterDelete": "Удалить через {{delay}}",
+    "unit": {
+      "hour": "ч",
+      "minute": "мин",
+      "second": "сек"
+    },
+    "cancelTitle": "Отменить?",
+    "cancelDesc": "Выбранные настройки не сохранятся.",
+    "keepEditing": "Продолжить",
+    "discard": "Отмена"
+  },
+  "messageAction": {
+    "copy": "Копировать",
+    "selectCopy": "Выбрать и копировать",
+    "reply": "Ответить",
+    "share": "Поделиться",
+    "toMe": "Себе",
+    "notice": "Объявление",
+    "highlight": "Закладка",
+    "capture": "Снимок",
+    "delete": "Удалить",
+    "cancelMoment": "Отменить удаление",
+    "viewOriginalTranslation": "Оригинал / перевод",
+    "translateOther": "Перевести на другой язык",
+    "reactors": "Кто отреагировал",
+    "shareToMe": "Поделиться с собой",
+    "unhighlight": "Убрать закладку"
+  },
+  "moment": {
+    "title": "Моментальное удаление",
+    "cancel": "Отменить удаление",
+    "expiredMessage": "Сообщение истекло"
+  },
+  "noticeBanner": {
+    "open": "Открыть объявление",
+    "close": "Закрыть объявление"
+  },
+  "newMessagePill": {
+    "label": "Новых сообщений: {{count}}",
+    "accessibility": "Показать новые сообщения: {{count}}"
+  },
+  "search": {
+    "sender": "Отправитель",
+    "senderFilter": "Фильтр отправителя",
+    "dateFilter": "Дата",
+    "prevResult": "Предыдущий результат",
+    "nextResult": "Следующий результат",
+    "close": "Закрыть поиск",
+    "clearSender": "Сбросить фильтр отправителя",
+    "placeholder": "Поиск",
+    "inputAccessibility": "Поле поиска",
+    "clearKeyword": "Очистить запрос",
+    "bookmarkFilter": "Фильтр закладок"
+  },
+  "datePicker": {
+    "title": "Выбор даты",
+    "clear": "Сбросить выбор",
+    "prevMonth": "Предыдущий месяц",
+    "nextMonth": "Следующий месяц",
+    "monthTitle": "{{month}} {{year}}",
+    "weekday": {
+      "sun": "Вс",
+      "mon": "Пн",
+      "tue": "Вт",
+      "wed": "Ср",
+      "thu": "Чт",
+      "fri": "Пт",
+      "sat": "Сб"
+    },
+    "dayAccessibility": "День {{day}}",
+    "selected": "Выбрано",
+    "none": "Нет"
+  },
+  "selection": {
+    "title": "Удалить",
+    "selectAll": "Выбрать все",
+    "deleteCount": "Удалить {{count}}"
+  },
+  "noticeModel": {
+    "fallback": "Проверьте сообщение.",
+    "scheduleTitle": "Расписание",
+    "media": {
+      "image": "Фото",
+      "video": "Видео",
+      "audio": "Голосовое сообщение",
+      "file": "Файл",
+      "map": "Местоположение"
+    },
+    "secureRecovery": {
+      "requestCreated": {
+        "title": "Запрос старых ключей",
+        "body": "Запрос на отправку старых ключей."
+      },
+      "approved": {
+        "title": "Старые ключи одобрены",
+        "body": "Можно импортировать одобренные старые ключи."
+      },
+      "completed": {
+        "title": "Старые ключи восстановлены",
+        "body": "Старые сообщения снова доступны."
+      },
+      "rejected": {
+        "title": "Запрос старых ключей отклонён",
+        "body": "По этому запросу старые сообщения открыть нельзя."
+      }
+    },
+    "scheduleTitleWithPrefix": "[Расписание] Расписание",
+    "weekday": {
+      "sun": "Вс",
+      "mon": "Пн",
+      "tue": "Вт",
+      "wed": "Ср",
+      "thu": "Чт",
+      "fri": "Пт",
+      "sat": "Сб"
+    }
+  },
+  "messageItem": {
+    "noticeFallback": "Сообщение-объявление.",
+    "secureLinkFallback": "Ссылка",
+    "mapAddressFallback": "Информация о месте",
+    "secure": {
+      "genericTitle": "Защищённый запрос",
+      "genericBody": "Статус защищённого запроса обновлён.",
+      "fileFallback": "Защищённый файл"
+    },
+    "tombstone": {
+      "deleted": "Удалено.",
+      "expired": "Сообщение истекло."
+    },
+    "longMessage": {
+      "viewAll": "Все"
+    },
+    "action": {
+      "confirm": "ОК"
+    }
+  },
+  "linkPreview": {
+    "link": "Ссылка",
+    "web": "Веб",
+    "searchTitle": "Поиск: {{query}}",
+    "searchTitleWithProvider": "{{query}} · поиск {{provider}}",
+    "searchResult": "Результаты по {{query}}",
+    "searchResultWithProvider": "{{query}} · результаты {{provider}}",
+    "provider": {
+      "naver": "Naver",
+      "google": "Google",
+      "daum": "Daum"
+    }
+  },
+  "messageMeta": {
+    "deleteSuffix": "Удалить",
+    "cancelMoment": "Отменить отложенное удаление"
+  },
+  "messageBody": {
+    "link": "Ссылка",
+    "secureMessage": "Зашифрованное сообщение",
+    "file": "Файл",
+    "tapToOpen": "Нажмите, чтобы открыть",
+    "locationInfo": "Информация о месте",
+    "secureFile": "Защищённый файл"
+  },
+  "replyBlock": {
+    "peer": "Собеседник",
+    "replyTo": "Ответить {{name}}"
+  },
+  "voiceRecorder": {
+    "totalDuration": "Всего {{duration}}"
+  },
+  "actions": {
+    "momentCancelFailTitle": "Не удалось отменить",
+    "tryAgain": "Попробуйте позже.",
+    "deleteFailTitle": "Не удалось удалить",
+    "missingServerMessage": "Не удалось выполнить действие.",
+    "deleteNetworkFail": "Не удалось выполнить действие.",
+    "momentSetFailTitle": "Не удалось выполнить",
+    "momentSetNetworkFail": "Не удалось выполнить действие.",
+    "uploadFailTitle": "Не удалось загрузить",
+    "imageUploadFail": "Не удалось выполнить действие.",
+    "errorTitle": "Ошибка",
+    "mediaSendFail": "Не удалось выполнить",
+    "voiceUploadFail": "Не удалось загрузить",
+    "fileUploadFail": "Не удалось загрузить"
+  },
+  "bridge": {
+    "messageNotFound": "Не удалось выполнить действие.",
+    "editedImageSent": "Отредактированное изображение отправлено.",
+    "editedImageSendFail": "Не удалось выполнить действие."
+  },
+  "capture": {
+    "title": "Выбор снимка",
+    "desc": "Выберите диапазон сообщений",
+    "exit": "Выйти из снимка",
+    "clear": "Снять выбор",
+    "share": "Поделиться",
+    "save": "Сохранить",
+    "shareCapture": "Поделиться снимком",
+    "saveCapture": "Сохранить снимок",
+    "anonymousOn": "Анонимность вкл.",
+    "anonymousOff": "Анонимность выкл.",
+    "anonymousUser": "Пользователь {{index}}",
+    "error": {
+      "secureBlocked": "Нельзя делать снимок защищённого чата.",
+      "messageNotFound": "Сообщение не найдено.",
+      "areaNotFound": "Область снимка не найдена.",
+      "selectedAreaNotFound": "Выбранная область не найдена.",
+      "areaCalcFailed": "Не удалось рассчитать область.",
+      "outOfView": "Выбранный диапазон вне экрана.",
+      "imageCreateFailed": "Не удалось создать изображение.",
+      "emptySelection": "Нет выбранных сообщений.",
+      "permissionRequired": "Нужно разрешение на сохранение фото.",
+      "saveFailed": "Не удалось сохранить.",
+      "shareUnavailable": "Отправка недоступна.",
+      "shareFailed": "Не удалось выполнить действие."
+    },
+    "success": {
+      "saved": "Снимок сохранён.",
+      "savedPartial": "Сохранена часть диапазона.",
+      "savedVisibleOnly": "Сохранена только видимая часть."
+    },
+    "anonymousInitial": "П"
+  },
+  "schedule": {
+    "common": {
+      "title": "Расписание",
+      "fallbackTitle": "Без названия",
+      "roomFallback": "Чат",
+      "participantFallback": "Участник",
+      "confirm": "ОК",
+      "cancel": "Отмена",
+      "close": "Закрыть",
+      "delete": "Удалить",
+      "done": "Готово",
+      "save": "Сохранить",
+      "saving": "Сохранение",
+      "select": "Выбрать",
+      "weekdays": {
+        "sun": "Вс",
+        "mon": "Пн",
+        "tue": "Вт",
+        "wed": "Ср",
+        "thu": "Чт",
+        "fri": "Пт",
+        "sat": "Сб"
+      },
+      "period": {
+        "am": "AM",
+        "pm": "PM"
+      },
+      "date": "{{day}}.{{month}} ({{weekday}})",
+      "compactDate": "{{day}}.{{month}} {{weekday}}",
+      "timeWithPeriod": "{{period}} {{hour}}:{{minute}}",
+      "participantCount": "Участников: {{count}}",
+      "participantCountShort": "Участников {{count}}",
+      "participantCountCompact": "Участ. {{count}}",
+      "openDetail": "Открыть детали: {{title}}"
+    },
+    "reminder": {
+      "off": "Выкл.",
+      "before30m": "За 30 мин",
+      "before1h": "За 1 час",
+      "before3h": "За 3 часа",
+      "before1d": "За день",
+      "afterJoin": "Доступно после участия"
+    },
+    "api": {
+      "messageTitle": "Расписание · {{title}}",
+      "calendarDefaultTitle": "Расписание CO·ONN",
+      "calendarPlace": "Место: {{place}}",
+      "calendarAddress": "Адрес: {{address}}",
+      "calendarNoteFooter": "Расписание CO·ONN",
+      "notificationChannel": "Расписание",
+      "reminderTimeBody": "Событие начнётся в {{time}}.",
+      "reminderSoonBody": "Событие скоро начнётся.",
+      "reminderTitle": "Напоминание о расписании"
+    },
+    "detail": {
+      "notFound": "Расписание не найдено.",
+      "cancelled": "Отменённое расписание",
+      "completed": "Завершённое расписание",
+      "directions": "Маршрут",
+      "notification": "Уведомление",
+      "appPush": "Push в приложении",
+      "calendar": "Календарь",
+      "syncCalendar": "Синхронизировать с календарём",
+      "synced": "Синхронизировано",
+      "notSynced": "Не синхронизировано",
+      "join": "Участвовать",
+      "leave": "Отмена",
+      "noticeBadge": "Объявление",
+      "noParticipants": "Участников пока нет.",
+      "moveToChat": "Перейти в чат",
+      "menu": {
+        "edit": "Изменить",
+        "cancel": "Отмена",
+        "complete": "Завершить"
+      },
+      "alert": {
+        "processFailTitle": "Не удалось выполнить",
+        "joinChangeFail": "Не удалось выполнить действие.",
+        "participantSettingTitle": "Настройки участника",
+        "promoteNotice": "Объявление",
+        "removeNotice": "Объявление",
+        "promoteNoticeMessage": "Выделить {{name}} среди участников?",
+        "removeNoticeMessage": "Убрать выделение у {{name}}?",
+        "settingFailTitle": "Не удалось настроить",
+        "participantSettingFail": "Не удалось изменить настройки участника.",
+        "reminderFailTitle": "Не удалось выполнить",
+        "calendarReminderFailTitle": "Не удалось установить напоминание календаря",
+        "calendarSyncFailTitle": "Не удалось синхронизировать календарь",
+        "calendarDeleteFailTitle": "Не удалось удалить из календаря",
+        "cancelTitle": "Отменить расписание",
+        "cancelMessage": "Сообщение",
+        "cancelAction": "Отменить расписание",
+        "cancelFailTitle": "Не удалось выполнить",
+        "cancelFail": "Не удалось отменить расписание.",
+        "completeTitle": "Завершить расписание",
+        "completeMessage": "Сообщение",
+        "completeFailTitle": "Не удалось выполнить",
+        "completeFail": "Не удалось завершить расписание.",
+        "calendarRemoveTitle": "Удалить из календаря",
+        "calendarRemoveMessage": "Сообщение"
+      },
+      "error": {
+        "calendarPermissionDenied": "Нужно разрешение календаря.",
+        "calendarNotFound": "Нет данных.",
+        "invalidScheduleTime": "Не удалось выполнить действие.",
+        "calendarApiUnavailable": "Календарь недоступен на этом устройстве.",
+        "calendarDefault": "Не удалось выполнить действие календаря.",
+        "notificationPermissionDenied": "Нужно разрешение уведомлений.",
+        "reminderTimePast": "Время напоминания уже прошло.",
+        "reminderDefault": "Не удалось установить напоминание."
+      }
+    },
+    "editor": {
+      "createTitle": "Создать расписание",
+      "editTitle": "Изменить расписание",
+      "titlePlaceholder": "Название",
+      "allDay": "Весь день",
+      "startDate": "Дата начала",
+      "endDate": "Дата окончания",
+      "place": "Место",
+      "map": "Карта",
+      "placeNamePlaceholder": "Название места",
+      "memoPlaceholder": "Введите текст",
+      "cancelledLocked": "Отменённое расписание нельзя изменить.",
+      "locationPickerTitle": "Выбор места",
+      "locationPickerHelper": "Переместите центр карты в нужное место и выберите его.",
+      "validation": {
+        "titleRequired": "Введите название.",
+        "startInvalid": "Проверьте время начала.",
+        "endInvalid": "Проверьте время окончания.",
+        "endBeforeStart": "Время окончания раньше начала.",
+        "roomMissing": "Информация о чате не найдена."
+      }
+    },
+    "listScreen": {
+      "loadFail": "Не удалось загрузить расписание.",
+      "roomMissing": "Информация о чате не найдена.",
+      "createAccessibility": "Создать расписание",
+      "retry": "Повторить",
+      "activeCount": "Количество {{count}}",
+      "summary": "Общее расписание этого чата.",
+      "emptyTitle": "Пока нет расписаний",
+      "emptyDesc": "Создайте расписание для всех участников.",
+      "beaconUnavailableTitle": "Расписание недоступно в бикон-чате",
+      "beaconUnavailableDesc": "В бикон-чатах расписание не отображается.",
+      "create": "Создать",
+      "joined": "Участвует",
+      "notJoined": "Не участвует",
+      "cancelled": "Отменено",
+      "completed": "Завершено",
+      "past": "Прошедшее"
+    },
+    "messageCard": {
+      "cancelled": "Отменено",
+      "completed": "Завершено"
+    }
+  },
+  "openProfile": {
+    "common": {
+      "confirm": "ОК",
+      "cancel": "Отмена",
+      "save": "Сохранить",
+      "delete": "Удалить",
+      "default": "По умолчанию",
+      "user": "Пользователь",
+      "openChat": "Открытый чат",
+      "business": "Бизнес",
+      "openTalk": "Открытый чат",
+      "fallbackName": "Имя",
+      "statusEmpty": "Нет данных",
+      "selectPhoto": "Фото",
+      "photoApplied": "Фото применено.",
+      "saved": "Сохранено.",
+      "deleted": "Удалено.",
+      "tryAgain": "Попробуйте позже.",
+      "notice": "Объявление",
+      "actionFailed": "Не удалось выполнить действие.",
+      "saveFailed": "Не удалось сохранить.",
+      "profileSaveFailed": "Не удалось сохранить профиль."
+    },
+    "list": {
+      "title": "Открытые профили",
+      "loadFailed": "Не удалось загрузить открытые профили.",
+      "nicknameRequired": "Введите никнейм.",
+      "createSuccess": "Открытый профиль создан.",
+      "createFailed": "Не удалось создать",
+      "saveFailed": "Не удалось сохранить",
+      "deleteFailed": "Не удалось удалить",
+      "deleteTitle": "Удалить открытый профиль?",
+      "deleteDescInUse": "Профили в используемых открытых чатах сохранятся.",
+      "deleteDescDefault": "Удалённые профили нельзя использовать снова.",
+      "editAccessibility": "Изменить открытый профиль",
+      "usedRoomsCount": "Используется в открытых чатах: {{count}}",
+      "usedRoomsEmpty": "Нет данных.",
+      "emptyTitle": "Нет данных.",
+      "emptyDesc": "Создайте новый профиль кнопкой + справа сверху."
+    },
+    "viewer": {
+      "action": {
+        "transferOwner": "Передать владельца",
+        "promoteManager": "Назначить модератора",
+        "demoteManager": "Снять модератора",
+        "kick": "Исключить",
+        "block": "Заблокировать",
+        "unblock": "Разблокировать",
+        "release": "Снять",
+        "delegate": "Передать",
+        "appoint": "Назначить",
+        "changePhoto": "Фото",
+        "showPhoto": "Фото"
+      },
+      "confirm": {
+        "blockMessage": "Сообщение",
+        "unblockMessage": "Снова показывать сообщения этого пользователя?",
+        "transferOwnerMessage": "Передать роль владельца пользователю {{name}}?",
+        "promoteManagerMessage": "Назначить {{name}} модератором?",
+        "demoteManagerMessage": "Снять с {{name}} роль модератора?",
+        "kickMessage": "Исключить {{name}}? Исключённые пользователи не смогут вернуться."
+      },
+      "accessibility": {
+        "save": "Сохранить"
+      },
+      "placeholder": {
+        "status": "Статус"
+      }
+    },
+    "edit": {
+      "loadFailed": "Не удалось загрузить данные открытого чата.",
+      "titleRequired": "Введите название комнаты.",
+      "saveFailed": "Не удалось выполнить действие.",
+      "categoryFallback": "Открытый чат",
+      "titlePlaceholder": "Название открытого чата",
+      "changePhoto": "Фото",
+      "descriptionPlaceholder": "Введите текст",
+      "tagsPlaceholder": "Введите текст",
+      "publicTitle": "Публично",
+      "publicDesc": "Поиск по названию, описанию и тегам.",
+      "selectCover": "Выбрать фото"
+    },
+    "gate": {
+      "loadFailed": "Не удалось загрузить информацию.",
+      "joinFailed": "Не удалось выполнить действие.",
+      "enterChat": "Войти в чат",
+      "startConsult": "Начать консультацию",
+      "selectProfileEnter": "Выбрать профиль для входа",
+      "joinOpenChat": "Войти в открытый чат",
+      "openNow": "Открыть",
+      "closed": "Закрыто",
+      "participants": "Участников {{count}}",
+      "participantsWithMax": "Участников {{count}}/{{max}}",
+      "createdAt": "Создано {{date}}",
+      "host": "Владелец",
+      "introEmpty": "Нет данных."
+    }
+  },
+  "userFallback": "Пользователь",
+  "room": {
+    "deletedReadonly": "Эта комната удалена. Доступна только история.",
+    "leftReadonly": "Вы вышли из этого чата.",
+    "kickedTitle": "Вас исключили.",
+    "kickedMessage": "Сообщение"
+  },
+  "toast": {
+    "selectCopySecureBlocked": "Защищённые сообщения нельзя копировать выборочно.",
+    "selectCopyUnsupported": "Это сообщение нельзя копировать выборочно.",
+    "shareToSelfSuccess": "Готово",
+    "shareSecureBlocked": "Защищённые сообщения нельзя отправлять.",
+    "shareUnsupported": "Это сообщение нельзя отправить.",
+    "shareSelfRoomUnavailable": "Не удалось выполнить действие.",
+    "shareFailed": "Не удалось выполнить действие.",
+    "noticeNoPermission": "Нет прав для объявления.",
+    "copied": "Скопировано."
+  },
+  "longMessage": {
+    "message": "Сообщение",
+    "translation": "Перевод",
+    "original": "Оригинал"
+  },
+  "selectCopy": {
+    "titleFallback": "Сообщение",
+    "translated": "Перевод",
+    "original": "Оригинал",
+    "hint": "Удерживайте нужный фрагмент, чтобы выбрать",
+    "copied": "Скопировано",
+    "copyAll": "Все",
+    "empty": "Нет данных"
+  },
+  "system": {
+    "notice": "Обновление чата",
+    "memberJoined": "{{name}} присоединился(-лась).",
+    "memberLeft": "{{name}} вышел(-ла).",
+    "memberKicked": "{{name}} удалён(-а).",
+    "managerPromoted": "{{name}} теперь модератор.",
+    "managerDemoted": "{{name}} больше не модератор.",
+    "ownerTransferred": "{{name}} теперь владелец.",
+    "roomDeleted": "Чат удалён."
+  },
+  "cancel": "Отмена"
+}

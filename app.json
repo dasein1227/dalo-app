@@ -1,33 +1,64 @@
 {
   "expo": {
-    "name": "dalo",
-    "slug": "dalo",
-    "owner": "youngjin1",
+    "name": "COONN",
+    "slug": "coonn",
+    "owner": "geniestudio",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "scheme": "dalo",
+    "scheme": "coonn",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#000000"
+      "backgroundColor": "#0F0524"
     },
-    "assetBundlePatterns": ["**/*"],
-
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "locales": {
+      "ar": "./locales/ar.json",
+      "de": "./locales/de.json",
+      "en": "./locales/en.json",
+      "es": "./locales/es.json",
+      "fr": "./locales/fr.json",
+      "hi": "./locales/hi.json",
+      "id": "./locales/id.json",
+      "it": "./locales/it.json",
+      "ja": "./locales/ja.json",
+      "ko": "./locales/ko.json",
+      "pt": "./locales/pt.json",
+      "ru": "./locales/ru.json",
+      "th": "./locales/th.json",
+      "tr": "./locales/tr.json",
+      "vi": "./locales/vi.json",
+      "zh-Hans": "./locales/zh-Hans.json",
+      "zh-Hant": "./locales/zh-Hant.json"
+    },
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.youngjin1.daloapp",
+      "supportsTablet": false,
+      "bundleIdentifier": "com.geniestudio.coonn",
       "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "채팅에서 사진을 선택하여 전송하기 위해 사진 보관함 접근이 필요합니다.",
-        "NSPhotoLibraryAddUsageDescription": "사진을 저장하거나 전송 이력을 저장하기 위해 사진 보관함에 쓰기 권한이 필요합니다.",
-        "NSLocationWhenInUseUsageDescription": "내 주변 기능을 위해 현재 위치 정보가 필요합니다."
-      }
+        "CFBundleAllowMixedLocalizations": true,
+        "NSPhotoLibraryUsageDescription": "Photo access is used to select profile, post, and chat images.",
+        "NSPhotoLibraryAddUsageDescription": "Photo library access is used to save images and media to your device.",
+        "NSLocationWhenInUseUsageDescription": "Location is used for nearby posts, beacons, and distance-based features.",
+        "NSCameraUsageDescription": "Camera access is used to take profile, post, and chat photos.",
+        "NSMicrophoneUsageDescription": "Microphone access is used when recording videos.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "usesAppleSignIn": true,
+      "associatedDomains": [
+        "applinks:coonn.geniewise.net",
+        "applinks:coonn.geniewise.net"
+      ],
+      "buildNumber": "1"
     },
-
     "android": {
+      "package": "com.geniestudio.coonn",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -36,26 +67,47 @@
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
         "VIBRATE",
-        "POST_NOTIFICATIONS"
+        "POST_NOTIFICATIONS",
+        "android.permission.READ_CALENDAR",
+        "android.permission.WRITE_CALENDAR",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
       ],
       "intentFilters": [
         {
           "action": "VIEW",
-          "category": ["BROWSABLE", "DEFAULT"],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ],
           "data": [
             {
-              "scheme": "dalo",
-              "host": "",
-              "pathPrefix": "/auth"
+              "scheme": "coonn"
+            }
+          ]
+        },
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ],
+          "data": [
+            {
+              "scheme": "https",
+              "host": "coonn.geniewise.net",
+              "pathPrefix": "/add"
             }
           ]
         }
-      ],
-      "package": "com.youngjin1.daloapp"
+      ]
     },
-
     "plugins": [
       "expo-web-browser",
+      "expo-apple-authentication",
       "expo-font",
       "expo-location",
       [
@@ -63,7 +115,8 @@
         {
           "icon": "./assets/notification-icon.png",
           "color": "#111827",
-          "mode": "production"
+          "mode": "production",
+          "defaultChannel": "chat"
         }
       ],
       "expo-splash-screen",
@@ -85,11 +138,11 @@
           "RNMapboxMapsImpl": "mapbox",
           "RNMapboxMapsDownloadToken": "sk.eyJ1Ijoic2hpbnlvdW5namluIiwiYSI6ImNtanpuam1xdDVoZGYzZ3NjMmlha3JlOHYifQ.UnuTGk2nz3hn6XGImhvb5w"
         }
-      ]
+      ],
+      "./plugins/with-coonn-rich-push",
+      "expo-secure-store"
     ],
-
     "newArchEnabled": true,
-
     "extra": {
       "EXPO_PUBLIC_SUPABASE_URL": "https://yyvjwgnajosvapptbhwi.supabase.co",
       "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5dmp3Z25ham9zdmFwcHRiaHdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzODE0NzUsImV4cCI6MjA3NDk1NzQ3NX0.hzwIzJAAlzFsaiygV6sxgS4k7gzFIQGHF92Tb1WQ6PU",
@@ -97,11 +150,9 @@
       "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "848105897985-k0b5r4dica6tunjfjgl5df9refn4ojnd.apps.googleusercontent.com",
       "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "848105897985-flfdqdlda55h77mp9c5fics5k7v1m59d.apps.googleusercontent.com",
       "EXPO_PUBLIC_GOOGLE_PLACES_API_KEY": "AIzaSyDt_vSLEYse8kjVt65cgzwrhfNv6x5NAjA",
-
       "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "pk.eyJ1Ijoic2hpbnlvdW5namluIiwiYSI6ImNtanl5ZGhpbjBhOGozbHE0ZXl6Nnp5OXQifQ.8x9OTSQQakPOtYRbp_gYgQ",
-
       "eas": {
-        "projectId": "8367c5c3-a4d9-47fe-9079-9164c8894a26"
+        "projectId": "0161dd2c-3afa-4257-811d-14288cf6f7af"
       }
     }
   }

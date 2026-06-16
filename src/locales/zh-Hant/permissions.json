@@ -1,0 +1,35 @@
+{
+  "title": "權限設定",
+  "subtitle": "請允許必要權限。",
+  "location_title": "位置權限",
+  "location_desc": "用於顯示附近 Beacon 與地圖。",
+  "notifications_title": "通知權限（選用）",
+  "notifications_desc": "可接收 Beacon 邀請、聊天與通知。",
+  "allow_now": "立即允許",
+  "allowed": "已允許",
+  "open_settings": "開啟設定",
+  "continue_without_location": "稍後設定並繼續",
+  "background_location_title": "背景位置權限（選用）",
+  "background_location_desc": "即使未開啟 App，也可接收附近 Beacon 與位置型通知。",
+  "background_location_hint": "可能會增加電池用量。你可隨時在設定中變更。",
+  "gallery": {
+    "title": "需要照片存取權限",
+    "description": "選擇照片需要存取權限。"
+  },
+  "camera": {
+    "title": "需要相機存取權限",
+    "description": "拍攝需要相機權限。"
+  },
+  "location": {
+    "title": "需要位置存取權限",
+    "description": "確認目前位置需要權限。"
+  },
+  "notification": {
+    "title": "通知權限",
+    "description": "接收通知需要權限。"
+  },
+  "action": {
+    "openSettings": "開啟設定",
+    "notNow": "稍後"
+  }
+}

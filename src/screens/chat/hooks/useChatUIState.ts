@@ -1,7 +1,5 @@
 // src/screens/chat/hooks/useChatUIState.ts
-import { useState, useCallback, useRef } from 'react';
-import type { FlatList } from 'react-native';
-import type { RenderItem } from '@/utils/chat/useChatMessages';
+import { useState, useCallback } from 'react';
 
 export type ReplyInfo = {
   id: string;
@@ -25,8 +23,11 @@ export type TranslationTone =
   | 'creative';
 
 export function useChatUIState() {
-  const [text, setText] = useState('');
+  // ✅ [성능 최적화 완료]
+  // 1. text 상태는 InputBar.tsx 내부로 완전히 격리되어 삭제되었습니다.
+  // 2. 스크롤 및 새 메시지 로직은 useChatScroll.ts로 완벽히 위임되어 삭제되었습니다.
 
+  // 1. 답장(Reply) 상태 관리
   const [replyTo, setReplyTo] = useState<ReplyInfo | null>(null);
 
   const handleReply = useCallback((info: ReplyInfo) => {
@@ -37,45 +38,11 @@ export function useChatUIState() {
     setReplyTo(null);
   }, []);
 
-  const [newMsgCount, setNewMsgCount] = useState(0);
-  const [showNewMsgPill, setShowNewMsgPill] = useState(false);
-
-  const [atBottom, setAtBottom] = useState(true);
-
-  const listRef = useRef<FlatList<RenderItem> | null>(null);
-
-  const scrollToBottom = useCallback(() => {
-    try {
-      listRef.current?.scrollToOffset({
-        offset: 0,
-        animated: true,
-      });
-    } catch {}
-
-    setAtBottom(true);
-    setNewMsgCount(0);
-    setShowNewMsgPill(false);
-  }, []);
-
-  const handleScrolledToBottom = useCallback(() => {
-    setAtBottom(true);
-    setNewMsgCount(0);
-    setShowNewMsgPill(false);
-  }, []);
-
-  const markScrolledAway = useCallback(() => {
-    setAtBottom(false);
-  }, []);
-
-  const handleIncomingMessage = useCallback(() => {
-    if (atBottom) return;
-    setNewMsgCount((prev) => prev + 1);
-    setShowNewMsgPill(true);
-  }, [atBottom]);
-
+  // 2. 모달(Modal) 팝업 상태 관리
   const [mediaModalVisible, setMediaModalVisible] = useState(false);
   const [voiceModalVisible, setVoiceModalVisible] = useState(false);
 
+  // 3. 번역(Translation) 설정 상태 관리
   const [autoTranslate, setAutoTranslate] = useState(false);
   const toggleAutoTranslate = useCallback(() => {
     setAutoTranslate((prev) => !prev);
@@ -85,23 +52,9 @@ export function useChatUIState() {
   const [translationTone, setTranslationTone] = useState<TranslationTone>('neutral');
 
   return {
-    text,
-    setText,
-
     replyTo,
     handleReply,
     cancelReply,
-
-    newMsgCount,
-    showNewMsgPill,
-    handleIncomingMessage,
-
-    atBottom,
-    scrollToBottom,
-    handleScrolledToBottom,
-    markScrolledAway,
-
-    listRef,
 
     mediaModalVisible,
     setMediaModalVisible,

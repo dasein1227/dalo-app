@@ -1,0 +1,10 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "COONN",
+    "NSPhotoLibraryUsageDescription": "L’accès aux photos sert à choisir des images de profil, de publication et de chat.",
+    "NSPhotoLibraryAddUsageDescription": "L’accès à la photothèque sert à enregistrer des images et médias sur votre appareil.",
+    "NSLocationWhenInUseUsageDescription": "La position sert aux publications proches, aux balises et aux fonctions basées sur la distance.",
+    "NSCameraUsageDescription": "L’appareil photo sert à prendre des photos de profil, de publication et de chat.",
+    "NSMicrophoneUsageDescription": "Le microphone est utilisé lors de l’enregistrement de vidéos."
+  }
+}

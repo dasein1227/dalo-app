@@ -1,0 +1,1293 @@
+{
+  "title": "Chat",
+  "send": "Invia",
+  "attach": "File",
+  "gallery": "Galleria",
+  "invite": "Invita",
+  "manage": "Gestisci",
+  "members": "Membri",
+  "placeholder": "Scrivi un messaggio…",
+  "date": {
+    "today": "Oggi",
+    "yesterday": "Ieri",
+    "separatorLabel": "{{weekday}} {{day}} {{month}} {{year}}",
+    "floatingLabel": "{{day}} {{month}} {{year}} · {{weekday}}"
+  },
+  "all": "Tutto",
+  "and_others_n": "+ N",
+  "others_suffix": "altri",
+  "anonymous": "Anonimo",
+  "message": "Messaggio",
+  "message_search": "Cerca messaggi",
+  "message_send": "Invia messaggio",
+  "message_send_failed": "Messaggio non inviato",
+  "message_delete_failed": "Impossibile eliminare il messaggio.",
+  "message_deleted": "Messaggio eliminato.",
+  "new_message_one": "1 nuovo messaggio",
+  "new_messages_count": "{{count}} nuovi messaggi",
+  "chat_with_me": "Chat con me",
+  "self_badge": "Io",
+  "chat_room_title": "Chat",
+  "one_to_one_chat": "Chat 1:1",
+  "group_chat_title": "Chat di gruppo",
+  "open_chat_title": "Open chat",
+  "beacon_chat_title": "Chat beacon",
+  "room_not_found": "Info chat non disponibili.",
+  "chat_room_not_found": "Chat non trovata.",
+  "conversation_partner": "Interlocutore",
+  "audio_send_failed": "Audio non inviato",
+  "video": "Video",
+  "photo": "Foto",
+  "file_label": "File",
+  "open_file": "Apri file",
+  "play_video": "Riproduci video",
+  "voice_message": "Messaggio vocale",
+  "share_location": "Condividi posizione",
+  "map_location_shared_title": "Posizione condivisa",
+  "map_tap_to_open": "Tocca per aprire la mappa.",
+  "cannot_open_map": "Impossibile aprire la mappa.",
+  "no_coordinate_info": "Nessuna coordinata",
+  "send_failed": "Invio non riuscito",
+  "share": "Condividi",
+  "share_failed": "Condivisione non riuscita",
+  "delete_failed": "Eliminazione non riuscita",
+  "upload_failed": "Caricamento non riuscito",
+  "selection_mode": "Modalità selezione",
+  "selection_mode_hint": "Chat",
+  "selection_clear": "Deseleziona",
+  "delete_dialog_title": "Elimina messaggio",
+  "delete_dialog_desc": "Scegli come eliminare.",
+  "delete_for_everyone": "Elimina per tutti",
+  "delete_hide_for_everyone": "Nascondi per tutti",
+  "delete_for_me": "Elimina per me",
+  "delete_for_me_hint": "I messaggi selezionati possono essere eliminati solo per te.",
+  "reply": "Rispondi",
+  "reply_to_me": "Rispondi al mio messaggio",
+  "reply_to_user": "Rispondi a {{nickname}}",
+  "msg_deleted_by_user": "{{nickname}} ha eliminato il messaggio.",
+  "notice": "Avviso",
+  "notice_coming_soon": "Disponibile a breve.",
+  "korean_label": "Coreano",
+  "auto_translate_paid_only": "Chat",
+  "translation_paid_only": "La traduzione è riservata agli utenti paganti.",
+  "premium_only": "Solo Premium",
+  "premium_only_feature_hint": "Disponibile con Premium.",
+  "tone_neutral": "Neutro",
+  "tone_casual": "Informale",
+  "tone_formal": "Formale",
+  "tone_business": "Business",
+  "tone_playful": "Vivace",
+  "tone_change_premium_only": "Chat",
+  "tone_premium_only_hint": "Chat",
+  "login_required": "Accesso richiesto.",
+  "no_permission_send_rls": "Non hai l’autorizzazione per inviare messaggi. (RLS)\n",
+  "rls_help_chat_members": "→ Verifica che tu sia in chat_members e controlla le policy di chat_messages.",
+  "search_placeholder": "Cerca",
+  "search_result_count": "{{count}} risultati",
+  "show_original": "Mostra originale",
+  "show_translation": "Mostra traduzione",
+  "translating": "Traduzione…",
+  "input": {
+    "placeholder": "Invia un messaggio",
+    "placeholderLong": "Scrivi un messaggio…"
+  },
+  "hold_to_unlock": "Tieni premuto per sbloccare",
+  "error": {
+    "loginRequired": "Accesso richiesto.",
+    "roomNotFound": "Chat non trovata.",
+    "createRoomTitle": "Impossibile aprire la chat.",
+    "createRoomMessage": "Riprova più tardi."
+  },
+  "sheet": {
+    "moreActions": "Chat",
+    "media": "Foto/Video",
+    "file": "File",
+    "location": "Condividi posizione",
+    "inviteFriend": "Chat",
+    "inviteLink": "Link invito",
+    "translate": "Traduci"
+  },
+  "translate": {
+    "title": "Traduci",
+    "current_lang_prefix": "Attuale: {{code}}",
+    "tone_label": "Tono",
+    "toneNeutral": "Neutro",
+    "toneNeutralDesc": "Traduzione naturale standard",
+    "toneCasual": "Informale",
+    "toneCasualDesc": "Per chat amichevoli e informali",
+    "toneFormal": "Formale",
+    "toneFormalDesc": "Tono cortese e rispettoso",
+    "toneBusiness": "Business",
+    "toneBusinessDesc": "Per lavoro, email e report",
+    "tonePlayful": "Vivace",
+    "tonePlayfulDesc": "Per meme e battute leggere"
+  },
+  "unknown": "Sconosciuto",
+  "voice": "Voce",
+  "list": {
+    "tab": {
+      "chat": "Chat",
+      "open": "Apri",
+      "beacon": "Scheda Beacon",
+      "business": "Business"
+    },
+    "empty": {
+      "chatTitle": "Nessuna chat",
+      "chatSub": "Scrivi a un amico.",
+      "openTitle": "Nessuna open chat",
+      "openSub": "Lista Vuoto",
+      "beaconTitle": "Nessun beacon attivo",
+      "beaconSub": "Lista Vuoto",
+      "businessTitle": "Nessuna chat business",
+      "businessSub": "Lista Vuoto"
+    },
+    "leaveConfirmTitle": "Uscire dalla chat?",
+    "leaveConfirmMessage": "Questa chat sparirà dalla tua lista.",
+    "leaveConfirmAction": "Esci"
+  },
+  "menu": {
+    "title": "Menu chat",
+    "joinedDate": "Entrato il {{date}}",
+    "media": "Foto/Video",
+    "mediaEmpty": "I media recenti appariranno qui.",
+    "noticeSchedule": "Avvisi e programmi",
+    "me": "Io"
+  },
+  "membersScreen": {
+    "title": "Membri",
+    "loading": "Caricamento…",
+    "empty": "Nessun membro",
+    "owner": "Host",
+    "participant": "Partecipante",
+    "remove": "Rimuovi",
+    "removeTitle": "Rimuovi",
+    "removeMessage": "Rimuovere {{name}}?",
+    "loadFail": "Impossibile caricare",
+    "noName": "Senza nome"
+  },
+  "inviteScreen": {
+    "title": "Invita amici",
+    "roomMissingTitle": "Info chat mancanti",
+    "roomMissingMessage": "Rientra e riprova.",
+    "tryAgain": "Riprova più tardi.",
+    "loadFailTitle": "Impossibile caricare gli amici.",
+    "selectFriend": "Seleziona un amico.",
+    "selectForAdd": "Seleziona gli amici da aggiungere.",
+    "selectForNewGroup": "Seleziona amici da invitare.",
+    "addSuccessTitle": "Chat",
+    "addSuccessMessage": "{{count}} persone aggiunte.",
+    "addFailTitle": "Impossibile aggiungere amici.",
+    "createFailTitle": "Impossibile creare la chat di gruppo.",
+    "friendRowAdd": "Chat",
+    "friendRowNewGroup": "Includi nel nuovo gruppo",
+    "groupAddTitle": "Chat",
+    "newGroupTitle": "Nuova chat di gruppo",
+    "groupAddDesc": "Chat",
+    "newGroupDesc": "Chat",
+    "loading": "Caricamento amici",
+    "emptyTitle": "Nessun amico da invitare",
+    "emptyDesc": "Chat",
+    "addCount": "Aggiungi {{count}}",
+    "makeGroupCount": "Crea gruppo con {{count}}",
+    "noName": "Senza nome",
+    "groupFallbackTitle": "Chat di gruppo",
+    "groupTitleWithOthers": "{{names}} + {{count}}"
+  },
+  "roomEdit": {
+    "title": "Info chat",
+    "nameLabel": "Nome chat",
+    "hidePhoto": "Nascondi foto",
+    "hidePhotoDesc": "Chat",
+    "helperLine1": "Chat",
+    "helperLine2": "Non hanno effetto sull’altra persona.",
+    "alertTitle": "Avviso",
+    "unhideBeforeChange": "Chat",
+    "saveFail": "Salvataggio non riuscito"
+  },
+  "roomData": {
+    "title": "Gestione dati",
+    "ratioTitle": "Dati per tipo",
+    "noMedia": "Nessun media salvato",
+    "savedCount": "{{value}} salvati",
+    "deleteAllWithSize": "Elimina tutti i media ({{size}})",
+    "photoData": "Dati foto",
+    "videoData": "Dati video",
+    "audioData": "Chat",
+    "fileData": "Dati file",
+    "storageCenter": "Chat",
+    "loadFail": "Impossibile caricare i dati.",
+    "actionFail": "Impossibile completare l’azione.",
+    "clear": {
+      "photoTitle": "Elimina dati foto",
+      "photoMessage": "Elimina i dati foto salvati su questo dispositivo. Messaggi e galleria restano intatti.",
+      "photoSuccess": "Dati foto eliminati.",
+      "videoTitle": "Elimina dati video",
+      "videoMessage": "Elimina i dati video salvati su questo dispositivo. Messaggi e galleria restano intatti.",
+      "videoSuccess": "Dati video eliminati.",
+      "audioTitle": "Elimina dati vocali",
+      "audioMessage": "Elimina i dati vocali salvati su questo dispositivo. I messaggi restano intatti.",
+      "audioSuccess": "Dati vocali eliminati.",
+      "fileTitle": "Elimina dati file",
+      "fileMessage": "Elimina i dati file salvati su questo dispositivo. I messaggi restano intatti.",
+      "fileSuccess": "Dati file eliminati.",
+      "allTitle": "Elimina tutti i media",
+      "allMessage": "Elimina foto, video, messaggi vocali e file salvati su questo dispositivo. Messaggi e galleria restano intatti.",
+      "allSuccess": "Dati media eliminati."
+    }
+  },
+  "collection": {
+    "title": "Raccolta",
+    "count": "{{count}}",
+    "total": "Totale {{value}}",
+    "tabs": {
+      "links": "Link",
+      "schedules": "Programmi",
+      "bookmarks": "Segnalibri"
+    },
+    "empty": {
+      "media": "Nessuna foto o video",
+      "files": "Nessun file",
+      "links": "Nessun link",
+      "notices": "Nessun avviso",
+      "schedules": "Nessun programma",
+      "bookmarks": "Nessun segnalibro"
+    },
+    "noDate": "Nessuna data",
+    "tapToView": "Tocca per vedere",
+    "bookmarkMissingMessage": "Messaggio non trovato su questo dispositivo.",
+    "scheduleEmptyBody": "Nessun dettaglio del programma.",
+    "secureRecovery": {
+      "completedBody": "Chat",
+      "rejectedBody": "Chat"
+    },
+    "scheduleStatus": {
+      "cancelled": "Annullato",
+      "completed": "Completato",
+      "joined": "Partecipi",
+      "joinedOngoing": "Partecipi"
+    },
+    "section": {
+      "latestNotice": "Avviso recente",
+      "previousNotice": "Avvisi precedenti",
+      "activeSchedules": "Chat",
+      "closedSchedules": "Chat"
+    }
+  },
+  "settings": {
+    "title": "Impostazioni chat",
+    "memberCount": "{{count}} membri",
+    "startedAt": "Iniziata il {{date}}",
+    "inputLock": "Blocco input",
+    "theme": {
+      "title": "Tema chat",
+      "default": "Predefinito",
+      "byRoomType": "In base al tipo"
+    },
+    "themePreview": {
+      "other": "Va bene",
+      "mine": "Va bene"
+    },
+    "translation": {
+      "title": "Traduzione Titolo"
+    },
+    "sound": {
+      "title": "Suono notifiche",
+      "default": "Predefinito",
+      "clear": "Chiaro",
+      "calm": "Calmo",
+      "short": "Breve",
+      "soft": "Morbido",
+      "quiet": "Silenzioso",
+      "deep": "Profondo",
+      "light": "Leggero",
+      "mute": "Silenzia"
+    },
+    "data": {
+      "section": "Dati",
+      "manage": "Gestisci dati"
+    },
+    "export": {
+      "title": "Esporta chat",
+      "message": "Impostazioni Messaggio",
+      "saveFile": "Salva file",
+      "share": "Condividi",
+      "saveSuccess": "Salvato come file.",
+      "shareSuccess": "Schermata di condivisione aperta.",
+      "saveCancelled": "Salvataggio annullato.",
+      "fail": "Impossibile esportare.",
+      "deletedMessage": "[Messaggio eliminato]",
+      "secureExcluded": "[Messaggio sicuro - escluso]",
+      "imageLabel": "[Immagine]",
+      "videoLabel": "[Video]",
+      "audioLabel": "[Vocale]",
+      "fileLabel": "[File]",
+      "unknownSender": "Sconosciuto",
+      "meSender": "Io",
+      "userSender": "Utente",
+      "fileTitle": "Esportazione chat CO·ONN",
+      "roomLine": "Chat: {{roomTitle}}",
+      "exportedAtLine": "Esportata il: {{exportedAt}}",
+      "noteLocal": "※ Questo file si basa sulle chat salvate su questo dispositivo.",
+      "noteText": "※ I tuoi messaggi vengono esportati come originali; gli altri come testo attualmente mostrato.",
+      "noteSecure": "※ I messaggi sicuri e i dati chiave non vengono esportati.",
+      "noteGallery": "※ I file salvati in galleria sono gestiti separatamente dalla cache app.",
+      "attachmentLine": "- Allegato: {{type}}{{fileNamePart}}{{mimePart}}",
+      "shareDialogTitle": "Condividi chat"
+    },
+    "leave": {
+      "title": "Esci dalla chat",
+      "action": "Esci",
+      "rejectInvite": "Rifiuta invito ed esci",
+      "reportAndLeave": "Segnala ed esci",
+      "groupMessage": "Puoi uscire dalla chat o rifiutare l’invito.",
+      "reportMessage": "Puoi uscire o segnalare questa chat.",
+      "defaultMessage": "Uscire da questa chat? Sparirà dalla lista chat.",
+      "fail": "Impossibile completare impostazioni errore.",
+      "selfBlocked": "Non puoi uscire dalla chat con te stesso."
+    },
+    "secure": {
+      "section": "Chiavi di sicurezza",
+      "me": "Io",
+      "peer": "Altra persona",
+      "authCancelled": "Autenticazione annullata.",
+      "decline": "Rifiuta",
+      "newKey": "Crea nuova chiave",
+      "newKeyDesc": "Crea una nuova chiave per l’uso futuro.",
+      "newKeyConfirmTitle": "Creare una nuova chiave di sicurezza?",
+      "newKeyConfirmMessage": "La nuova chiave sarà usata da ora in avanti. Le chiavi precedenti restano.",
+      "create": "Crea",
+      "newKeySuccessTitle": "Nuova chiave di sicurezza creata",
+      "newKeySuccessMessage": "I prossimi messaggi saranno cifrati con la chiave epoch {{epoch}}.",
+      "newKeyFailTitle": "Creazione chiave non riuscita",
+      "newKeyFail": "Impossibile completare impostazioni sicuro.",
+      "historyRequest": "Richiedi chiavi precedenti",
+      "historyRequestDesc": "Richiedi le chiavi per i messaggi precedenti.",
+      "historyRequestConfirmTitle": "Richiedere le chiavi precedenti?",
+      "historyRequestConfirmMessage": "Richiedi le chiavi dei messaggi precedenti agli altri partecipanti.",
+      "request": "Richiedi",
+      "historyRequestSuccessTitle": "Richiesta inviata",
+      "historyRequestSuccessMessage": "Richiesta inviata a {{count}} persone.",
+      "historyRequestEmpty": "Nessun impostazioni sicuro.",
+      "historyRequestFailTitle": "Richiesta non riuscita",
+      "historyRequestFail": "Impossibile completare impostazioni sicuro.",
+      "claimApproved": "Importa chiavi approvate",
+      "claimApprovedDesc": "Salva le chiavi precedenti approvate.",
+      "claimSuccessTitle": "Chiavi di sicurezza importate",
+      "claimSuccessMessage": "Salvate {{imported}} · già presenti {{skipped}}{{conflictText}}",
+      "claimFailTitle": "Importazione non riuscita",
+      "claimFail": "Impossibile completare impostazioni sicuro.",
+      "incomingRequestTitle": "Richiesta chiavi precedenti da {{name}}",
+      "shareApprovedDesc": "Approva per condividere le chiavi precedenti.",
+      "historyShareConfirmTitle": "Condividere le chiavi precedenti?",
+      "historyShareConfirmMessage": "Condividere le chiavi precedenti con {{name}}?",
+      "historyShareSuccessTitle": "Condivise",
+      "historyShareSuccessMessage": "Condivise con {{name}}.",
+      "historyShareFailTitle": "Condivisione non riuscita",
+      "historyShareFail": "Impossibile completare impostazioni sicuro.",
+      "historyRejectConfirmTitle": "Rifiutare la richiesta?",
+      "historyRejectConfirmMessage": "Rifiutare la richiesta di {{name}}?",
+      "rejectSuccessTitle": "Rifiutata",
+      "rejectSuccessMessage": "Richiesta di {{name}} rifiutata.",
+      "rejectFailTitle": "Rifiuto non riuscito",
+      "rejectFail": "Impossibile completare impostazioni sicuro.",
+      "backupSection": "Backup chiavi",
+      "backup": "Sicuro Backup",
+      "backupSummary": "Backup · {{rooms}} chat · {{keys}} chiavi",
+      "noBackup": "Nessun backup",
+      "backupConfirmTitle": "Eseguire il backup delle chiavi?",
+      "backupCreateMessage": "Sul server viene salvato solo un backup cifrato. Il codice di recupero appare una sola volta.",
+      "backupReplaceMessage": "Un nuovo backup sostituisce quello esistente. Salva il nuovo codice di recupero.",
+      "backupAction": "Backup",
+      "backupFailTitle": "Backup non riuscito",
+      "backupCreateFail": "Impossibile creare il backup.",
+      "restore": "Ripristina backup chiavi",
+      "restoreDesc": "Importa le chiavi precedenti con un codice di recupero.",
+      "restoreMessage": "Inserisci impostazioni sicuro.",
+      "restoreAction": "Ripristina",
+      "restoreCodeRequired": "Inserisci impostazioni sicuro.",
+      "restoreSuccessTitle": "Ripristino completato",
+      "restoreSuccessMessage": "Importate {{imported}} · già presenti {{skipped}}{{conflictText}}",
+      "restoreFail": "Impossibile completare impostazioni sicuro.",
+      "conflictText": " · conflitti {{conflicts}}\nSono state mantenute le chiavi locali esistenti.",
+      "conflictShort": " · conflitti {{conflicts}}",
+      "recoveryCodeTitle": "Codice recupero chiavi",
+      "recoveryCodeMessage": "Questo codice di recupero non verrà mostrato di nuovo. Conservalo in un luogo sicuro.",
+      "copyRecoveryCode": "Copia codice recupero",
+      "codeStored": "Codice recupero salvato.",
+      "codeCopied": "Codice recupero copiato.",
+      "codeCopyFail": "Impossibile copiare.",
+      "codeConfirmRequired": "Copia il codice di recupero o conferma di averlo salvato.",
+      "deleteServerBackup": "Elimina backup server",
+      "deleteServerBackupDesc": "Elimina solo il backup cifrato sul server.",
+      "backupDeleteConfirmTitle": "Eliminare il backup chiavi?",
+      "backupDeleteConfirmMessage": "Il backup cifrato sul server sarà eliminato. Le chiavi su questo dispositivo restano.",
+      "backupDeleteSuccessTitle": "Backup eliminato",
+      "backupDeleteSuccessMessage": "Backup server eliminato. Le chiavi su questo dispositivo restano.",
+      "backupDeleteFailTitle": "Eliminazione backup non riuscita",
+      "backupDeleteFail": "Impossibile completare impostazioni sicuro."
+    },
+    "openProfileEditAccessibility": "Modifica info pubbliche open chat"
+  },
+  "me": "Io",
+  "noticePromote": {
+    "unsupported": "Non può essere promosso ad avviso.",
+    "ownerOnly": "Chat",
+    "noPermission": "Chat",
+    "secureBlocked": "Chat",
+    "systemBlocked": "Chat",
+    "deletedBlocked": "Chat",
+    "missingMessage": "Impossibile verificare il messaggio."
+  },
+  "secure": {
+    "promptAuth": "Autenticati per inviare un messaggio sicuro.",
+    "on": "Modalità sicura attiva",
+    "off": "Modalità sicura disattivata",
+    "readyFail": "Configurazione modalità sicura non riuscita",
+    "sendReadyFail": "Configurazione invio sicuro non riuscita",
+    "mediaUnsupported": "Al momento non supportato in modalità sicura.",
+    "fileUnsupported": "L’invio di file non è supportato in modalità sicura.",
+    "content": {
+      "image": "🔐 Immagine cifrata",
+      "video": "🔐 Video cifrato",
+      "audio": "Contenuto Audio",
+      "location": "🔐 Posizione cifrata"
+    },
+    "enabled": "Modalità sicura attiva",
+    "disabled": "Modalità sicura disattivata",
+    "lockedLabel": "🔐 Messaggio cifrato",
+    "prompt": {
+      "keyUse": "Autenticati per usare le chiavi dei messaggi sicuri.",
+      "deviceRegister": "Autenticati per registrare il dispositivo sicuro.",
+      "backupCreate": "Autenticati per il backup delle chiavi.",
+      "backupRestore": "Autenticati per ripristinare le chiavi.",
+      "newRoomKey": "Autenticati per creare una nuova chiave.",
+      "historyRequest": "Autenticati per richiedere le chiavi precedenti.",
+      "historyShare": "Autenticati per condividere le chiavi precedenti.",
+      "historyReject": "Autenticati per rifiutare la richiesta di chiavi precedenti.",
+      "historyClaim": "Autenticati per importare le chiavi precedenti approvate.",
+      "decrypt": "Autenticati per vedere il messaggio sicuro."
+    },
+    "error": {
+      "loginRequired": "Accesso richiesto.",
+      "backupEmpty": "Nessuna chiave da salvare. Riprova dopo aver usato messaggi sicuri.",
+      "backupMissing": "Nessun sicuro errore.",
+      "backupWrongAccount": "Sicuro Errore",
+      "requesterDeviceMissing": "Dispositivo sicuro del richiedente non trovato.",
+      "noHistoryKeyToShare": "Nessun sicuro errore.",
+      "parcelCreateFailed": "Impossibile creare i dati chiave da condividere."
+    }
+  },
+  "jump": {
+    "newMessage": "Nuovo messaggio",
+    "newMessageAccessibility": "Vai al nuovo messaggio",
+    "latestAccessibility": "Vai all’ultimo messaggio"
+  },
+  "permission": {
+    "cameraTitle": "Permesso richiesto",
+    "cameraMessage": "Accesso alla fotocamera richiesto.",
+    "contactsTitle": "Permesso richiesto",
+    "contactsMessage": "Accesso ai contatti richiesto."
+  },
+  "filePick": {
+    "failTitle": "Selezione file non riuscita",
+    "failMessage": "Impossibile completare chat."
+  },
+  "newChat": {
+    "title": "Nuova chat",
+    "create": "Crea",
+    "start": "Inizio",
+    "noName": "Senza nome",
+    "selectPartnerRequired": "Seleziona un interlocutore.",
+    "openTitleRequired": "Inserisci un nome per l’open chat.",
+    "modeNormal": "Normale",
+    "modeOpen": "Apri",
+    "openSectionTitle": "Crea open chat",
+    "openNamePlaceholder": "Nome open chat",
+    "openHelper": "Chat",
+    "partnerSectionTitle": "Seleziona interlocutore",
+    "groupTitlePlaceholder": "Nome gruppo",
+    "searchNamePlaceholder": "Chat",
+    "emptyFriends": "Nessun amico",
+    "userFallback": "Utente",
+    "privateChatTitle": "Chat privata",
+    "groupChatTitle": "Chat di gruppo",
+    "openChatTitle": "Open chat",
+    "coverPhoto": "Foto copertina",
+    "selectPhoto": "Scegli foto",
+    "openDescriptionPlaceholder": "Descrizione chat",
+    "openTagsPlaceholder": "es. quartiere, caffè, corsa",
+    "searchVisible": "Chat",
+    "searchVisibleDesc": "La chat può essere trovata per nome, descrizione e tag.",
+    "groupModeTitle": "Chat di gruppo",
+    "groupModeAutoDesc": "Chat",
+    "groupModeSingleDesc": "Chat"
+  },
+  "menuModal": {
+    "markRead": "Segna come letto",
+    "roomInfo": "Info chat",
+    "pin": "Chat",
+    "unpin": "Rimuovi fissaggio",
+    "mute": "Silenzia",
+    "unmute": "Chat",
+    "leave": "Esci",
+    "selfRoomTitle": "Chat"
+  },
+  "roomCard": {
+    "pending": "In attesa",
+    "emptyMessage": "Nessun messaggio",
+    "messageFallback": "Messaggio",
+    "am": "AM",
+    "pm": "PM",
+    "date": "{{day}}/{{month}}",
+    "preview": {
+      "image": "[Foto]",
+      "video": "[Video]",
+      "audio": "[Voce]",
+      "file": "[File]",
+      "map": "[Posizione]",
+      "notice": "[Avviso]"
+    }
+  },
+  "searchModal": {
+    "rooms": "Chat",
+    "messages": "Messaggi",
+    "placeholder": "Cerca",
+    "emptyTitle": "Cerca",
+    "emptyDesc": "Chat",
+    "noResultTitle": "Nessun risultato",
+    "noResultDesc": "Prova un’altra parola.",
+    "roomPrefix": "Chat",
+    "visibleName": "Nome mostrato",
+    "messageSender": "Mittente",
+    "filterNormal": "Normale",
+    "filterOpen": "Apri",
+    "filterBeacon": "Chat",
+    "filterBusiness": "Business",
+    "dateAll": "Tutto",
+    "dateToday": "Oggi",
+    "date7d": "Chat",
+    "date30d": "Chat",
+    "tabChat": "Chat",
+    "tabParticipant": "Membri",
+    "tabOpen": "Open chat",
+    "participants": "Membri",
+    "openRooms": "Open chat",
+    "participantEmptyTitle": "Chat",
+    "participantEmptyDesc": "Chat",
+    "participantNoResultTitle": "Nessun membro",
+    "participantNoResultDesc": "Chat",
+    "openEmptyTitle": "Cerca open chat",
+    "openEmptyDesc": "Cerca per nome, descrizione o tag.",
+    "openNoResultTitle": "Nessuna open chat",
+    "openNoResultDesc": "Prova un’altra parola.",
+    "typeFilter": "Tipo",
+    "dateFilter": "Data",
+    "openJoined": "Partecipi",
+    "openPublic": "Open chat",
+    "participatingRoom": "Chat attiva"
+  },
+  "location": {
+    "fallbackTitle": "Posizione",
+    "selectMapApp": "Scegli app mappe",
+    "openMapHint": "Tocca la mappa per le indicazioni"
+  },
+  "translationPanel": {
+    "title": "Impostazioni traduzione",
+    "subtitle": "Si applica solo a questa chat.",
+    "autoTranslate": {
+      "title": "Traduzione automatica",
+      "desc": "Mostra i messaggi ricevuti nella lingua selezionata."
+    },
+    "showTranslatedOnly": {
+      "title": "Solo traduzione",
+      "desc": "Dà priorità al testo tradotto."
+    },
+    "tier": {
+      "title": "Piano",
+      "desc": "Scegli la qualità della traduzione.",
+      "upgrade": "Aggiorna",
+      "options": {
+        "free": {
+          "label": "Basic",
+          "desc": "Traduzione base"
+        },
+        "mid": {
+          "label": "Standard",
+          "desc": "Traduzione naturale per chat"
+        },
+        "high": {
+          "label": "Premium",
+          "desc": "Con contesto e tono"
+        }
+      }
+    },
+    "tone": {
+      "title": "Tono",
+      "desc": "Tono Descrizione",
+      "disabled": "Disponibile con Premium.",
+      "options": {
+        "business": {
+          "label": "Business",
+          "desc": "Stile pulito, adatto al lavoro"
+        },
+        "polite": {
+          "label": "Cortese",
+          "desc": "Tono Descrizione"
+        },
+        "casual": {
+          "label": "Informale",
+          "desc": "Tono Descrizione"
+        },
+        "neutral": {
+          "label": "Neutro",
+          "desc": "Tono Descrizione"
+        },
+        "creative": {
+          "label": "Creativo",
+          "desc": "Espressione più ricca"
+        }
+      }
+    },
+    "sendLang": {
+      "title": "Lingua di invio",
+      "desc": "Auto segue la lingua di ricezione del destinatario.",
+      "auto": "Auto",
+      "autoDesc": "Chat",
+      "autoPeerDesc": "Attualmente in base all’altra persona: {{label}} ({{code}})",
+      "peerBase": "Basata sull’altra persona",
+      "peerDefault": "Predefinita dell’altra persona"
+    },
+    "receiveLang": {
+      "title": "Lingua di ricezione",
+      "desc": "Mostra i messaggi ricevuti in questa lingua."
+    },
+    "status": {
+      "off": "Disattivato",
+      "on": "ON",
+      "auto": "Auto",
+      "receive": "Ricevi",
+      "send": "Invia",
+      "translatedOnly": "Chat"
+    },
+    "language": {
+      "EN": "Inglese",
+      "ES": "Spagnolo",
+      "FR": "Francese",
+      "DE": "Tedesco",
+      "IT": "Italiano",
+      "PT": "Portoghese",
+      "NL": "Olandese",
+      "PL": "Polacco",
+      "RU": "Russo",
+      "JA": "Giapponese",
+      "KO": "Coreano",
+      "ZH": "Cinese",
+      "TR": "Turco",
+      "SV": "Svedese",
+      "ID": "Indonesiano",
+      "TH": "Thailandese",
+      "UK": "Ucraino",
+      "RO": "Rumeno",
+      "CS": "Ceco",
+      "DA": "Danese",
+      "EL": "Greco",
+      "FI": "Finlandese",
+      "HU": "Ungherese",
+      "SK": "Slovacco",
+      "SL": "Sloveno",
+      "BG": "Bulgaro",
+      "ET": "Estone",
+      "LT": "Lituano",
+      "LV": "Lettone",
+      "AR": "Arabo",
+      "ZH_HANS": "Cinese semplificato",
+      "ZH_HANT": "Cinese tradizionale",
+      "VI": "Vietnamita",
+      "HI": "Hindi",
+      "HE": "Ebraico"
+    }
+  },
+  "header": {
+    "searchPlaceholder": "Cerca chat",
+    "advanced": "Avanzate",
+    "sender": "Mittente",
+    "date": "Data"
+  },
+  "attachment": {
+    "photo": "Foto",
+    "camera": "Fotocamera",
+    "call": "Chiama",
+    "pay": "Paga",
+    "map": "Mappa",
+    "music": "Musica",
+    "file": "File",
+    "cloud": "Cloud",
+    "contact": "Contatto",
+    "recentPhotos": "Chat",
+    "send": "Invia",
+    "photoPermissionRequired": "Accesso alle foto richiesto.",
+    "openSettings": "Chat",
+    "callUnavailable": "Impossibile avviare la chiamata.",
+    "phoneMissing": "Nessun numero registrato.",
+    "phoneOpenFail": "Impossibile avviare la chiamata.",
+    "voiceCallUnavailable": "Chiamata vocale disponibile a breve.",
+    "contactEmpty": "Nessun contatto da condividere.",
+    "contactShareTitle": "Contatto",
+    "contactName": "Nome",
+    "contactPhone": "Telefono",
+    "contactShareFail": "Impossibile condividere il contatto.",
+    "voiceMessage": "Voce",
+    "capture": "Cattura",
+    "schedule": "Programma"
+  },
+  "accessibility": {
+    "attachmentClose": "Chiudi allegati",
+    "attachmentOpen": "Apri allegati",
+    "messageInput": "Campo messaggio",
+    "sendMessage": "Invia messaggio",
+    "voiceMessage": "Messaggio vocale"
+  },
+  "replyPreview": {
+    "peer": "Altra persona",
+    "replyTo": "Rispondi a {{name}}",
+    "cancel": "Annulla risposta"
+  },
+  "mediaKind": {
+    "image": "Foto",
+    "video": "Video",
+    "audio": "Messaggio vocale",
+    "file": "File",
+    "map": "Posizione",
+    "notice": "Avviso",
+    "text": "Chat"
+  },
+  "deleteModal": {
+    "title": "Elimina",
+    "mine": "Elimina per me",
+    "all": "Elimina per tutti",
+    "moment": "Chat",
+    "sectionTitle": "Chat",
+    "selectTime": "Seleziona quando eliminare.",
+    "readBased": "Chat",
+    "readAfterWithDelay": "Dopo la lettura +{{delay}}",
+    "afterDelete": "Elimina dopo {{delay}}",
+    "unit": {
+      "hour": "Chat",
+      "minute": "Chat",
+      "second": "Chat"
+    },
+    "cancelTitle": "Annullare?",
+    "cancelDesc": "Le impostazioni selezionate non saranno salvate.",
+    "keepEditing": "Chat",
+    "discard": "Annulla"
+  },
+  "messageAction": {
+    "copy": "Copia",
+    "selectCopy": "Copia selezione",
+    "reply": "Rispondi",
+    "share": "Condividi",
+    "toMe": "Chat",
+    "notice": "Avviso",
+    "highlight": "Chat",
+    "capture": "Cattura",
+    "delete": "Elimina",
+    "cancelMoment": "Annulla impostazione eliminazione",
+    "viewOriginalTranslation": "Originale/Traduzione",
+    "translateOther": "Traduci in un’altra lingua",
+    "reactors": "Chat",
+    "shareToMe": "Chat",
+    "unhighlight": "Chat"
+  },
+  "moment": {
+    "title": "Eliminazione temporizzata",
+    "cancel": "Annulla impostazione eliminazione",
+    "expiredMessage": "Messaggio scaduto"
+  },
+  "noticeBanner": {
+    "open": "Vedi avviso",
+    "close": "Chiudi avviso"
+  },
+  "newMessagePill": {
+    "label": "{{count}} nuovi messaggi",
+    "accessibility": "Vedi {{count}} nuovi messaggi"
+  },
+  "search": {
+    "sender": "Mittente",
+    "senderFilter": "Chat Cerca",
+    "dateFilter": "Chat Cerca",
+    "prevResult": "Chat Cerca",
+    "nextResult": "Chat Cerca",
+    "close": "Chat Cerca",
+    "clearSender": "Chat Cerca",
+    "placeholder": "Cerca",
+    "inputAccessibility": "Chat Cerca",
+    "clearKeyword": "Chat Cerca",
+    "bookmarkFilter": "Filtro segnalibri"
+  },
+  "datePicker": {
+    "title": "Seleziona chat titolo.",
+    "clear": "Chiaro",
+    "prevMonth": "Mese precedente",
+    "nextMonth": "Mese successivo",
+    "monthTitle": "{{month}} {{year}}",
+    "weekday": {
+      "sun": "Dom",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Gio",
+      "fri": "Ven",
+      "sat": "Sab"
+    },
+    "dayAccessibility": "Giorno {{day}}",
+    "selected": "Selezionato",
+    "none": "Nessuno"
+  },
+  "selection": {
+    "title": "Elimina",
+    "selectAll": "Seleziona tutto",
+    "deleteCount": "Elimina {{count}}"
+  },
+  "noticeModel": {
+    "fallback": "Controlla il messaggio.",
+    "scheduleTitle": "Programma",
+    "media": {
+      "image": "Foto",
+      "video": "Video",
+      "audio": "Messaggio vocale",
+      "file": "File",
+      "map": "Posizione"
+    },
+    "secureRecovery": {
+      "requestCreated": {
+        "title": "Richiesta chiavi precedenti",
+        "body": "Chat Testo"
+      },
+      "approved": {
+        "title": "Chiavi precedenti approvate",
+        "body": "Chat Testo"
+      },
+      "completed": {
+        "title": "Completato Titolo",
+        "body": "Completato Testo"
+      },
+      "rejected": {
+        "title": "Richiesta chiavi precedenti rifiutata",
+        "body": "Chat Testo"
+      }
+    },
+    "scheduleTitleWithPrefix": "[Programma] Programma",
+    "weekday": {
+      "sun": "Dom",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Gio",
+      "fri": "Ven",
+      "sat": "Sab"
+    }
+  },
+  "messageItem": {
+    "noticeFallback": "Chat",
+    "secureLinkFallback": "Link",
+    "mapAddressFallback": "Info posizione",
+    "secure": {
+      "genericTitle": "Richiesta di sicurezza",
+      "genericBody": "Stato richiesta di sicurezza aggiornato.",
+      "fileFallback": "File sicuro"
+    },
+    "tombstone": {
+      "deleted": "Questo messaggio è stato eliminato.",
+      "expired": "Chat"
+    },
+    "longMessage": {
+      "viewAll": "Vedi tutto"
+    },
+    "action": {
+      "confirm": "Azione Conferma"
+    }
+  },
+  "linkPreview": {
+    "link": "Link",
+    "web": "Web",
+    "searchTitle": "Cerca {{query}}",
+    "searchTitleWithProvider": "Cerca {{query}} · {{provider}}",
+    "searchResult": "Risultati per {{query}}",
+    "searchResultWithProvider": "Risultati per {{query}} · {{provider}}",
+    "provider": {
+      "naver": "Naver",
+      "google": "Google",
+      "daum": "Daum"
+    }
+  },
+  "messageMeta": {
+    "deleteSuffix": "Chat",
+    "cancelMoment": "Chat"
+  },
+  "messageBody": {
+    "link": "Link",
+    "secureMessage": "Chat",
+    "file": "File",
+    "tapToOpen": "Tocca per aprire",
+    "locationInfo": "Info posizione",
+    "secureFile": "File sicuro"
+  },
+  "replyBlock": {
+    "peer": "Altra persona",
+    "replyTo": "Rispondi a {{name}}"
+  },
+  "voiceRecorder": {
+    "totalDuration": "Totale {{duration}}"
+  },
+  "actions": {
+    "momentCancelFailTitle": "Impossibile completare chat azioni.",
+    "tryAgain": "Riprova più tardi.",
+    "deleteFailTitle": "Eliminazione non riuscita",
+    "missingServerMessage": "Impossibile completare chat azioni.",
+    "deleteNetworkFail": "Impossibile completare chat azioni.",
+    "momentSetFailTitle": "Chat Azioni non riuscito.",
+    "momentSetNetworkFail": "Impossibile completare chat azioni.",
+    "uploadFailTitle": "Caricamento non riuscito",
+    "imageUploadFail": "Impossibile completare chat azioni.",
+    "errorTitle": "Errore",
+    "mediaSendFail": "Chat Azioni",
+    "voiceUploadFail": "Chat Azioni non riuscito.",
+    "fileUploadFail": "Chat Azioni non riuscito."
+  },
+  "bridge": {
+    "messageNotFound": "Messaggio non trovato localmente.",
+    "editedImageSent": "Immagine modificata inviata.",
+    "editedImageSendFail": "Immagine modificata non inviata."
+  },
+  "capture": {
+    "title": "Seleziona cattura titolo.",
+    "desc": "Seleziona un intervallo di messaggi",
+    "exit": "Esci da cattura",
+    "clear": "Chiaro",
+    "share": "Condividi",
+    "save": "Salva",
+    "shareCapture": "Condividi cattura",
+    "saveCapture": "Salva cattura",
+    "anonymousOn": "Anonimo attivo",
+    "anonymousOff": "Anonimo disattivato",
+    "anonymousUser": "Utente {{index}}",
+    "error": {
+      "secureBlocked": "Le chat sicure non possono essere catturate.",
+      "messageNotFound": "Messaggio non trovato.",
+      "areaNotFound": "Area di cattura non trovata.",
+      "selectedAreaNotFound": "Area selezionata non trovata.",
+      "areaCalcFailed": "Impossibile calcolare l’area.",
+      "outOfView": "Cattura Errore",
+      "imageCreateFailed": "Impossibile creare l’immagine.",
+      "emptySelection": "Nessun cattura errore.",
+      "permissionRequired": "Permesso di salvare foto richiesto.",
+      "saveFailed": "Impossibile salvare.",
+      "shareUnavailable": "Cattura Errore",
+      "shareFailed": "Impossibile condividere."
+    },
+    "success": {
+      "saved": "Cattura salvata.",
+      "savedPartial": "Cattura Successo",
+      "savedVisibleOnly": "Cattura Successo"
+    },
+    "anonymousInitial": "U"
+  },
+  "schedule": {
+    "common": {
+      "title": "Programma",
+      "fallbackTitle": "Senza titolo",
+      "roomFallback": "Chat",
+      "participantFallback": "Partecipante",
+      "confirm": "Programma Conferma",
+      "cancel": "Annulla",
+      "close": "Chiudi",
+      "delete": "Elimina",
+      "done": "Fine",
+      "save": "Salva",
+      "saving": "Salvataggio",
+      "select": "Seleziona",
+      "weekdays": {
+        "sun": "Dom",
+        "mon": "Lun",
+        "tue": "Mar",
+        "wed": "Mer",
+        "thu": "Gio",
+        "fri": "Ven",
+        "sat": "Sab"
+      },
+      "period": {
+        "am": "AM",
+        "pm": "PM"
+      },
+      "date": "{{day}}/{{month}} ({{weekday}})",
+      "compactDate": "{{day}}/{{month}} {{weekday}}",
+      "timeWithPeriod": "{{period}} {{hour}}:{{minute}}",
+      "participantCount": "{{count}} partecipanti",
+      "participantCountShort": "{{count}} partecipanti",
+      "participantCountCompact": "{{count}} partecip.",
+      "openDetail": "Vedi dettagli di {{title}}"
+    },
+    "reminder": {
+      "off": "Disattivato",
+      "before30m": "Chat Programma",
+      "before1h": "Chat Programma",
+      "before3h": "Chat Programma",
+      "before1d": "Chat Programma",
+      "afterJoin": "Disponibile dopo l’adesione"
+    },
+    "api": {
+      "messageTitle": "Programma · {{title}}",
+      "calendarDefaultTitle": "Programma CO·ONN",
+      "calendarPlace": "Luogo: {{place}}",
+      "calendarAddress": "Indirizzo: {{address}}",
+      "calendarNoteFooter": "Programma CO·ONN",
+      "notificationChannel": "Programmi",
+      "reminderTimeBody": "Il programma inizia alle {{time}}.",
+      "reminderSoonBody": "Il programma inizia a breve.",
+      "reminderTitle": "Chat Programma"
+    },
+    "detail": {
+      "notFound": "Programma non trovato.",
+      "cancelled": "Programma annullato",
+      "completed": "Programma completato",
+      "directions": "Indicazioni",
+      "notification": "Notifica",
+      "appPush": "Push app",
+      "calendar": "Calendario",
+      "syncCalendar": "Sincronizza col calendario",
+      "synced": "Sincronizzato",
+      "notSynced": "Non sincronizzato",
+      "join": "Partecipa",
+      "leave": "Annulla",
+      "noticeBadge": "Avviso",
+      "noParticipants": "Ancora nessun partecipante.",
+      "moveToChat": "Programma Dettaglio",
+      "menu": {
+        "edit": "Modifica programma",
+        "cancel": "Menu Annulla",
+        "complete": "Completa"
+      },
+      "alert": {
+        "processFailTitle": "Impossibile completare dettaglio avviso.",
+        "joinChangeFail": "Impossibile completare dettaglio avviso.",
+        "participantSettingTitle": "Dettaglio Avviso",
+        "promoteNotice": "Dettaglio Avviso",
+        "removeNotice": "Dettaglio Avviso",
+        "promoteNoticeMessage": "Mettere in evidenza {{name}} tra i partecipanti?",
+        "removeNoticeMessage": "Rimuovere l’evidenza da {{name}}?",
+        "settingFailTitle": "Impostazioni non riuscite",
+        "participantSettingFail": "Impossibile cambiare le impostazioni.",
+        "reminderFailTitle": "Dettaglio Avviso non riuscito.",
+        "calendarReminderFailTitle": "Promemoria calendario non riuscito",
+        "calendarSyncFailTitle": "Sincronizzazione calendario non riuscita",
+        "calendarDeleteFailTitle": "Eliminazione calendario non riuscita",
+        "cancelTitle": "Annulla programma",
+        "cancelMessage": "Annullare questo programma?\nI partecipanti lo vedranno come annullato.",
+        "cancelAction": "Annulla programma",
+        "cancelFailTitle": "Annullamento non riuscito",
+        "cancelFail": "Impossibile annullare il programma.",
+        "completeTitle": "Completa programma",
+        "completeMessage": "Segnare questo programma come completato?\nI programmi completati appaiono in basso.",
+        "completeFailTitle": "Completamento non riuscito",
+        "completeFail": "Impossibile completare il programma.",
+        "calendarRemoveTitle": "Dettaglio Avviso",
+        "calendarRemoveMessage": "Rimuovere il programma sincronizzato dal calendario?"
+      },
+      "error": {
+        "calendarPermissionDenied": "Permesso calendario richiesto.",
+        "calendarNotFound": "Nessun dettaglio errore.",
+        "invalidScheduleTime": "Impossibile completare dettaglio errore.",
+        "calendarApiUnavailable": "Calendario non disponibile su questo dispositivo.",
+        "calendarDefault": "Impossibile completare l’azione calendario.",
+        "notificationPermissionDenied": "Permesso notifiche richiesto.",
+        "reminderTimePast": "Dettaglio Errore",
+        "reminderDefault": "Impossibile impostare il promemoria."
+      }
+    },
+    "editor": {
+      "createTitle": "Crea programma",
+      "editTitle": "Modifica programma",
+      "titlePlaceholder": "Titolo",
+      "allDay": "Tutto il giorno",
+      "startDate": "Data inizio",
+      "endDate": "Data fine",
+      "place": "Luogo",
+      "map": "Editor Mappa",
+      "placeNamePlaceholder": "Programma Editor",
+      "memoPlaceholder": "Inserisci programma editor.",
+      "cancelledLocked": "I programmi annullati non possono essere modificati.",
+      "locationPickerTitle": "Seleziona programma editor.",
+      "locationPickerHelper": "Programma Editor",
+      "validation": {
+        "titleRequired": "Inserisci un titolo.",
+        "startInvalid": "Controlla l’orario di inizio.",
+        "endInvalid": "Controlla l’orario di fine.",
+        "endBeforeStart": "L’orario di fine precede l’inizio.",
+        "roomMissing": "Info chat non trovate."
+      }
+    },
+    "listScreen": {
+      "loadFail": "Impossibile caricare i programmi.",
+      "roomMissing": "Info chat non trovate.",
+      "createAccessibility": "Crea programma",
+      "retry": "Riprova",
+      "activeCount": "Chat Programma {{count}}",
+      "summary": "Programma Riepilogo",
+      "emptyTitle": "Ancora nessun programma",
+      "emptyDesc": "Crea un programma da condividere.",
+      "beaconUnavailableTitle": "I programmi non sono disponibili nelle chat beacon",
+      "beaconUnavailableDesc": "Chat Programma",
+      "create": "Crea programma",
+      "joined": "Partecipi",
+      "notJoined": "Non partecipi",
+      "cancelled": "Annullato",
+      "completed": "Completato",
+      "past": "Chat Programma"
+    },
+    "messageCard": {
+      "cancelled": "Annullato",
+      "completed": "Completato"
+    }
+  },
+  "openProfile": {
+    "common": {
+      "confirm": "Chat Conferma",
+      "cancel": "Annulla",
+      "save": "Salva",
+      "delete": "Elimina",
+      "default": "Predefinito",
+      "user": "Utente",
+      "openChat": "Open chat",
+      "business": "Business",
+      "openTalk": "Open chat",
+      "fallbackName": "Chat",
+      "statusEmpty": "Nessun messaggio di stato",
+      "selectPhoto": "Seleziona chat.",
+      "photoApplied": "Foto applicata.",
+      "saved": "Salvato.",
+      "deleted": "Eliminato.",
+      "tryAgain": "Riprova più tardi.",
+      "notice": "Avviso",
+      "actionFailed": "Impossibile procedere.",
+      "saveFailed": "Impossibile salvare.",
+      "profileSaveFailed": "Impossibile salvare il profilo."
+    },
+    "list": {
+      "title": "Lista Titolo",
+      "loadFailed": "Impossibile caricare gli open profile.",
+      "nicknameRequired": "Inserisci un nickname.",
+      "createSuccess": "Open profile creato.",
+      "createFailed": "Creazione non riuscita",
+      "saveFailed": "Salvataggio non riuscito",
+      "deleteFailed": "Eliminazione non riuscita",
+      "deleteTitle": "Eliminare open profile?",
+      "deleteDescInUse": "I profili già usati nelle open chat resteranno.",
+      "deleteDescDefault": "I profili eliminati non possono essere riusati.",
+      "editAccessibility": "Modifica open profile",
+      "usedRoomsCount": "Usato in {{count}} open chat",
+      "usedRoomsEmpty": "Nessun chat lista.",
+      "emptyTitle": "Nessun open profile.",
+      "emptyDesc": "Chat Lista"
+    },
+    "viewer": {
+      "action": {
+        "transferOwner": "Trasferisci host",
+        "promoteManager": "Visualizzatore Azione",
+        "demoteManager": "Rimuovi moderatore",
+        "kick": "Espelli",
+        "block": "Blocca",
+        "unblock": "Sblocca",
+        "release": "Rilascia",
+        "delegate": "Visualizzatore Azione",
+        "appoint": "Nomina",
+        "changePhoto": "Cambia foto",
+        "showPhoto": "Visualizzatore Azione"
+      },
+      "confirm": {
+        "blockMessage": "Nascondere i futuri messaggi di questo utente dal tuo schermo?",
+        "unblockMessage": "Mostrare di nuovo i messaggi di questo utente?",
+        "transferOwnerMessage": "Trasferire il ruolo di host a {{name}}?",
+        "promoteManagerMessage": "Rendere {{name}} moderatore?",
+        "demoteManagerMessage": "Rimuovere il ruolo di moderatore da {{name}}?",
+        "kickMessage": "Espellere {{name}}? Gli utenti espulsi non possono rientrare."
+      },
+      "accessibility": {
+        "save": "Salva"
+      },
+      "placeholder": {
+        "status": "Messaggio di stato"
+      }
+    },
+    "edit": {
+      "loadFailed": "Impossibile caricare le info open chat.",
+      "titleRequired": "Inserisci un nome chat.",
+      "saveFailed": "Impossibile salvare. Riprova più tardi.",
+      "categoryFallback": "Open chat",
+      "titlePlaceholder": "Nome open chat",
+      "changePhoto": "Cambia foto",
+      "descriptionPlaceholder": "Chat Modifica",
+      "tagsPlaceholder": "Inserisci chat modifica.",
+      "publicTitle": "Pubblica",
+      "publicDesc": "La chat può essere trovata per nome, descrizione e tag.",
+      "selectCover": "Seleziona chat modifica."
+    },
+    "gate": {
+      "loadFailed": "Impossibile caricare le info.",
+      "joinFailed": "Impossibile entrare con open profile. Riprova più tardi.",
+      "enterChat": "Inserisci chat.",
+      "startConsult": "Chat",
+      "selectProfileEnter": "Seleziona profilo per entrare",
+      "joinOpenChat": "Partecipa a open chat",
+      "openNow": "Apri",
+      "closed": "Chiuso",
+      "participants": "{{count}} partecipanti",
+      "participantsWithMax": "{{count}}/{{max}} partecipanti",
+      "createdAt": "Creato il {{date}}",
+      "host": "Host",
+      "introEmpty": "Nessun chat."
+    }
+  },
+  "userFallback": "Utente",
+  "room": {
+    "deletedReadonly": "Chat Chat",
+    "leftReadonly": "Chat Chat",
+    "kickedTitle": "Sei stato rimosso.",
+    "kickedMessage": "Chat Chat"
+  },
+  "toast": {
+    "selectCopySecureBlocked": "Chat Toast",
+    "selectCopyUnsupported": "Chat Toast",
+    "shareToSelfSuccess": "Chat Toast",
+    "shareSecureBlocked": "I messaggi sicuri non possono essere condivisi.",
+    "shareUnsupported": "Questo messaggio non può essere condiviso.",
+    "shareSelfRoomUnavailable": "Impossibile completare chat toast.",
+    "shareFailed": "Impossibile condividere.",
+    "noticeNoPermission": "Chat Toast",
+    "copied": "Copiato."
+  },
+  "longMessage": {
+    "message": "Messaggio",
+    "translation": "Traduzione",
+    "original": "Originale"
+  },
+  "selectCopy": {
+    "titleFallback": "Messaggio",
+    "translated": "Traduzione",
+    "original": "Originale",
+    "hint": "Tieni premuto per selezionare il testo",
+    "copied": "Copiato",
+    "copyAll": "Chat",
+    "empty": "Nessun testo da selezionare"
+  },
+  "system": {
+    "notice": "Aggiornamento chat",
+    "memberJoined": "{{name}} si è unito.",
+    "memberLeft": "{{name}} ha lasciato la chat.",
+    "memberKicked": "{{name}} è stato rimosso.",
+    "managerPromoted": "{{name}} ora è moderatore.",
+    "managerDemoted": "{{name}} non è più moderatore.",
+    "ownerTransferred": "{{name}} ora è host.",
+    "roomDeleted": "Questa chat è stata eliminata."
+  },
+  "cancel": "Annulla"
+}

@@ -1,0 +1,27 @@
+{
+  "splash_loading": "시작 준비 중…",
+  "offline": "오프라인입니다. 네트워크를 확인하세요.",
+  "not_found": "페이지를 찾을 수 없습니다.",
+  "notFound": {
+    "header": "페이지 없음",
+    "title": "페이지를 찾을 수 없어요",
+    "desc": "요청한 화면을 찾을 수 없습니다. 경로나 정보를 확인해 주세요.",
+    "retry": "다시 시도",
+    "home": "홈으로 이동",
+    "homeShort": "홈으로",
+    "previous": "이전으로",
+    "quick": {
+      "friends": "친구",
+      "settings": "설정"
+    }
+  },
+  "offlineScreen": {
+    "header": "오프라인",
+    "title": "오프라인 상태입니다",
+    "desc": "네트워크 연결을 확인해 주세요.\n와이파이 또는 모바일 데이터가 꺼져 있을 수 있습니다.",
+    "retry": "다시 시도",
+    "check": "연결 확인",
+    "openSettings": "설정 열기",
+    "home": "홈으로"
+  }
+}

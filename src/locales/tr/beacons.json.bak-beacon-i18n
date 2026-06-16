@@ -1,0 +1,409 @@
+{
+  "create_title": "Beacon oluştur",
+  "edit_title": "Beacon düzenle",
+  "detail_title": "Beacon bilgisi",
+  "members_title": "Beacon yönetimi",
+  "my_rooms_title": "Beaconlarım",
+  "join": "Katıl",
+  "enter": "Gir",
+  "owner_tools": "Ev sahibi araçları",
+  "visibility": "Görünürlük",
+  "status_message": "Durum mesajı",
+  "public_profile": "Profili göster",
+  "current_members": "Mevcut katılımcılar",
+  "age_range": "Yaş aralığı",
+  "memo": "Not",
+  "time_left": "Kalan süre",
+  "common": {
+    "beacon": "Beacon",
+    "noName": "İsimsiz",
+    "anonymous": "Anonim kullanıcı",
+    "loading": "Yükleniyor…",
+    "done": "Tamam",
+    "confirm": "Onayla",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "submit": "Gönder",
+    "approve": "Onayla",
+    "reject": "Reddet",
+    "block": "Engelle",
+    "kick": "Çıkar",
+    "none": "Yok",
+    "unlimited": "Sınırsız"
+  },
+  "error": {
+    "invalidId": "Geçersiz ID.",
+    "invalidAccess": "Geçersiz erişim.",
+    "loginRequired": "Giriş gerekli.",
+    "locationPermission": "Konum izni gerekli.",
+    "locationUnavailable": "Mevcut konum alınamıyor.",
+    "locationLoadFail": "Konum yüklenemedi.",
+    "notFound": "Beacon bulunamadı.",
+    "detailNotFound": "Beacon bilgisi bulunamadı.",
+    "detailLoadFail": "Beacon bilgisi yüklenemedi.",
+    "operationFail": "İşlem tamamlanamadı."
+  },
+  "time": {
+    "am": "ÖÖ",
+    "pm": "ÖS",
+    "monthDay": "{{day}}/{{month}}",
+    "minute": "{{count}} dk",
+    "hour": "{{count}} sa",
+    "hourMinute": "{{hour}} sa {{minute}} dk",
+    "remainEnded": "Sona erdi",
+    "remainMinute": "{{count}} dk kaldı",
+    "remainHour": "{{count}} sa kaldı",
+    "remainHourMinute": "{{hour}} sa {{minute}} dk kaldı",
+    "justNow": "Az önce",
+    "agoMinute": "{{count}} dk önce",
+    "agoHour": "{{count}} sa önce",
+    "agoDay": "{{count}} gün önce"
+  },
+  "unit": {
+    "people": "kişi",
+    "age": "yaş",
+    "count": "adet",
+    "times": "kez",
+    "peopleCount": "{{count}} kişi",
+    "ageCount": "{{count}} yaş",
+    "retryLeft": "{{count}} hak kaldı"
+  },
+  "tabs": {
+    "dm": "Özel",
+    "group": "Grup",
+    "open": "Açık",
+    "beacon": "Beacon"
+  },
+  "visibilityLabel": {
+    "public": "Herkese açık",
+    "friends": "Arkadaşlara açık",
+    "labels": "Gruplara açık",
+    "custom": "Özel görünürlük",
+    "publicCompact": "Herkese açık",
+    "friendsCompact": "Arkadaşlara açık",
+    "labelsCompact": "Gruplar",
+    "customCompact": "Özel",
+    "publicExcludeFriends": "Tanıdıklar hariç"
+  },
+  "visibilityDesc": {
+    "public": "Herkese görünür. Varsayılan giriş onaylıdır.",
+    "friends": "Yalnızca arkadaşlara görünür. Varsayılan giriş serbesttir.",
+    "labels": "Yalnızca seçilen gruplara görünür. Varsayılan giriş serbesttir.",
+    "custom": "Arkadaşları ve grupları doğrudan seçersin. Varsayılan giriş serbesttir."
+  },
+  "gender": {
+    "any": "Cinsiyet fark etmez",
+    "male": "Erkek",
+    "female": "Kadın"
+  },
+  "myRooms": {
+    "headerTitle": "Sohbet",
+    "status": {
+      "pending": "Onay bekliyor",
+      "joined": "{{visibility}} · Katıldın",
+      "owner": "{{visibility}} · {{minutes}} dk kaldı",
+      "host": "Ev sahibi",
+      "waiting": "Bekliyor",
+      "member": "Katılımcı"
+    },
+    "title": {
+      "mine": "Beaconlarım",
+      "fallback": "Beacon"
+    },
+    "empty": {
+      "title": "Sohbet yok.",
+      "beaconDesc": "Beaconların ve katıldıkların burada görünür."
+    },
+    "error": {
+      "loadFail": "Liste yüklenemedi."
+    },
+    "alert": {
+      "routeCreate": "Beacon oluşturma ekranını kontrol edin.",
+      "routeChatCreate": "Yeni sohbet oluşturma hazırlanıyor.",
+      "routeBeaconSearch": "Beacon arama ekranını kontrol edin.",
+      "routeSearch": "Arama ekranını kontrol edin."
+    }
+  },
+  "form": {
+    "titlePlaceholder": "Beacon amacı",
+    "descPlaceholder": "Açıklama veya kural gir",
+    "durationMin": "30 dk",
+    "durationMax": "4 sa",
+    "minuteSuffix": "dk",
+    "locationSelectTitle": "Arkadaş görünür konumu",
+    "locationSelectHelper": "Mevcut konumdan 200 m içinde",
+    "locationPickFailTitle": "Konum seçilemiyor",
+    "selectedAddress": "Seçili adres",
+    "locationEmpty": "Seçili konum yok. Haritayı açın.",
+    "locationShortPlaceholder": "Yaklaşık konum",
+    "locationDetailPlaceholder": "Detay konum",
+    "conditionsTitle": "Katılım koşulları",
+    "genderTitle": "Cinsiyet",
+    "quotaTitle": "Kapasite",
+    "quotaDesc": "0 kişi sınırsızdır. Sayıya dokunarak doğrudan girebilirsiniz.",
+    "ageLimitTitle": "Yaş sınırı",
+    "ageLimitDesc": "Varsayılan, yaşınıza göre ±10 yıldır.",
+    "ageNoLimit": "Sınırsız",
+    "ageMin": "Min. yaş",
+    "ageMax": "Maks. yaş",
+    "maleQuota": "Erkek",
+    "femaleQuota": "Kadın",
+    "mixQuota": "Cinsiyet fark etmez",
+    "selectGroups": "Gösterilecek gruplar",
+    "selectFriends": "Gösterilecek arkadaşlar",
+    "friendSearch": "Arkadaş ara",
+    "emptyGroups": "Grup yok.",
+    "emptyFriends": "Arkadaş yok.",
+    "protectionOff": "Koruma kapalı",
+    "protectionOffAlt": "Koruma yok",
+    "createButton": "Beacon oluştur",
+    "saveButton": "Kaydet",
+    "durationTitle": "Süre",
+    "durationDesc": "Belirlenen süre dolunca otomatik kapanır.",
+    "locationProtectionTitle": "Konum koruması",
+    "locationProtectionDesc": "Konum, ayarlanan alan içinde rastgele gösterilir.",
+    "refreshLocation": "Konumu tekrar kontrol et"
+  },
+  "create": {
+    "validation": {
+      "titleRequired": "Toplantı adını girin.",
+      "titleMax": "Toplantı adı en fazla 80 karakter olabilir.",
+      "duration": "Süre 10-240 dk olmalıdır.",
+      "ageRange": "Yaş aralığını kontrol edin.",
+      "locationRequired": "Mevcut konumu kontrol edin.",
+      "labelsRequired": "Grup seçin.",
+      "customRequired": "Arkadaş veya grup seçin."
+    },
+    "alert": {
+      "labelLoadFailTitle": "Gruplar yüklenemedi",
+      "labelLoadFail": "Grup listesi yüklenemedi.",
+      "friendLoadFailTitle": "Arkadaşlar yüklenemedi",
+      "friendLoadFail": "Arkadaş listesi yüklenemedi.",
+      "createFailTitle": "Beacon oluşturulamadı",
+      "createFail": "Bir hata oluştu."
+    }
+  },
+  "edit": {
+    "validation": {
+      "titleRequired": "Oda adını girin.",
+      "titleMax": "Oda adı en fazla 80 karakter olabilir.",
+      "duration": "Süre 10-240 dk olmalıdır.",
+      "ageRange": "Yaş aralığını kontrol edin.",
+      "labelsRequired": "Grup seçin.",
+      "customRequired": "Arkadaş veya grup seçin."
+    },
+    "toast": {
+      "moved": "Mevcut konuma gidildi.",
+      "moveFail": "Konuma gidilemedi.",
+      "saved": "Kaydedildi.",
+      "saveFail": "Bir hata oluştu."
+    }
+  },
+  "detail": {
+    "action": {
+      "ended": "Alım kapandı",
+      "enter_chat": "Sohbete gir",
+      "cancel_request": "İsteği iptal et",
+      "join_direct": "Katıl",
+      "request_retry": "Tekrar iste",
+      "request_join": "Katılım isteği",
+      "forbidden": "Giriş sınırlı",
+      "full": "Kapasite dolu",
+      "closed": "Katılım yok"
+    },
+    "badge": {
+      "pending": "Onay bekliyor",
+      "rejected": "Reddedildi",
+      "approval": "Onaylı giriş",
+      "free": "Serbest giriş"
+    },
+    "empty": {
+      "deleted": "Bu beacon artık yok.",
+      "back": "Geri"
+    },
+    "fallbackTitle": "İsimsiz beacon",
+    "info": {
+      "status": "Durum",
+      "capacity": "Kapasite",
+      "audience": "Görünür kitle",
+      "retry": "Yeniden başvuru hakkı"
+    },
+    "location": {
+      "title": "Toplantı konumu",
+      "visible": "Detay konum katılmadan önce verilir.",
+      "hidden": "Kesin adres katıldıktan sonra sohbette paylaşılır.",
+      "openMap": "Haritada gör ›"
+    },
+    "host": {
+      "settings": "Beacon ayarları",
+      "settingsDesc": "Oda adı, tanıtım ve görünürlüğü değiştir",
+      "members": "Katılımcıları yönet",
+      "membersDesc": "Üyeleri gör ve çıkar",
+      "close": "Beaconu kapat",
+      "closeDesc": "Alımı kapat ve sohbet odasını sonlandır"
+    },
+    "requests": {
+      "title": "Katılım bekleyenler",
+      "empty": "Bekleyen istek yok.",
+      "messageTitle": "Katılım isteği mesajı",
+      "messageDesc": "Ev sahibine iletmek istediğiniz mesajı yazın. İsteğe bağlıdır.",
+      "placeholder": "Örn. Yakındayım.",
+      "send": "İsteği gönder",
+      "sending": "Gönderiliyor…",
+      "code": "Kod {{code}}",
+      "temperature": "Sıcaklık {{temp}}°",
+      "rejectionCount": "Önceki ret {{count}}"
+    },
+    "alert": {
+      "editRoute": "Düzenleme ekranını kontrol edin.",
+      "membersRoute": "Üye yönetimi ekranını kontrol edin.",
+      "loginTitle": "Giriş gerekli",
+      "loginDesc": "Katılmak için giriş gerekli.",
+      "chatNotFound": "Sohbet bilgisi bulunamadı.",
+      "cancelTitle": "İsteği iptal et",
+      "cancelDesc": "Katılım isteği iptal edilsin mi?",
+      "keep": "Koru",
+      "cancelFailTitle": "İptal başarısız",
+      "cancelFail": "İstek iptal edilemedi.",
+      "fullTitle": "Kapasite dolu",
+      "fullDesc": "Katılımcı sayısı doldu.",
+      "forbiddenTitle": "Katılım sınırlı",
+      "forbiddenDesc": "Bu beacona katılamazsınız.",
+      "endedTitle": "Alım kapandı",
+      "endedDesc": "Bu beacon sona erdi.",
+      "unavailableTitle": "Bilgi",
+      "unavailableDesc": "Şu anda katılamazsınız.",
+      "requestSentTitle": "İstek gönderildi",
+      "requestSentDesc": "Ev sahibi onayı bekleniyor.",
+      "requestFailTitle": "Gönderilemedi",
+      "requestFail": "İstek gönderilemedi.",
+      "approveFailTitle": "Onay başarısız",
+      "approveFail": "Katılımcı onaylanamadı.",
+      "rejectFailTitle": "Reddetme başarısız",
+      "rejectFail": "Katılım isteği reddedilemedi.",
+      "closeTitle": "Beaconu kapat",
+      "closeDesc": "Alım ve sohbet odası birlikte kapatılsın mı?",
+      "closeAction": "Kapat",
+      "closeDoneTitle": "Kapatıldı",
+      "closeDoneDesc": "Beacon kapatıldı.",
+      "closeFailTitle": "Kapatılamadı",
+      "closeFail": "Beacon kapatılamadı."
+    }
+  },
+  "members": {
+    "role": {
+      "host": "Ev sahibi",
+      "mod": "Moderatör",
+      "member": "Katılımcı"
+    },
+    "tab": {
+      "members": "Katılımcılar",
+      "requests": "İstek {{count}}"
+    },
+    "meta": {
+      "joined": "Katıldı {{time}}",
+      "request": "İstek {{time}} · önceki ret {{count}}"
+    },
+    "hero": {
+      "titleFallback": "Beacon",
+      "approval": "Onaylı giriş",
+      "free": "Serbest giriş"
+    },
+    "empty": {
+      "members": "Henüz katılımcı yok.",
+      "requests": "Bekleyen istek yok."
+    },
+    "alert": {
+      "loadFailTitle": "Yüklenemedi",
+      "loadFail": "Bilgi yüklenemedi.",
+      "kickTitle": "Katılımcıyı çıkar",
+      "kickDesc": "{{name}} çıkarılsın mı?",
+      "kickAction": "Çıkar",
+      "alreadyHandled": "Zaten işlendi veya çıkarılamaz.",
+      "kickFailTitle": "Başarısız",
+      "kickFail": "Katılımcı çıkarılamadı.",
+      "blockTitle": "Katılımcıyı engelle",
+      "blockDesc": "{{name}} engellensin ve çıkarılsın mı?\nEngellenen kullanıcı tekrar görünmez.",
+      "blockFail": "Katılımcı engellenemedi.",
+      "approveTitle": "Katılımı onayla",
+      "approveDesc": "{{name}} katılımı onaylansın mı?",
+      "approveFailTitle": "Onay başarısız",
+      "approveFail": "Onaylanamadı.",
+      "rejectTitle": "Katılımı reddet",
+      "rejectDesc": "{{name}} isteği reddedilsin mi?",
+      "rejectFailTitle": "Reddetme başarısız",
+      "rejectFail": "Reddedilemedi."
+    }
+  },
+  "main": {
+    "loadingMap": "Harita yükleniyor…",
+    "listButton": "Liste",
+    "emptyRadius": "Gösterilecek beacon yok.",
+    "card": {
+      "noTitle": "Başlıksız",
+      "meta": "Mesafe {{distance}}m · yarıçap {{radius}}m · {{entry}}",
+      "endsAfterMinute": "{{count}} dk sonra biter",
+      "endingSoon": "Yakında bitiyor",
+      "always": "Sürekli"
+    },
+    "toast": {
+      "movedHere": "Mevcut konum güncellendi."
+    },
+    "error": {
+      "loadFail": "Yakındaki beaconlar yüklenemedi.",
+      "locationUnavailable": "Konum alınamıyor.",
+      "noActiveBeacon": "Aktif beacon yok.",
+      "moveFail": "Konum güncellenemedi."
+    },
+    "accessibility": {
+      "detail": "Beacon detayını gör",
+      "create": "Yeni beacon oluştur"
+    }
+  },
+  "search": {
+    "title": "Ara",
+    "placeholder": "Aradığın buluşma",
+    "distance": "Mesafe",
+    "target": "Hedef",
+    "age": "Yaş",
+    "quick": {
+      "friendsOnly": "Sadece arkadaşlar",
+      "public": "Açık",
+      "tenMin": "10 dk",
+      "twenties": "20'ler"
+    },
+    "visibility": {
+      "title": "Görünürlük",
+      "any": "Tümü",
+      "public": "Herkese açık",
+      "publicFiltered": "Açık · arkadaşlar hariç",
+      "friends": "Arkadaşlara açık",
+      "labels": "Gruplar",
+      "custom": "Seçili"
+    },
+    "gender": {
+      "title": "Cinsiyet",
+      "any": "Tümü",
+      "male": "Erkek",
+      "female": "Kadın",
+      "other": "Diğer"
+    },
+    "distancePreset": {
+      "fiveMin": "5 dk",
+      "tenMin": "10 dk",
+      "twentyMin": "20 dk",
+      "near": "Yakın"
+    },
+    "agePreset": {
+      "all": "Tümü",
+      "twenties": "20'ler",
+      "thirties": "30'lar",
+      "forties": "40'lar",
+      "fiftyPlus": "50+"
+    },
+    "action": {
+      "reset": "Sıfırla",
+      "apply": "Uygula"
+    }
+  }
+}

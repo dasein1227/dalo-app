@@ -1,0 +1,27 @@
+{
+  "splash_loading": "Preparando início…",
+  "offline": "Você está offline. Verifique a conexão.",
+  "not_found": "Página não encontrada.",
+  "notFound": {
+    "header": "Página indisponível",
+    "title": "Página não encontrada",
+    "desc": "Não foi possível encontrar a tela solicitada. Verifique o caminho ou as informações.",
+    "retry": "Tentar novamente",
+    "home": "Ir para início",
+    "homeShort": "Início",
+    "previous": "Voltar",
+    "quick": {
+      "friends": "Amigos",
+      "settings": "Configurações"
+    }
+  },
+  "offlineScreen": {
+    "header": "Offline",
+    "title": "Você está offline",
+    "desc": "Verifique sua conexão de rede.\nO Wi‑Fi ou os dados móveis podem estar desligados.",
+    "retry": "Tentar novamente",
+    "check": "Verificar conexão",
+    "openSettings": "Abrir configurações",
+    "home": "Início"
+  }
+}

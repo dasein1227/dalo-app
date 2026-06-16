@@ -1,0 +1,133 @@
+{
+  "view_title": "Profil",
+  "edit_title": "Edit profil",
+  "nickname": "Nama panggilan",
+  "handle": "Handle",
+  "status_message": "Status",
+  "public_default": "Profil publik default",
+  "save_done": "Disimpan.",
+  "no_name": "Tanpa nama",
+  "no_id": "ID belum diatur",
+  "follow": "Ikuti",
+  "following": "Mengikuti",
+  "stat_posts": "Postingan",
+  "stat_followers": "Pengikut",
+  "stat_following": "Mengikuti",
+  "empty_posts": "Belum ada postingan",
+  "empty_posts_tab": "Belum ada postingan",
+  "swipe": {
+    "new_post": "＋ Postingan baru",
+    "chat_1on1": "Chat 1:1",
+    "chat_me": "Chat dengan saya",
+    "call": "Panggilan",
+    "more": "Lainnya →"
+  },
+  "alert": {
+    "setting_soon": "Segera hadir.",
+    "call_friend_only_title": "Panggilan tidak tersedia",
+    "call_friend_only_desc": "Hanya tersedia untuk teman.",
+    "call_feature_soon": "Segera hadir.",
+    "unfollow_title": "Berhenti mengikuti",
+    "unfollow_desc": "Berhenti mengikuti?",
+    "keep": "Tetap",
+    "follow_fail": "Gagal mengikuti.",
+    "unfollow_fail": "Gagal membatalkan.",
+    "self_chat_fail": "Gagal memulai chat."
+  },
+  "edit": {
+    "error_permission": "Anda hanya dapat mengedit profil sendiri.",
+    "revert_title": "Batalkan perubahan",
+    "revert_msg": "Batalkan perubahan?",
+    "revert_action": "Batalkan",
+    "revert": "Batalkan perubahan",
+    "error_add_tab": "Gagal menambahkan tab.",
+    "confirm_delete_tab": "Hapus tab \"{{name}}\"?",
+    "error_save": "Gagal menyimpan.",
+    "change_cover": "Ubah latar",
+    "status_placeholder": "Masukkan status",
+    "section_theme": "Gaya",
+    "theme_color": "Warna tema",
+    "font_color": "Warna font",
+    "statusbar": "Bilah atas",
+    "text_white": "Teks putih",
+    "text_black": "Teks hitam",
+    "section_tabs": "Kelola tab",
+    "tab_all": "Semua",
+    "tab_input_placeholder": "+ Tab baru",
+    "hue": "Warna (Hue)",
+    "brightness": "Kecerahan (Brightness)",
+    "apply": "Terapkan",
+    "setting_tab": "Pengaturan \"{{name}}\"",
+    "move_up": "Naikkan",
+    "move_down": "Turunkan",
+    "visibility": "Visibilitas",
+    "current_vis": "Saat ini: {{val}}",
+    "vis_public": "Semua",
+    "vis_private": "Hanya saya",
+    "vis_custom": "Pilih",
+    "vis_friends": "Teman",
+    "vis_followers": "Pengikut",
+    "picker_avatar": "Pilih foto profil",
+    "picker_cover": "Pilih foto latar"
+  },
+  "menu": {
+    "settings": "Pengaturan",
+    "message": "Pesan",
+    "unfollow": "Berhenti mengikuti",
+    "hide": "Sembunyikan",
+    "hide_confirm": "Sembunyikan pengguna ini?",
+    "block": "Blokir",
+    "block_confirm": "Blokir pengguna ini?",
+    "report": "Laporkan"
+  },
+  "followList": {
+    "title": "Ikuti",
+    "searchPlaceholder": "Cari nama panggilan atau ID",
+    "searchHint": "Masukkan kata kunci",
+    "searchEmpty": "Tidak ada hasil",
+    "retry": "Muat ulang",
+    "unfollowTitle": "Berhenti mengikuti",
+    "unfollowMessage": "Berhenti mengikuti {{name}}?",
+    "unfollowAction": "Batalkan",
+    "tab": {
+      "following": "Mengikuti",
+      "followers": "Pengikut",
+      "requests": "Permintaan"
+    },
+    "list": {
+      "following": "Daftar mengikuti",
+      "followers": "Daftar pengikut",
+      "requests": "Permintaan ikuti"
+    },
+    "section": {
+      "outgoing": "Dikirim",
+      "incoming": "Diterima"
+    },
+    "badge": {
+      "follower": "Pengikut",
+      "pending": "Diminta"
+    },
+    "action": {
+      "accept": "Terima",
+      "decline": "Tolak"
+    },
+    "empty": {
+      "followingTitle": "Belum mengikuti",
+      "followersTitle": "Belum ada pengikut",
+      "requestsTitle": "Tidak ada permintaan",
+      "followingDesc": "Ikuti orang yang menarik.",
+      "followersDesc": "Bagikan profil Anda.",
+      "requestsDesc": "Kirim atau terima permintaan."
+    },
+    "error": {
+      "loadFollowing": "Gagal memuat daftar mengikuti.",
+      "loadFollowers": "Gagal memuat pengikut.",
+      "loadRequests": "Gagal memuat permintaan.",
+      "loadList": "Gagal memuat daftar.",
+      "unfollow": "Gagal membatalkan.",
+      "cancelRequest": "Gagal membatalkan permintaan.",
+      "acceptRequest": "Gagal menerima permintaan.",
+      "rejectRequest": "Gagal menolak permintaan."
+    }
+  }
+}

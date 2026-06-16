@@ -1,0 +1,253 @@
+{
+  "title": "Teman",
+  "requests": "Permintaan teman",
+  "requests_empty": "Tidak ada permintaan teman baru.",
+  "requests_received": "Diterima",
+  "requests_sent": "Dikirim",
+  "add_friend": "Tambah teman",
+  "send_request": "Kirim permintaan",
+  "request_sent": "Permintaan teman terkirim.",
+  "request_send_failed": "Gagal mengirim permintaan teman.",
+  "request_cancel": "Batalkan permintaan",
+  "request_canceled": "Permintaan teman dibatalkan.",
+  "request_cancel_failed": "Gagal membatalkan permintaan teman.",
+  "accept": "Terima",
+  "decline": "Tolak",
+  "accepted": "Permintaan teman diterima.",
+  "declined": "Permintaan teman ditolak.",
+  "accept_failed": "Gagal menerima permintaan teman.",
+  "decline_failed": "Gagal menolak permintaan teman.",
+  "remove_friend": "Hapus teman",
+  "remove_friend_confirm": "Hapus teman ini?",
+  "remove_friend_done": "Teman dihapus.",
+  "remove_friend_failed": "Gagal menghapus teman.",
+  "blocked": "Diblokir",
+  "block": "Blokir",
+  "unblock": "Buka blokir",
+  "block_done": "Diblokir.",
+  "unblock_done": "Blokir dibuka.",
+  "search_placeholder": "Cari nama, ID, atau kode teman",
+  "code_placeholder": "Masukkan kode teman",
+  "already_friends": "Sudah berteman.",
+  "already_requested": "Permintaan teman sudah dikirim.",
+  "self_not_allowed": "Anda tidak dapat mengirim permintaan ke diri sendiri.",
+  "hidden": "Disembunyikan",
+  "favorite": "Favorit",
+  "memo": "Catatan",
+  "alias": "Alias",
+  "group": {
+    "title": "Grup",
+    "manageTitle": "Grup teman",
+    "createTitle": "Grup baru",
+    "createDesc": "Masukkan nama grup.",
+    "createPlaceholder": "Contoh: Rekan kerja, teman sekitar, studi",
+    "createAction": "Buat",
+    "createFail": "Gagal membuat",
+    "editTitle": "Edit nama grup",
+    "editDesc": "Masukkan nama baru.",
+    "editPlaceholder": "Nama grup",
+    "saveAction": "Simpan",
+    "renameFail": "Gagal mengubah",
+    "nameRequired": "Masukkan nama grup.",
+    "deleteTitle": "Hapus grup",
+    "deleteMessage": "Hapus grup \"{{name}}\"?",
+    "emptyTitle": "Belum ada grup",
+    "emptyDesc": "Buat grup baru.",
+    "memberEmpty": "Belum ada anggota grup.",
+    "addTitle": "Tambah teman",
+    "addSuccess": "Ditambahkan.",
+    "addFail": "Gagal menambahkan",
+    "addEmpty": "Tidak ada teman untuk ditambahkan.",
+    "removeSuccess": "Dikeluarkan.",
+    "removeFail": "Gagal mengeluarkan",
+    "memberCount": "{{count}} orang"
+  },
+  "userFallback": "Pengguna",
+  "list": {
+    "favoriteFriendsCount": "Favorit {{count}}",
+    "friendsCount": "Teman {{count}}"
+  },
+  "tabs": {
+    "friends": "Teman",
+    "groups": "Grup"
+  },
+  "search": {
+    "placeholder": "Masukkan kata kunci",
+    "friendPlaceholder": "Cari nama teman atau ID",
+    "groupPlaceholder": "Cari grup atau peserta",
+    "namePlaceholder": "Cari nama",
+    "friendPickerPlaceholder": "Cari teman",
+    "contactsPlaceholder": "Cari nama atau nomor",
+    "waitTitle": "Menunggu input",
+    "waitCaption": "Masukkan informasi untuk mencari.",
+    "emptyTitle": "Tidak ada hasil",
+    "emptyCaption": "Tidak ada pengguna yang cocok.",
+    "contactEmptyTitle": "Kontak kosong",
+    "contactEmptyCaption": "Tidak ada kontak yang cocok.",
+    "groupNamePlaceholder": "Cari grup"
+  },
+  "action": {
+    "favoriteAdd": "Favorit",
+    "favoriteRemove": "Hapus",
+    "manageFriend": "Kelola teman",
+    "manageGroup": "Kelola grup",
+    "contact": "Hubungi",
+    "create": "Buat",
+    "save": "Simpan",
+    "add": "Tambah",
+    "remove": "Keluarkan",
+    "select": "Pilih",
+    "search": "Cari",
+    "processing": "Memproses",
+    "saving": "Menyimpan"
+  },
+  "alert": {
+    "notice": "Info",
+    "fail": "Gagal",
+    "loadFail": "Gagal memuat",
+    "deleteFail": "Gagal menghapus",
+    "profileRouteMissing": "Layar profil tidak ditemukan.",
+    "chatRouteMissing": "Layar chat tidak ditemukan.",
+    "phoneMissing": "Nomor telepon tidak tersedia.",
+    "phoneOpenFail": "Tidak dapat membuka aplikasi telepon.",
+    "removeFriendTitle": "Hapus teman",
+    "removeFriendMessage": "Hapus {{name}}?",
+    "blockTitle": "Blokir",
+    "blockMessage": "Blokir {{name}}?",
+    "blockFail": "Gagal memblokir",
+    "friendEditRouteMissing": "Layar kelola teman tidak ditemukan."
+  },
+  "add": {
+    "title": "Tambah teman",
+    "loginRequired": "Login diperlukan.",
+    "contactSearch": "Cari kontak",
+    "userFallback": "Pengguna {{id}}",
+    "noName": "Tanpa nama",
+    "myProfile": "Profil saya",
+    "notSet": "Belum diatur",
+    "friendCodeLabel": "Kode teman",
+    "qrOfflineHint": "Terhubung langsung lewat kode QR.",
+    "shareLink": "Bagikan tautan",
+    "scanQr": "Pindai QR",
+    "qrTitle": "Kode koneksi saya",
+    "qrDesc": "Mereka dapat memindai untuk\nterhubung langsung.",
+    "scanGuide": "Pindai QR orang lain.",
+    "contactsTitle": "Cari dari kontak",
+    "contactsDesc": "Pilih dari buku alamat untuk mencari.",
+    "mode": {
+      "coonnIdTitle": "CO·ONN ID",
+      "coonnIdHint": "Masukkan ID publik orang lain.",
+      "coonnIdPlaceholder": "Masukkan ID",
+      "friendCodeTitle": "Kode teman",
+      "friendCodeHint": "Masukkan kode teman.",
+      "friendCodePlaceholder": "Masukkan kode teman",
+      "phoneTitle": "Kontak",
+      "phoneHint": "Cari dengan nomor ponsel.",
+      "phonePlaceholder": "Masukkan nomor"
+    },
+    "result": {
+      "noPublicId": "Tidak ada ID publik",
+      "friendCodeVerified": "Kode teman terverifikasi",
+      "friendCodeMatched": "Kode teman cocok",
+      "contact": "Kontak · {{phone}}",
+      "added": "Ditambahkan",
+      "limited": "Dibatasi",
+      "add": "Tambah"
+    },
+    "share": {
+      "myId": "ID saya",
+      "friendCode": "Kode teman",
+      "title": "Bagikan tautan CO·ONN",
+      "message": "[CO·ONN] Mari terhubung dengan saya.{{idText}}{{codeText}}\n\nBuka layar tambah teman lewat tautan berikut.\n{{url}}"
+    },
+    "toast": {
+      "added": "Ditambahkan sebagai teman."
+    },
+    "alert": {
+      "permissionRequired": "Izin diperlukan",
+      "cameraPermissionRequired": "Izin kamera diperlukan.",
+      "contactsPermissionRequired": "Izin kontak diperlukan.",
+      "contactsLoadFail": "Gagal memuat kontak",
+      "searchFail": "Pencarian gagal",
+      "addFail": "Gagal menambahkan"
+    },
+    "error": {
+      "invalidUser": "Pengguna tidak valid.",
+      "selfQr": "Ini QR Anda.",
+      "userNotFound": "Pengguna tidak ditemukan.",
+      "invalidQr": "Kode tidak valid.",
+      "minLength": "Masukkan minimal {{count}} karakter."
+    },
+    "findTitle": "Temukan teman baru",
+    "card": {
+      "idTitle": "Cari dengan ID",
+      "idDesc": "Cari CO·ONN ID",
+      "codeTitle": "Cari dengan kode",
+      "codeDesc": "Cari kode teman",
+      "contactsTitle": "Kontak",
+      "contactsDesc": "Berbasis buku alamat"
+    },
+    "digitalCardTitle": "Kartu saya"
+  },
+  "communication": {
+    "noPhone": "Tidak ada nomor telepon",
+    "phoneCall": "Panggilan biasa",
+    "voiceCall": "Panggilan suara",
+    "comingSoon": "Segera hadir"
+  },
+  "edit": {
+    "title": "Pengaturan teman",
+    "unknownUser": "Tidak diketahui",
+    "none": "Tidak ada",
+    "field": {
+      "name": "Nama"
+    },
+    "placeholder": {
+      "alias": "Masukkan alias",
+      "memo": "Masukkan catatan"
+    },
+    "helper": {
+      "friendName": "Nama teman · {{name}}",
+      "privateMemo": "Hanya terlihat oleh Anda."
+    },
+    "section": {
+      "groups": "Grup",
+      "security": "Keamanan"
+    },
+    "state": {
+      "on": "Aktif",
+      "off": "Nonaktif",
+      "hidden": "Disembunyikan",
+      "visible": "Terlihat",
+      "blocked": "Diblokir",
+      "unblocked": "Tidak diblokir"
+    },
+    "toast": {
+      "saved": "Disimpan."
+    },
+    "alert": {
+      "loadFail": "Gagal memuat",
+      "saveFail": "Gagal menyimpan",
+      "removeFail": "Gagal menghapus",
+      "userLoadFail": "Tidak dapat memuat pengguna.",
+      "blockedByPeer": "Orang ini telah memblokir Anda."
+    },
+    "remove": {
+      "title": "Hapus teman",
+      "message": "Hapus {{name}}?"
+    },
+    "unsaved": {
+      "title": "Perubahan",
+      "message": "Ada perubahan yang belum disimpan.",
+      "discard": "Jangan simpan"
+    },
+    "groups": {
+      "title": "Kelola grup",
+      "subtitle": "Pilih grup yang akan disertakan.",
+      "selectedCount": "Dipilih {{count}}",
+      "inGroup": "Sudah termasuk",
+      "addHint": "Ketuk untuk menambahkan",
+      "emptySearch": "Coba nama lain."
+    }
+  }
+}

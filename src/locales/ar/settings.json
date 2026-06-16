@@ -1,0 +1,525 @@
+{
+  "home_title": "الإعدادات",
+  "title": "الإعدادات",
+  "version": "إصدار التطبيق",
+  "open": "فتح",
+  "change": "تغيير",
+  "run": "تشغيل",
+  "logout": "تسجيل الخروج",
+  "logoutDone": "تم تسجيل الخروج.",
+  "sections": {
+    "communication": "التواصل",
+    "general": "عام",
+    "advanced": "متقدم",
+    "service_info": "الخدمات",
+    "account": "الحساب",
+    "notification": "الإشعارات",
+    "display_language": "العرض واللغة",
+    "location": "الموقع",
+    "data": "البيانات",
+    "support": "الدعم",
+    "info": "معلومات"
+  },
+  "menus": {
+    "call": "اتصال",
+    "etc": "أخرى",
+    "app_manage": "إدارة التطبيق",
+    "version": "إصدار التطبيق"
+  },
+  "alerts": {
+    "logout_title": "تسجيل الخروج",
+    "logout_desc": "تسجيل الخروج الآن؟",
+    "language_change_error": "تعذر تغيير اللغة.",
+    "logout_fail": "تعذر تسجيل الخروج."
+  },
+  "search": {
+    "title": "بحث الإعدادات",
+    "soon": "بحث الإعدادات قريباً."
+  },
+  "me": {
+    "noName": "بلا اسم",
+    "profileManage": "إدارة الملف",
+    "loadingAccount": "جارٍ فحص الحساب"
+  },
+  "account": {
+    "title": "الحساب",
+    "editProfile": "تعديل الملف",
+    "profilePublicDefault": "إظهار ملفي افتراضياً في البيكونات",
+    "profilePublicHint": "يُستخدم كافتراضي عند إنشاء بيكون. يمكنك تغييره لكل بيكون.",
+    "header_title": "الحساب",
+    "section": {
+      "contact": "جهة الاتصال",
+      "identity": "الهوية",
+      "visibility": "الظهور",
+      "profile": "الملف الشخصي",
+      "account_management": "الحساب"
+    },
+    "field": {
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "id_label": "CO·ONN ID",
+      "friend_code": "رمز الصديق",
+      "show_nickname": "إظهار الاسم المستعار",
+      "profile_photo": "صورة الملف الشخصي",
+      "nickname": "الاسم المستعار"
+    },
+    "value": {
+      "not_registered": "غير مسجل"
+    },
+    "badge": {
+      "verified": "موثّق",
+      "verify": "توثيق"
+    },
+    "placeholder": {
+      "id": "المعرّف",
+      "friend_code": "رمز الصديق",
+      "nickname": "الاسم المستعار"
+    },
+    "help": {
+      "id_desc": "معرّفك الفريد القابل للبحث.",
+      "show_nickname_desc": "إظهار اسمك المستعار للأصدقاء."
+    },
+    "error": {
+      "check_duplication": "تحقق من التوفر أولاً.",
+      "id_taken": "مستخدم بالفعل.",
+      "code_taken": "مستخدم بالفعل.",
+      "check_failed": "تعذر التحقق من التوفر.",
+      "invalid_id": "2–30 حرفاً صغيراً أو رقماً أو شرطة سفلية",
+      "invalid_friend_code": "2–30 حرفاً صغيراً أو رقماً أو شرطة سفلية",
+      "duplicate_exists": "هذه القيمة مستخدمة بالفعل.",
+      "duplicate_check_required": "أكمل فحص التكرار قبل الحفظ.",
+      "duplicate_check_retry": "يرجى التحقق من التوفر مجدداً.",
+      "duplicate_value_retry": "مستخدم بالفعل. تحقق مجدداً.",
+      "nickname_required": "أدخل اسمًا مستعارًا.",
+      "nickname_too_long": "يمكن أن يصل الاسم المستعار إلى 30 حرفًا."
+    },
+    "alert": {
+      "check_required": "التحقق مطلوب",
+      "save_success_title": "تم الحفظ",
+      "save_success_desc": "تم حفظ إعدادات الحساب.",
+      "save_fail_title": "فشل الحفظ"
+    },
+    "action": {
+      "save": "حفظ",
+      "check_duplicate_short": "تحقق",
+      "checking_short": "…",
+      "change_photo": "تغيير الصورة",
+      "remove_photo": "إزالة الصورة"
+    },
+    "status": {
+      "available_short": "متاح",
+      "duplicate_short": "مستخدم"
+    },
+    "picker": {
+      "profile_photo": "اختيار صورة"
+    },
+    "withdrawal": {
+      "entryTitle": "حذف الحساب",
+      "entryDescription": "احذف حسابك وبياناتك الشخصية.",
+      "noticeTitle": "راجع هذه النقاط قبل المتابعة.",
+      "noticeMessage": "سيتم حذف ملفك الشخصي والأصدقاء والإعدادات.",
+      "noticeItemProfile": "قد تبقى بعض محادثاتك لدى المشاركين الآخرين كمستخدم محذوف.",
+      "noticeItemChat": "لا يمكنك التسجيل مجددًا بالحساب نفسه لمدة 7 أيام.",
+      "noticeItemRejoin": "لا يمكن إعادة استخدام CO·ONN ID ورمز الصديق لمدة 30 يومًا.",
+      "noticeItemIdentifier": "راجعت كل ما سبق وأريد المتابعة.",
+      "noticeAcknowledge": "التالي",
+      "continue": "إلغاء",
+      "cancel": "أخبرنا بسبب المغادرة",
+      "surveyTitle": "تساعدنا ملاحظاتك على تحسين CO·ONN.",
+      "surveyMessage": "متابعة",
+      "surveyAction": "أدخل السبب.",
+      "otherPlaceholder": "اختر سببًا.",
+      "reasonRequired": "أدخل السبب.",
+      "otherRequired": "جارٍ تحميل الأسباب.",
+      "reasonsLoading": "تعذر تحميل الأسباب.",
+      "reasonsEmpty": "تأكيد أخير",
+      "confirmTitle": "سيتوقف الوصول إلى الحساب فورًا.",
+      "confirmMessage": "اكتب “{{keyword}}” أدناه.",
+      "confirmInstruction": "حذف",
+      "confirmKeyword": "حذف",
+      "confirmPlaceholder": "حذف",
+      "confirmAction": "تم إرسال طلب الحذف.",
+      "completed": "تعذر حذف الحساب."
+    }
+  },
+  "privacy": {
+    "title": "الخصوصية",
+    "header_title": "الخصوصية",
+    "section": {
+      "profile": "الملف الشخصي",
+      "friend_req": "طلبات الصداقة",
+      "activity": "النشاط"
+    },
+    "field": {
+      "public_profile": "ملف عام",
+      "allow_search": "السماح بالبحث",
+      "show_nickname": "إظهار الاسم المستعار",
+      "show_location": "إظهار الموقع",
+      "last_active": "إظهار آخر نشاط"
+    },
+    "help": {
+      "public_profile": "يمكن للمستخدمين الآخرين عرض ملفك.",
+      "allow_search": "يمكن العثور عليك بالاسم المستعار والمعرّف.",
+      "show_nickname": "إظهار اسمك المستعار للأصدقاء.",
+      "show_location": "إظهار موقع نشاطك.",
+      "last_active": "إظهار آخر وقت نشاط."
+    },
+    "option": {
+      "all": "الجميع",
+      "all_desc": "يمكن لأي شخص إرسال طلبات",
+      "friends": "أصدقاء الأصدقاء",
+      "friends_desc": "يمكن للمستخدمين المتصلين فقط إرسال طلب",
+      "none": "لا أحد",
+      "none_desc": "حظر طلبات الصداقة"
+    },
+    "alert": {
+      "save_success": "تم الحفظ.",
+      "save_fail": "تعذر الحفظ.",
+      "load_fail": "تعذر التحميل.",
+      "login_required": "تسجيل الدخول مطلوب."
+    }
+  },
+  "radius": {
+    "title": "نطاق الحي",
+    "current": "الحالي",
+    "desc": "تظهر فقط التحديثات ضمن هذا النطاق.",
+    "save_error": "تعذر حفظ نطاق الحي."
+  },
+  "friends": {
+    "title": "الأصدقاء",
+    "manage": "إدارة الأصدقاء",
+    "caption": "الحظر، التوصيات، الظهور",
+    "soon": "قريباً."
+  },
+  "notification": {
+    "title": "الإشعارات",
+    "manage": "الإشعارات",
+    "caption": "إشعارات فورية، داخل التطبيق، وصوت",
+    "soon": "قريباً.",
+    "section": {
+      "defaults": "الافتراضي",
+      "types": "الأنواع",
+      "quiet": "ساعات الهدوء",
+      "push_types": "أنواع الإشعارات الفورية",
+      "in_app": "تنبيهات داخل التطبيق"
+    },
+    "field": {
+      "push": "الإشعارات الفورية",
+      "preview": "المعاينة",
+      "sound": "الصوت",
+      "vibrate": "الاهتزاز",
+      "chat": "الدردشة",
+      "system": "الإعلانات والنظام",
+      "marketing": "التسويق"
+    },
+    "help": {
+      "push": "كل الإشعارات الفورية",
+      "preview": "عرض المحتوى على شاشة القفل",
+      "chat_push": "إشعارات رسائل الدردشة",
+      "system_push": "تنبيهات الخدمة والتحديثات المهمة",
+      "marketing_push": "الفعاليات والعروض"
+    },
+    "action": {
+      "save": "حفظ",
+      "open_system": "إعدادات النظام",
+      "cancel": "إلغاء",
+      "done": "تم"
+    },
+    "time": {
+      "start": "بدء",
+      "end": "النهاية",
+      "hour": "س",
+      "minute": "د",
+      "close": "إغلاق منتقي الوقت",
+      "select": "اختر {{label}} {{value}}",
+      "start_time": "وقت البداية",
+      "end_time": "وقت النهاية"
+    },
+    "alert": {
+      "table_missing_title": "جدول الإعدادات غير موجود",
+      "table_missing_message": "أنشئ user_notification_settings.",
+      "load_fail": "تعذر التحميل",
+      "time_invalid_title": "تحقق من الوقت",
+      "time_invalid_message": "اختر الوقت مجدداً.",
+      "save_success": "تم الحفظ.",
+      "save_fail": "فشل الحفظ",
+      "open_settings_fail_title": "تعذر الفتح",
+      "open_settings_fail_message": "تعذر فتح إعدادات النظام.",
+      "login_required": "تسجيل الدخول مطلوب."
+    },
+    "in_app": {
+      "master": "تنبيهات داخل التطبيق",
+      "master_help": "تظهر في صندوق تنبيهات التطبيق",
+      "group": {
+        "social": "اجتماعي",
+        "chat": "الدردشة",
+        "beacon": "Beacon",
+        "schedule": "المواعيد",
+        "post": "المنشورات"
+      },
+      "follow_created": "متابع جديد",
+      "follow_created_help": "عندما يتابعك شخص ما",
+      "chat_reply": "الردود",
+      "chat_reply_help": "عندما يرد شخص على رسالتك",
+      "chat_mention": "الإشارات",
+      "chat_mention_help": "عندما يذكرك شخص ما",
+      "beacon_join_request": "طلبات الانضمام",
+      "beacon_join_request_help": "عند وصول طلب انضمام إلى Beacon",
+      "beacon_join_approved": "تمت الموافقة",
+      "beacon_join_approved_help": "عند الموافقة على انضمامك إلى Beacon",
+      "beacon_friend_created": "Beacon من الأصدقاء",
+      "beacon_friend_created_help": "عندما ينشئ صديق Beacon",
+      "schedule_created": "موعد جديد",
+      "schedule_created_help": "عند إضافة موعد إلى غرفة منضم إليها",
+      "schedule_updated": "تغيير موعد",
+      "schedule_updated_help": "عند تغيير موعد منضم إليه",
+      "schedule_cancelled": "موعد ملغى",
+      "schedule_cancelled_help": "عند إلغاء موعد منضم إليه",
+      "post_like": "الإعجابات",
+      "post_like_help": "عندما يحصل منشورك على إعجابات",
+      "post_comment": "التعليقات",
+      "post_comment_help": "عندما يعلق شخص على منشورك",
+      "post_reply": "الردود",
+      "post_reply_help": "عندما يرد شخص على تعليقك",
+      "post_mention": "إشارات المنشورات",
+      "post_mention_help": "عندما يذكرك شخص في منشور أو تعليق"
+    }
+  },
+  "display": {
+    "title": "العرض واللغة"
+  },
+  "language": {
+    "title": "اللغة",
+    "select": "اختيار اللغة",
+    "inUse": "(قيد الاستخدام)"
+  },
+  "theme": {
+    "title": "السمة",
+    "caption": "فاتح / داكن",
+    "soon": "قريباً.",
+    "header_title": "السمة",
+    "section_style": "الوضع",
+    "mode": {
+      "system": "النظام",
+      "system_desc": "استخدام إعداد الجهاز",
+      "light": "فاتح",
+      "light_desc": "مظهر فاتح",
+      "dark": "داكن",
+      "dark_desc": "مظهر داكن"
+    }
+  },
+  "chat": {
+    "title": "الدردشة"
+  },
+  "translate": {
+    "autoDefault": "ترجمة الرسائل تلقائياً",
+    "autoDefaultHint": "يُستخدم كافتراضي للدردشات الجديدة.",
+    "showOriginal": "عرض الأصل مع الترجمة",
+    "showOriginalHint": "عند التفعيل، يظهر النص الأصلي أسفل الرسائل المترجمة."
+  },
+  "storage": {
+    "title": "البيانات والتخزين",
+    "clearCache": "مسح الذاكرة المؤقتة",
+    "clearCacheHint": "حذف الملفات المؤقتة",
+    "soon": "قريباً.",
+    "section": {
+      "ratio": "نسبة البيانات",
+      "rooms": "البيانات حسب الغرفة"
+    },
+    "summary": {
+      "total_media": "إجمالي الوسائط",
+      "saved_count": "{{count}} محفوظ"
+    },
+    "legend": {
+      "photo": "الصور",
+      "video": "الفيديوهات",
+      "audio": "الصوت",
+      "file": "الملفات",
+      "other": "أخرى"
+    },
+    "action": {
+      "delete_all": "حذف الكل",
+      "delete_all_with_size": "حذف الكل ({{size}})",
+      "delete_room": "حذف",
+      "scroll_top": "الأعلى"
+    },
+    "empty": {
+      "title": "لا توجد وسائط محفوظة",
+      "desc": "ستظهر هنا الوسائط التي فتحتها."
+    },
+    "alert": {
+      "load_fail": "تعذر التحميل.",
+      "delete_fail": "تعذر الحذف.",
+      "delete_all_title": "حذف كل الوسائط",
+      "delete_all_message": "يحذف وسائط الدردشة المحفوظة على هذا الجهاز. تبقى ملفات الخادم ومعرض الصور كما هي.",
+      "delete_room_title": "حذف بيانات {{room}}",
+      "delete_room_message": "يحذف وسائط هذه الغرفة المحفوظة على هذا الجهاز. تبقى ملفات الخادم ومعرض الصور كما هي.",
+      "delete_all_success": "تم الحذف.",
+      "delete_room_success": "تم حذف بيانات {{room}}."
+    },
+    "room": {
+      "fallback_title": "غرفة الدردشة {{id}}",
+      "delete_accessibility": "حذف بيانات {{room}}"
+    }
+  },
+  "support": {
+    "title": "الدعم",
+    "cs": "مركز المساعدة",
+    "notice": {
+      "title": "الإشعارات",
+      "eyebrow": "NOTICE",
+      "sectionTitle": "إشعارات {{category}}",
+      "markAll": "تحديد الكل كمقروء",
+      "markAllDone": "تم تحديدها كمقروءة.",
+      "loadFail": "تعذر تحميل الإشعارات.",
+      "readFail": "تعذر التحديد كمقروء.",
+      "markAllFail": "تعذر التحديد كمقروء.",
+      "emptyTitle": "لا توجد إشعارات",
+      "emptyDesc": "ستظهر الإشعارات الجديدة هنا.",
+      "category": {
+        "normal": "عام",
+        "important": "مهم",
+        "legal": "قانوني",
+        "security": "الأمان"
+      }
+    },
+    "guide": "الدليل",
+    "soon": "قريباً.",
+    "loading": "جارٍ التحميل…",
+    "action": {
+      "ok": "حسناً"
+    },
+    "alert": {
+      "notice": "إشعار",
+      "error": "خطأ"
+    },
+    "center": {
+      "title": "مركز المساعدة",
+      "hero": "كيف يمكننا المساعدة؟",
+      "searchPlaceholder": "بحث",
+      "faq": "الأسئلة الشائعة",
+      "categories": "مواضيع المساعدة",
+      "contactTitle": "هل تحتاج إلى مساعدة؟",
+      "emailDesc": "سنرد عبر البريد الإلكتروني.",
+      "aiTitle": "دعم AI",
+      "aiDesc": "متاح 24/7",
+      "policies": "الشروط والسياسات"
+    },
+    "contact": {
+      "title": "تواصل معنا",
+      "guide": "اترك رسالتك.\nسنرد عبر البريد الإلكتروني.",
+      "category": "الفئة",
+      "categoryLoading": "جارٍ التحميل…",
+      "categoryPlaceholder": "اختر الفئة",
+      "categorySelect": "الفئة",
+      "email": "بريد الرد",
+      "emailPlaceholder": "عنوان البريد الإلكتروني",
+      "content": "رسالة",
+      "contentPlaceholder": "أدخل رسالتك.",
+      "submit": "إرسال",
+      "required": "أدخل بريدك الإلكتروني ورسالتك.",
+      "categoryRequired": "اختر فئة.",
+      "loadFail": "تعذر تحميل الشاشة.",
+      "submitFail": "تعذر الإرسال.",
+      "successTitle": "تم الإرسال",
+      "successDesc": "تم استلام استفسارك."
+    },
+    "list": {
+      "all": "الكل",
+      "common": "عام",
+      "result": "النتائج",
+      "empty": "لا توجد نتائج."
+    },
+    "policy": {
+      "title": "الشروط والسياسات",
+      "effectiveDate": "تاريخ السريان",
+      "summary": "الملخص",
+      "download": "تنزيل",
+      "downloadStart": "جارٍ بدء التنزيل.",
+      "empty": "تعذر تحميل المحتوى.",
+      "versions": "الإصدارات السابقة",
+      "behaviorInfoTitle": "جمع بيانات السلوك واستخدامها",
+      "behaviorInfoDesc": "نجمع الحد الأدنى اللازم لتحسين الخدمة.",
+      "userControlTitle": "اختيار المستخدم",
+      "userControlDesc": "يمكنك تغيير إعدادات الإعلانات المخصصة داخل التطبيق.",
+      "version": "الإصدار",
+      "language": "اللغة",
+      "loadFail": "تعذر تحميل مستندات السياسة.",
+      "summaryEmpty": "لا يوجد ملخص متاح.",
+      "downloadCancelledTitle": "تم إلغاء التنزيل",
+      "downloadCancelled": "لم يتم اختيار موقع للحفظ.",
+      "downloadSuccessTitle": "تم التنزيل",
+      "downloadSuccess": "تم حفظ مستند السياسة.",
+      "downloadFailTitle": "فشل التنزيل",
+      "downloadFail": "تعذر حفظ مستند السياسة.",
+      "privacyTitle": "سياسة الخصوصية",
+      "termsTitle": "شروط خدمة CO·ONN",
+      "marketingTitle": "الموافقة على التسويق"
+    },
+    "company": {
+      "ceo": "الرئيس التنفيذي",
+      "regNum": "رقم تسجيل النشاط",
+      "businessNum": "رقم نشاط البيع عبر الإنترنت",
+      "address": "العنوان",
+      "cs": "دعم العملاء",
+      "host": "مزود الاستضافة"
+    }
+  },
+  "labs": {
+    "title": "المختبر",
+    "features": "ميزات المختبر",
+    "caption": "جرّب الميزات الجديدة أولاً.",
+    "soon": "المختبر قريباً.",
+    "subtitle": "جرّب الميزات الجديدة أولاً.",
+    "empty_title": "لا توجد ميزات بعد",
+    "empty_desc": "ستظهر الميزات الجديدة هنا قبل الإطلاق.",
+    "note": "قد تتغير ميزات المختبر قبل الإصدار الرسمي."
+  },
+  "admin": {
+    "title": "المشرف",
+    "console": "لوحة المشرف"
+  },
+  "open_profiles": {
+    "title": "الملفات المفتوحة",
+    "subtitle": "إدارة الملفات المستخدمة في الدردشات المفتوحة.",
+    "header_title": "الملفات المفتوحة",
+    "fallback_name": "ملف مفتوح",
+    "default_badge": "افتراضي",
+    "status_empty": "لا توجد رسالة حالة",
+    "room": {
+      "fallback_title": "دردشة مفتوحة",
+      "used_count": "مستخدم في {{count}} غرفة دردشة مفتوحة",
+      "empty": "لا توجد غرف دردشة مفتوحة قيد الاستخدام"
+    },
+    "empty": {
+      "title": "لا توجد ملفات مفتوحة",
+      "desc": "أنشئ ملفاً للدردشات المفتوحة."
+    },
+    "form": {
+      "create_title": "إنشاء ملف مفتوح",
+      "edit_title": "تعديل الملف المفتوح",
+      "nickname": "الاسم المستعار",
+      "status_message": "رسالة الحالة",
+      "status_placeholder": "عرّف بنفسك باختصار.",
+      "default_profile": "الملف المفتوح الافتراضي",
+      "delete": "حذف الملف المفتوح",
+      "pick_avatar": "اختيار صورة الملف"
+    },
+    "alert": {
+      "load_fail": "تعذر تحميل الملفات المفتوحة.",
+      "nickname_required": "أدخل اسماً مستعاراً.",
+      "create_fail": "فشل الإنشاء",
+      "save_fail": "فشل الحفظ",
+      "delete_title": "حذف الملف المفتوح؟",
+      "delete_used_desc": "ستبقى الملفات الحالية في غرف الدردشة المفتوحة.",
+      "delete_desc": "لا يمكن استعادة الملفات المحذوفة.",
+      "delete_fail": "فشل الحذف"
+    },
+    "toast": {
+      "created": "تم إنشاء الملف المفتوح.",
+      "saved": "تم الحفظ.",
+      "deleted": "تم الحذف.",
+      "photo_applied": "تم تطبيق الصورة."
+    }
+  }
+}

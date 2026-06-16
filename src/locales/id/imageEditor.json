@@ -1,0 +1,14 @@
+{
+  "title": "Edit gambar",
+  "ratio_original": "Asli",
+  "ratio_free": "Bebas",
+  "rotate": "Putar",
+  "ratio": "Rasio",
+  "invert": "Balik",
+  "orientation": "Orientasi",
+  "reset": "Reset",
+  "error_load_title": "Kesalahan",
+  "error_load_msg": "Gambar tidak dapat dimuat.",
+  "error_save_title": "Gagal menyimpan",
+  "error_save_msg": "Coba lagi nanti."
+}

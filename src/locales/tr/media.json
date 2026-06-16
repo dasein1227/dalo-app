@@ -1,0 +1,14 @@
+{
+  "recent": "Son öğeler",
+  "select_photo": "Fotoğraf seç",
+  "max_select": "En fazla {{count}}",
+  "processing_error": "İşlenemedi.",
+  "select_to_edit": "Düzenlenecek fotoğrafı seçin.",
+  "video_edit_warning": "Video düzenlenemez.",
+  "bundle_photos": "Birlikte gönder",
+  "quality_settings": "Kalite",
+  "quality_original": "Orijinal",
+  "quality_standard": "Standart",
+  "quality_low": "Düşük boyut",
+  "quality_high": "Yüksek kalite"
+}

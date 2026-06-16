@@ -1,0 +1,48 @@
+{
+  "channel": {
+    "social_name": "ソーシャル",
+    "social_description": "友だち・ソーシャル通知",
+    "chat_name": "チャット",
+    "chat_description": "チャットメッセージ・会話通知"
+  },
+  "summary": {
+    "social_title": "CO·ONN",
+    "social_body": "新しいソーシャル通知",
+    "chat_title": "CO·ONN",
+    "chat_body": "新着チャット通知"
+  },
+  "actions": {
+    "read": "既読",
+    "reply": "返信"
+  },
+  "common": {
+    "someone": "誰か",
+    "new_notification": "新しい通知",
+    "new_notification_body": "新しい通知が届きました。",
+    "new_message": "新着メッセージ"
+  },
+  "friend": {
+    "request_received_title": "友だちリクエスト",
+    "request_received_subtitle": "{{actor}}",
+    "request_received_body": "{{actor}}さんから友だちリクエストが届きました"
+  },
+  "chat": {
+    "dm_title": "{{sender}}",
+    "dm_subtitle": "",
+    "dm_body_text": "{{message}}",
+    "dm_body_image": "写真を送信しました",
+    "dm_body_video": "動画を送信しました",
+    "dm_body_audio": "音声メッセージを送信しました",
+    "dm_body_file": "ファイルを送信しました",
+    "dm_body_map": "位置情報を共有しました",
+    "group_title": "{{room}}",
+    "group_subtitle": "{{sender}}",
+    "group_body_text": "{{sender}}: {{message}}",
+    "group_body_image": "{{sender}}さんが写真を送信しました",
+    "group_body_video": "{{sender}}さんが動画を送信しました",
+    "group_body_audio": "{{sender}}さんが音声メッセージを送信しました",
+    "group_body_file": "{{sender}}さんがファイルを送信しました",
+    "group_body_map": "{{sender}}さんが位置情報を共有しました",
+    "reply_placeholder": "返信を入力…"
+  }
+}

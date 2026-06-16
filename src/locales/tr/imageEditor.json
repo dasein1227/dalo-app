@@ -1,0 +1,14 @@
+{
+  "title": "Görsel düzenle",
+  "ratio_original": "Orijinal",
+  "ratio_free": "Serbest",
+  "rotate": "Döndür",
+  "ratio": "Oran",
+  "invert": "Yatay/Dikey",
+  "orientation": "Yatay/Dikey",
+  "reset": "Sıfırla",
+  "error_load_title": "Hata",
+  "error_load_msg": "Görsel yüklenemedi.",
+  "error_save_title": "Kaydedilemedi",
+  "error_save_msg": "Lütfen daha sonra tekrar deneyin."
+}

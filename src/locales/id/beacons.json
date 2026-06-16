@@ -1,0 +1,421 @@
+{
+  "create_title": "Buat beacon",
+  "edit_title": "Edit beacon",
+  "detail_title": "Info beacon",
+  "members_title": "Kelola beacon",
+  "my_rooms_title": "Beacon saya",
+  "join": "Ikut",
+  "enter": "Masuk",
+  "owner_tools": "Alat pemilik",
+  "visibility": "Visibilitas",
+  "status_message": "Pesan status",
+  "public_profile": "Profil publik",
+  "current_members": "Anggota saat ini",
+  "age_range": "Rentang usia",
+  "memo": "Memo",
+  "time_left": "Sisa waktu",
+  "common": {
+    "beacon": "Beacon",
+    "noName": "Tanpa nama",
+    "anonymous": "Pengguna anonim",
+    "loading": "Memuat…",
+    "done": "Selesai",
+    "confirm": "Konfirmasi",
+    "cancel": "Batal",
+    "save": "Simpan",
+    "submit": "Kirim",
+    "approve": "Setujui",
+    "reject": "Tolak",
+    "block": "Blokir",
+    "kick": "Keluarkan",
+    "none": "Tidak ada",
+    "unlimited": "Tanpa batas"
+  },
+  "error": {
+    "invalidId": "ID tidak valid.",
+    "invalidAccess": "Akses tidak valid.",
+    "loginRequired": "Login diperlukan.",
+    "locationPermission": "Izin lokasi diperlukan.",
+    "locationUnavailable": "Lokasi saat ini tidak tersedia.",
+    "locationLoadFail": "Gagal memuat lokasi.",
+    "notFound": "Beacon tidak ditemukan.",
+    "detailNotFound": "Info beacon tidak ditemukan.",
+    "detailLoadFail": "Gagal memuat info beacon.",
+    "operationFail": "Gagal menyelesaikan tindakan."
+  },
+  "time": {
+    "am": "AM",
+    "pm": "PM",
+    "monthDay": "{{month}}/{{day}}",
+    "minute": "{{count}} menit",
+    "hour": "{{count}} jam",
+    "hourMinute": "{{hour}} jam {{minute}} menit",
+    "remainEnded": "Berakhir",
+    "remainMinute": "Sisa {{count}} menit",
+    "remainHour": "Sisa {{count}} jam",
+    "remainHourMinute": "Sisa {{hour}} jam {{minute}} menit",
+    "justNow": "Baru saja",
+    "agoMinute": "{{count}} menit lalu",
+    "agoHour": "{{count}} jam lalu",
+    "agoDay": "{{count}} hari lalu"
+  },
+  "unit": {
+    "people": "orang",
+    "age": "thn",
+    "count": "item",
+    "times": "kali",
+    "peopleCount": "{{count}} orang",
+    "ageCount": "{{count}} thn",
+    "retryLeft": "Sisa {{count}} kali"
+  },
+  "tabs": {
+    "dm": "Pribadi",
+    "group": "Grup",
+    "open": "Terbuka",
+    "beacon": "Beacon"
+  },
+  "visibilityLabel": {
+    "public": "Publik",
+    "friends": "Untuk teman",
+    "labels": "Untuk grup",
+    "custom": "Kustom",
+    "publicCompact": "Publik",
+    "friendsCompact": "Teman",
+    "labelsCompact": "Grup",
+    "customCompact": "Kustom",
+    "publicExcludeFriends": "Kecuali kenalan"
+  },
+  "visibilityDesc": {
+    "public": "Ditampilkan ke banyak orang. Default masuk dengan persetujuan.",
+    "friends": "Hanya terlihat oleh teman. Default bebas masuk.",
+    "labels": "Hanya terlihat oleh grup yang dipilih. Default bebas masuk.",
+    "custom": "Tentukan teman dan grup langsung. Default bebas masuk."
+  },
+  "gender": {
+    "any": "Semua gender",
+    "male": "Pria",
+    "female": "Wanita"
+  },
+  "myRooms": {
+    "headerTitle": "Chat",
+    "status": {
+      "pending": "Menunggu persetujuan",
+      "joined": "{{visibility}} · Bergabung",
+      "owner": "{{visibility}} · sisa {{minutes}} menit",
+      "host": "Pemilik",
+      "waiting": "Menunggu",
+      "member": "Bergabung"
+    },
+    "title": {
+      "mine": "Beacon saya",
+      "fallback": "Beacon"
+    },
+    "empty": {
+      "title": "Belum ada percakapan.",
+      "beaconDesc": "Beacon saya dan beacon yang diikuti akan tampil di sini."
+    },
+    "error": {
+      "loadFail": "Gagal memuat daftar."
+    },
+    "alert": {
+      "routeCreate": "Periksa layar pembuatan beacon.",
+      "routeChatCreate": "Pembuatan chat baru sedang disiapkan.",
+      "routeBeaconSearch": "Periksa layar pencarian beacon.",
+      "routeSearch": "Periksa layar pencarian."
+    }
+  },
+  "form": {
+    "titlePlaceholder": "Tujuan beacon",
+    "descPlaceholder": "Tulis deskripsi atau aturan",
+    "durationMin": "30 menit",
+    "durationMax": "4 jam",
+    "minuteSuffix": "menit",
+    "locationSelectTitle": "Lokasi untuk teman",
+    "locationSelectHelper": "Dalam 200 m dari lokasi saat ini",
+    "locationPickFailTitle": "Tidak dapat memilih lokasi",
+    "selectedAddress": "Alamat terpilih",
+    "locationEmpty": "Belum ada lokasi dipilih. Buka peta.",
+    "locationShortPlaceholder": "Lokasi perkiraan",
+    "locationDetailPlaceholder": "Lokasi detail",
+    "conditionsTitle": "Syarat bergabung",
+    "genderTitle": "Gender",
+    "quotaTitle": "Kuota",
+    "quotaDesc": "0 berarti tanpa batas. Ketuk angka untuk input manual.",
+    "ageLimitTitle": "Batas usia",
+    "ageLimitDesc": "Default adalah ±10 tahun dari usia Anda.",
+    "ageNoLimit": "Tanpa batas",
+    "ageMin": "Usia min.",
+    "ageMax": "Usia maks.",
+    "maleQuota": "Pria",
+    "femaleQuota": "Wanita",
+    "mixQuota": "Semua gender",
+    "selectGroups": "Grup yang ditampilkan",
+    "selectFriends": "Teman yang ditampilkan",
+    "friendSearch": "Cari teman",
+    "emptyGroups": "Belum ada grup.",
+    "emptyFriends": "Belum ada teman.",
+    "protectionOff": "Tanpa proteksi",
+    "protectionOffAlt": "Tanpa proteksi",
+    "createButton": "Buat beacon",
+    "saveButton": "Simpan",
+    "durationTitle": "Durasi",
+    "durationDesc": "Akan berakhir otomatis setelah waktu yang dipilih.",
+    "locationProtectionTitle": "Proteksi lokasi",
+    "locationProtectionDesc": "Lokasi ditampilkan acak dalam radius yang ditentukan.",
+    "refreshLocation": "Periksa ulang lokasi saat ini",
+    "meetingTitle": "Beacon ini untuk apa?",
+    "requireApprovalTitle": "Perlu persetujuan",
+    "requireApprovalDesc": "Hanya orang yang disetujui host yang bisa bergabung.",
+    "hideFromFriendsTitle": "Sembunyikan dari teman",
+    "hideFromFriendsDesc": "Tetap publik, tetapi tidak tampil ke kontak Anda.",
+    "selectedGroupsCount": "{{count}} grup dipilih",
+    "selectedFriendsCount": "{{count}} teman dipilih",
+    "friendLocationDesc": "Catatan lokasi yang hanya terlihat oleh audiens terpilih. Pilih dalam 200 m dari lokasi Anda.",
+    "locationPickTitle": "Pilih di peta",
+    "locationPickHint": "Alamat yang dipilih akan tampil di bawah.",
+    "friendLocationEmpty": "Belum ada lokasi. Buka peta dengan tombol di kanan.",
+    "moveToCurrentLocation": "Gunakan lokasi saat ini"
+  },
+  "create": {
+    "validation": {
+      "titleRequired": "Masukkan nama pertemuan.",
+      "titleMax": "Nama pertemuan maksimal 80 karakter.",
+      "duration": "Durasi harus 10–240 menit.",
+      "ageRange": "Periksa rentang usia.",
+      "locationRequired": "Periksa lokasi saat ini.",
+      "labelsRequired": "Pilih grup.",
+      "customRequired": "Pilih teman atau grup."
+    },
+    "alert": {
+      "labelLoadFailTitle": "Gagal memuat grup",
+      "labelLoadFail": "Gagal memuat daftar grup.",
+      "friendLoadFailTitle": "Gagal memuat teman",
+      "friendLoadFail": "Gagal memuat daftar teman.",
+      "createFailTitle": "Gagal membuat beacon",
+      "createFail": "Terjadi kesalahan."
+    }
+  },
+  "edit": {
+    "validation": {
+      "titleRequired": "Masukkan judul ruang.",
+      "titleMax": "Judul ruang maksimal 80 karakter.",
+      "duration": "Durasi harus 10–240 menit.",
+      "ageRange": "Periksa rentang usia.",
+      "labelsRequired": "Pilih grup.",
+      "customRequired": "Pilih teman atau grup."
+    },
+    "toast": {
+      "moved": "Pindah ke lokasi saat ini.",
+      "moveFail": "Gagal memindahkan lokasi.",
+      "saved": "Tersimpan.",
+      "saveFail": "Terjadi kesalahan."
+    }
+  },
+  "detail": {
+    "action": {
+      "ended": "Rekrutmen berakhir",
+      "enter_chat": "Masuk ruang chat",
+      "cancel_request": "Batalkan permintaan",
+      "join_direct": "Ikut",
+      "request_retry": "Minta lagi",
+      "request_join": "Minta ikut",
+      "forbidden": "Akses dibatasi",
+      "full": "Kuota penuh",
+      "closed": "Tidak tersedia"
+    },
+    "badge": {
+      "pending": "Menunggu persetujuan",
+      "rejected": "Ditolak",
+      "approval": "Perlu persetujuan",
+      "free": "Bebas masuk"
+    },
+    "empty": {
+      "deleted": "Beacon tidak tersedia.",
+      "back": "Kembali"
+    },
+    "fallbackTitle": "Beacon tanpa nama",
+    "info": {
+      "status": "Status",
+      "capacity": "Kuota",
+      "audience": "Audiens",
+      "retry": "Kesempatan ulang"
+    },
+    "location": {
+      "title": "Lokasi pertemuan",
+      "visible": "Lokasi detail tersedia sebelum bergabung.",
+      "hidden": "Alamat tepat dibagikan di ruang chat setelah bergabung.",
+      "openMap": "Lihat di peta ›"
+    },
+    "host": {
+      "settings": "Pengaturan beacon",
+      "settingsDesc": "Ubah judul, intro, dan visibilitas",
+      "members": "Kelola anggota",
+      "membersDesc": "Lihat dan keluarkan anggota",
+      "close": "Akhiri beacon",
+      "closeDesc": "Tutup rekrutmen dan ruang chat"
+    },
+    "requests": {
+      "title": "Menunggu bergabung",
+      "empty": "Tidak ada permintaan tertunda.",
+      "messageTitle": "Pesan permintaan",
+      "messageDesc": "Tinggalkan pesan untuk pemilik. Opsional.",
+      "placeholder": "Contoh: Saya di dekat sini.",
+      "send": "Kirim permintaan",
+      "sending": "Mengirim…",
+      "code": "Kode {{code}}",
+      "temperature": "Suhu {{temp}}°",
+      "rejectionCount": "Pernah ditolak {{count}} kali"
+    },
+    "alert": {
+      "editRoute": "Periksa layar edit.",
+      "membersRoute": "Periksa layar kelola anggota.",
+      "loginTitle": "Login diperlukan",
+      "loginDesc": "Login diperlukan untuk bergabung.",
+      "chatNotFound": "Info ruang chat tidak ditemukan.",
+      "cancelTitle": "Batalkan permintaan",
+      "cancelDesc": "Batalkan permintaan bergabung?",
+      "keep": "Pertahankan",
+      "cancelFailTitle": "Gagal membatalkan",
+      "cancelFail": "Gagal membatalkan permintaan.",
+      "fullTitle": "Kuota penuh",
+      "fullDesc": "Jumlah peserta sudah penuh.",
+      "forbiddenTitle": "Bergabung dibatasi",
+      "forbiddenDesc": "Anda tidak dapat bergabung dengan beacon ini.",
+      "endedTitle": "Rekrutmen berakhir",
+      "endedDesc": "Beacon sudah berakhir.",
+      "unavailableTitle": "Info",
+      "unavailableDesc": "Saat ini tidak dapat bergabung.",
+      "requestSentTitle": "Permintaan terkirim",
+      "requestSentDesc": "Tunggu persetujuan pemilik.",
+      "requestFailTitle": "Gagal mengirim",
+      "requestFail": "Gagal mengirim permintaan.",
+      "approveFailTitle": "Gagal menyetujui",
+      "approveFail": "Gagal menyetujui peserta.",
+      "rejectFailTitle": "Gagal menolak",
+      "rejectFail": "Gagal menolak permintaan.",
+      "closeTitle": "Akhiri beacon",
+      "closeDesc": "Akhiri rekrutmen dan ruang chat?",
+      "closeAction": "Akhiri",
+      "closeDoneTitle": "Berakhir",
+      "closeDoneDesc": "Beacon telah berakhir.",
+      "closeFailTitle": "Gagal mengakhiri",
+      "closeFail": "Gagal mengakhiri beacon."
+    }
+  },
+  "members": {
+    "role": {
+      "host": "Pemilik",
+      "mod": "Moderator",
+      "member": "Anggota"
+    },
+    "tab": {
+      "members": "Anggota",
+      "requests": "Permintaan {{count}}"
+    },
+    "meta": {
+      "joined": "Bergabung {{time}}",
+      "request": "Meminta {{time}} · pernah ditolak {{count}} kali"
+    },
+    "hero": {
+      "titleFallback": "Beacon",
+      "approval": "Perlu persetujuan",
+      "free": "Bebas masuk"
+    },
+    "empty": {
+      "members": "Belum ada anggota.",
+      "requests": "Tidak ada permintaan tertunda."
+    },
+    "alert": {
+      "loadFailTitle": "Gagal memuat",
+      "loadFail": "Gagal memuat info.",
+      "kickTitle": "Keluarkan anggota",
+      "kickDesc": "Keluarkan {{name}}?",
+      "kickAction": "Keluarkan",
+      "alreadyHandled": "Sudah diproses atau tidak dapat dikeluarkan.",
+      "kickFailTitle": "Gagal",
+      "kickFail": "Gagal mengeluarkan anggota.",
+      "blockTitle": "Blokir anggota",
+      "blockDesc": "Blokir dan keluarkan {{name}}?\nPengguna yang diblokir tidak akan terlihat lagi.",
+      "blockFail": "Gagal memblokir anggota.",
+      "approveTitle": "Setujui peserta",
+      "approveDesc": "Setujui {{name}} untuk bergabung?",
+      "approveFailTitle": "Gagal menyetujui",
+      "approveFail": "Gagal menyetujui.",
+      "rejectTitle": "Tolak peserta",
+      "rejectDesc": "Tolak permintaan {{name}}?",
+      "rejectFailTitle": "Gagal menolak",
+      "rejectFail": "Gagal menolak."
+    }
+  },
+  "main": {
+    "loadingMap": "Memuat peta…",
+    "listButton": "Daftar",
+    "emptyRadius": "Tidak ada beacon untuk ditampilkan.",
+    "card": {
+      "noTitle": "Tanpa judul",
+      "meta": "Jarak {{distance}}m · radius {{radius}}m · {{entry}}",
+      "endsAfterMinute": "Berakhir dalam {{count}} menit",
+      "endingSoon": "Segera berakhir",
+      "always": "Selalu"
+    },
+    "toast": {
+      "movedHere": "Diperbarui ke lokasi saat ini."
+    },
+    "error": {
+      "loadFail": "Gagal memuat beacon sekitar.",
+      "locationUnavailable": "Lokasi tidak tersedia.",
+      "noActiveBeacon": "Tidak ada beacon aktif.",
+      "moveFail": "Gagal memperbarui lokasi."
+    },
+    "accessibility": {
+      "detail": "Lihat detail beacon",
+      "create": "Buat beacon baru"
+    }
+  },
+  "search": {
+    "title": "Cari",
+    "placeholder": "Pertemuan yang dicari",
+    "distance": "Jarak",
+    "target": "Target",
+    "age": "Usia",
+    "quick": {
+      "friendsOnly": "Teman saja",
+      "public": "Publik",
+      "tenMin": "10 menit",
+      "twenties": "20-an"
+    },
+    "visibility": {
+      "title": "Visibilitas",
+      "any": "Semua",
+      "public": "Publik",
+      "publicFiltered": "Publik · kecuali teman",
+      "friends": "Untuk teman",
+      "labels": "Grup",
+      "custom": "Khusus"
+    },
+    "gender": {
+      "title": "Gender",
+      "any": "Semua",
+      "male": "Pria",
+      "female": "Wanita",
+      "other": "Lainnya"
+    },
+    "distancePreset": {
+      "fiveMin": "5 menit",
+      "tenMin": "10 menit",
+      "twentyMin": "20 menit",
+      "near": "Terdekat"
+    },
+    "agePreset": {
+      "all": "Semua",
+      "twenties": "20-an",
+      "thirties": "30-an",
+      "forties": "40-an",
+      "fiftyPlus": "50+"
+    },
+    "action": {
+      "reset": "Reset",
+      "apply": "Terapkan"
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "channel": {
+    "social_name": "社交",
+    "social_description": "好友与社交通知",
+    "chat_name": "聊天",
+    "chat_description": "聊天消息与对话通知"
+  },
+  "summary": {
+    "social_title": "CO·ONN",
+    "social_body": "新社交通知",
+    "chat_title": "CO·ONN",
+    "chat_body": "新聊天通知"
+  },
+  "actions": {
+    "read": "已读",
+    "reply": "回复"
+  },
+  "common": {
+    "someone": "有人",
+    "new_notification": "新通知",
+    "new_notification_body": "你有一条新通知。",
+    "new_message": "新消息"
+  },
+  "friend": {
+    "request_received_title": "好友请求",
+    "request_received_subtitle": "{{actor}}",
+    "request_received_body": "{{actor}} 向你发送了好友请求"
+  },
+  "chat": {
+    "dm_title": "{{sender}}",
+    "dm_subtitle": "",
+    "dm_body_text": "{{message}}",
+    "dm_body_image": "发送了照片",
+    "dm_body_video": "发送了视频",
+    "dm_body_audio": "发送了语音消息",
+    "dm_body_file": "发送了文件",
+    "dm_body_map": "分享了位置",
+    "group_title": "{{room}}",
+    "group_subtitle": "{{sender}}",
+    "group_body_text": "{{sender}}: {{message}}",
+    "group_body_image": "{{sender}} 发送了照片",
+    "group_body_video": "{{sender}} 发送了视频",
+    "group_body_audio": "{{sender}} 发送了语音消息",
+    "group_body_file": "{{sender}} 发送了文件",
+    "group_body_map": "{{sender}} 分享了位置",
+    "reply_placeholder": "输入回复…"
+  }
+}

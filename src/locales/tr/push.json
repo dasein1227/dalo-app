@@ -1,0 +1,48 @@
+{
+  "channel": {
+    "social_name": "Sosyal",
+    "social_description": "Arkadaş ve sosyal bildirimler",
+    "chat_name": "Sohbet",
+    "chat_description": "Sohbet mesajları ve konuşma bildirimleri"
+  },
+  "summary": {
+    "social_title": "CO·ONN",
+    "social_body": "Yeni sosyal bildirim",
+    "chat_title": "CO·ONN",
+    "chat_body": "Yeni sohbet bildirimi"
+  },
+  "actions": {
+    "read": "Okundu",
+    "reply": "Yanıtla"
+  },
+  "common": {
+    "someone": "Biri",
+    "new_notification": "Yeni bildirim",
+    "new_notification_body": "Yeni bir bildirim geldi.",
+    "new_message": "Yeni mesaj"
+  },
+  "friend": {
+    "request_received_title": "Arkadaş isteği",
+    "request_received_subtitle": "{{actor}}",
+    "request_received_body": "{{actor}} size arkadaş isteği gönderdi"
+  },
+  "chat": {
+    "dm_title": "{{sender}}",
+    "dm_subtitle": "",
+    "dm_body_text": "{{message}}",
+    "dm_body_image": "Fotoğraf gönderdi",
+    "dm_body_video": "Video gönderdi",
+    "dm_body_audio": "Sesli mesaj gönderdi",
+    "dm_body_file": "Dosya gönderdi",
+    "dm_body_map": "Konum paylaştı",
+    "group_title": "{{room}}",
+    "group_subtitle": "{{sender}}",
+    "group_body_text": "{{sender}}: {{message}}",
+    "group_body_image": "{{sender}} fotoğraf gönderdi",
+    "group_body_video": "{{sender}} video gönderdi",
+    "group_body_audio": "{{sender}} sesli mesaj gönderdi",
+    "group_body_file": "{{sender}} dosya gönderdi",
+    "group_body_map": "{{sender}} konum paylaştı",
+    "reply_placeholder": "Yanıt yaz…"
+  }
+}

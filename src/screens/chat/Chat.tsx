@@ -1,61 +1,89 @@
-// src/screens/chat/Chat.tsx
-import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
-import type { ComponentProps } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  useMemo,
+} from "react";
+import type { ComponentProps } from "react";
 import {
   View,
   StyleSheet,
   ActivityIndicator,
-  FlatList,
   Text,
   Keyboard,
+  Dimensions,
   BackHandler,
   DeviceEventEmitter,
   Animated,
   Share,
   Pressable,
-} from 'react-native';
-import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
-import * as Clipboard from 'expo-clipboard';
-
-import { supabase } from '@/lib/supabase';
-import { database } from '@/lib/chatDB/database';
-import { useChatMessages, type RenderItem } from '@/utils/chat/useChatMessages';
-import { syncInitialRoom, syncOlderForRoom, startRealtime } from '@/lib/chatSync/syncEngine';
+  Alert,
+  Vibration,
+  Platform,
+  Easing,
+  Image,
+  Linking,
+} from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import {
-  sendRoomMessage,
-  deleteMessageMine,
-  deleteMessagesMine,
-  type ProfileLangConfig,
-  type Tier,
-} from '@/lib/chatSync/push';
+  CommonActions,
+  useRoute,
+  useNavigation,
+  useIsFocused,
+} from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SystemBars } from "react-native-edge-to-edge";
+import * as Clipboard from "expo-clipboard";
+import { ChevronDown, Lock } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
+import * as ImagePicker from "expo-image-picker";
+import * as DocumentPicker from "expo-document-picker";
+import * as Contacts from "expo-contacts";
 
-import ChatHeader from './components/Header/ChatHeader';
-import MessageList from './components/MessageList/MessageList';
-import InputBar from './components/InputBar/InputBar';
+import { useChatMessages } from "@/utils/chat/useChatMessages";
+import { sendRoomMessage, type Tier } from "@/lib/chatSync/push";
+import { setActiveChatRoom, clearActiveChatRoom } from "@/lib/chat/activeChatRoom";
+import { supabase } from "@/lib/supabase";
+
+import ChatHeader from "./components/Header/ChatHeader";
+import NonFriendActionBar from "./components/Relation/NonFriendActionBar";
+import { addFriendMetaDirect } from "./api/nonFriendRelation";
+import MessageList from "./components/MessageList/MessageList";
+import ChatNoticeBanner from "./components/Notice/ChatNoticeBanner";
+import ReactionUsersSheet from "./reactions/ReactionUsersSheet";
+import InputBar, { type InputBarHandle } from "./components/InputBar/InputBar";
+import AttachmentSheet, {
+  type AttachmentSheetHandle,
+} from "./components/InputBar/AttachmentSheet";
+import FriendCommunicationSheet from "../friends/components/FriendCommunicationSheet";
+
 import {
   useChatUIState,
   type ReplyInfo,
   type TranslationTier,
   type TranslationTone,
-} from './hooks/useChatUIState';
+} from "./hooks/useChatUIState";
 
-import TranslatePopover from './components/TranslatePopover';
-
-import MediaPickerModal from './MediaPickerModal';
-import VoiceRecorderModal from './VoiceRecorderModal';
-
-import { getChatTheme, type ChatTheme, resolveRoomType } from './theme/chatTheme';
-
-import ChatThemeGate from './theme/global/ChatThemeGate';
-
-import ChatSearchHeader from './components/Search/ChatSearchHeader';
-import ChatSearchBar from './components/Search/ChatSearchBar';
-import SenderPickerSheet from './components/Search/SenderPickerSheet';
-import DatePickerSheet from './components/Search/DatePickerSheet';
-import { useChatInlineSearch } from './hooks/useChatInlineSearch';
-
+import TranslationSettingsPanel from "./components/TranslationSettingsPanel";
+import UploadModals from "./components/Modals/UploadModals";
+import ActionModals from "./components/Modals/ActionModals";
+import SelectCopyModal from "./components/Modals/SelectCopyModal";
+import { type MessageActionKey } from "./components/MessageActions/MessageActionSheet";
+import {
+  getChatTheme,
+  type ChatTheme,
+  resolveRoomType,
+  CHAT_THEMES,
+  type ChatRoomType,
+} from "./theme/chatTheme";
+import ChatThemeGate from "./theme/global/ChatThemeGate";
+import ChatSearchHeader from "./components/Search/ChatSearchHeader";
+import ChatSearchBar from "./components/Search/ChatSearchBar";
+import SenderPickerSheet from "./components/Search/SenderPickerSheet";
+import DatePickerSheet from "./components/Search/DatePickerSheet";
+import { useInlineSearchFocusBridge } from "./hooks/useInlineSearchFocusBridge";
+import { useChatMessageActionState } from "./hooks/useChatMessageActionState";
 import {
   type RoomKind,
   type MemberNick,
@@ -71,141 +99,289 @@ import {
   normalizeTone,
   deriveTextPairForReplyPreview,
   pickThumbUri,
-} from './utils/chatHelpers';
+} from "./utils/chatHelpers";
+import {
+  buildMessageTextOptionsForSelectCopy,
+  isSecureMessageForSelectCopy,
+  resolveSenderDisplayNameForMessage,
+  type SelectCopyTextOptions,
+} from "./utils/messageTextExtract";
+import { useChatBootAnimation } from "./hooks/useChatBootAnimation";
+import { useChatStatusBar } from "./hooks/useChatStatusBar";
+import { useMessageSelection } from "./hooks/useMessageSelection";
+import CoonnFloatingToast from "@/components/feedback/CoonnFloatingToast";
+import { useCoonnFloatingToast } from "@/components/feedback/useCoonnFloatingToast";
+import MessageCaptureOverlay from "./capture/MessageCaptureOverlay";
+import {
+  ChatCaptureTarget,
+  MessageCaptureProcessingCover,
+  MessageCaptureTopBar,
+  useChatScreenshotCapture,
+} from "./capture";
+import SelectionTopBar from "./components/Selection/SelectionTopBar";
+import SelectionBottomBar from "./components/Selection/SelectionBottomBar";
+import { useChatActions } from "./hooks/useChatActions";
+import { useChatScroll } from "./hooks/useChatScroll";
+import { useMediaViewerChatBridge } from "./hooks/useMediaViewerChatBridge";
+import { useChatReadReceipt } from "./hooks/useChatReadReceipt";
+import { useChatBootstrap } from "./hooks/useChatBootstrap";
+import { useChatLivePatches } from "./hooks/useChatLivePatches";
+import { useChatRoomBroadcast } from "./hooks/useChatRoomBroadcast";
+import { useChatNoticeController } from "./hooks/useChatNoticeController";
+import { useChatFocusLock } from "./hooks/useChatFocusLock";
+import { useChatKeyboardDock } from "./hooks/useChatKeyboardDock";
+import { useChatMenuPrefetch } from "./hooks/useChatMenuPrefetch";
+import { useChatInteractionController } from "./hooks/useChatInteractionController";
+import { useChatSecureSendController } from "./hooks/useChatSecureSendController";
+import { useChatOlderPaging } from "./hooks/useChatOlderPaging";
+import { useChatDeleteController } from "./hooks/useChatDeleteController";
+import { useRoomRealtimeSync } from "@/hooks/useRoomRealtimeSync";
+import RoomAccessBlockOverlay from "./components/RoomAccessBlockOverlay";
+import { useChatRoomAccessGuard } from "./hooks/useChatRoomAccessGuard";
+import {
+  type FlashListRefLike,
+  parseRoomId,
+  parseUuid,
+  pickMessageUidForReply,
+} from "./utils/messageAnchor";
+import { resolveKeyboardDockHeight } from "./utils/chatKeyboardDock";
+import {
+  pickLatestMessageMeta,
+  type LatestMessageMeta,
+} from "./utils/chatLatestMessageMeta";
+import { buildDisplayUnreadMapWithOutgoingFallback } from "./utils/chatUnreadFallback";
 
-import { fetchRoomSettings, upsertRoomSettings, type RoomSettingsRow } from './services/roomSettings';
+const CHAT_LIST_FALLBACK_ROUTE = "ChatList";
+const ANDROID_KEYBOARD_DOCK_INCREASE_THRESHOLD_PX = 12;
 
-import { useChatBootAnimation } from './hooks/useChatBootAnimation';
-import { useChatStatusBar } from './hooks/useChatStatusBar';
-import { useUnreadCountsForMyMessages } from './hooks/useUnreadCountsForMyMessages';
-
-import MessageActionSheet, { type MessageActionKey } from './components/MessageActions/MessageActionSheet';
-import MomentQuickMenu from './components/MessageActions/MomentQuickMenu';
-import DeleteTypeModal, { type MomentDeleteConfig } from './components/MessageActions/DeleteTypeModal';
-
-import { useMessageSelection } from './hooks/useMessageSelection';
-import SelectionTopBar from './components/Selection/SelectionTopBar';
-import SelectionBottomBar from './components/Selection/SelectionBottomBar';
-
-const INLINE_SEARCH_BAR_HEIGHT = 52;
-
-function parseRoomId(input: unknown): number | null {
-  const n =
-    typeof input === 'number'
-      ? input
-      : typeof input === 'string' && input.trim() !== ''
-        ? Number(input)
-        : NaN;
-
-  if (!Number.isFinite(n)) return null;
-
-  const id = Math.trunc(n);
-  if (id <= 0) return null;
-
-  return id;
-}
-
-function parseUuid(input: unknown): string | null {
-  const s = typeof input === 'string' ? input.trim() : '';
-  if (!s) return null;
-
-  const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  if (!uuidRe.test(s)) return null;
-
-  return s;
-}
-
-/**
- * ✅ Room kind coerce (서버 enum/legacy 값이 RoomKind 범위를 벗어나도 안전하게 흡수)
- * - legacy: 'map' -> 'beacon' (기존 지도/비콘 계열 방 타입 호환)
- */
-const ROOM_KIND_SET: ReadonlySet<string> = new Set([
-  'self',
-  'dm',
-  'group',
-  'open',
-  'beacon',
-  'business_dm',
+const OPEN_REPLY_ROOM_TYPE_SET = new Set([
+  "open",
+  "openchat",
+  "open_chat",
+  "open_group",
+  "public",
+  "public_group",
+  "beacon",
+  "map",
+  "business",
+  "biz",
 ]);
 
-function coerceRoomKind(input: unknown): RoomKind | null {
-  const v = typeof input === 'string' ? input.trim() : '';
-  if (!v) return null;
-
-  if (v === 'map') return 'beacon';
-
-  return ROOM_KIND_SET.has(v) ? (v as RoomKind) : null;
+function isOpenLikeRoomForReplyName(roomType?: string | null): boolean {
+  const value = String(roomType ?? "").trim().toLowerCase();
+  return !!value && OPEN_REPLY_ROOM_TYPE_SET.has(value);
 }
 
-async function resolveOrCreateDmRoom(params: { myId: string; peerId: string }): Promise<number | null> {
-  const { myId, peerId } = params;
+function pickLocalRoomReplyName(profile: any): string | null {
+  if (!profile || typeof profile !== "object") return null;
 
-  if (!myId || !peerId || myId === peerId) return null;
+  const candidates = [
+    profile.roomNickname,
+    profile.room_nickname,
+    profile.displayName,
+    profile.display_name,
+    profile.nickname,
+    profile.name,
+  ];
 
-  try {
-    const callRpc = async (args: any) => {
-      const { data, error } = await supabase.rpc('get_or_create_dm_room', args);
-      if (error) throw error;
-      return data as any;
-    };
-
-    let data: any = null;
-    try {
-      data = await callRpc({ peer_id: peerId });
-    } catch {
-      try {
-        data = await callRpc({ p_user1: myId, p_user2: peerId });
-      } catch {
-        data = await callRpc({ other_user_id: peerId });
-      }
-    }
-
-    const ridRaw =
-      typeof data === 'number'
-        ? data
-        : typeof data === 'string'
-          ? Number(data)
-          : typeof (data as any)?.room_id === 'number'
-            ? (data as any).room_id
-            : typeof (data as any)?.room_id === 'string'
-              ? Number((data as any).room_id)
-              : NaN;
-
-    const parsed = parseRoomId(ridRaw);
-    if (parsed) return parsed;
-
-    console.warn('[Chat] get_or_create_dm_room returned invalid data', { data, myId, peerId });
-    return null;
-  } catch (e: any) {
-    console.warn('[Chat] get_or_create_dm_room RPC error', {
-      message: e?.message ?? String(e),
-      myId,
-      peerId,
-    });
-    return null;
+  for (const value of candidates) {
+    const text = String(value ?? "").trim();
+    if (text) return text;
   }
+
+  return null;
 }
+
+
+function isGenericDmDisplayName(input: unknown): boolean {
+  const raw = String(input ?? "").trim();
+  if (!raw) return true;
+  const compact = raw.replace(/\s+/g, "").toLowerCase();
+  return (
+    compact === "1:1채팅" ||
+    compact === "1:1대화" ||
+    compact === "dm" ||
+    compact === "directmessage" ||
+    compact === "directmessages"
+  );
+}
+
+function pickNonGenericDmDisplayName(input: unknown): string | null {
+  const text = String(input ?? "").trim();
+  if (!text || isGenericDmDisplayName(text)) return null;
+  return text;
+}
+
+
+function normalizeChatNotificationLevel(value: unknown): string {
+  return String(value ?? "").trim().toLowerCase();
+}
+
+function isChatNotificationMutedLevel(value: unknown): boolean {
+  const text = normalizeChatNotificationLevel(value);
+  return (
+    text === "mute" ||
+    text === "muted" ||
+    text === "off" ||
+    text === "none" ||
+    text === "disabled"
+  );
+}
+
+function isKnownChatNotificationLevel(value: unknown): boolean {
+  const text = normalizeChatNotificationLevel(value);
+  return (
+    text === "mute" ||
+    text === "muted" ||
+    text === "off" ||
+    text === "none" ||
+    text === "disabled" ||
+    text === "default" ||
+    text === "all" ||
+    text === "on" ||
+    text === "enabled"
+  );
+}
+
+function toOptionalBoolean(value: unknown): boolean | null {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") {
+    if (value === 1) return true;
+    if (value === 0) return false;
+  }
+  if (typeof value === "string") {
+    const text = value.trim().toLowerCase();
+    if (text === "true" || text === "1" || text === "yes" || text === "y") return true;
+    if (text === "false" || text === "0" || text === "no" || text === "n") return false;
+  }
+  return null;
+}
+
+function readOptionalBoolean(source: any, keys: string[]): boolean | null {
+  if (!source || typeof source !== "object") return null;
+  for (const key of keys) {
+    if (!Object.prototype.hasOwnProperty.call(source, key)) continue;
+    const parsed = toOptionalBoolean(source[key]);
+    if (parsed !== null) return parsed;
+  }
+  return null;
+}
+
+function normalizeChatNotificationMutedFromSources(...sources: any[]): boolean | null {
+  for (const source of sources) {
+    if (!source || typeof source !== "object") continue;
+
+    const explicitMuted = readOptionalBoolean(source, [
+      "muted",
+      "isMuted",
+      "is_muted",
+      "notification_muted",
+    ]);
+    if (explicitMuted !== null) return explicitMuted;
+
+    const notificationsEnabled = readOptionalBoolean(source, [
+      "notifications_enabled",
+      "notificationEnabled",
+      "notificationsEnabled",
+    ]);
+    if (notificationsEnabled !== null) return !notificationsEnabled;
+
+    const notificationLevel =
+      source.notification_level ?? source.notificationLevel ?? source.push_level;
+    if (isKnownChatNotificationLevel(notificationLevel)) {
+      return isChatNotificationMutedLevel(notificationLevel);
+    }
+  }
+
+  return null;
+}
+
+function buildChatNotificationSnapshot(muted: boolean | null) {
+  if (muted === null) return {};
+
+  return {
+    muted,
+    isMuted: muted,
+    is_muted: muted,
+    notification_muted: muted,
+    notifications_enabled: !muted,
+    notification_level: muted ? "mute" : "default",
+    notificationLevel: muted ? "mute" : "default",
+  };
+}
+
+function isMediaViewerRouteName(name: unknown) {
+  const routeName = String(name ?? "");
+  return (
+    routeName === "MediaViewer" ||
+    routeName === "ImageViewer" ||
+    routeName === "VideoViewer" ||
+    routeName.toLowerCase().includes("viewer")
+  );
+}
+
+
+
+function normalizeChatRoomTypeForNotice(value: unknown): string {
+  return String(value ?? '').trim().toLowerCase();
+}
+
+function canPromoteNoticeByRoomPolicy(roomType: unknown, myRoomRole: unknown): boolean {
+  const type = normalizeChatRoomTypeForNotice(roomType);
+  if (type === 'dm' || type === 'group' || type === 'self') return true;
+
+  const role = String(myRoomRole ?? '').trim().toLowerCase();
+  if (type === 'open' || type === 'business' || type === 'beacon') {
+    return role === 'host' || role === 'sub_host' || role === 'co_host';
+  }
+
+  return false;
+}
+
 
 export default function Chat() {
+  const { t } = useTranslation();
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
   const insets = useSafeAreaInsets();
-  const listRef = useRef<FlatList<RenderItem>>(null);
+  const listRef = useRef<FlashListRefLike | null>(null);
+  const {
+    messageFocusRequest,
+    setMessageFocusRequest,
+    messageFocusRequestRef,
+    focusFailureTimerRef,
+    focusAutoBottomLockRef,
+    focusAutoBottomLocked,
+    setFocusAutoBottomLock,
+  } = useChatFocusLock();
+  const [showNewMessageNotice, setShowNewMessageNotice] = useState(false);
+  const [dismissedNoticeKey, setDismissedNoticeKey] = useState<string | null>(
+    null,
+  );
+  const [dismissedNoticeLoadedStorageKey, setDismissedNoticeLoadedStorageKey] =
+    useState<string | null>(null);
+  const latestMessageMetaRef = useRef<LatestMessageMeta | null>(null);
+  const latestMessageRoomRef = useRef<number | null>(null);
+  const inputBarRef = useRef<InputBarHandle | null>(null);
+  const attachmentSheetRef = useRef<AttachmentSheetHandle>(null);
+
+  const isFocused = useIsFocused();
 
   const routeParams = route.params ?? {};
-
-  // ✅ business DM header override (route params)
-  const businessNameFromParams =
-    typeof (routeParams as any)?.business_name === 'string' && (routeParams as any).business_name.trim()
-      ? (routeParams as any).business_name.trim()
+  const routeInitialRoomSnapshot =
+    routeParams?.initialRoomSnapshot &&
+    typeof routeParams.initialRoomSnapshot === "object"
+      ? routeParams.initialRoomSnapshot
       : null;
 
   const businessLogoFromParams =
-    typeof (routeParams as any)?.business_logo_url === 'string' && (routeParams as any).business_logo_url.trim()
+    typeof (routeParams as any)?.business_logo_url === "string" &&
+    (routeParams as any).business_logo_url.trim()
       ? (routeParams as any).business_logo_url.trim()
       : null;
 
-  const roomIdRaw = routeParams.roomId ?? routeParams.room_id ?? routeParams.id ?? null;
+  const roomIdRaw =
+    routeParams.roomId ?? routeParams.room_id ?? routeParams.id ?? null;
   const peerIdRaw =
     routeParams.peer_id ??
     routeParams.peerId ??
@@ -219,333 +395,15 @@ export default function Chat() {
   const roomIdFromParams = parseRoomId(roomIdRaw);
   const peerIdFromParams = parseUuid(peerIdRaw);
 
-  const [resolvedRoomId, setResolvedRoomId] = useState<number>(roomIdFromParams ?? 0);
-  const resolvedRoomIdOk = resolvedRoomId > 0;
 
-  useEffect(() => {
-    if (roomIdFromParams && roomIdFromParams !== resolvedRoomId) {
-      setResolvedRoomId(roomIdFromParams);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomIdFromParams]);
-
-  const scrollToBottom = useCallback((animated: boolean = true) => {
-    try {
-      listRef.current?.scrollToOffset?.({ offset: 0, animated });
-    } catch {}
-  }, []);
-
-  const [me, setMe] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const [title, setTitle] = useState('채팅');
-  const [headerAvatarUrl, setHeaderAvatarUrl] = useState<string | null>(businessLogoFromParams);
-  const [participantCount, setParticipantCount] = useState(1);
-  const [myLang, setMyLang] = useState('ko');
-  const [roomType, setRoomType] = useState<RoomKind | null>(null);
-
-  const resolvedRoomTypeRef = useRef<RoomKind | null>(null);
-  const [theme, setTheme] = useState<ChatTheme>(() => getChatTheme({ type: 'dm' }));
-
-  const selection = useMessageSelection();
-
-  const {
-    headerAnim,
-    listAnim,
-    listMoveY,
-    inputAnim,
-    inputMoveY,
-    bootCoverAnim,
-    bootCoverVisible,
-  } = useChatBootAnimation({ roomId: resolvedRoomId, loading, me });
-
-  const { expoBarStyle } = useChatStatusBar({ navigation, headerBg: theme.headerBg });
-
-  const [initialSynced, setInitialSynced] = useState(false);
-
-  useEffect(() => {
-    setInitialSynced(false);
-  }, [resolvedRoomId]);
-
-  const [isAtBottom, setIsAtBottom] = useState(true);
-  const [hasNewWhileAway, setHasNewWhileAway] = useState(false);
-  const prevMsgCountRef = useRef(0);
-
-  const [collapseNonce, setCollapseNonce] = useState(0);
-  const [attachmentsOpen, setAttachmentsOpen] = useState(false);
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
-
-  const [mediaVisible, setMediaVisible] = useState(false);
-  const [voiceVisible, setVoiceVisible] = useState(false);
-
-  const [photoQuality, setPhotoQuality] = useState<any>('high');
-  const [videoQuality, setVideoQuality] = useState<any>('high');
-
-  const THEME_COLOR = theme.headerBg;
-  const expanded = keyboardVisible || attachmentsOpen;
-
-  const memberNickMapRef = useRef<Map<string, string | null>>(new Map());
-
-  const [myProfileCfg, setMyProfileCfg] = useState<ProfileLangConfig | null>(null);
-  const [peerProfileCfg, setPeerProfileCfg] = useState<ProfileLangConfig | null>(null);
-  const peerIdRef = useRef<string | null>(null);
-
-  const [translatePopoverVisible, setTranslatePopoverVisible] = useState(false);
-
-  const [actionSheetVisible, setActionSheetVisible] = useState(false);
-
-  const [deleteTypeVisible, setDeleteTypeVisible] = useState(false);
-  const [deleteTypeMsg, setDeleteTypeMsg] = useState<any | null>(null);
-
-  const closeDeleteType = useCallback(() => {
-    setDeleteTypeVisible(false);
-    setTimeout(() => setDeleteTypeMsg(null), 200);
-  }, []);
-
-  const [momentMenuVisible, setMomentMenuVisible] = useState(false);
-  const [momentMenuAnchor, setMomentMenuAnchor] = useState<{ x: number; y: number; w: number; h: number } | null>(
-    null,
-  );
-  const [momentMenuMsg, setMomentMenuMsg] = useState<any | null>(null);
-
-  const closeMomentMenu = useCallback(() => {
-    setMomentMenuVisible(false);
-    setMomentMenuAnchor(null);
-    setMomentMenuMsg(null);
-  }, []);
-
-  const [actionSheetMsg, setActionSheetMsg] = useState<any | null>(null);
-
-  const openMessageActions = useCallback(
-    (msg: any) => {
-      if (!msg) return;
-      if (selection.selecting) return;
-      setActionSheetMsg(msg);
-      setActionSheetVisible(true);
-    },
-    [selection.selecting],
-  );
-
-  const closeMessageActions = useCallback(() => {
-    setActionSheetVisible(false);
-    setTimeout(() => setActionSheetMsg(null), 200);
-  }, []);
-
-  const openDeleteTypeForMessage = useCallback((msg: any) => {
-    if (!msg) return;
-    setDeleteTypeMsg(msg);
-    setDeleteTypeVisible(true);
-  }, []);
-
-  const deleteEligibility = useMemo(() => {
-    const msg = deleteTypeMsg;
-    const id = String(msg?.id ?? '').trim();
-    const isMe2 = String(msg?.senderId ?? msg?.sender_id ?? '') === String(me ?? '');
-    const isLocal = !id || id.startsWith('local_');
-    const createdMs = toMillis(msg?.createdAt ?? msg?.created_at ?? null) ?? null;
-
-    const within24h = createdMs != null ? Date.now() - createdMs <= 24 * 3600 * 1000 : false;
-
-    const canDeleteAll = !!me && isMe2 && !isLocal && within24h;
-    const canMomentDelete = canDeleteAll;
-
-    return { canDeleteAll, canMomentDelete };
-  }, [deleteTypeMsg, me]);
-
-  const cancelMomentDelete = useCallback(
-    async (msg: any) => {
-      if (!msg) return;
-      const id = String(msg?.id ?? '').trim();
-      if (!id || id.startsWith('local_')) return;
-
-      try {
-        await database.write(async () => {
-          const collection = database.get<any>('messages');
-          let mLocal: any = null;
-          try {
-            mLocal = await collection.find(id);
-          } catch {
-            mLocal = null;
-          }
-          if (!mLocal) return;
-          await mLocal.update((mm: any) => {
-            if ('delete_at' in mm) mm.delete_at = null;
-          });
-        });
-      } catch {}
-
-      try {
-        await supabase.from('chat_messages').update({ delete_at: null, moment_config: null }).eq('id', id).eq('sender_id', me);
-      } catch {}
-    },
-    [me],
-  );
-
-  const pickMsgId = useCallback((msg: any) => {
-    const id = String(msg?.id ?? msg?.message_id ?? '').trim();
-    return id || null;
-  }, []);
-
-  const isLocalMsg = useCallback((id: string | null) => {
-    if (!id) return true;
-    return id.startsWith('local_');
-  }, []);
-
-  const updateLocalFields = useCallback(async (id: string, patch: (m: any) => void) => {
-    try {
-      await database.write(async () => {
-        const collection = database.get<any>('messages');
-        let mLocal: any = null;
-        try {
-          mLocal = await collection.find(id);
-        } catch {
-          mLocal = null;
-        }
-        if (!mLocal) return;
-        await mLocal.update((mm: any) => {
-          patch(mm);
-        });
-      });
-    } catch {}
-  }, []);
-
-  const deleteMineLocal = useCallback(
-    async (msg: any) => {
-      const id = pickMsgId(msg);
-      if (!id) return;
-
-      try {
-        await database.write(async () => {
-          const collection = database.get<any>('messages');
-          let mLocal: any = null;
-          try {
-            mLocal = await collection.find(id);
-          } catch {
-            mLocal = null;
-          }
-          if (!mLocal) return;
-          await mLocal.destroyPermanently();
-        });
-      } catch {}
-    },
-    [pickMsgId],
-  );
-
-  const deleteAll = useCallback(
-    async (msg: any) => {
-      if (!msg) return;
-      const id = pickMsgId(msg);
-      if (!id || isLocalMsg(id)) return;
-
-      const nowIso = new Date().toISOString();
-      const nowMs = Date.now();
-
-      await updateLocalFields(id, (mm) => {
-        if ('delete_at' in mm) mm.delete_at = nowMs as any;
-        if ('moment_config' in mm) mm.moment_config = null as any;
-      });
-
-      try {
-        await supabase
-          .from('chat_messages')
-          .update({ delete_at: nowIso, moment_config: null })
-          .eq('id', id)
-          .eq('room_id', resolvedRoomId)
-          .eq('sender_id', me);
-      } catch {}
-    },
-    [me, pickMsgId, isLocalMsg, updateLocalFields, resolvedRoomId],
-  );
-
-  const setMomentDelete = useCallback(
-    async (msg: any, cfg: MomentDeleteConfig) => {
-      if (!msg) return;
-      const id = pickMsgId(msg);
-      if (!id || isLocalMsg(id)) return;
-
-      const now = Date.now();
-      const delayMs = Math.max(0, Math.floor(cfg.delaySeconds * 1000));
-      const deleteAtMs = now + delayMs;
-      const deleteAtIso = new Date(deleteAtMs).toISOString();
-
-      if (cfg.readBased) {
-        const moment_config = {
-          type: 'READ_BASED',
-          delay: Math.max(1, Math.floor(cfg.delaySeconds)),
-        };
-
-        await updateLocalFields(id, (mm) => {
-          if ('moment_config' in mm) mm.moment_config = JSON.stringify(moment_config) as any;
-          if ('delete_at' in mm) mm.delete_at = null as any;
-        });
-
-        try {
-          await supabase
-            .from('chat_messages')
-            .update({ moment_config, delete_at: null })
-            .eq('id', id)
-            .eq('room_id', resolvedRoomId)
-            .eq('sender_id', me);
-        } catch {}
-        return;
-      }
-
-      await updateLocalFields(id, (mm) => {
-        if ('delete_at' in mm) mm.delete_at = deleteAtMs as any;
-        if ('moment_config' in mm) mm.moment_config = null as any;
-      });
-
-      try {
-        await supabase
-          .from('chat_messages')
-          .update({ delete_at: deleteAtIso, moment_config: null })
-          .eq('id', id)
-          .eq('room_id', resolvedRoomId)
-          .eq('sender_id', me);
-      } catch {}
-    },
-    [me, pickMsgId, isLocalMsg, updateLocalFields, resolvedRoomId],
-  );
-
-  useEffect(() => {
-    const sub = DeviceEventEmitter.addListener('chat:openMessageActions', (payload: any) => {
-      try {
-        const msg = payload?.message ?? null;
-        if (!msg) return;
-        openMessageActions(msg);
-      } catch {}
-    });
-
-    const subMoment = DeviceEventEmitter.addListener('chat:openMomentQuickMenu', (payload: any) => {
-      try {
-        const msg = payload?.message ?? null;
-        const anchor = payload?.anchor ?? null;
-        if (!msg) return;
-        setMomentMenuMsg(msg);
-        setMomentMenuAnchor(anchor);
-        setMomentMenuVisible(true);
-      } catch {}
-    });
-
-    return () => {
-      sub.remove();
-      subMoment.remove();
-    };
-  }, [openMessageActions]);
-
-  const [searchMembers, setSearchMembers] = useState<{ id: string; name: string; avatarUrl?: string | null }[]>([]);
 
   const [viewLangLocal, setViewLangLocal] = useState<string | null>(null);
-  const [preferredLangLocal, setPreferredLangLocal] = useState<string | null>(null);
-
+  const [preferredLangLocal, setPreferredLangLocal] = useState<string | null>(
+    null,
+  );
   const [showTranslatedOnly, setShowTranslatedOnly] = useState<boolean>(false);
 
-  const openTranslatePopover = useCallback(() => setTranslatePopoverVisible(true), []);
-  const closeTranslatePopover = useCallback(() => setTranslatePopoverVisible(false), []);
-
   const {
-    text,
-    setText,
     replyTo,
     handleReply,
     cancelReply,
@@ -557,641 +415,1269 @@ export default function Chat() {
     setTranslationTone,
   } = useChatUIState();
 
-  const { items } = useChatMessages(resolvedRoomIdOk ? resolvedRoomId : 0, me);
-
-  const inlineSearchRaw =
-    (useChatInlineSearch({
-      roomId: resolvedRoomIdOk ? resolvedRoomId : 0,
-      me,
-      items,
-      listRef,
-      scrollToBottom,
-    } as any) as any) ?? ({} as any);
-
-  const inlineSearch = useMemo(() => {
-    const r: any = inlineSearchRaw ?? {};
-    return {
-      open: !!r.open,
-      openSearch: typeof r.openSearch === 'function' ? r.openSearch : () => {},
-      closeSearch: typeof r.closeSearch === 'function' ? r.closeSearch : () => {},
-
-      q: typeof r.q === 'string' ? r.q : '',
-      setQ: typeof r.setQ === 'function' ? r.setQ : (_v: any) => {},
-      clearQ: typeof r.clearQ === 'function' ? r.clearQ : () => {},
-      removeMember: typeof r.removeMember === 'function' ? r.removeMember : () => {},
-
-      selectedMember: r.selectedMember ?? null,
-
-      countLabel: typeof r.countLabel === 'string' ? r.countLabel : '',
-      hasSenderFilter: !!r.hasSenderFilter,
-      hasDateFilter: !!r.hasDateFilter,
-
-      openSender: typeof r.openSender === 'function' ? r.openSender : () => {},
-      closeSender: typeof r.closeSender === 'function' ? r.closeSender : () => {},
-      senderSheetOpen: !!r.senderSheetOpen,
-      members: Array.isArray(r.members) ? r.members : [],
-      setMember: typeof r.setMember === 'function' ? r.setMember : (_m: any) => {},
-
-      openDate: typeof r.openDate === 'function' ? r.openDate : () => {},
-      closeDate: typeof r.closeDate === 'function' ? r.closeDate : () => {},
-      dateSheetOpen: !!r.dateSheetOpen,
-      dateRange: r.dateRange ?? null,
-      setDates: typeof r.setDates === 'function' ? r.setDates : (_range: any) => {},
-
-      prev: typeof r.prev === 'function' ? r.prev : () => {},
-      next: typeof r.next === 'function' ? r.next : () => {},
-
-      setOpen: typeof r.setOpen === 'function' ? r.setOpen : undefined,
-    };
-  }, [inlineSearchRaw]);
-
-  const itemById = useMemo(() => {
-    const m = new Map<string, any>();
-    for (const it of items as any[]) {
-      if ((it as any)?.type !== 'message') continue;
-      const msg: any = (it as any)?.data;
-      const id = String(msg?.id ?? '').trim();
-      if (id) m.set(id, msg);
-    }
-    return m;
-  }, [items]);
-
-  const selectedMsgs = useMemo(() => {
-    const out: any[] = [];
-    selection.selectedIds.forEach((id) => {
-      const msg = itemById.get(String(id));
-      if (msg) out.push(msg);
-    });
-    return out;
-  }, [selection.selectedIds, itemById]);
-
-  const bulkEligibility = useMemo(() => {
-    if (!selectedMsgs.length) return { canDeleteAll: false, canMomentDelete: false };
-
-    const allOk = selectedMsgs.every((msg) => {
-      const id = String(msg?.id ?? '').trim();
-      const isMe2 = String(msg?.senderId ?? msg?.sender_id ?? '') === String(me ?? '');
-      const isLocal2 = !id || id.startsWith('local_');
-      const createdMs = toMillis(msg?.createdAt ?? msg?.created_at ?? null) ?? null;
-      const within24h = createdMs != null ? Date.now() - createdMs <= 24 * 3600 * 1000 : false;
-      return !!me && isMe2 && !isLocal2 && within24h;
-    });
-
-    return { canDeleteAll: allOk, canMomentDelete: allOk };
-  }, [selectedMsgs, me]);
-
-  /**
-   * ✅ READ SYNC (서버 chat_members.last_read_seq/at 업데이트)
-   * - 로컬 items에서 최신 room_seq를 계산
-   * - room_seq가 로컬에 없으면 서버에서 1번 조회(최신 seq)
-   * - 디바운스로 "한 번만" 서버에 보냄
-   */
-  const computeLatestSeqFromItems = useCallback((): number => {
-    let maxSeq = 0;
-    for (const it of items as any[]) {
-      if ((it as any)?.type !== 'message') continue;
-      const msg: any = (it as any)?.data ?? null;
-      const raw = msg?.roomSeq ?? msg?.room_seq ?? 0;
-      const n = Math.trunc(Number(raw ?? 0) || 0);
-      if (Number.isFinite(n) && n > maxSeq) maxSeq = n;
-    }
-    return maxSeq;
-  }, [items]);
-
-  const fetchLatestSeqFromServer = useCallback(async (): Promise<number> => {
-    if (!resolvedRoomIdOk) return 0;
-    try {
-      const { data, error } = await supabase
-        .from('chat_messages')
-        .select('room_seq')
-        .eq('room_id', resolvedRoomId)
-        .order('room_seq', { ascending: false })
-        .limit(1);
-
-      if (error) {
-        console.warn('[readSync] fetchLatestSeqFromServer error', error?.message ?? String(error));
-        return 0;
-      }
-
-      const seq = Math.trunc(Number((data as any)?.[0]?.room_seq ?? 0) || 0);
-      return Number.isFinite(seq) ? seq : 0;
-    } catch (e: any) {
-      console.warn('[readSync] fetchLatestSeqFromServer exception', e?.message ?? String(e));
-      return 0;
-    }
-  }, [resolvedRoomId, resolvedRoomIdOk]);
-
-  const latestRoomSeq = useMemo(() => computeLatestSeqFromItems(), [computeLatestSeqFromItems]);
-
-  const lastReadPushedRef = useRef<number>(0);
-  const readPushInFlightRef = useRef<boolean>(false);
-  const readPushTimerRef = useRef<any>(null);
-
-  useEffect(() => {
-    // 방 바뀌면 리셋
-    lastReadPushedRef.current = 0;
-    if (readPushTimerRef.current) {
-      clearTimeout(readPushTimerRef.current);
-      readPushTimerRef.current = null;
-    }
-  }, [resolvedRoomId]);
-
-  useEffect(() => {
-    return () => {
-      if (readPushTimerRef.current) {
-        clearTimeout(readPushTimerRef.current);
-        readPushTimerRef.current = null;
-      }
-    };
-  }, []);
-
-  const fetchMyLastReadSeqFromServer = useCallback(async (): Promise<number> => {
-    if (!me || !resolvedRoomIdOk) return 0;
-    try {
-      const { data, error } = await supabase
-        .from('chat_members')
-        .select('last_read_seq')
-        .eq('room_id', resolvedRoomId)
-        .eq('user_id', me)
-        .maybeSingle();
-
-      if (error) return 0;
-
-      const seq = Math.trunc(Number((data as any)?.last_read_seq ?? 0) || 0);
-      return Number.isFinite(seq) ? seq : 0;
-    } catch {
-      return 0;
-    }
-  }, [me, resolvedRoomId, resolvedRoomIdOk]);
-
-  const pushReadNow = useCallback(
-    async (seqHint?: number, reason: string = 'ui') => {
-      if (!me || !resolvedRoomIdOk) return;
-      if (readPushInFlightRef.current) return;
-
-      let seq = Math.trunc(Number(seqHint ?? 0) || 0);
-      if (!seq) seq = computeLatestSeqFromItems();
-      if (!seq) seq = await fetchLatestSeqFromServer();
-
-      if (seq <= 0) return;
-      if (seq <= lastReadPushedRef.current) return;
-
-      readPushInFlightRef.current = true;
-
-      const nowIso = new Date().toISOString();
-
-      try {
-        const { data, error } = await supabase
-          .from('chat_members')
-          .update({ last_read_seq: seq, last_read_at: nowIso })
-          .eq('room_id', resolvedRoomId)
-          .eq('user_id', me)
-          .lt('last_read_seq', seq) // ✅ 중복/역전 업데이트 방지
-          .select('last_read_seq');
-
-        if (error) {
-          console.warn('[readSync] push error', {
-            reason,
-            roomId: resolvedRoomId,
-            me,
-            seq,
-            message: (error as any)?.message ?? String(error),
-          });
-          return;
-        }
-
-        // ✅ 서버가 이미 더 큰 값(다른 기기)이라 update=0이어도, 로컬은 seq까지는 올려서 재시도 폭주를 막는다.
-        lastReadPushedRef.current = Math.max(lastReadPushedRef.current, seq);
-
-        // (옵션) data 기반 디버그가 필요하면 여기에 로그 추가
-        // console.warn('[readSync] push ok', { reason, seq, data });
-      } catch (e: any) {
-        console.warn('[readSync] push exception', e?.message ?? String(e));
-      } finally {
-        readPushInFlightRef.current = false;
-      }
-    },
-    [me, resolvedRoomId, resolvedRoomIdOk, computeLatestSeqFromItems, fetchLatestSeqFromServer],
-  );
-
-  const scheduleReadSync = useCallback(
-    (seq: number) => {
-      const s = Math.trunc(Number(seq ?? 0) || 0);
-      if (s <= 0) return;
-
-      if (readPushTimerRef.current) clearTimeout(readPushTimerRef.current);
-      readPushTimerRef.current = setTimeout(() => {
-        pushReadNow(s, 'debounce');
-      }, 250);
-    },
-    [pushReadNow],
-  );
-
-  useFocusEffect(
-    useCallback(() => {
-      if (!me || !resolvedRoomIdOk) return;
-      const t = setTimeout(() => {
-        pushReadNow(undefined, 'focus').catch(() => {});
-      }, 250);
-      return () => clearTimeout(t);
-    }, [me, resolvedRoomIdOk, pushReadNow]),
-  );
-
-  useEffect(() => {
-    if (!me || !resolvedRoomIdOk) return;
-    if (!isAtBottom) return;
-    if (latestRoomSeq > 0) scheduleReadSync(latestRoomSeq);
-  }, [me, resolvedRoomIdOk, isAtBottom, latestRoomSeq, scheduleReadSync]);
-
-  const { emitUnreadCountsForMyMessages } = useUnreadCountsForMyMessages({
-    roomId: resolvedRoomIdOk ? resolvedRoomId : 0,
-    me,
-    items,
-    DeviceEventEmitter,
-  });
-
-  /**
-   * ✅ chat_members 실시간 구독 → 상대가 읽으면 내 메시지의 "1"이 즉시 사라지게 함
-   * - UPDATE/INSERT 수신 시 unread counts 재계산을 디바운스로 1회만 실행
-   */
-  const memberReadChannelRef = useRef<any>(null);
-  const unreadRecalcTimerRef = useRef<any>(null);
-
-  const scheduleUnreadRecalc = useCallback(
-    (reason: string) => {
-      if (unreadRecalcTimerRef.current) clearTimeout(unreadRecalcTimerRef.current);
-      unreadRecalcTimerRef.current = setTimeout(() => {
-        try {
-          emitUnreadCountsForMyMessages();
-        } catch {}
-      }, 120);
-    },
-    [emitUnreadCountsForMyMessages],
-  );
-
-  useEffect(() => {
-    return () => {
-      if (unreadRecalcTimerRef.current) {
-        clearTimeout(unreadRecalcTimerRef.current);
-        unreadRecalcTimerRef.current = null;
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!me || !resolvedRoomIdOk) return;
-
-    // 1) 방 진입 시 내 last_read_seq를 1회 로드해서 불필요한 push 반복 방지
-    (async () => {
-      const s = await fetchMyLastReadSeqFromServer();
-      if (s > 0) {
-        lastReadPushedRef.current = Math.max(lastReadPushedRef.current, s);
-      }
-      scheduleUnreadRecalc('init');
-    })().catch(() => {});
-
-    // 2) 기존 채널 정리
-    try {
-      memberReadChannelRef.current?.unsubscribe?.();
-    } catch {}
-    memberReadChannelRef.current = null;
-
-    const channel = supabase
-      .channel(`chat_members:reads:${resolvedRoomId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'chat_members',
-          filter: `room_id=eq.${resolvedRoomId}`,
-        },
-        (payload: any) => {
-          try {
-            const row = payload?.new ?? null;
-            const uid = String(row?.user_id ?? '').trim();
-            const seq = Math.trunc(Number(row?.last_read_seq ?? 0) || 0);
-
-            if (uid && uid === String(me)) {
-              // 내 row가 다른 경로(다른 기기/서버)로 올라온 경우 로컬 ref도 동기화
-              if (seq > 0) lastReadPushedRef.current = Math.max(lastReadPushedRef.current, seq);
-            }
-
-            // 상대가 읽음 → 내 메시지 unread 카운트 즉시 재계산
-            scheduleUnreadRecalc('realtime_update');
-          } catch {}
-        },
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'chat_members',
-          filter: `room_id=eq.${resolvedRoomId}`,
-        },
-        () => {
-          // 멤버가 새로 생기는 케이스도 카운트에 영향 가능
-          scheduleUnreadRecalc('realtime_insert');
-        },
-      )
-      .subscribe((status: any) => {
-        if (status === 'SUBSCRIBED') {
-          scheduleUnreadRecalc('subscribed');
-        }
-      });
-
-    memberReadChannelRef.current = channel;
-
-    return () => {
-      try {
-        channel?.unsubscribe?.();
-      } catch {}
-      if (memberReadChannelRef.current === channel) memberReadChannelRef.current = null;
-    };
-  }, [
-    me,
+  const {
     resolvedRoomId,
     resolvedRoomIdOk,
-    fetchMyLastReadSeqFromServer,
-    scheduleUnreadRecalc,
-  ]);
+    me,
+    loading,
+    title,
+    headerAvatarUrl,
+    participantCount,
+    myLang,
+    roomType,
+    themeOverride,
+    isInputLocked,
+    setIsInputLocked,
+    isSelfRoom,
+    memberNickMapRef,
+    myProfileCfg,
+    peerProfileCfg,
+    searchMembers,
+    initialSynced,
+    resolveRoomTypeForSend,
+    toggleShowTranslatedOnly,
+    toggleAutoTranslate,
+    setTierWithPersist,
+    setToneWithPersist,
+    handleChangeViewLang,
+    handleChangePreferredLang,
+  } = useChatBootstrap({
+    tTitle: t("chat:title", { defaultValue: "채팅" }),
+    routeParams,
+    navigation,
+    roomIdFromParams,
+    peerIdFromParams,
+    businessLogoFromParams,
+    autoTranslate,
+    setAutoTranslate,
+    setTranslationTier,
+    setTranslationTone,
+    setViewLangLocal,
+    setPreferredLangLocal,
+    showTranslatedOnly,
+    setShowTranslatedOnly,
+  });
 
-  type HeaderRoomType = ComponentProps<typeof ChatHeader>['roomType'];
-  const headerRoomType = useMemo<HeaderRoomType>(() => {
-    if (!roomType) return undefined;
-    if (roomType === 'business_dm') return 'dm' as HeaderRoomType;
-    return roomType as unknown as HeaderRoomType;
-  }, [roomType]);
+  useEffect(() => {
+    if (!resolvedRoomIdOk || !isFocused) {
+      clearActiveChatRoom(resolvedRoomIdOk ? resolvedRoomId : undefined);
+      return;
+    }
 
-  const translateFn = useCallback(
-    async (args: { text: string; targetLang: string; tier: Tier; tone?: string | null; sourceLang?: string | null }) => {
-      const payload = {
-        text: args.text,
-        target_lang: args.targetLang,
-        tier: args.tier,
-        tone: args.tone ?? null,
-        source_lang: args.sourceLang ?? null,
-      };
+    const activeRoomId = Number(resolvedRoomId);
+    if (!Number.isFinite(activeRoomId) || activeRoomId <= 0) {
+      clearActiveChatRoom();
+      return;
+    }
 
-      const pickOut = (data: any): string | null => {
-        if (!data) return null;
+    setActiveChatRoom(activeRoomId);
 
-        if (typeof data === 'string') {
-          const s = data.trim();
-          if (!s) return null;
-          if ((s.startsWith('{') && s.endsWith('}')) || (s.startsWith('[') && s.endsWith(']'))) {
-            try {
-              data = JSON.parse(s);
-            } catch {
-              return s;
-            }
-          } else {
-            return s;
-          }
-        }
+    return () => {
+      clearActiveChatRoom(activeRoomId);
+    };
+  }, [isFocused, resolvedRoomId, resolvedRoomIdOk]);
 
-        const out =
-          (data as any)?.translated_text ??
-          (data as any)?.text ??
-          (data as any)?.result ??
-          (data as any)?.translation ??
-          null;
+  const roomBroadcast = useChatRoomBroadcast({
+    roomId: resolvedRoomId,
+    roomIdOk: resolvedRoomIdOk,
+    isFocused,
+  });
 
-        return out && String(out).trim() ? String(out) : null;
-      };
-
-      const tryInvoke = async (fnName: string) => {
-        try {
-          const { data, error } = await supabase.functions.invoke(fnName, { body: payload });
-
-          console.warn('[translateFn] invoke', fnName, {
-            ok: !error,
-            error: error ? ((error as any).message ?? error) : null,
-            data,
-            payload,
-          });
-
-          if (error) return null;
-          return pickOut(data);
-        } catch (e: any) {
-          console.warn('[translateFn] invoke EXCEPTION', fnName, {
-            message: e?.message ?? String(e),
-            payload,
-          });
-          return null;
-        }
-      };
-
-      const a = await tryInvoke('chat-translate');
-      if (a) return a;
-
-      const b = await tryInvoke('translate');
-      if (b) return b;
-
-      return null;
+  const {
+    items,
+    loading: messagesLoading,
+    expandWindow,
+    prepareWindow,
+    ensureAnchorInWindow,
+    getOldestLocalCursor,
+    getWindowState,
+  } = useChatMessages(
+    resolvedRoomIdOk ? resolvedRoomId : 0,
+    me,
+    {
+      tailReady: initialSynced,
+      allowLocalFirstPaintBeforeTailReady: true,
     },
+  );
+
+  const chatBootLoading = loading || messagesLoading;
+  const shellBootLoading = false;
+  // Do not let bootstrap/runtime hydration hide an already-published local tail.
+  // MessageList only needs the current user and message query readiness;
+  // room/profile hydration continues behind the first paint.
+  const messageListBootLoading = !me || messagesLoading;
+  const inputBootLoading = !resolvedRoomIdOk || !me;
+  const {
+    visibleItems,
+    renderTick: livePatchRenderTick,
+    hideMessages,
+    softDeleteLocalBatch,
+  } = useChatLivePatches({
+    roomId: resolvedRoomId,
+    roomIdOk: resolvedRoomIdOk,
+    items,
+    isFocused,
+  });
+
+
+  const [realtimeTick, setRealtimeTick] = useState(0);
+
+  const handleRoomRealtimeUpdate = useCallback(() => {
+    setRealtimeTick((prev) => prev + 1);
+  }, []);
+
+  useRoomRealtimeSync(
+    resolvedRoomIdOk ? Number(resolvedRoomId) : null,
+    isFocused,
+    handleRoomRealtimeUpdate,
+  );
+
+  useEffect(() => {
+    if (!resolvedRoomIdOk) return undefined;
+
+    const sub = DeviceEventEmitter.addListener('chat:messages_updated', (payload: any) => {
+      const eventRoomId = Number(payload?.roomId ?? payload?.room_id ?? 0);
+      if (eventRoomId && eventRoomId !== Number(resolvedRoomId)) return;
+      handleRoomRealtimeUpdate();
+    });
+
+    return () => {
+      try { sub.remove(); } catch {}
+    };
+  }, [handleRoomRealtimeUpdate, resolvedRoomId, resolvedRoomIdOk]);
+
+  const {
+    secureController,
+    secureSendEnabled,
+    shouldUseSecureForSend,
+    showSecureStatus,
+    resolveSecureSendConfig,
+    handleToggleSecure,
+    lockSecureRoom,
+    touchSecureActivity,
+  } = useChatSecureSendController({
+    roomId: resolvedRoomIdOk ? Number(resolvedRoomId) : null,
+    roomIdOk: resolvedRoomIdOk,
+    me,
+    isFocused,
+    t,
+  });
+
+  const {
+    isKickedRoomBlocked,
+    isDeletedRoomReadOnly,
+    isLeftRoomReadOnly,
+    isRoomSendBlocked,
+    handleConfirmKickedExit,
+  } = useChatRoomAccessGuard({
+    roomId: resolvedRoomId,
+    roomIdOk: resolvedRoomIdOk,
+    me,
+    isFocused,
+    navigation,
+    lockSecureRoom,
+  });
+
+  const theme = useMemo<ChatTheme>(() => {
+    if (themeOverride && CHAT_THEMES[themeOverride])
+      return CHAT_THEMES[themeOverride];
+    return getChatTheme({ type: roomType ?? "dm" });
+  }, [roomType, themeOverride]);
+
+  const chatThemeKey = useMemo<ChatRoomType>(() => {
+    if (themeOverride && CHAT_THEMES[themeOverride]) return themeOverride;
+    return resolveRoomType({ type: roomType ?? "dm" });
+  }, [roomType, themeOverride]);
+
+  const initialNotificationMuted = useMemo(
+    () =>
+      normalizeChatNotificationMutedFromSources(
+        routeInitialRoomSnapshot,
+        routeParams,
+      ),
+    [
+      routeInitialRoomSnapshot,
+      routeParams?.muted,
+      routeParams?.isMuted,
+      routeParams?.is_muted,
+      routeParams?.notification_muted,
+      routeParams?.notifications_enabled,
+      routeParams?.notification_level,
+      routeParams?.notificationLevel,
+    ],
+  );
+
+  const [chatNotificationMuted, setChatNotificationMuted] = useState<boolean | null>(
+    initialNotificationMuted,
+  );
+
+  useEffect(() => {
+    if (initialNotificationMuted !== null) {
+      setChatNotificationMuted(initialNotificationMuted);
+    }
+  }, [initialNotificationMuted, resolvedRoomId]);
+
+  useEffect(() => {
+    if (!resolvedRoomIdOk || !resolvedRoomId || !me) return undefined;
+
+    let cancelled = false;
+
+    const loadMyNotificationLevel = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("chat_members")
+          .select("notification_level")
+          .eq("room_id", Number(resolvedRoomId))
+          .eq("user_id", me)
+          .maybeSingle();
+
+        if (cancelled || error || !data) return;
+
+        const nextMuted = normalizeChatNotificationMutedFromSources(data);
+        if (nextMuted !== null) setChatNotificationMuted(nextMuted);
+      } catch {}
+    };
+
+    void loadMyNotificationLevel();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [me, resolvedRoomId, resolvedRoomIdOk]);
+
+  useEffect(() => {
+    if (!resolvedRoomIdOk || !resolvedRoomId) return undefined;
+
+    const sub = DeviceEventEmitter.addListener(
+      "chat:room_notification_updated",
+      (payload: any) => {
+        const eventRoomId = Number(payload?.roomId ?? payload?.room_id ?? 0);
+        if (eventRoomId && eventRoomId !== Number(resolvedRoomId)) return;
+
+        const nextMuted = normalizeChatNotificationMutedFromSources(payload);
+        if (nextMuted === null) return;
+
+        setChatNotificationMuted(nextMuted);
+
+        try {
+          navigation.setParams?.({
+            ...buildChatNotificationSnapshot(nextMuted),
+            initialRoomSnapshot: {
+              ...(routeInitialRoomSnapshot ?? {}),
+              roomId: resolvedRoomId,
+              id: resolvedRoomId,
+              ...buildChatNotificationSnapshot(nextMuted),
+            },
+          });
+        } catch {}
+      },
+    );
+
+    return () => {
+      try {
+        sub.remove();
+      } catch {}
+    };
+  }, [navigation, resolvedRoomId, resolvedRoomIdOk, routeInitialRoomSnapshot]);
+
+  const chatNotificationSnapshot = useMemo(
+    () => buildChatNotificationSnapshot(chatNotificationMuted),
+    [chatNotificationMuted],
+  );
+
+  const selection = useMessageSelection();
+  const { toast: floatingToast, showToast: showFloatingToast, hideToast: hideFloatingToast } = useCoonnFloatingToast();
+  const {
+    bookmarkedMessageUidSet,
+    reactionCountsByMessageUid,
+    myReactionByMessageUid,
+    reactionUsersSheet,
+    handleToggleBookmarkMessage,
+    handleReactMessage,
+    handleOpenReactionUsers,
+    closeReactionUsersSheet,
+  } = useChatInteractionController({
+    roomId: resolvedRoomId,
+    me,
+    showFloatingToast,
+    externalRefreshKey: realtimeTick,
+  });
+  const [selectCopyTarget, setSelectCopyTarget] = useState<({
+    senderName: string;
+  } & SelectCopyTextOptions) | null>(null);
+
+  const {
+    headerAnim,
+    listAnim,
+    listMoveY,
+    inputAnim,
+    inputMoveY,
+    bootCoverAnim,
+    bootCoverVisible,
+  } = useChatBootAnimation({ roomId: resolvedRoomId, loading: shellBootLoading, me });
+  const { expoBarStyle } = useChatStatusBar({
+    navigation,
+    headerBg: theme.headerBg,
+  });
+  const systemBarsStyle =
+    expoBarStyle === "dark" || (expoBarStyle as string) === "dark-content"
+      ? "dark"
+      : "light";
+
+  const {
+    setCollapseNonce,
+    attachmentsOpen,
+    setAttachmentsOpen,
+    keyboardVisible,
+    setKeyboardVisible,
+    keyboardHeight,
+    setKeyboardHeight,
+    composerMeasuredH,
+    setComposerMeasuredH,
+    dockLockH,
+    setDockLockH,
+    dockLockActiveRef,
+    openedFromKeyboardRef,
+    replySettleActiveRef,
+    lastBottomOccupiedHRef,
+    secureLayoutSettleTimerRef,
+    secureLayoutFollowupTimersRef,
+    lastReplyTargetIdRef,
+    clearSecureLayoutFollowupTimers,
+    clearDockLockNow,
+    scheduleDockLockRelease,
+    scheduleReplySettleRelease,
+    expanded,
+  } = useChatKeyboardDock();
+  const keyboardDockVisibleRef = useRef(false);
+  const keyboardDockLastEventRef = useRef<any | null>(null);
+  const keyboardDockLastHeightRef = useRef(0);
+  const keyboardDockRecheckRafRef = useRef<number | null>(null);
+
+  const [mediaVisible, setMediaVisible] = useState(false);
+  const [voiceVisible, setVoiceVisible] = useState(false);
+  const [communicationVisible, setCommunicationVisible] = useState(false);
+  const [communicationTarget, setCommunicationTarget] = useState<any | null>(null);
+  const [translatePopoverVisible, setTranslatePopoverVisible] = useState(false);
+
+  const {
+    actionSheetVisible,
+    actionSheetMsg,
+    actionSheetCopyText,
+    closeMessageActions,
+    deleteTypeVisible,
+    deleteTypeMsg,
+    closeDeleteType,
+    openBulkDeleteType,
+    deleteEligibility,
+    momentMenuVisible,
+    momentMenuAnchor,
+    momentMenuMsg,
+    closeMomentMenu,
+    selectedMsgs,
+    bulkEligibility,
+    interactionLocked,
+  } = useChatMessageActionState({
+    visibleItems,
+    selection,
+    me,
+  });
+
+  const {
+    captureSelection,
+    captureAnonymize,
+    setCaptureAnonymize,
+    captureModeActive,
+    captureInteractionLocked,
+    captureChromeVisible,
+    captureProcessingCoverVisible,
+    captureProcessingCoverUri,
+    handleToggleCaptureMessage,
+    handleStartCaptureFromMessage,
+    handleStartCaptureEmpty,
+    handleSaveCapture,
+    handleShareCapture,
+    targetProps: captureTargetProps,
+    messageListProps: captureMessageListProps,
+  } = useChatScreenshotCapture({
+    items: visibleItems,
+    interactionLocked,
+    captureBlockedBySecure:
+      secureController.policy === "required" ||
+      secureController.isUnlocked ||
+      secureSendEnabled,
+    attachmentsOpen,
+    attachmentSheetRef,
+    setAttachmentsOpen,
+    scheduleDockLockRelease,
+    showFloatingToast,
+    title,
+    me,
+    theme,
+    roomType,
+    headerAvatarUrl,
+  });
+
+  const openTranslatePopover = useCallback(
+    () => setTranslatePopoverVisible(true),
+    [],
+  );
+  const closeTranslatePopover = useCallback(
+    () => setTranslatePopoverVisible(false),
     [],
   );
 
-  const applyDefaultsFromProfile = useCallback((prof: any) => {
-    const settingLang = String(prof?.setting_lang ?? 'ko');
-    const settingUpper = toLangCodeUpper(settingLang) ?? 'KO';
+  const inlineSearchMembers = useMemo(() => {
+    const byId = new Map<string, string>();
 
-    const userTier: Tier = toTier(prof?.user_tier ?? 'free');
-    const baseTier: Tier = toTier(prof?.translation_tier ?? userTier);
-
-    const baseTone = normalizeTone(prof?.translation_tone_default ?? 'nature');
-
-    const baseView = toLangCodeUpper(prof?.view_lang ?? null) ?? settingUpper;
-    const basePreferred = toLangCodeUpper(prof?.preferred_lang ?? null) ?? baseView;
-
-    return { settingLang, settingUpper, userTier, baseTier, baseTone, baseView, basePreferred };
-  }, []);
-
-  const loadAndApplyRoomSettings = useCallback(
-    async (roomIdArg: number, myId: string, base: ReturnType<typeof applyDefaultsFromProfile>) => {
-      const row = await fetchRoomSettings(roomIdArg, myId);
-
-      const finalAuto = row?.auto_translate ?? true;
-      const finalShowTranslatedOnly = row?.show_translated_only ?? false;
-
-      const finalTier: Tier = toTier(row?.translation_tier ?? base.baseTier);
-      const finalTone: string = normalizeTone(row?.translation_tone ?? base.baseTone);
-
-      const finalView = toLangCodeUpper(row?.view_lang ?? base.baseView) ?? base.baseView;
-      const finalPreferred = toLangCodeUpper(row?.preferred_lang ?? base.basePreferred) ?? base.basePreferred;
-
-      setAutoTranslate(!!finalAuto);
-      setTranslationTier(finalTier as any);
-      setTranslationTone(finalTone as any);
-
-      setViewLangLocal(finalView);
-      setPreferredLangLocal(finalPreferred);
-      setShowTranslatedOnly(!!finalShowTranslatedOnly);
-
-      setMyProfileCfg((prev) => {
-        const p = (prev ?? {}) as any;
-        return {
-          ...p,
-          translation_tier: finalTier,
-          translation_tone_default: finalTone,
-          view_lang: finalView,
-          preferred_lang: finalPreferred,
-          user_tier: (p?.user_tier ?? base.userTier) as any,
-        } as any;
-      });
-
-      if (!row) {
-        await upsertRoomSettings(roomIdArg, myId, {
-          auto_translate: finalAuto,
-          show_translated_only: finalShowTranslatedOnly,
-          translation_tier: finalTier,
-          translation_tone: finalTone,
-          view_lang: finalView,
-          preferred_lang: finalPreferred,
+    try {
+      const current = memberNickMapRef.current;
+      if (current && typeof current.forEach === "function") {
+        current.forEach((name: any, id: any) => {
+          const sid = String(id ?? "").trim();
+          const label = String(name ?? "").trim();
+          if (sid && label) byId.set(sid, label);
         });
       }
+    } catch {}
 
-      console.warn('[roomSettings] applied', {
-        roomId: roomIdArg,
-        auto_translate: finalAuto,
-        show_translated_only: finalShowTranslatedOnly,
-        translation_tier: finalTier,
-        translation_tone: finalTone,
-        view_lang: finalView,
-        preferred_lang: finalPreferred,
-      });
-    },
-    [applyDefaultsFromProfile, setAutoTranslate, setTranslationTier, setTranslationTone],
-  );
-
-  useEffect(() => {
-    const v = toLangCodeUpper((myProfileCfg as any)?.view_lang ?? null);
-    setViewLangLocal(v);
-
-    const p = toLangCodeUpper((myProfileCfg as any)?.preferred_lang ?? null);
-    setPreferredLangLocal(p);
-  }, [myProfileCfg]);
-
-  useEffect(() => {
-    if (!peerProfileCfg) return;
-    if (preferredLangLocal) return;
-    if (!resolvedRoomIdOk) return;
-
-    const peerView = toLangCodeUpper((peerProfileCfg as any)?.view_lang ?? (peerProfileCfg as any)?.setting_lang ?? null);
-    if (!peerView) return;
-
-    setPreferredLangLocal(peerView);
-
-    if (me) {
-      upsertRoomSettings(resolvedRoomId, me, { preferred_lang: peerView }).catch(() => {});
+    for (const item of visibleItems as any[]) {
+      if (item?.type !== "message") continue;
+      const msg = item?.data;
+      const senderId = String(
+        msg?.senderId ?? msg?.sender_id ?? msg?._raw?.sender_id ?? "",
+      ).trim();
+      if (!senderId || byId.has(senderId)) continue;
+      const dmPeerTitle =
+        roomType === "dm" && senderId !== me ? String(title ?? "").trim() : "";
+      const label = String(
+        senderId === me
+          ? t("chat:me", { defaultValue: "나" })
+          : (dmPeerTitle ||
+              String(
+                msg?.senderName ??
+                  msg?.sender_name ??
+                  msg?.nickname ??
+                  msg?._raw?.sender_name ??
+                  "",
+              )),
+      ).trim();
+      if (label) byId.set(senderId, label);
     }
-  }, [peerProfileCfg, preferredLangLocal, me, resolvedRoomId, resolvedRoomIdOk]);
 
-  const persistRoomSettingPatch = useCallback(
-    async (patch: Partial<RoomSettingsRow>) => {
-      if (!me || !resolvedRoomIdOk) return;
-      await upsertRoomSettings(resolvedRoomId, me, patch);
-    },
-    [me, resolvedRoomId, resolvedRoomIdOk],
-  );
+    if (me && !byId.has(me)) byId.set(me, t("chat:me", { defaultValue: "나" }));
 
-  const toggleShowTranslatedOnly = useCallback(() => {
-    setShowTranslatedOnly((v) => {
-      const next = !v;
-      persistRoomSettingPatch({ show_translated_only: next });
-      return next;
+    return Array.from(byId.entries()).map(([id, name]) => ({ id, name }));
+  }, [me, memberNickMapRef, roomType, title, visibleItems, t]);
+
+  const { chatMenuPrefetchMembers, chatMenuPrefetchSnapshot } =
+    useChatMenuPrefetch({
+      roomId: resolvedRoomId,
+      roomIdOk: resolvedRoomIdOk,
+      roomType,
+      title,
+      headerAvatarUrl,
+      participantCount,
+      chatThemeKey,
+      t,
     });
-  }, [persistRoomSettingPatch]);
 
-  const toggleAutoTranslate = useCallback(() => {
-    setAutoTranslate((v) => {
-      const next = !v;
-      persistRoomSettingPatch({ auto_translate: next });
-      return next;
+  const {
+    isAtBottom,
+    isFarFromBottom,
+    isReadyToDisplay,
+    scrollToBottom,
+    onBeforeOptimisticAppend,
+    onAfterOptimisticAppend,
+    handleScrolledToBottom,
+    handleScrolledAway,
+    handleBottomDistanceChange,
+    handlePressNewPill,
+    shouldStickToBottom,
+    appendStickNonce,
+    initialBottomPending,
+    onInitialBottomDone,
+  } = useChatScroll({
+    roomId: resolvedRoomId,
+    roomIdOk: resolvedRoomIdOk,
+    items: visibleItems,
+    loading: chatBootLoading,
+    listRef,
+  });
+
+  const latestMessageMeta = useMemo(
+    () => pickLatestMessageMeta(visibleItems as any[]),
+    [visibleItems],
+  );
+
+  const {
+    activeChatNotice,
+    hasNoticeBadge,
+    handlePressNoticeBanner,
+    handleCloseNoticeBanner,
+    promoteMessageToNotice,
+  } = useChatNoticeController({
+    roomId: resolvedRoomId,
+    roomIdOk: resolvedRoomIdOk,
+    isFocused,
+    realtimeTick,
+    visibleItems: visibleItems as any[],
+    me,
+    title,
+    chatThemeKey,
+    navigation,
+    roomBroadcast,
+    t,
+  });
+
+  const { inlineSearch, handleInlineSearchMoveUp, handleInlineSearchMoveDown } =
+    useInlineSearchFocusBridge({
+      items: visibleItems,
+      roomId: resolvedRoomIdOk ? resolvedRoomId : null,
+      roomIdOk: resolvedRoomIdOk,
+      members: inlineSearchMembers,
+      ensureAnchorInWindow,
+      onInitialBottomDone,
+      setFocusAutoBottomLock,
+      showSecureStatus,
+      messageFocusRequestRef,
+      setMessageFocusRequest,
+      focusFailureTimerRef,
+      bookmarkedMessageUidSet,
     });
-  }, [persistRoomSettingPatch, setAutoTranslate]);
 
-  const setTierWithPersist = useCallback(
-    (tier: any) => {
-      const t: Tier = toTier(tier);
-      setTranslationTier(t as any);
-      persistRoomSettingPatch({ translation_tier: t });
+  const latestRoomSeq = useMemo(() => {
+    for (let i = items.length - 1; i >= 0; i--) {
+      const it = items[i];
+      if (it?.type === "message") {
+        const msg: any = (it as any)?.data ?? null;
+        const n = Math.trunc(
+          Number(msg?._raw?.room_seq ?? msg?.roomSeq ?? msg?.room_seq ?? 0) ||
+            0,
+        );
+        if (n > 0) return n;
+      }
+    }
+    return 0;
+  }, [items]);
 
-      setMyProfileCfg((prev) => {
-        if (!prev) return prev;
-        return { ...(prev as any), translation_tier: t } as any;
-      });
-    },
-    [persistRoomSettingPatch, setTranslationTier],
-  );
+  const searchModeActive = !!inlineSearch.open;
+  const suppressAutoBottomScroll =
+    searchModeActive || !!messageFocusRequest || focusAutoBottomLocked;
 
-  const setToneWithPersist = useCallback(
-    (tone: any) => {
-      const tt = normalizeTone(tone);
-      setTranslationTone(tt as any);
-      persistRoomSettingPatch({ translation_tone: tt });
+  useEffect(() => {
+    if (!isRoomSendBlocked) return;
 
-      setMyProfileCfg((prev) => {
-        if (!prev) return prev;
-        return { ...(prev as any), translation_tone_default: tt } as any;
-      });
-    },
-    [persistRoomSettingPatch, setTranslationTone],
-  );
+    Keyboard.dismiss();
+    setKeyboardVisible(false);
+    setKeyboardHeight(0);
+    setDockLockH(0);
+    clearDockLockNow();
+    attachmentSheetRef.current?.close?.();
+    setAttachmentsOpen(false);
+    setMediaVisible(false);
+    setVoiceVisible(false);
+    setCommunicationVisible(false);
+    cancelReply();
 
-  const handleChangeViewLang = useCallback(
-    async (lang: string) => {
-      const upper = toLangCodeUpper(lang) ?? 'KO';
-      setViewLangLocal(upper);
+    if (!isKickedRoomBlocked) return;
 
-      setMyProfileCfg((prev) => {
-        if (!prev) return prev;
-        return { ...(prev as any), view_lang: upper } as any;
-      });
+    setTranslatePopoverVisible(false);
+    setSelectCopyTarget(null);
+    closeMessageActions();
+    closeDeleteType();
+    closeMomentMenu();
+    hideFloatingToast();
 
-      persistRoomSettingPatch({ view_lang: upper });
+    if (inlineSearch.open) inlineSearch.closeSearch();
+    if (selection.selecting) selection.exit();
+    if (captureModeActive) captureSelection.exit();
+  }, [
+    cancelReply,
+    captureModeActive,
+    captureSelection,
+    clearDockLockNow,
+    closeDeleteType,
+    closeMessageActions,
+    closeMomentMenu,
+    hideFloatingToast,
+    inlineSearch,
+    isKickedRoomBlocked,
+    isRoomSendBlocked,
+    selection,
+    setAttachmentsOpen,
+    setDockLockH,
+    setKeyboardHeight,
+    setKeyboardVisible,
+  ]);
 
+  useEffect(() => {
+    if (latestMessageRoomRef.current === resolvedRoomId) return;
+
+    latestMessageRoomRef.current = resolvedRoomIdOk ? resolvedRoomId : null;
+    latestMessageMetaRef.current = latestMessageMeta;
+    setShowNewMessageNotice(false);
+  }, [latestMessageMeta, resolvedRoomId, resolvedRoomIdOk]);
+
+  useEffect(() => {
+    if (!resolvedRoomIdOk || chatBootLoading || !isReadyToDisplay) return;
+    if (!latestMessageMeta?.key) return;
+
+    const prev = latestMessageMetaRef.current;
+    latestMessageMetaRef.current = latestMessageMeta;
+
+    if (!prev?.key || prev.key === latestMessageMeta.key) return;
+
+    const prevSeq = Math.trunc(Number(prev.roomSeq) || 0);
+    const nextSeq = Math.trunc(Number(latestMessageMeta.roomSeq) || 0);
+    const isNewerTailMessage =
+      nextSeq > 0 && prevSeq > 0 ? nextSeq > prevSeq : true;
+    const isMine = !!me && latestMessageMeta.senderId === me;
+
+    if (!isNewerTailMessage || isMine) return;
+    if (searchModeActive || !!messageFocusRequest || selection.selecting)
+      return;
+
+    if (isAtBottom) {
+      setShowNewMessageNotice(false);
+      return;
+    }
+
+    setShowNewMessageNotice(true);
+  }, [
+    isAtBottom,
+    isFarFromBottom,
+    isReadyToDisplay,
+    latestMessageMeta,
+    chatBootLoading,
+    me,
+    messageFocusRequest,
+    resolvedRoomIdOk,
+    searchModeActive,
+    selection.selecting,
+  ]);
+
+  useEffect(() => {
+    if (isAtBottom) setShowNewMessageNotice(false);
+  }, [isAtBottom]);
+
+  const showLatestJumpButton =
+    isFarFromBottom && isReadyToDisplay && !chatBootLoading && !selection.selecting;
+
+  const handlePressLatestJump = useCallback(() => {
+    setShowNewMessageNotice(false);
+    handlePressNewPill?.();
+    requestAnimationFrame(() => {
       try {
-        if (!me) return;
-        await supabase.from('profiles').update({ view_lang: upper }).eq('user_id', me);
+        scrollToBottom(true);
       } catch {}
-    },
-    [me, persistRoomSettingPatch],
+    });
+  }, [handlePressNewPill, scrollToBottom]);
+
+  const currentReplyTargetId = replyTo?.id ? String(replyTo.id) : null;
+  const keyboardGuardPx = Platform.OS === "android" ? 10 : 0;
+  const dockSpacerH =
+    dockLockH > 0
+      ? Math.max(0, dockLockH) + keyboardGuardPx
+      : keyboardVisible
+        ? Math.max(0, keyboardHeight) + keyboardGuardPx
+        : 0;
+  const bottomOccupiedH = Math.max(
+    0,
+    Math.trunc(Number(composerMeasuredH) || 0) + dockSpacerH,
   );
 
-  const handleChangePreferredLang = useCallback(
-    async (lang: string) => {
-      const upper = toLangCodeUpper(lang) ?? 'KO';
-      setPreferredLangLocal(upper);
-
-      setMyProfileCfg((prev) => {
-        if (!prev) return prev;
-        return { ...(prev as any), preferred_lang: upper } as any;
+  const handleComposerHeightChange = useCallback(
+    (height: number) => {
+      const next = Math.max(0, Number(height) || 0);
+      setComposerMeasuredH((prev: number) => {
+        if (Math.abs(prev - next) < 1) return prev;
+        return next;
       });
-
-      persistRoomSettingPatch({ preferred_lang: upper });
-
-      try {
-        if (!me) return;
-        await supabase.from('profiles').update({ preferred_lang: upper }).eq('user_id', me);
-      } catch {}
     },
-    [me, persistRoomSettingPatch],
+    [setComposerMeasuredH],
   );
 
   useEffect(() => {
-    const showSub = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
-    const hideSub = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
+    const prevReplyId = lastReplyTargetIdRef.current;
+    lastReplyTargetIdRef.current = currentReplyTargetId;
+
+    if (prevReplyId === currentReplyTargetId) return;
+    if (suppressAutoBottomScroll) return;
+
+    if (isAtBottom || replySettleActiveRef.current) {
+      replySettleActiveRef.current = true;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          scrollToBottom(false);
+        });
+      });
+      scheduleReplySettleRelease(160);
+    }
+  }, [
+    currentReplyTargetId,
+    isAtBottom,
+    scheduleReplySettleRelease,
+    scrollToBottom,
+    suppressAutoBottomScroll,
+  ]);
+
+  useEffect(() => {
+    const prev = lastBottomOccupiedHRef.current;
+    const next = bottomOccupiedH;
+    lastBottomOccupiedHRef.current = next;
+
+    if (Math.abs(next - prev) < 2) return;
+
+    if (suppressAutoBottomScroll) return;
+    if (!isAtBottom && !replySettleActiveRef.current) return;
+
+    if (currentReplyTargetId) {
+      replySettleActiveRef.current = true;
+      scheduleReplySettleRelease(160);
+    }
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        scrollToBottom(false);
+      });
+    });
+  }, [
+    bottomOccupiedH,
+    currentReplyTargetId,
+    isAtBottom,
+    scheduleReplySettleRelease,
+    scrollToBottom,
+    suppressAutoBottomScroll,
+    composerMeasuredH,
+    dockSpacerH,
+    keyboardVisible,
+    keyboardHeight,
+    shouldStickToBottom,
+  ]);
+
+  useEffect(() => {
+    if (!resolvedRoomIdOk || !resolvedRoomId) return;
+
+    const flushSecureLayoutSettle = () => {
+      secureLayoutSettleTimerRef.current = null;
+
+      if (searchModeActive || focusAutoBottomLockRef.current) return;
+
+      const shouldPinBottom =
+        isAtBottom || shouldStickToBottom || replySettleActiveRef.current;
+      if (!shouldPinBottom) return;
+
+      replySettleActiveRef.current = true;
+      scheduleReplySettleRelease(keyboardVisible ? 300 : 220);
+
+      const snapBottom = () => {
+        try {
+          scrollToBottom(false);
+        } catch {}
+      };
+
+      requestAnimationFrame(() => {
+        snapBottom();
+        requestAnimationFrame(snapBottom);
+      });
+
+      clearSecureLayoutFollowupTimers();
+      const delays = keyboardVisible ? [90, 220] : [70, 180];
+      for (const delay of delays) {
+        const timer = setTimeout(() => {
+          secureLayoutFollowupTimersRef.current =
+            secureLayoutFollowupTimersRef.current.filter((item) => item !== timer);
+          snapBottom();
+        }, delay);
+        secureLayoutFollowupTimersRef.current.push(timer);
+      }
+    };
+
+    const sub = DeviceEventEmitter.addListener(
+      "chat:secure:layoutChanged",
+      (payload: any) => {
+        const eventRoomId = Number(payload?.roomId ?? 0);
+        if (
+          !Number.isFinite(eventRoomId) ||
+          eventRoomId !== Number(resolvedRoomId)
+        )
+          return;
+
+        if (secureLayoutSettleTimerRef.current) {
+          clearTimeout(secureLayoutSettleTimerRef.current);
+        }
+
+        // 여러 보안 메시지가 동시에 복호화되면 각 row가 layoutChanged를 연속 발생시킨다.
+        // 이벤트마다 scrollToBottom을 다단 예약하면 복호화와 레이아웃이 서로 방해하므로
+        // 짧게 debounce해서 한 번의 settle 묶음으로 처리한다.
+        secureLayoutSettleTimerRef.current = setTimeout(
+          flushSecureLayoutSettle,
+          keyboardVisible ? 72 : 48,
+        );
+      },
+    );
+
     return () => {
+      if (secureLayoutSettleTimerRef.current) {
+        clearTimeout(secureLayoutSettleTimerRef.current);
+        secureLayoutSettleTimerRef.current = null;
+      }
+      clearSecureLayoutFollowupTimers();
+
+      try {
+        sub.remove();
+      } catch {}
+    };
+  }, [
+    resolvedRoomIdOk,
+    resolvedRoomId,
+    isAtBottom,
+    shouldStickToBottom,
+    keyboardVisible,
+    searchModeActive,
+    scheduleReplySettleRelease,
+    scrollToBottom,
+    clearSecureLayoutFollowupTimers,
+  ]);
+
+  const makeTempId = useCallback(
+    () => `local_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+    [],
+  );
+
+  const { unreadMap } = useChatReadReceipt({
+    roomId: resolvedRoomId,
+    roomIdOk: resolvedRoomIdOk,
+    me,
+    isSelfRoom,
+    roomType,
+    participantCount,
+    visibleItems,
+    latestRoomSeq,
+    isFocused,
+    isAtBottom,
+    renderTick: livePatchRenderTick + realtimeTick,
+  });
+
+  const displayUnreadMap = useMemo(
+    () =>
+      buildDisplayUnreadMapWithOutgoingFallback({
+        unreadMap,
+        visibleItems: visibleItems as any[],
+        me,
+        participantCount,
+        roomType,
+        isSelfRoom,
+      }) as typeof unreadMap,
+    [isSelfRoom, me, participantCount, roomType, unreadMap, visibleItems],
+  );
+
+  const headerRoomType = useMemo<
+    ComponentProps<typeof ChatHeader>["roomType"]
+  >(() => {
+    if (!roomType) return undefined;
+    return roomType as any;
+  }, [roomType]);
+
+  const chatMenuInitialMembers = useMemo(() => {
+    const canUseViewerFriendAlias = roomType === "dm" || roomType === "group";
+    const meId = String(me ?? "").trim();
+
+    const prefetchById = new Map<string, any>();
+    for (const member of chatMenuPrefetchMembers as any[]) {
+      const id = String(member?.id ?? member?.user_id ?? member?.userId ?? "").trim();
+      if (id) prefetchById.set(id, member);
+    }
+
+    // friend_meta alias는 useChatBootstrap의 searchMembers state로 들어온다.
+    // memberNickMapRef.current만 보면 ref 변경이 렌더를 유발하지 않아 MessageList가 계속 예전 nickname을 잡는다.
+    if (canUseViewerFriendAlias && searchMembers.length > 0) {
+      return searchMembers.map((member: any) => {
+        const id = String(member?.id ?? member?.user_id ?? member?.userId ?? "").trim();
+        const base = prefetchById.get(id) ?? {};
+        const isMe = id && id === meId;
+        const name = String(
+          member?.name ??
+            member?.nickname ??
+            base?.nickname ??
+            base?.name ??
+            (isMe ? t("chat:me", { defaultValue: "나" }) : t("chat:userFallback")),
+        ).trim();
+        const avatarUrl = String(
+          member?.avatarUrl ??
+            member?.avatar_url ??
+            base?.avatarUrl ??
+            base?.avatar_url ??
+            (roomType === "dm" && !isMe ? (headerAvatarUrl ?? "") : ""),
+        ).trim() || null;
+
+        return {
+          ...base,
+          id,
+          user_id: id,
+          userId: id,
+          nickname: name,
+          name,
+          displayName: name,
+          display_name: name,
+          roomNickname: name,
+          room_nickname: name,
+          avatar_url: avatarUrl,
+          avatarUrl,
+          is_me: Boolean(base?.is_me ?? isMe),
+          role: base?.role ?? "member",
+        };
+      });
+    }
+
+    if (chatMenuPrefetchMembers.length > 0) {
+      if (!canUseViewerFriendAlias) return chatMenuPrefetchMembers;
+
+      return chatMenuPrefetchMembers.map((member: any) => {
+        const id = String(member?.id ?? member?.user_id ?? member?.userId ?? "").trim();
+        if (!id || id === meId) return member;
+
+        const aliasName = String(memberNickMapRef.current.get(id) ?? "").trim();
+        if (!aliasName) return member;
+
+        return {
+          ...member,
+          nickname: aliasName,
+          name: aliasName,
+          displayName: aliasName,
+          display_name: aliasName,
+          roomNickname: aliasName,
+          room_nickname: aliasName,
+        };
+      });
+    }
+
+    return inlineSearchMembers.map((member) => {
+      const isMe = member.id === me;
+      const avatarUrl =
+        roomType === "dm" && !isMe ? (headerAvatarUrl ?? null) : null;
+
+      return {
+        id: member.id,
+        user_id: member.id,
+        nickname: member.name,
+        name: member.name,
+        displayName: member.name,
+        display_name: member.name,
+        roomNickname: member.name,
+        room_nickname: member.name,
+        avatar_url: avatarUrl,
+        avatarUrl,
+        is_me: isMe,
+        role: "member",
+      };
+    });
+  }, [
+    chatMenuPrefetchMembers,
+    headerAvatarUrl,
+    inlineSearchMembers,
+    me,
+    memberNickMapRef,
+    roomType,
+    searchMembers,
+    t,
+  ]);
+
+  const myRoomRoleForNotice = useMemo(() => {
+    const currentUserId = String(me ?? '').trim();
+    if (!currentUserId) return null;
+
+    for (const member of chatMenuInitialMembers as any[]) {
+      const memberId = String(member?.id ?? member?.user_id ?? member?.userId ?? '').trim();
+      if (memberId !== currentUserId) continue;
+      return String(member?.role ?? 'member').trim().toLowerCase() || 'member';
+    }
+
+    return null;
+  }, [chatMenuInitialMembers, me]);
+
+  const canPromoteNoticeInCurrentRoom = useMemo(
+    () => canPromoteNoticeByRoomPolicy(roomType, myRoomRoleForNotice),
+    [myRoomRoleForNotice, roomType],
+  );
+
+  const messageSenderProfilesById = useMemo(() => {
+    const out: Record<string, any> = {};
+    const meId = String(me ?? '').trim();
+    const useViewerAliasName = roomType === 'dm' || roomType === 'group';
+
+    for (const member of chatMenuInitialMembers as any[]) {
+      const id = String(member?.id ?? member?.user_id ?? member?.userId ?? '').trim();
+      if (!id) continue;
+
+      const isPeerInDm = roomType === 'dm' && !!meId && id !== meId;
+      const dmPeerTitleName = isPeerInDm ? pickNonGenericDmDisplayName(title) : null;
+      const viewerCachedName =
+        useViewerAliasName && !!meId && id !== meId
+          ? String(memberNickMapRef.current.get(id) ?? '').trim() || null
+          : null;
+      const rawRoomNickname = String(member?.room_nickname ?? member?.roomNickname ?? '').trim() || null;
+      const resolvedRoomNickname = useViewerAliasName
+        ? dmPeerTitleName || viewerCachedName || rawRoomNickname
+        : rawRoomNickname;
+
+      const name = String(
+        resolvedRoomNickname ??
+          member?.displayName ??
+          member?.display_name ??
+          member?.nickname ??
+          member?.name ??
+          '',
+      ).trim();
+      const avatarUrl = String(
+        member?.avatar_url ??
+          member?.avatarUrl ??
+          member?.room_avatar_url ??
+          member?.roomAvatarUrl ??
+          '',
+      ).trim();
+      const stableRoomNickname = useViewerAliasName ? name : rawRoomNickname;
+
+      out[id] = {
+        id,
+        user_id: id,
+        displayName: name,
+        display_name: name,
+        nickname: name,
+        name,
+        avatarUrl: avatarUrl || null,
+        avatar_url: avatarUrl || null,
+        roomNickname: stableRoomNickname || null,
+        room_nickname: stableRoomNickname || null,
+        roomAvatarUrl: member?.room_avatar_url ?? member?.roomAvatarUrl ?? (avatarUrl || null),
+        room_avatar_url: member?.room_avatar_url ?? member?.roomAvatarUrl ?? (avatarUrl || null),
+        roomStatusMessage: member?.room_status_message ?? member?.roomStatusMessage ?? null,
+        room_status_message: member?.room_status_message ?? member?.roomStatusMessage ?? null,
+        openProfileId: member?.open_profile_id ?? member?.openProfileId ?? null,
+        open_profile_id: member?.open_profile_id ?? member?.openProfileId ?? null,
+        role: member?.role ?? 'member',
+        isMe: !!member?.is_me,
+        is_me: !!member?.is_me,
+      };
+    }
+
+    return out;
+  }, [chatMenuInitialMembers, me, memberNickMapRef, roomType, title]);
+
+  const chatMenuInitialSnapshot = useMemo(() => {
+    const isDm = roomType === "dm" || roomType === "business_dm";
+    const snapshotParticipantCount = isDm ? Math.max(Number(participantCount) || 0, 2) : participantCount;
+
+    return {
+      ...(routeInitialRoomSnapshot ?? {}),
+      ...(chatMenuPrefetchSnapshot ?? {}),
+      roomId: resolvedRoomId,
+      id: resolvedRoomId,
+      title,
+      roomTitle: title,
+      roomType: roomType ?? undefined,
+      type: roomType ?? undefined,
+      avatarUrl: headerAvatarUrl ?? undefined,
+      peerAvatarUrl: isDm ? (headerAvatarUrl ?? undefined) : undefined,
+      roomCover: isDm ? undefined : (headerAvatarUrl ?? undefined),
+      coverImageUrl: isDm ? undefined : (headerAvatarUrl ?? undefined),
+      useDefaultCover: !headerAvatarUrl,
+      memberCount: snapshotParticipantCount,
+      participantCount: snapshotParticipantCount,
+      initialMembers: chatMenuInitialMembers,
+      members: chatMenuInitialMembers,
+      chatThemeKey,
+      themeOverride: chatThemeKey,
+      hasNoticeBadge,
+      ...chatNotificationSnapshot,
+    };
+  }, [
+    chatMenuPrefetchSnapshot,
+    chatNotificationSnapshot,
+    chatThemeKey,
+    hasNoticeBadge,
+    chatMenuInitialMembers,
+    headerAvatarUrl,
+    participantCount,
+    resolvedRoomId,
+    roomType,
+    routeInitialRoomSnapshot,
+    title,
+  ]);
+
+  const handleOpenChatMenu = useCallback(() => {
+    if (!resolvedRoomIdOk || !resolvedRoomId) return;
+
+    navigation.navigate("ChatMenu", {
+      roomId: resolvedRoomId,
+      initialRoomSnapshot: chatMenuInitialSnapshot,
+      initialMembers: chatMenuInitialMembers,
+      chatThemeKey,
+      themeOverride: chatThemeKey,
+      hasNoticeBadge,
+      ...chatNotificationSnapshot,
+    });
+  }, [
+    chatMenuInitialMembers,
+    chatMenuInitialSnapshot,
+    chatNotificationSnapshot,
+    chatThemeKey,
+    hasNoticeBadge,
+    navigation,
+    resolvedRoomId,
+    resolvedRoomIdOk,
+  ]);
+
+
+  const handleBackFromChat = useCallback(() => {
+    const state = navigation.getState?.();
+    const routes = Array.isArray(state?.routes) ? state.routes : [];
+    const currentIndex =
+      typeof state?.index === "number" ? state.index : routes.length - 1;
+    const prevName = currentIndex > 0 ? routes[currentIndex - 1]?.name : null;
+
+    if (isMediaViewerRouteName(prevName)) {
+      lockSecureRoom();
+
+      const currentRouteName = String(route?.name ?? "Chat");
+      let targetIndex = -1;
+
+      for (let i = currentIndex - 2; i >= 0; i -= 1) {
+        const name = String(routes[i]?.name ?? "");
+        if (
+          name &&
+          !isMediaViewerRouteName(name) &&
+          name !== currentRouteName &&
+          name !== "Chat"
+        ) {
+          targetIndex = i;
+          break;
+        }
+      }
+
+      if (targetIndex >= 0) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: targetIndex,
+            routes: routes.slice(0, targetIndex + 1),
+          } as any),
+        );
+        return;
+      }
+
+      navigation.navigate(CHAT_LIST_FALLBACK_ROUTE as never);
+      return;
+    }
+
+    if (navigation.canGoBack?.()) {
+      navigation.goBack();
+      return;
+    }
+
+    navigation.navigate(CHAT_LIST_FALLBACK_ROUTE as never);
+  }, [lockSecureRoom, navigation, route?.name]);
+
+  useEffect(() => {
+    const clearKeyboardDockRecheckRaf = () => {
+      if (keyboardDockRecheckRafRef.current == null) return;
+      cancelAnimationFrame(keyboardDockRecheckRafRef.current);
+      keyboardDockRecheckRafRef.current = null;
+    };
+
+    const applyKeyboardDockHeight = (height: number) => {
+      const next = Math.max(0, Math.floor(Number(height) || 0));
+      keyboardDockLastHeightRef.current = next;
+      setKeyboardHeight(next);
+    };
+
+    const handleKeyboardShow = (e: any) => {
+      clearKeyboardDockRecheckRaf();
+
+      const h = resolveKeyboardDockHeight(e);
+      keyboardDockVisibleRef.current = true;
+      keyboardDockLastEventRef.current = e;
+      applyKeyboardDockHeight(h);
+      setKeyboardVisible(true);
+      clearDockLockNow();
+      if (attachmentsOpen) setAttachmentsOpen(false);
+      if (
+        !searchModeActive &&
+        !focusAutoBottomLockRef.current &&
+        (isAtBottom || replySettleActiveRef.current)
+      ) {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            scrollToBottom(false);
+          });
+        });
+      }
+    };
+
+    const handleKeyboardHide = () => {
+      clearKeyboardDockRecheckRaf();
+      keyboardDockVisibleRef.current = false;
+      keyboardDockLastEventRef.current = null;
+      keyboardDockLastHeightRef.current = 0;
+      setKeyboardVisible(false);
+      setKeyboardHeight(0);
+      clearDockLockNow();
+    };
+
+    const scheduleAndroidDockIncreaseRecheck = () => {
+      if (Platform.OS !== "android") return;
+      if (!keyboardDockVisibleRef.current) return;
+      if (!keyboardDockLastEventRef.current) return;
+
+      clearKeyboardDockRecheckRaf();
+      keyboardDockRecheckRafRef.current = requestAnimationFrame(() => {
+        keyboardDockRecheckRafRef.current = null;
+
+        if (!keyboardDockVisibleRef.current) return;
+        const lastEvent = keyboardDockLastEventRef.current;
+        if (!lastEvent) return;
+
+        const nextHeight = Math.max(0, resolveKeyboardDockHeight(lastEvent));
+        const currentHeight = Math.max(0, keyboardDockLastHeightRef.current);
+
+        if (
+          nextHeight >
+          currentHeight + ANDROID_KEYBOARD_DOCK_INCREASE_THRESHOLD_PX
+        ) {
+          applyKeyboardDockHeight(nextHeight);
+        }
+      });
+    };
+
+    const showSub = Keyboard.addListener("keyboardDidShow", handleKeyboardShow);
+    const hideSub = Keyboard.addListener("keyboardDidHide", handleKeyboardHide);
+    const dimensionsSub =
+      Platform.OS === "android"
+        ? Dimensions.addEventListener("change", scheduleAndroidDockIncreaseRecheck)
+        : null;
+
+    return () => {
+      clearKeyboardDockRecheckRaf();
       showSub.remove();
       hideSub.remove();
+      dimensionsSub?.remove?.();
     };
-  }, []);
+  }, [
+    attachmentsOpen,
+    clearDockLockNow,
+    scrollToBottom,
+    isAtBottom,
+    searchModeActive,
+    setAttachmentsOpen,
+    setKeyboardHeight,
+    setKeyboardVisible,
+  ]);
 
   useEffect(() => {
     const onBackPress = () => {
+      if (isKickedRoomBlocked) {
+        return true;
+      }
       if (selection.selecting) {
         selection.exit();
         return true;
@@ -1202,6 +1688,10 @@ export default function Chat() {
       }
       if (actionSheetVisible) {
         closeMessageActions();
+        return true;
+      }
+      if (attachmentsOpen) {
+        setAttachmentsOpen(false);
         return true;
       }
       if (momentMenuVisible) {
@@ -1217,730 +1707,1283 @@ export default function Chat() {
         setTranslatePopoverVisible(false);
         return true;
       }
-      return false;
+      handleBackFromChat();
+      return true;
     };
-
-    const sub = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    const sub = BackHandler.addEventListener("hardwareBackPress", onBackPress);
     return () => sub.remove();
   }, [
+    isKickedRoomBlocked,
     selection,
     expanded,
     translatePopoverVisible,
-    inlineSearch.open,
-    inlineSearch.closeSearch,
+    inlineSearch,
     actionSheetVisible,
     closeMessageActions,
     momentMenuVisible,
     closeMomentMenu,
+    attachmentsOpen,
+    handleBackFromChat,
   ]);
 
   useEffect(() => {
-    const unsub = navigation.addListener('beforeRemove', (e: any) => {
+    const unsub = navigation.addListener("beforeRemove", (e: any) => {
+      if (isKickedRoomBlocked) {
+        e.preventDefault();
+        return;
+      }
       if (selection.selecting) {
         e.preventDefault();
         selection.exit();
         return;
       }
-
       if (inlineSearch.open) {
         e.preventDefault();
         inlineSearch.closeSearch();
         return;
       }
-
       if (actionSheetVisible) {
         e.preventDefault();
         closeMessageActions();
         return;
       }
-
       if (momentMenuVisible) {
         e.preventDefault();
         closeMomentMenu();
         return;
       }
-
-      if (!expanded && !translatePopoverVisible) return;
-
+      if (!expanded && !translatePopoverVisible) {
+        lockSecureRoom();
+        return;
+      }
       e.preventDefault();
       if (translatePopoverVisible) setTranslatePopoverVisible(false);
-
       Keyboard.dismiss();
       setCollapseNonce((v) => v + 1);
     });
     return unsub;
   }, [
     navigation,
+    isKickedRoomBlocked,
     selection,
     expanded,
     translatePopoverVisible,
-    inlineSearch.open,
-    inlineSearch.closeSearch,
+    inlineSearch,
     actionSheetVisible,
     closeMessageActions,
     momentMenuVisible,
     closeMomentMenu,
+    lockSecureRoom,
   ]);
 
-  useEffect(() => {
-    let cancelled = false;
+  const { handleLoadMore, prefetchOlderForRoom } = useChatOlderPaging({
+    roomId: resolvedRoomId,
+    roomIdOk: resolvedRoomIdOk,
+    initialSynced,
+    expandWindow,
+    getOldestLocalCursor,
+    getWindowState,
+    prepareWindow,
+  });
 
-    (async () => {
-      if (!roomIdFromParams && !peerIdFromParams && !resolvedRoomIdOk) {
-        console.warn('[Chat] invalid params: need roomId or peer_id', routeParams);
-      }
+  const {
+    pickMsgId,
+    isLocalMsg,
+    cancelMomentDelete,
+    deleteAll,
+    setMomentDelete,
+    sendText,
+    sendSelectedMedia: sendSelectedMediaAction,
+    sendVoice: sendVoiceAction,
+    sendFile: sendFileAction,
+    sendLocation: sendLocationAction,
+    shareMessageToSelf,
+  } = useChatActions({
+    me,
+    roomId: resolvedRoomId,
+    roomIdOk: resolvedRoomIdOk,
+    isSelfRoom,
+    translationTier,
+    translationTone,
+    viewLangLocal,
+    preferredLangLocal,
+    myProfileCfg,
+    peerProfileCfg,
+    resolveRoomTypeForSend,
+    makeTempId,
+    onBeforeOptimisticAppend,
+    onAfterOptimisticAppend,
+  });
 
-      const { data } = await supabase.auth.getUser();
-      const user = data?.user;
-      if (!user) {
-        if (!cancelled) setLoading(false);
-        return;
-      }
-
-      const myId = user.id;
-      if (!cancelled) setMe(myId);
-
-      if (!resolvedRoomIdOk) {
-        if (!peerIdFromParams) {
-          console.warn('[Chat] invalid roomId from route.params', routeParams);
-          if (!cancelled) setLoading(false);
-          return;
-        }
-
-        const rid = await resolveOrCreateDmRoom({ myId, peerId: peerIdFromParams });
-        if (!rid) {
-          console.warn('[Chat] cannot resolve DM roomId for peer_id (RPC-only)', { peer_id: peerIdFromParams });
-          if (!cancelled) setLoading(false);
-          return;
-        }
-
-        if (cancelled) return;
-
-        setResolvedRoomId(rid);
-
-        try {
-          navigation.setParams?.({ roomId: rid });
-        } catch {}
-
-        return;
-      }
-
-      const roomId = resolvedRoomId;
-
-      let baseDefaults: ReturnType<typeof applyDefaultsFromProfile> | null = null;
-
-      try {
-        const { data: prof } = await supabase
-          .from('profiles')
-          .select('setting_lang, view_lang, preferred_lang, translation_tier, translation_tone_default, user_tier')
-          .eq('user_id', myId)
-          .maybeSingle();
-
-        if (!cancelled && prof) {
-          baseDefaults = applyDefaultsFromProfile(prof);
-
-          setMyLang(baseDefaults.settingLang ?? 'ko');
-
-          setMyProfileCfg({
-            translation_tier: baseDefaults.baseTier,
-            view_lang: baseDefaults.baseView,
-            preferred_lang: baseDefaults.basePreferred,
-            translation_tone_default: baseDefaults.baseTone,
-            user_tier: baseDefaults.userTier,
-          } as any);
-
-          setAutoTranslate(true);
-          setTranslationTier(baseDefaults.baseTier as any);
-          setTranslationTone(baseDefaults.baseTone as any);
-          setViewLangLocal(baseDefaults.baseView);
-          setPreferredLangLocal(baseDefaults.basePreferred);
-        }
-      } catch {}
-
-      try {
-        const fallbackBase = baseDefaults ?? {
-          settingLang: myLang ?? 'ko',
-          settingUpper: (toLangCodeUpper(myLang ?? 'ko') ?? 'KO') as any,
-          userTier: ('free' as Tier) as any,
-          baseTier: ('free' as Tier) as any,
-          baseTone: 'nature',
-          baseView: toLangCodeUpper(myLang ?? 'ko') ?? 'KO',
-          basePreferred: toLangCodeUpper(myLang ?? 'ko') ?? 'KO',
-        };
-
-        await loadAndApplyRoomSettings(roomId, myId, fallbackBase as any);
-      } catch (e: any) {
-        console.warn('[roomSettings] load/apply error', e?.message ?? String(e));
-      }
-
-      let fetchedRoomType: RoomKind | null = null;
-      let customTitle: string | null =
-        (typeof routeParams?.business_name === 'string' && routeParams.business_name.trim()
-          ? routeParams.business_name.trim()
-          : typeof routeParams?.businessName === 'string' && routeParams.businessName.trim()
-            ? routeParams.businessName.trim()
-            : typeof routeParams?.customTitle === 'string' && routeParams.customTitle.trim()
-              ? routeParams.customTitle.trim()
-              : typeof routeParams?.beaconTitle === 'string' && routeParams.beaconTitle.trim()
-                ? routeParams.beaconTitle.trim()
-                : null);
-
-      let dmKey: string | null = null;
-
-      try {
-        const { data: roomHeader } = await supabase
-          .from('chat_rooms_header')
-          .select('type, custom_title')
-          .eq('room_id', roomId)
-          .maybeSingle();
-
-        if (roomHeader) {
-          fetchedRoomType = coerceRoomKind(roomHeader.type);
-          if (roomHeader.custom_title) customTitle = roomHeader.custom_title;
-        }
-      } catch {}
-
-      try {
-        const { data: roomRow } = await supabase.from('chat_rooms').select('type, dm_key').eq('id', roomId).maybeSingle();
-
-        if (!fetchedRoomType) fetchedRoomType = coerceRoomKind((roomRow as any)?.type);
-        dmKey = typeof (roomRow as any)?.dm_key === 'string' ? (roomRow as any).dm_key : null;
-      } catch {}
-
-      let members: MemberNick[] = [];
-      let userIds: string[] = [];
-
-      try {
-        const { data: memberRows } = await supabase.from('chat_members').select('user_id').eq('room_id', roomId).eq('active', true);
-
-        userIds = memberRows?.map((m: any) => String(m.user_id)) ?? [];
-
-        const treatAsDm =
-          fetchedRoomType === 'dm' ||
-          !!peerIdFromParams ||
-          (typeof dmKey === 'string' && dmKey.includes(':'));
-
-        const parsePeerFromDmKey = (key: string | null): string | null => {
-          if (!key) return null;
-          const parts = String(key)
-            .split(':')
-            .map((s) => s.trim())
-            .filter(Boolean);
-          if (parts.length !== 2) return null;
-          const a = parts[0];
-          const b = parts[1];
-          if (a === myId) return b;
-          if (b === myId) return a;
-          return null;
-        };
-
-        const peerFromKey = parsePeerFromDmKey(dmKey);
-        const peerIdCandidateRaw = (peerIdFromParams ? String(peerIdFromParams) : null) ?? peerFromKey;
-
-        // ✅ 방어: 잘못된 peer_id(=내 uuid)가 들어오면 "나와의 채팅"으로 오염되는 걸 차단
-        const peerIdCandidate = peerIdCandidateRaw && peerIdCandidateRaw !== myId ? peerIdCandidateRaw : null;
-
-        if (!userIds.includes(myId)) userIds.unshift(myId);
-        if (treatAsDm && peerIdCandidate && !userIds.includes(peerIdCandidate)) userIds.push(peerIdCandidate);
-
-        if (!cancelled) setParticipantCount(userIds.length || 1);
-
-        if (userIds.length) {
-          const idsCsv = userIds.join(',');
-
-          const { data: profiles } = await supabase
-            .from('profiles')
-            .select('id, user_id, nickname, avatar_url, setting_lang, view_lang, preferred_lang, translation_tier, translation_tone_default')
-            .or(`user_id.in.(${idsCsv}),id.in.(${idsCsv})`);
-
-          const nickMap = new Map<string, string | null>();
-          const avatarMap = new Map<string, string | null>();
-          (profiles ?? []).forEach((p: any) => {
-            const uid = String(p?.user_id ?? p?.id ?? '');
-            if (!uid) return;
-            nickMap.set(uid, p.nickname ?? null);
-            avatarMap.set(uid, p.avatar_url ?? null);
-          });
-
-          members = userIds.map((uid) => ({
-            user_id: uid,
-            nickname: nickMap.get(uid) ?? null,
-            avatar_url: avatarMap.get(uid) ?? null,
-          }));
-
-          memberNickMapRef.current = nickMap;
-
-          if (!cancelled) {
-            setSearchMembers(
-              userIds.map((uid) => ({
-                id: String(uid),
-                name: uid === myId ? '나' : String(nickMap.get(uid) ?? '사용자'),
-                avatarUrl: avatarMap.get(uid) ?? null,
-              })),
-            );
-          }
-
-          const otherId = (treatAsDm ? peerIdCandidate : null) ?? userIds.find((uid) => uid !== myId) ?? null;
-          peerIdRef.current = otherId;
-
-          if (otherId) {
-            const other = (profiles ?? []).find((p: any) => String(p?.user_id ?? p?.id) === String(otherId)) ?? null;
-            if (!cancelled) {
-              setPeerProfileCfg(
-                other
-                  ? {
-                      setting_lang: other.setting_lang ?? null,
-                      translation_tier: toTier(other.translation_tier),
-                      view_lang: other.view_lang ?? null,
-                      preferred_lang: other.preferred_lang ?? null,
-                      translation_tone_default: other.translation_tone_default ?? null,
-                    }
-                  : null,
-              );
-            }
-          } else {
-            if (!cancelled) setPeerProfileCfg(null);
-          }
-        } else {
-          if (!cancelled) setSearchMembers([]);
-        }
-      } catch {
-        if (!cancelled) setSearchMembers([]);
-      }
-
-      let effectiveRoomType: RoomKind | null = fetchedRoomType;
-
-      const isBeaconEntry =
-        routeParams?.isBeacon === true ||
-        routeParams?.fromBeacon === true ||
-        routeParams?.roomType === 'beacon' ||
-        typeof routeParams?.beaconId === 'string' ||
-        typeof routeParams?.beaconId === 'number' ||
-        typeof routeParams?.beacon_id === 'string' ||
-        typeof routeParams?.beacon_id === 'number';
-
-      const isSelfChatEntry = routeParams?.selfChat === true || routeParams?.self_chat === true;
-
-      if (isSelfChatEntry) {
-        effectiveRoomType = 'self';
-      } else if (isBeaconEntry) {
-        effectiveRoomType = 'beacon';
-      } else if (!effectiveRoomType) {
-        const treatAsDmFallback =
-          fetchedRoomType === 'dm' ||
-          !!peerIdFromParams ||
-          (typeof dmKey === 'string' && dmKey.includes(':'));
-
-        const n = Array.isArray(userIds) ? userIds.length : 0;
-
-        if (treatAsDmFallback) effectiveRoomType = 'dm';
-        else if (n >= 3) effectiveRoomType = 'group';
-        else if (n === 2) effectiveRoomType = 'dm';
-        else effectiveRoomType = 'group';
-      }
-
-      if (!cancelled) {
-        setRoomType(effectiveRoomType);
-        resolvedRoomTypeRef.current = effectiveRoomType;
-
-        setTheme(
-          getChatTheme({
-            type: (effectiveRoomType ?? 'dm') as any,
-          }),
-        );
-
-        const builtTitle = buildChatTitle({
-          roomType: effectiveRoomType,
-          meId: myId,
-          members,
-          customTitle,
-        });
-
-        const hasBusinessTitle =
-          (typeof routeParams?.business_name === 'string' && routeParams.business_name.trim()) ||
-          (typeof routeParams?.businessName === 'string' && routeParams.businessName.trim());
-
-        let finalTitle = builtTitle;
-
-        // ✅ business_dm 진입(route params로 business_name 전달) 시: 상대 프로필 닉네임으로 덮어쓰지 않음
-        if (
-          !hasBusinessTitle &&
-          (effectiveRoomType === 'dm' || (!effectiveRoomType && peerIdRef.current && String(peerIdRef.current) !== String(myId))) &&
-          peerIdRef.current
-        ) {
-          const peerId = String(peerIdRef.current);
-          const peerNick = members.find((m) => String(m.user_id) === peerId)?.nickname ?? null;
-          if (peerNick) finalTitle = peerNick;
-        }
-
-        setTitle(finalTitle);
-        // ✅ header avatar (business DM): route.params.business_logo_url only
-        setHeaderAvatarUrl(businessLogoFromParams ?? null);
-
-        setLoading(false);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resolvedRoomId, resolvedRoomIdOk, peerIdFromParams]);
-
-  const resolveRoomTypeForSend = useCallback(async (): Promise<RoomKind | null> => {
-    if (!resolvedRoomIdOk) return null;
-
-    const cur = roomType ?? resolvedRoomTypeRef.current;
-    if (cur) return cur;
-
-    try {
-      const { data: roomHeader } = await supabase.from('chat_rooms_header').select('type').eq('room_id', resolvedRoomId).maybeSingle();
-
-      const t1 = coerceRoomKind((roomHeader as any)?.type);
-      if (t1) {
-        resolvedRoomTypeRef.current = t1;
-        setRoomType(t1);
-        return t1;
-      }
-    } catch {}
-
-    try {
-      const { data: roomRow } = await supabase.from('chat_rooms').select('type').eq('id', resolvedRoomId).maybeSingle();
-      const t2 = coerceRoomKind((roomRow as any)?.type);
-      if (t2) {
-        resolvedRoomTypeRef.current = t2;
-        setRoomType(t2);
-        return t2;
-      }
-    } catch {}
-
+  function normalizeReplyPreviewSource(value: unknown): "original" | "content" | null {
+    const text = String(value ?? "").trim().toLowerCase();
+    if (text === "original" || text === "source" || text === "raw") return "original";
+    if (
+      text === "content" ||
+      text === "translated" ||
+      text === "translation" ||
+      text === "my_view"
+    ) {
+      return "content";
+    }
     return null;
-  }, [resolvedRoomId, resolvedRoomIdOk, roomType]);
+  }
 
-  useEffect(() => {
-    if (!me || !resolvedRoomIdOk || initialSynced) return;
+  function pickReplyTextValue(...values: any[]): string | null {
+    for (const value of values) {
+      const text = String(value ?? "").trim();
+      if (text) return text;
+    }
+    return null;
+  }
 
-    let channel: any;
-    setInitialSynced(true);
+  function buildReplyPayloadForSend(reply: ReplyInfo | null | undefined) {
+    if (!reply) return null;
 
-    (async () => {
-      await syncInitialRoom(resolvedRoomId);
-      channel = startRealtime(resolvedRoomId);
-    })();
+    const anyReply: any = reply as any;
+    const previewSource =
+      normalizeReplyPreviewSource(
+        anyReply.replyPreviewSource ??
+          anyReply.previewSource ??
+          anyReply.__replyPreviewSource,
+      ) ?? null;
 
-    return () => {
-      try {
-        channel?.unsubscribe?.();
-      } catch {}
+    const previewText = pickReplyTextValue(
+      anyReply.content,
+      anyReply.preview,
+      anyReply.__replyDisplayText,
+      anyReply.contentTranslated,
+      anyReply.translatedText,
+      anyReply.translated_text,
+      anyReply.contentOriginal,
+      anyReply.originalText,
+    );
+
+    const payload: any = {
+      id: anyReply.id ?? anyReply.message_uid ?? anyReply.messageUid ?? null,
+      message_uid: anyReply.message_uid ?? anyReply.messageUid ?? anyReply.id ?? null,
+      messageUid: anyReply.messageUid ?? anyReply.message_uid ?? anyReply.id ?? null,
+      sender: anyReply.sender ?? anyReply.senderId ?? anyReply.sender_id ?? null,
+      senderId: anyReply.senderId ?? anyReply.sender_id ?? anyReply.sender ?? null,
+      sender_id: anyReply.sender_id ?? anyReply.senderId ?? anyReply.sender ?? null,
+      senderName: anyReply.senderName ?? anyReply.sender_name ?? null,
+      sender_name: anyReply.sender_name ?? anyReply.senderName ?? null,
+      roomNickname: anyReply.roomNickname ?? anyReply.room_nickname ?? null,
+      room_nickname: anyReply.room_nickname ?? anyReply.roomNickname ?? null,
+      kind: anyReply.kind ?? "text",
+      type: anyReply.kind ?? "text",
+      content: previewText ?? "",
+      preview: previewText ?? "",
+      text: previewText ?? "",
+      contentOriginal: anyReply.contentOriginal ?? anyReply.originalText ?? anyReply.__replyOriginalText ?? null,
+      contentTranslated:
+        anyReply.contentTranslated ??
+        anyReply.translatedText ??
+        anyReply.translated_text ??
+        anyReply.__replyTranslatedText ??
+        anyReply.__replyContentText ??
+        null,
+      original: anyReply.original ?? null,
+      thumbUri: anyReply.thumbUri ?? anyReply.thumb_uri ?? null,
     };
-  }, [resolvedRoomId, resolvedRoomIdOk, me, initialSynced]);
 
-  useEffect(() => {
-    const msgCount = items.filter((it) => it.type === 'message').length;
-    const prev = prevMsgCountRef.current;
-    prevMsgCountRef.current = msgCount;
-
-    if (prev === 0) return;
-
-    if (msgCount > prev) {
-      if (isAtBottom) scrollToBottom(true);
-      else setHasNewWhileAway(true);
+    if (previewSource) {
+      payload.previewSource = previewSource;
+      payload.replyPreviewSource = previewSource;
+      payload.reply_preview_source = previewSource;
     }
-  }, [items, isAtBottom, scrollToBottom]);
 
-  const handleLoadMore = useCallback(async () => {
-    if (!resolvedRoomIdOk) return;
+    return payload;
+  }
 
-    const reversed = [...items].reverse();
-    const oldest = reversed.find((it) => it.type === 'message');
-    if (!oldest || oldest.type !== 'message') return;
+  function buildReplyMetaForSend(reply: ReplyInfo | null | undefined) {
+    const payload = buildReplyPayloadForSend(reply);
+    if (!payload) return null;
 
-    const beforeMs = oldest.data.createdAt;
-    const beforeSeqRaw = (oldest.data as any).roomSeq ?? (oldest.data as any).room_seq ?? 0;
-    const beforeSeq = Math.max(0, Math.trunc(Number(beforeSeqRaw ?? 0) || 0));
+    return {
+      reply: payload,
+      replyTo: payload,
+      reply_to: payload,
+      reply_to_message_uid: payload.message_uid ?? payload.id ?? null,
+      replyToMessageUid: payload.message_uid ?? payload.id ?? null,
+      reply_preview: payload.preview ?? payload.content ?? "",
+      reply_text: payload.preview ?? payload.content ?? "",
+      reply_content: payload.preview ?? payload.content ?? "",
+      reply_preview_source:
+        payload.reply_preview_source ?? payload.replyPreviewSource ?? payload.previewSource ?? null,
+      replyPreviewSource:
+        payload.replyPreviewSource ?? payload.previewSource ?? payload.reply_preview_source ?? null,
+      reply_sender_name: payload.senderName ?? payload.sender_name ?? null,
+      replySenderName: payload.senderName ?? payload.sender_name ?? null,
+      reply_kind: payload.kind ?? "text",
+      replyKind: payload.kind ?? "text",
+    };
+  }
 
-    try {
-      await (syncOlderForRoom as any)(resolvedRoomId, { beforeMs, beforeSeq });
-    } catch {
-      await (syncOlderForRoom as any)(resolvedRoomId, beforeMs);
-    }
-  }, [items, resolvedRoomId, resolvedRoomIdOk]);
-
-  function mergeOriginalWithReply(original: string | null | undefined, reply: ReplyInfo | null | undefined, fallbackText?: string | null) {
-    const raw = typeof original === 'string' ? original : '';
+  function mergeOriginalWithReply(
+    original: string | null | undefined,
+    reply: ReplyInfo | null | undefined,
+    fallbackText?: string | null,
+  ) {
+    const raw = typeof original === "string" ? original : "";
     const rawTrim = raw.trim();
-
     const originalIsJson = isProbablyJsonObjectString(rawTrim);
     const base = originalIsJson ? safeJsonParse(rawTrim) : null;
-    const obj: any = base && typeof base === 'object' ? { ...(base as any) } : {};
-
-    const preservedOriginalText = !originalIsJson && rawTrim ? rawTrim : typeof fallbackText === 'string' ? fallbackText.trim() : '';
+    const obj: any =
+      base && typeof base === "object" ? { ...(base as any) } : {};
+    const preservedOriginalText =
+      !originalIsJson && rawTrim
+        ? rawTrim
+        : typeof fallbackText === "string"
+          ? fallbackText.trim()
+          : "";
 
     if (preservedOriginalText) {
-      if (typeof obj.text_original !== 'string' || !obj.text_original.trim()) obj.text_original = preservedOriginalText;
-      if (typeof obj.original_text !== 'string' || !obj.original_text.trim()) obj.original_text = preservedOriginalText;
-      if (typeof obj.originalText !== 'string' || !obj.originalText.trim()) obj.originalText = preservedOriginalText;
-      if (typeof obj.text !== 'string' || !obj.text.trim()) obj.text = preservedOriginalText;
-      if (typeof obj.content_original !== 'string' || !obj.content_original.trim()) obj.content_original = preservedOriginalText;
-      if (typeof obj.contentOriginal !== 'string' || !obj.contentOriginal.trim()) obj.contentOriginal = preservedOriginalText;
+      if (typeof obj.text_original !== "string" || !obj.text_original.trim())
+        obj.text_original = preservedOriginalText;
+      if (typeof obj.original_text !== "string" || !obj.original_text.trim())
+        obj.original_text = preservedOriginalText;
+      if (typeof obj.originalText !== "string" || !obj.originalText.trim())
+        obj.originalText = preservedOriginalText;
+      if (typeof obj.text !== "string" || !obj.text.trim())
+        obj.text = preservedOriginalText;
+      if (
+        typeof obj.content_original !== "string" ||
+        !obj.content_original.trim()
+      )
+        obj.content_original = preservedOriginalText;
+      if (
+        typeof obj.contentOriginal !== "string" ||
+        !obj.contentOriginal.trim()
+      )
+        obj.contentOriginal = preservedOriginalText;
     }
+    if (!reply)
+      return Object.keys(obj).length ? JSON.stringify(obj) : rawTrim || null;
 
-    if (!reply) {
-      if (Object.keys(obj).length) return JSON.stringify(obj);
-      return rawTrim || null;
+    const replyPayload = buildReplyPayloadForSend(reply);
+    if (replyPayload) {
+      obj.reply = replyPayload;
+      obj.replyTo = replyPayload;
+      obj.reply_to = replyPayload;
+      obj.reply_to_message_uid = replyPayload.message_uid ?? replyPayload.id ?? null;
+      obj.replyToMessageUid = replyPayload.message_uid ?? replyPayload.id ?? null;
     }
-
-    obj.reply = {
-      id: (reply as any).id,
-      sender: (reply as any).sender,
-      senderName: (reply as any).senderName,
-      kind: (reply as any).kind ?? 'text',
-      content: (reply as any).content ?? '',
-      contentOriginal: (reply as any).contentOriginal ?? null,
-      contentTranslated: (reply as any).contentTranslated ?? null,
-      original: (reply as any).original ?? null,
-      thumbUri: (reply as any).thumbUri ?? null,
-    };
 
     return JSON.stringify(obj);
   }
 
-  const handleSendMessage = useCallback(
-    async (opts: { content: string; original?: string | null; kind?: string; replyTo?: ReplyInfo | null }) => {
-      if (!me || !resolvedRoomIdOk) return;
-
-      setIsAtBottom(true);
-      setHasNewWhileAway(false);
-
-      const mergedOriginal = mergeOriginalWithReply(opts.original ?? null, opts.replyTo ?? null, opts.content ?? null);
-
-      const senderSelectedTier = toTier(translationTier);
-
-      const finalView = toLangCodeUpper(viewLangLocal ?? (myProfileCfg as any)?.view_lang ?? null);
-      const finalPreferred = toLangCodeUpper(preferredLangLocal ?? (myProfileCfg as any)?.preferred_lang ?? null);
-
-      const finalTone = normalizeTone(translationTone ?? (myProfileCfg as any)?.translation_tone_default ?? 'nature');
-
-      const myCfg: ProfileLangConfig | null = {
-        ...(myProfileCfg as any),
-        translation_tier: senderSelectedTier,
-        view_lang: finalView ?? null,
-        preferred_lang: finalPreferred ?? null,
-        translation_tone_default: finalTone,
-      } as any;
-
-      const peerCfg: ProfileLangConfig | null = peerProfileCfg
-        ? ({
-            ...(peerProfileCfg as any),
-            translation_tier: toTier((peerProfileCfg as any).translation_tier),
-          } as any)
-        : null;
-
-      const rt = await resolveRoomTypeForSend();
-      const rawPushRt = toPushRoomType(rt);
-
-      const isDirectLike = rt === 'dm' || rt === 'business_dm' || rt === 'self' || rawPushRt === 'direct' || !!peerIdRef.current;
-
-      const pushRt = (isDirectLike ? 'direct' : rawPushRt) as any;
-
+  const sendSecureDirect = useCallback(
+    async (params: {
+      kind: "text" | "image" | "audio" | "video" | "file" | "map";
+      content: string | null;
+      original: string | null;
+      meta?: any | null;
+      replyToMessageUid?: string | null;
+    }) => {
+      if (!resolvedRoomIdOk || !resolvedRoomId || !me) return false;
+      const secure = await resolveSecureSendConfig();
+      if (!secure) return false;
       await sendRoomMessage({
-        roomId: resolvedRoomId,
-        senderId: me,
-        content: opts.content ?? null,
-        original: mergedOriginal,
-        kind: coerceKind(opts.kind),
-        roomType: pushRt,
-        my: myCfg,
-        peer: isDirectLike ? peerCfg : null,
-        senderSelectedTier,
-        translateFn: autoTranslate ? translateFn : undefined,
+        roomId: Number(resolvedRoomId),
+        senderId: String(me),
+        content: params.content,
+        original: params.original,
+        kind: params.kind,
+        roomType: toPushRoomType(await resolveRoomTypeForSend()),
+        my: myProfileCfg,
+        peer: peerProfileCfg,
+        tempId: makeTempId(),
+        senderSelectedTier: translationTier as Tier,
+        meta: params.meta ?? null,
+        replyToMessageUid: params.replyToMessageUid ?? null,
+        replyToMessageId: params.replyToMessageUid ?? null,
+        secure,
       });
-
-      emitUnreadCountsForMyMessages();
+      return true;
     },
     [
       me,
-      resolvedRoomId,
-      resolvedRoomIdOk,
-      autoTranslate,
-      translateFn,
-      emitUnreadCountsForMyMessages,
-      resolveRoomTypeForSend,
       myProfileCfg,
       peerProfileCfg,
+      resolveRoomTypeForSend,
+      resolveSecureSendConfig,
+      resolvedRoomId,
+      resolvedRoomIdOk,
       translationTier,
-      translationTone,
-      viewLangLocal,
-      preferredLangLocal,
+      makeTempId,
+    ],
+  );
+
+  const handleSendMessage = useCallback(
+    async (opts: {
+      content: string;
+      original?: string | null;
+      kind?: string;
+      replyTo?: ReplyInfo | null;
+    }) => {
+      if (isRoomSendBlocked) return;
+
+      const mergedOriginal = mergeOriginalWithReply(
+        opts.original ?? null,
+        opts.replyTo ?? null,
+        opts.content ?? null,
+      );
+      const replyMeta = buildReplyMetaForSend(opts.replyTo ?? null);
+      const replyToMessageUid = parseUuid(opts.replyTo?.id ?? null);
+      if (shouldUseSecureForSend()) {
+        const ok = await sendSecureDirect({
+          kind: opts.kind === "map" ? "map" : "text",
+          content: opts.content,
+          original: mergedOriginal,
+          meta: replyMeta,
+          replyToMessageUid,
+        });
+        if (!ok) {
+          showSecureStatus(
+            t("chat:secure.sendReadyFail", {
+              defaultValue: "보안 전송 준비 실패",
+            }),
+          );
+        }
+        return;
+      }
+      await sendText({
+        content: opts.content,
+        original: mergedOriginal,
+        kind: opts.kind,
+        meta: replyMeta,
+        replyToMessageUid,
+      });
+
+    },
+    [
+      isRoomSendBlocked,
+      mergeOriginalWithReply,
+      resolvedRoomId,
+      sendSecureDirect,
+      sendText,
+      shouldUseSecureForSend,
+      showSecureStatus,
+      isAtBottom,
+      shouldStickToBottom,
+      bottomOccupiedH,
     ],
   );
 
   const handleSendSelectedMedia = useCallback(
     async (assets: PickedAsset[], bundleSend: boolean) => {
-      if (!me || !resolvedRoomIdOk) return;
-
-      setIsAtBottom(true);
-      setHasNewWhileAway(false);
-
-      const imagesMeta = assets.map((a) => ({
-        uri: a.uri,
-        width: typeof a.width === 'number' ? a.width : null,
-        height: typeof a.height === 'number' ? a.height : null,
-        filename: a.filename,
-        isVideo: !!a.isVideo,
-        durationSec: typeof a.durationSec === 'number' ? a.durationSec : null,
-      }));
-
-      const allImages = imagesMeta.every((m) => !m.isVideo);
-      const doBundle = !!bundleSend && imagesMeta.length > 1 && allImages;
-
-      if (doBundle) {
-        await sendRoomMessage({
-          roomId: resolvedRoomId,
-          senderId: me,
-          kind: 'image',
-          content: null,
-          original: JSON.stringify({ images: imagesMeta }),
-        });
-      } else {
-        for (const m of imagesMeta) {
-          await sendRoomMessage({
-            roomId: resolvedRoomId,
-            senderId: me,
-            kind: m.isVideo ? 'video' : 'image',
-            content: m.uri,
-            original: JSON.stringify({ images: [m] }),
-          });
-        }
-      }
-
+      if (isRoomSendBlocked) return;
+      touchSecureActivity();
       setMediaVisible(false);
-      scrollToBottom(true);
-      emitUnreadCountsForMyMessages();
+      const replyToMessageUid = parseUuid(replyTo?.id ?? null);
+      if (shouldUseSecureForSend()) {
+        let blockedVideo = false;
+        for (const asset of assets ?? []) {
+          const a: any = asset as any;
+          const isVideo =
+            !!a?.isVideo || String(a?.type ?? "").toLowerCase() === "video";
+          if (
+            isVideo &&
+            !(typeof a?.url === "string" && /^https?:\/\//i.test(a.url))
+          ) {
+            // secure v1은 URL/descriptor 암호화 방식이다. 현재 video 전용 remote upload helper가
+            // 확정되지 않았으므로 local video URI를 암호화 payload에 넣지 않는다.
+            blockedVideo = true;
+            continue;
+          }
+          const original = JSON.stringify({
+            uri: a?.uri ?? null,
+            url: a?.url ?? null,
+            filename: a?.filename ?? a?.fileName ?? null,
+            width: a?.width ?? null,
+            height: a?.height ?? null,
+            durationSec: a?.durationSec ?? null,
+          });
+          const ok = await sendSecureDirect({
+            kind: isVideo ? "video" : "image",
+            content: isVideo ? t("chat:secure.content.video") : t("chat:secure.content.image"),
+            original,
+            meta: { secure_url_payload_v1: true, bundleSend: !!bundleSend },
+            replyToMessageUid,
+          });
+          if (!ok && secureController.policy === "required") break;
+        }
+        if (blockedVideo) {
+          showSecureStatus(
+            t("chat:secure.mediaUnsupported", {
+              defaultValue: "보안모드에서는 현재 지원하지 않습니다.",
+            }),
+          );
+        }
+        if (replyToMessageUid) cancelReply();
+        return;
+      }
+      await sendSelectedMediaAction(assets, bundleSend, replyToMessageUid);
+      if (replyToMessageUid) cancelReply();
     },
-    [me, resolvedRoomId, resolvedRoomIdOk, scrollToBottom, emitUnreadCountsForMyMessages],
+    [
+      cancelReply,
+      isRoomSendBlocked,
+      replyTo,
+      resolvedRoomId,
+      sendSecureDirect,
+      sendSelectedMediaAction,
+      shouldUseSecureForSend,
+      showSecureStatus,
+      t,
+      touchSecureActivity,
+    ],
   );
 
+  const { handleMessageFocusHandled } = useMediaViewerChatBridge({
+    navigation,
+    routeParams: routeParams as any,
+    isFocused,
+    resolvedRoomId: resolvedRoomIdOk ? Number(resolvedRoomId) : null,
+    resolvedRoomIdOk,
+    ensureAnchorInWindow,
+    onInitialBottomDone,
+    showSecureStatus,
+    setFocusAutoBottomLock,
+    messageFocusRequestRef,
+    setMessageFocusRequest,
+    focusFailureTimerRef,
+    handleSendSelectedMedia,
+  });
+
   const handleSendVoice = useCallback(
-    async (uri: string, durationMs: number) => {
-      if (!me || !resolvedRoomIdOk) return;
-
-      setIsAtBottom(true);
-      setHasNewWhileAway(false);
-
-      await sendRoomMessage({
-        roomId: resolvedRoomId,
-        senderId: me,
-        kind: 'audio',
-        content: uri,
-        original: JSON.stringify({ durationMs }),
-      });
-
+    async (uri: string, durationMs: number, waveform: number[]) => {
+      if (isRoomSendBlocked) return;
+      touchSecureActivity();
       setVoiceVisible(false);
-      scrollToBottom(true);
-      emitUnreadCountsForMyMessages();
+      const replyToMessageUid = parseUuid(replyTo?.id ?? null);
+      if (shouldUseSecureForSend()) {
+        const ok = await sendSecureDirect({
+          kind: "audio",
+          content: t("chat:secure.content.audio"),
+          original: JSON.stringify({ uri, durationMs, waveform }),
+          meta: { uri, durationMs, waveform, secure_url_payload_v1: true },
+          replyToMessageUid,
+        });
+        if (replyToMessageUid) cancelReply();
+        if (!ok) {
+          showSecureStatus(
+            t("chat:secure.sendReadyFail", {
+              defaultValue: "보안 전송 준비 실패",
+            }),
+          );
+        }
+        return;
+      }
+      await sendVoiceAction(uri, durationMs, waveform, replyToMessageUid);
+      if (replyToMessageUid) cancelReply();
     },
-    [me, resolvedRoomId, resolvedRoomIdOk, scrollToBottom, emitUnreadCountsForMyMessages],
+    [
+      cancelReply,
+      isRoomSendBlocked,
+      replyTo,
+      resolvedRoomId,
+      sendSecureDirect,
+      sendVoiceAction,
+      shouldUseSecureForSend,
+      showSecureStatus,
+      t,
+      touchSecureActivity,
+    ],
+  );
+
+
+  const closeAttachmentSheetForMenuAction = useCallback(() => {
+    attachmentSheetRef.current?.close();
+    setAttachmentsOpen(false);
+    openedFromKeyboardRef.current = false;
+    scheduleDockLockRelease(0);
+  }, [scheduleDockLockRelease, setAttachmentsOpen]);
+
+  const buildCommunicationTarget = useCallback(() => {
+    const params: any = routeParams as any;
+    const peerSnapshot =
+      params?.initialPeerSnapshot ??
+      params?.initial_peer_snapshot ??
+      params?.peerSnapshot ??
+      null;
+
+    const peerId =
+      peerIdFromParams ??
+      parseUuid(peerSnapshot?.user_id ?? peerSnapshot?.userId ?? null) ??
+      parseUuid((peerProfileCfg as any)?.user_id ?? (peerProfileCfg as any)?.userId ?? (peerProfileCfg as any)?.id ?? null);
+
+    if (!peerId || isSelfRoom) return null;
+
+    const nickname = String(
+      peerSnapshot?.nickname ??
+        params?.peerNickname ??
+        params?.peer_nickname ??
+        (peerProfileCfg as any)?.nickname ??
+        title ??
+        t("chat:title", { defaultValue: "채팅" }),
+    ).trim();
+
+    const avatarUrl =
+      peerSnapshot?.avatar_url ??
+      peerSnapshot?.avatarUrl ??
+      params?.peerAvatarUrl ??
+      params?.peer_avatar_url ??
+      (peerProfileCfg as any)?.avatar_url ??
+      (peerProfileCfg as any)?.avatarUrl ??
+      headerAvatarUrl ??
+      null;
+
+    return {
+      user_id: peerId,
+      nickname: nickname || t("chat:title", { defaultValue: "채팅" }),
+      avatar_url: avatarUrl,
+      phone_number:
+        peerSnapshot?.phone_number ??
+        peerSnapshot?.phoneNumber ??
+        params?.phone_number ??
+        params?.phoneNumber ??
+        null,
+      status_message:
+        peerSnapshot?.status_message ??
+        peerSnapshot?.statusMessage ??
+        null,
+    };
+  }, [headerAvatarUrl, isSelfRoom, peerIdFromParams, peerProfileCfg, routeParams, t, title]);
+
+  const handleOpenCommunicationSheet = useCallback(() => {
+    closeAttachmentSheetForMenuAction();
+    const target = buildCommunicationTarget();
+    if (!target) {
+      showFloatingToast({
+        message: t("chat:attachment.callUnavailable"),
+        tone: "default",
+      });
+      return;
+    }
+    setCommunicationTarget(target);
+    setCommunicationVisible(true);
+  }, [buildCommunicationTarget, closeAttachmentSheetForMenuAction, showFloatingToast, t]);
+
+  const handlePhoneCallFromChat = useCallback((friend: any) => {
+    const phone = String(friend?.phone_number ?? friend?.phoneNumber ?? "").trim();
+    if (!phone) {
+      Alert.alert(
+        t("common:notice", { defaultValue: "알림" }),
+        t("chat:attachment.phoneMissing"),
+      );
+      return;
+    }
+    Linking.openURL(`tel:${phone}`).catch(() => {
+      Alert.alert(
+        t("common:error", { defaultValue: "오류" }),
+        t("chat:attachment.phoneOpenFail"),
+      );
+    });
+  }, [t]);
+
+  const handleVoiceCallFromChat = useCallback((_friend: any) => {
+    showFloatingToast({
+      message: t("chat:attachment.voiceCallUnavailable"),
+      tone: "default",
+    });
+  }, [showFloatingToast, t]);
+
+  const handleOpenCaptureFromAttachment = useCallback(() => {
+    closeAttachmentSheetForMenuAction();
+    requestAnimationFrame(() => handleStartCaptureEmpty());
+  }, [closeAttachmentSheetForMenuAction, handleStartCaptureEmpty]);
+
+  const handleOpenScheduleFromAttachment = useCallback(() => {
+    closeAttachmentSheetForMenuAction();
+
+    if (roomType === "beacon") return;
+    if (!resolvedRoomIdOk || !resolvedRoomId) return;
+
+    const nextRoomTitle = String(
+      title || t("chat:title", { defaultValue: "채팅" }),
+    ).trim();
+
+    requestAnimationFrame(() => {
+      navigation.navigate("ChatCollection", {
+        roomId: resolvedRoomId,
+        title: nextRoomTitle,
+        roomTitle: nextRoomTitle,
+        initialTab: "schedules",
+        roomType,
+        chatThemeKey,
+        themeOverride: chatThemeKey,
+        initialRoomSnapshot: chatMenuInitialSnapshot,
+        initialMembers: chatMenuInitialMembers,
+      });
+    });
+  }, [
+    chatMenuInitialMembers,
+    chatMenuInitialSnapshot,
+    chatThemeKey,
+    closeAttachmentSheetForMenuAction,
+    navigation,
+    resolvedRoomId,
+    resolvedRoomIdOk,
+    roomType,
+    t,
+    title,
+  ]);
+
+  const handleOpenContactShare = useCallback(async () => {
+    closeAttachmentSheetForMenuAction();
+
+    try {
+      const permission = await Contacts.requestPermissionsAsync();
+      if (!permission?.granted) {
+        Alert.alert(
+          t("chat:permission.contactsTitle"),
+          t("chat:permission.contactsMessage"),
+        );
+        return;
+      }
+
+      const picked = await (Contacts as any).presentContactPickerAsync();
+      const contact = Array.isArray(picked) ? picked[0] : picked?.contact ?? picked;
+      if (!contact) return;
+
+      const name = String(
+        contact?.name ??
+          [contact?.firstName, contact?.lastName].filter(Boolean).join(" ") ??
+          "",
+      ).trim();
+      const phone = String(
+        (contact?.phoneNumbers ?? [])
+          .map((item: any) => item?.number)
+          .find((value: any) => String(value ?? "").trim()) ?? "",
+      ).trim();
+
+      if (!name && !phone) {
+        Alert.alert(
+          t("common:notice", { defaultValue: "알림" }),
+          t("chat:attachment.contactEmpty"),
+        );
+        return;
+      }
+
+      const content = [
+        t("chat:attachment.contactShareTitle"),
+        name ? `${t("chat:attachment.contactName")}: ${name}` : null,
+        phone ? `${t("chat:attachment.contactPhone")}: ${phone}` : null,
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      await handleSendMessage({
+        content,
+        original: content,
+        kind: "text",
+        replyTo,
+      });
+      if (replyTo) cancelReply();
+    } catch {
+      Alert.alert(
+        t("common:error", { defaultValue: "오류" }),
+        t("chat:attachment.contactShareFail"),
+      );
+    }
+  }, [cancelReply, closeAttachmentSheetForMenuAction, handleSendMessage, replyTo, t]);
+
+  const handleSendLocation = useCallback(
+    async (data: { lat: number; lng: number; address: string }) => {
+      touchSecureActivity();
+      const replyToMessageUid = parseUuid(replyTo?.id ?? null);
+      if (shouldUseSecureForSend()) {
+        const ok = await sendSecureDirect({
+          kind: "map",
+          content: t("chat:secure.content.location"),
+          original: JSON.stringify({
+            lat: data.lat,
+            lng: data.lng,
+            label: data.address,
+            address: data.address,
+          }),
+          meta: { secure_url_payload_v1: true },
+          replyToMessageUid,
+        });
+        if (replyToMessageUid) cancelReply();
+        if (!ok) {
+          showSecureStatus(
+            t("chat:secure.sendReadyFail", {
+              defaultValue: "보안 전송 준비 실패",
+            }),
+          );
+        }
+        return;
+      }
+      await sendLocationAction(data, replyToMessageUid);
+      if (replyToMessageUid) cancelReply();
+    },
+    [
+      cancelReply,
+      replyTo,
+      resolvedRoomId,
+      sendLocationAction,
+      sendSecureDirect,
+      shouldUseSecureForSend,
+      showSecureStatus,
+      t,
+      touchSecureActivity,
+    ],
+  );
+  const handleOpenMap = useCallback(() => {
+    navigation.navigate("LocationPicker", { onPick: handleSendLocation });
+  }, [navigation, handleSendLocation]);
+  const resolveReplySenderNameForComposer = useCallback(
+    (msg: any) => {
+      const senderId = String(
+        msg?.senderId ?? msg?.sender_id ?? msg?._raw?.sender_id ?? "",
+      ).trim();
+
+      if (senderId && senderId === String(me ?? "")) {
+        return t("chat:me", { defaultValue: "나" });
+      }
+
+      if (isOpenLikeRoomForReplyName(roomType)) {
+        const localRoomName = senderId
+          ? pickLocalRoomReplyName(messageSenderProfilesById?.[senderId])
+          : null;
+        return localRoomName || t("chat:replyBlock.peer", { defaultValue: "참가자" });
+      }
+
+      const fallbackName = String(
+        msg?.senderName ??
+          msg?.sender_name ??
+          msg?.nickname ??
+          (senderId ? memberNickMapRef.current.get(senderId) : null) ??
+          "",
+      ).trim();
+
+      return fallbackName || t("chat:replyBlock.peer", { defaultValue: "상대방" });
+    },
+    [me, memberNickMapRef, messageSenderProfilesById, roomType, t],
   );
 
   const handleReplyFromList = useCallback(
     (msg: any) => {
-      const senderId = msg.senderId;
-      const nickMap = memberNickMapRef.current;
+      const replyMessageUid = pickMessageUidForReply(msg);
+      if (!replyMessageUid) {
+        return;
+      }
 
-      const resolvedName = senderId === me ? '나' : msg.senderName ?? msg.nickname ?? nickMap.get(senderId) ?? null;
-
+      const senderId = String(
+        msg?.senderId ?? msg?.sender_id ?? msg?._raw?.sender_id ?? "",
+      ).trim() || null;
+      const resolvedName = resolveReplySenderNameForComposer(msg);
+      const openLikeReplyRoom = isOpenLikeRoomForReplyName(roomType);
       const pair = deriveTextPairForReplyPreview({ msg, meId: me });
-      const previewText = showTranslatedOnly ? pair.altText : pair.primaryText;
+      const explicitPreviewSource = normalizeReplyPreviewSource(
+        (msg as any)?.__replyPreviewSource ??
+          (msg as any)?.replyPreviewSource ??
+          (msg as any)?.previewSource ??
+          (msg as any)?.__replyMode ??
+          ((msg as any)?.__replyIsLocalFlipped === true ? "original" : null),
+      );
+      const explicitDisplayText = pickReplyTextValue(
+        (msg as any)?.__replyVisibleText,
+        (msg as any)?.replyVisibleText,
+        (msg as any)?.visibleText,
+        (msg as any)?.__replyDisplayText,
+        (msg as any)?.displayText,
+      );
+      const isReplyTargetMe = !!senderId && senderId === String(me ?? "").trim();
+      const fallbackPreviewSource =
+        explicitPreviewSource ?? (isReplyTargetMe ? "original" : "content");
+      const selectedReplyText =
+        explicitDisplayText ??
+        (fallbackPreviewSource === "original"
+          ? pickReplyTextValue(pair.originalText, pair.primaryText, pair.altText)
+          : pickReplyTextValue(pair.translatedText, pair.altText, pair.primaryText, pair.originalText)) ??
+        "";
 
       handleReply({
-        id: msg.id,
+        id: replyMessageUid,
+        message_uid: replyMessageUid,
+        messageUid: replyMessageUid,
         sender: senderId,
+        senderId,
+        sender_id: senderId,
         senderName: resolvedName,
-        kind: String(msg.kind ?? 'text'),
+        ...(openLikeReplyRoom && senderId !== String(me ?? "")
+          ? { roomNickname: resolvedName, room_nickname: resolvedName }
+          : {}),
+        kind: String(msg.kind ?? "text"),
         original: msg.original ?? null,
         thumbUri: pickThumbUri(msg),
-        content: previewText,
-        ...(pair.originalText ? { contentOriginal: pair.originalText } : {}),
-        ...(pair.translatedText ? { contentTranslated: pair.translatedText } : {}),
+        content: selectedReplyText,
+        preview: selectedReplyText,
+        visibleText: selectedReplyText,
+        __replyVisibleText: selectedReplyText,
+        __replyDisplayText: selectedReplyText,
+        replyPreviewSource: fallbackPreviewSource,
+        previewSource: fallbackPreviewSource,
+        __replyPreviewSource: fallbackPreviewSource,
+        ...(pair.originalText ? { contentOriginal: pair.originalText, __replyOriginalText: pair.originalText } : {}),
+        ...(pair.translatedText
+          ? { contentTranslated: pair.translatedText, __replyTranslatedText: pair.translatedText }
+          : {}),
       } as any);
     },
-    [handleReply, me, showTranslatedOnly],
+    [
+      handleReply,
+      me,
+      resolveReplySenderNameForComposer,
+      roomType,
+      showTranslatedOnly,
+    ],
   );
 
   const openSearch = useCallback(() => {
     if (selection.selecting) return;
-
-    if (typeof inlineSearch?.openSearch === 'function') {
+    if (typeof inlineSearch?.openSearch === "function") {
       inlineSearch.openSearch();
       return;
     }
-    if (typeof inlineSearch?.setOpen === 'function') {
+    if (typeof inlineSearch?.setOpen === "function") {
       inlineSearch.setOpen(true);
       return;
     }
-
-    DeviceEventEmitter.emit('chat:openSearchModal', { roomId: resolvedRoomIdOk ? resolvedRoomId : 0 });
+    DeviceEventEmitter.emit("chat:openSearchModal", {
+      roomId: resolvedRoomIdOk ? resolvedRoomId : 0,
+    });
   }, [resolvedRoomId, resolvedRoomIdOk, selection.selecting, inlineSearch]);
 
-  const gateRoomType = (roomType ?? 'dm') as string;
+  const [lockedButtonWidth, setLockedButtonWidth] = useState(0);
+  const unlockFillAnim = useRef(new Animated.Value(0)).current;
+  const unlockScaleAnim = useRef(new Animated.Value(1)).current;
+  const hapticTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  if (loading || !me) {
-    return (
-      <View style={[styles.center, { backgroundColor: theme.background }]}>
-        <ExpoStatusBar style={expoBarStyle} translucent={true} backgroundColor="transparent" />
-        <ActivityIndicator size="small" />
-      </View>
+  useEffect(() => {
+    return () => {
+      if (hapticTimerRef.current) clearInterval(hapticTimerRef.current);
+      unlockFillAnim.stopAnimation();
+      unlockScaleAnim.stopAnimation();
+    };
+  }, []);
+
+  const handleUnlockPressIn = useCallback(() => {
+    if (!isInputLocked) return;
+    Vibration.vibrate(10);
+    Animated.timing(unlockScaleAnim, {
+      toValue: 0.96,
+      duration: 150,
+      useNativeDriver: true,
+      easing: Easing.out(Easing.ease),
+    }).start();
+    Animated.timing(unlockFillAnim, {
+      toValue: 1,
+      duration: 3000,
+      useNativeDriver: true,
+      easing: Easing.inOut(Easing.ease),
+    }).start(({ finished }) => {
+      if (finished) {
+        if (hapticTimerRef.current) {
+          clearInterval(hapticTimerRef.current);
+          hapticTimerRef.current = null;
+        }
+        Vibration.vibrate([0, 50, 50, 50]);
+        setIsInputLocked(false);
+        unlockFillAnim.setValue(0);
+        unlockScaleAnim.setValue(1);
+      }
+    });
+  }, [isInputLocked, unlockFillAnim, unlockScaleAnim]);
+
+  const handleUnlockPressOut = useCallback(() => {
+    if (hapticTimerRef.current) {
+      clearInterval(hapticTimerRef.current);
+      hapticTimerRef.current = null;
+    }
+    unlockFillAnim.stopAnimation();
+    Animated.parallel([
+      Animated.timing(unlockFillAnim, {
+        toValue: 0,
+        duration: 250,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+      Animated.spring(unlockScaleAnim, {
+        toValue: 1,
+        friction: 5,
+        tension: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [unlockFillAnim, unlockScaleAnim]);
+
+  const unlockTranslateX = unlockFillAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-lockedButtonWidth, 0],
+  });
+  const gateRoomType = chatThemeKey;
+
+  const selectionToggleRef = useRef(selection.toggle);
+  useEffect(() => {
+    selectionToggleRef.current = selection.toggle;
+  }, [selection.toggle]);
+  const handleToggleSelectById = useCallback((id: string) => {
+    selectionToggleRef.current(id);
+  }, []);
+
+  const { allowReadBasedMomentDelete, runDeleteMineNow } =
+    useChatDeleteController({
+      roomType,
+      resolvedRoomId,
+      selectedMsgs,
+      deleteTypeMsg,
+      selection,
+      pickMsgId,
+      isLocalMsg,
+      hideMessages,
+      softDeleteLocalBatch,
+    });
+
+  const nonFriendPeerId = useMemo(() => {
+    const myId = parseUuid(me);
+    const candidates: any[] = [];
+
+    const pushCandidate = (value: any) => {
+      const id = parseUuid(value);
+      if (id && id !== myId && !candidates.includes(id)) candidates.push(id);
+    };
+
+    const target = buildCommunicationTarget();
+    pushCandidate(target?.user_id);
+
+    const params: any = routeParams as any;
+    const peerSnapshot =
+      params?.initialPeerSnapshot ??
+      params?.initial_peer_snapshot ??
+      params?.peerSnapshot ??
+      null;
+
+    pushCandidate(peerIdFromParams);
+    pushCandidate(peerSnapshot?.user_id ?? peerSnapshot?.userId);
+    pushCandidate((peerProfileCfg as any)?.user_id);
+    pushCandidate((peerProfileCfg as any)?.userId);
+    pushCandidate((peerProfileCfg as any)?.id);
+
+    for (const member of searchMembers as any[]) {
+      pushCandidate(member?.id ?? member?.user_id ?? member?.userId);
+    }
+
+    try {
+      const current = memberNickMapRef.current;
+      if (current && typeof current.forEach === "function") {
+        current.forEach((_name: any, id: any) => pushCandidate(id));
+      }
+    } catch {}
+
+    for (const item of visibleItems as any[]) {
+      if (item?.type !== "message") continue;
+      const msg = item?.data;
+      pushCandidate(msg?.senderId ?? msg?.sender_id ?? msg?._raw?.sender_id);
+    }
+
+    return candidates[0] ?? null;
+  }, [
+    buildCommunicationTarget,
+    me,
+    memberNickMapRef,
+    peerIdFromParams,
+    peerProfileCfg,
+    routeParams,
+    searchMembers,
+    visibleItems,
+  ]);
+
+  const isDmNonSelfRoom =
+    String(roomType ?? "").trim().toLowerCase() === "dm" &&
+    !isSelfRoom &&
+    !!nonFriendPeerId;
+
+  const [nonFriendFriendStatus, setNonFriendFriendStatus] = useState<boolean | null>(null);
+  const [nonFriendBlockedStatus, setNonFriendBlockedStatus] = useState<boolean | null>(null);
+  const [nonFriendAddPending, setNonFriendAddPending] = useState(false);
+  const [nonFriendBlockPending, setNonFriendBlockPending] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!isFocused || !me || !nonFriendPeerId || !isDmNonSelfRoom) {
+      setNonFriendFriendStatus(null);
+      setNonFriendBlockedStatus(null);
+      setNonFriendAddPending(false);
+      setNonFriendBlockPending(false);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setNonFriendFriendStatus(null);
+    setNonFriendBlockedStatus(null);
+
+    const loadNonFriendRelation = async () => {
+      try {
+        const [friendRes, blockRes] = await Promise.all([
+          supabase
+            .from("friend_meta")
+            .select("is_friend")
+            .eq("owner_user_id", me)
+            .eq("friend_user_id", nonFriendPeerId)
+            .maybeSingle(),
+          supabase
+            .from("friend_blocks")
+            .select("user_id,target_id")
+            .or(
+              `and(user_id.eq.${me},target_id.eq.${nonFriendPeerId}),and(user_id.eq.${nonFriendPeerId},target_id.eq.${me})`,
+            )
+            .limit(1),
+        ]);
+
+        if (cancelled) return;
+
+        if (friendRes.error) {
+          setNonFriendFriendStatus(null);
+        } else {
+          setNonFriendFriendStatus(Boolean((friendRes.data as any)?.is_friend));
+        }
+
+        if (blockRes.error) {
+          // 차단 조회 오류 때문에 비친구 액션바 전체가 영구히 숨는 회귀를 막는다.
+          // 실제 차단 row가 확인된 경우에만 숨긴다.
+          setNonFriendBlockedStatus(false);
+        } else {
+          setNonFriendBlockedStatus(Array.isArray(blockRes.data) && blockRes.data.length > 0);
+        }
+      } catch {
+        if (!cancelled) {
+          setNonFriendFriendStatus(null);
+          setNonFriendBlockedStatus(null);
+        }
+      }
+    };
+
+    void loadNonFriendRelation();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isDmNonSelfRoom, isFocused, me, nonFriendPeerId]);
+
+  const showNonFriendActionBar =
+    isDmNonSelfRoom &&
+    nonFriendFriendStatus === false &&
+    nonFriendBlockedStatus === false &&
+    !selection.selecting &&
+    !(captureModeActive && captureChromeVisible) &&
+    !inlineSearch.open;
+
+  const handleAddNonFriend = useCallback(async () => {
+    if (!me || !nonFriendPeerId || nonFriendAddPending || nonFriendFriendStatus === true) return;
+
+    try {
+      setNonFriendAddPending(true);
+      await addFriendMetaDirect(me, nonFriendPeerId);
+      setNonFriendFriendStatus(true);
+      showFloatingToast({
+        message: t("friends:add.toast.added", { defaultValue: "친구로 추가했습니다." }),
+        tone: "success",
+        showMark: true,
+      });
+    } catch {
+      showFloatingToast({
+        message: t("friends:add.alert.addFail", { defaultValue: "친구 추가에 실패했습니다." }),
+        tone: "default",
+      });
+    } finally {
+      setNonFriendAddPending(false);
+    }
+  }, [me, nonFriendAddPending, nonFriendFriendStatus, nonFriendPeerId, showFloatingToast, t]);
+
+  const executeBlockNonFriend = useCallback(async () => {
+    if (!me || !nonFriendPeerId || nonFriendBlockPending) return;
+
+    try {
+      setNonFriendBlockPending(true);
+      const { error } = await supabase.from("friend_blocks").insert({
+        user_id: me,
+        target_id: nonFriendPeerId,
+      });
+
+      if (error && (error as any).code !== "23505") throw error;
+
+      setNonFriendBlockedStatus(true);
+      showFloatingToast({
+        message: t("friends:block"),
+        tone: "success",
+        showMark: true,
+      });
+    } catch {
+      showFloatingToast({
+        message: t("friends:alert.blockFail"),
+        tone: "default",
+      });
+    } finally {
+      setNonFriendBlockPending(false);
+    }
+  }, [me, nonFriendBlockPending, nonFriendPeerId, showFloatingToast, t]);
+
+  const handleBlockNonFriend = useCallback(() => {
+    if (!me || !nonFriendPeerId || nonFriendBlockPending) return;
+
+    Alert.alert(
+      t("friends:alert.blockTitle"),
+      t("friends:alert.blockMessage", { name: title }),
+      [
+        { text: t("common:cancel", { defaultValue: "취소" }), style: "cancel" },
+        {
+          text: t("friends:block"),
+          style: "destructive",
+          onPress: () => {
+            void executeBlockNonFriend();
+          },
+        },
+      ],
     );
-  }
+  }, [executeBlockNonFriend, me, nonFriendBlockPending, nonFriendPeerId, t, title]);
+
+  const handleReportNonFriend = useCallback(() => {
+    if (!nonFriendPeerId) return;
+
+    navigation.navigate("ReportReasonList", {
+      targetType: "chat_user",
+      targetId: nonFriendPeerId,
+      reportedUserId: nonFriendPeerId,
+      roomId: resolvedRoomIdOk ? Number(resolvedRoomId) : null,
+      messageUids: [],
+      lang: myLang ?? null,
+    });
+  }, [myLang, navigation, nonFriendPeerId, resolvedRoomId, resolvedRoomIdOk]);
 
   if (!resolvedRoomIdOk) {
     return (
-      <View style={[styles.center, { backgroundColor: theme.background, paddingHorizontal: 18 }]}>
-        <ExpoStatusBar style={expoBarStyle} translucent={true} backgroundColor="transparent" />
-        <Text style={{ fontSize: 16, fontWeight: '700', marginBottom: 8, color: '#111827' }}>채팅방을 만들 수 없습니다</Text>
-        <Text style={{ fontSize: 13, color: '#6B7280', textAlign: 'center', marginBottom: 14 }}>
-          peer_id는 받았지만 DM room_id 생성/조회에 실패했습니다. 현재 앱은 RPC-only 정책입니다. 서버에 get_or_create_dm_room RPC가 반드시 존재해야
-          합니다.
+      <View
+        style={[
+          styles.center,
+          { backgroundColor: theme.background, paddingHorizontal: 18 },
+        ]}
+      >
+        {isFocused && <SystemBars style={systemBarsStyle} />}
+        <Text
+          style={{
+            fontSize: 16,
+            fontWeight: "700",
+            marginBottom: 8,
+            color: "#111827",
+          }}
+        >
+          {t("chat:error.createRoomTitle", {
+            defaultValue: "채팅방을 열 수 없습니다.",
+          })}
+        </Text>
+        <Text
+          style={{
+            fontSize: 13,
+            color: "#6B7280",
+            textAlign: "center",
+            marginBottom: 14,
+          }}
+        >
+          {t("chat:error.createRoomMessage", {
+            defaultValue: "잠시 후 다시 시도해 주세요.",
+          })}
         </Text>
         <Pressable
           onPress={() => navigation.goBack?.()}
-          style={{ paddingHorizontal: 14, paddingVertical: 10, borderRadius: 10, backgroundColor: '#111827' }}
+          style={{
+            paddingHorizontal: 14,
+            paddingVertical: 10,
+            borderRadius: 10,
+            backgroundColor: "#111827",
+          }}
         >
-          <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>뒤로가기</Text>
+          <Text style={{ color: "#fff", fontSize: 13, fontWeight: "700" }}>
+            {t("common:back", { defaultValue: "뒤로" })}
+          </Text>
         </Pressable>
       </View>
     );
   }
 
-  const userTierForPopover = toTier((myProfileCfg as any)?.user_tier ?? 'free') as unknown as TranslationTier;
-  const settingLangForPopover = (myLang ?? 'ko').toUpperCase();
-
-  const viewLangForPopover = viewLangLocal;
-  const preferredLangForPopover = preferredLangLocal;
-
-  const peerViewLangForPopover = toLangCodeUpper((peerProfileCfg as any)?.view_lang ?? null);
-  const peerSettingLangForPopover = toLangCodeUpper((peerProfileCfg as any)?.setting_lang ?? null);
-
-  const newPillBottom = 76 + Math.max(insets.bottom, 0) + (inlineSearch.open ? INLINE_SEARCH_BAR_HEIGHT : 0);
-
+  const userTierForPopover = toTier(
+    (myProfileCfg as any)?.user_tier ?? "free",
+  ) as unknown as TranslationTier;
+  const settingLangForPopover = (myLang ?? "ko").toUpperCase();
+  const peerViewLangForPopover = toLangCodeUpper(
+    (peerProfileCfg as any)?.view_lang ?? null,
+  );
+  const peerSettingLangForPopover = toLangCodeUpper(
+    (peerProfileCfg as any)?.setting_lang ?? null,
+  );
+  const latestJumpBottom = 12;
+  const latestJumpSurface = theme.inputBg ?? theme.background ?? "#FFFFFF";
+  const latestJumpIconColor = theme.text ?? "#111827";
+  const latestJumpBorderColor =
+    systemBarsStyle === "light"
+      ? "rgba(255, 255, 255, 0.18)"
+      : "rgba(0, 0, 0, 0.10)";
+  const newMessageNoticeSurface =
+    theme.inputBg ?? theme.background ?? "#FFFFFF";
+  const newMessageNoticeColor = theme.text ?? "#111827";
   const isBulk = !!(deleteTypeMsg as any)?.__bulk;
+  const captureVisualActive = captureModeActive && captureChromeVisible;
 
   return (
     <ChatThemeGate theme={theme} roomType={gateRoomType}>
-      <View style={[styles.container, { backgroundColor: 'transparent' }]}>
-        <ExpoStatusBar style={expoBarStyle} translucent={true} backgroundColor="transparent" />
+      <View style={[styles.container, { backgroundColor: "transparent" }]}>
+        {isFocused && <SystemBars style={systemBarsStyle} />}
 
-        <View style={[styles.headerWrap, { backgroundColor: theme.headerBg }]} pointerEvents="box-none">
+        <View
+          style={styles.headerWrap}
+          pointerEvents="box-none"
+        >
           <Animated.View style={{ opacity: headerAnim }}>
-            {selection.selecting ? (
+            {captureVisualActive && (
+              <MessageCaptureTopBar
+                theme={theme}
+                count={captureSelection.count}
+                onBack={captureSelection.exit}
+                onClear={captureSelection.clear}
+              />
+            )}
+            {!captureVisualActive && !selection.selecting && !inlineSearch.open && (
+              <>
+                <ChatHeader
+                  theme={theme}
+                  title={title}
+                  avatarUrl={headerAvatarUrl}
+                  participantCount={participantCount}
+                  autoTranslate={autoTranslate}
+                  myLang={(viewLangLocal ?? settingLangForPopover).toString()}
+                  onToggleTranslate={toggleAutoTranslate}
+                  onOpenTranslateSettings={openTranslatePopover}
+                  roomType={headerRoomType}
+                  onPressSearch={openSearch}
+                  onPressOptions={handleOpenChatMenu}
+                  onBack={handleBackFromChat}
+                  secureEnabled={secureController.isUnlocked}
+                  secureUnlocking={secureController.state === "unlocking"}
+                  onToggleSecure={handleToggleSecure}
+                  hasOptionsBadge={hasNoticeBadge}
+                />
+              </>
+            )}
+            {selection.selecting && (
               <SelectionTopBar
                 theme={theme}
                 insetsTop={Math.max(insets.top, 0)}
                 count={selection.count}
                 onExit={() => selection.exit()}
               />
-            ) : inlineSearch.open ? (
+            )}
+            {inlineSearch.open && (
               <ChatSearchHeader
                 theme={theme}
                 insetsTop={Math.max(insets.top, 0)}
@@ -1951,119 +2994,580 @@ export default function Chat() {
                 onClearQ={inlineSearch.clearQ}
                 onRemoveMember={inlineSearch.removeMember}
               />
-            ) : (
-              <ChatHeader
-                theme={theme}
-                title={title}
-                avatarUrl={headerAvatarUrl}
-                participantCount={participantCount}
-                autoTranslate={autoTranslate}
-                myLang={(viewLangLocal ?? settingLangForPopover).toString()}
-                onToggleTranslate={toggleAutoTranslate}
-                onOpenTranslateSettings={openTranslatePopover}
-                roomType={headerRoomType}
-                onPressSearch={openSearch}
-              />
             )}
           </Animated.View>
+
+          {showNonFriendActionBar ? (
+            <Animated.View
+              pointerEvents="box-none"
+              style={[styles.nonFriendActionOverlay, { opacity: headerAnim }]}
+            >
+              <NonFriendActionBar
+                theme={theme}
+                addLabel={t("friends:add.result.add")}
+                blockLabel={t("friends:block")}
+                reportLabel={t("profile:menu.report")}
+                addPending={nonFriendAddPending}
+                blockPending={nonFriendBlockPending}
+                onAdd={handleAddNonFriend}
+                onBlock={handleBlockNonFriend}
+                onReport={handleReportNonFriend}
+              />
+            </Animated.View>
+          ) : null}
         </View>
 
-        <View style={[styles.listWrap, { backgroundColor: 'transparent' }]}>
-          <Animated.View style={{ flex: 1, opacity: listAnim, transform: [{ translateY: listMoveY }] }}>
-            <MessageList
-              items={items}
-              me={me}
-              listRef={listRef}
-              loadMore={handleLoadMore}
-              onReply={handleReplyFromList}
-              onScrolledToBottom={() => {
-                setIsAtBottom(true);
-                setHasNewWhileAway(false);
-                if (latestRoomSeq > 0) scheduleReadSync(latestRoomSeq);
-                else pushReadNow(undefined, 'scrollBottom').catch(() => {});
-              }}
-              onScrolledAway={() => setIsAtBottom(false)}
-              showOriginalGlobal={true}
+        <View style={[styles.listWrap, { backgroundColor: "transparent" }]}>
+          {!showNonFriendActionBar ? (
+            <ChatNoticeBanner
+              notice={activeChatNotice}
               theme={theme}
-              {...({ showTranslatedOnlyGlobal: showTranslatedOnly } as any)}
-              {...({
-                selectionMode: selection.selecting,
-                selectedIdSet: selection.selectedIds,
-                isSelected: (id: string) => selection.selectedIds.has(String(id)),
-                onToggleSelectById: (id: string) => selection.toggle(String(id)),
-              } as any)}
+              onPress={handlePressNoticeBanner}
+              onClose={handleCloseNoticeBanner}
             />
+          ) : null}
+          <Animated.View
+            style={{
+              flex: 1,
+              opacity: listAnim,
+              transform: [{ translateY: listMoveY }],
+            }}
+          >
+            <ChatCaptureTarget
+              {...captureTargetProps}
+              visible={isReadyToDisplay || messageListBootLoading || visibleItems.length > 0}
+              backgroundColor={theme.background}
+            >
+              {messageListBootLoading ? (
+                <View
+                  style={[
+                    styles.messageBootCenter,
+                    { backgroundColor: theme.background },
+                  ]}
+                >
+                  <ActivityIndicator size="small" />
+                </View>
+              ) : (
+                <MessageList
+                  items={visibleItems}
+                  me={me as string}
+                  listRef={listRef}
+                  loadMore={handleLoadMore}
+                  onReply={handleReplyFromList}
+                  onScrolledToBottom={handleScrolledToBottom}
+                  onScrolledAway={handleScrolledAway}
+                  onBottomDistanceChange={handleBottomDistanceChange}
+                  showOriginalGlobal={true}
+                  theme={theme}
+                  searchQuery={inlineSearch.open ? inlineSearch.q : ""}
+                  searchModeOpen={inlineSearch.open}
+                  isSelfRoom={isSelfRoom}
+                  unreadMap={displayUnreadMap}
+                  showTranslatedOnlyGlobal={showTranslatedOnly}
+                  selectionMode={selection.selecting}
+                  selectedIdSet={selection.selectedIds}
+                  onToggleSelectById={handleToggleSelectById}
+                  bookmarkedMessageUidSet={bookmarkedMessageUidSet}
+                  reactionCountsByMessageUid={reactionCountsByMessageUid}
+                  myReactionByMessageUid={myReactionByMessageUid}
+                  onReactionPress={handleReactMessage}
+                  onReactionLongPress={handleOpenReactionUsers}
+                  captureMode={captureModeActive}
+                  captureAnonymize={captureAnonymize}
+                  captureSelectedIdSet={captureSelection.selectedIdSet}
+                  onToggleCaptureMessage={handleToggleCaptureMessage}
+                  {...captureMessageListProps}
+                  autoTranslate={autoTranslate}
+                  interactionLocked={captureInteractionLocked || isKickedRoomBlocked}
+                  scrollEnabled={!isKickedRoomBlocked}
+                  roomId={resolvedRoomId}
+                  roomType={roomType ?? undefined}
+                  senderProfilesById={messageSenderProfilesById}
+                  focusRequest={messageFocusRequest}
+                  onFocusHandled={handleMessageFocusHandled}
+                  shouldStickToBottom={
+                    shouldStickToBottom && !suppressAutoBottomScroll
+                  }
+                  appendStickNonce={appendStickNonce}
+                  initialBottomPending={
+                    initialBottomPending && !suppressAutoBottomScroll
+                  }
+                  onInitialBottomDone={onInitialBottomDone}
+                />
+              )}
+            </ChatCaptureTarget>
           </Animated.View>
 
-          {hasNewWhileAway && !selection.selecting && (
-            <View style={[styles.newPill, { bottom: newPillBottom }]}>
-              <Text
-                style={styles.newPillText}
-                onPress={() => {
-                  scrollToBottom(true);
-                  setIsAtBottom(true);
-                  setHasNewWhileAway(false);
-                  if (latestRoomSeq > 0) scheduleReadSync(latestRoomSeq);
-                  else pushReadNow(undefined, 'newPill').catch(() => {});
-                }}
+          <MessageCaptureProcessingCover
+            visible={captureProcessingCoverVisible}
+            theme={theme}
+            imageUri={captureProcessingCoverUri}
+          />
+
+          {showLatestJumpButton && !isKickedRoomBlocked && (
+            <>
+              {showNewMessageNotice && (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t("chat:jump.newMessageAccessibility", {
+                    defaultValue: "새 메시지로 이동",
+                  })}
+                  hitSlop={10}
+                  onPress={handlePressLatestJump}
+                  style={[
+                    styles.newMessageNoticePill,
+                    {
+                      bottom: latestJumpBottom + 44,
+                      backgroundColor: newMessageNoticeSurface,
+                      borderColor: latestJumpBorderColor,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.newMessageNoticeText,
+                      { color: newMessageNoticeColor },
+                    ]}
+                  >
+                    {t("chat:jump.newMessage", { defaultValue: "새 메시지" })}
+                  </Text>
+                </Pressable>
+              )}
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t("chat:jump.latestAccessibility", {
+                  defaultValue: "최신 메시지로 이동",
+                })}
+                hitSlop={10}
+                onPress={handlePressLatestJump}
+                style={[
+                  styles.latestJumpButton,
+                  {
+                    bottom: latestJumpBottom,
+                    backgroundColor: latestJumpSurface,
+                    borderColor: latestJumpBorderColor,
+                  },
+                ]}
               >
-                새 메시지
-              </Text>
-            </View>
+                <ChevronDown
+                  size={23}
+                  color={latestJumpIconColor}
+                  strokeWidth={2.45}
+                />
+              </Pressable>
+            </>
           )}
         </View>
 
         <View style={[styles.inputWrap, { backgroundColor: theme.inputBg }]}>
-          {selection.selecting ? (
+          {inputBootLoading ? (
+            <View
+              style={[
+                styles.inputBootBar,
+                {
+                  backgroundColor: theme.inputBg,
+                  paddingBottom: Math.max(insets.bottom, 10),
+                },
+              ]}
+            >
+              <ActivityIndicator size="small" />
+            </View>
+          ) : selection.selecting && !isRoomSendBlocked ? (
             <SelectionBottomBar
               theme={theme}
               insetsBottom={Math.max(insets.bottom, 0)}
               count={selection.count}
               onPressDelete={() => {
                 if (!selectedMsgs.length) return;
-                setDeleteTypeMsg({ __bulk: true });
-                setDeleteTypeVisible(true);
+                openBulkDeleteType();
               }}
             />
+          ) : isDeletedRoomReadOnly ? (
+            <View
+              style={[
+                styles.roomClosedBar,
+                { paddingBottom: Math.max(insets.bottom, 14) },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.roomClosedText,
+                  { color: String((theme as any).subText ?? theme.text ?? "#6B7280") },
+                ]}
+              >
+                {t("chat:room.deletedReadonly")}
+              </Text>
+            </View>
+          ) : isLeftRoomReadOnly ? (
+            <View
+              style={[
+                styles.roomClosedBar,
+                { paddingBottom: Math.max(insets.bottom, 14) },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.roomClosedText,
+                  { color: String((theme as any).subText ?? theme.text ?? "#6B7280") },
+                ]}
+              >
+                {t("chat:room.leftReadonly")}
+              </Text>
+            </View>
+          ) : isInputLocked ? (
+            <Animated.View
+              style={{
+                opacity: inputAnim,
+                transform: [{ translateY: inputMoveY }],
+              }}
+            >
+              <View
+                style={[
+                  styles.lockedContainer,
+                  { paddingBottom: Math.max(insets.bottom, 16) },
+                ]}
+              >
+                <Animated.View
+                  style={[
+                    styles.lockedPillBg,
+                    { transform: [{ scale: unlockScaleAnim }] },
+                  ]}
+                >
+                  <View
+                    style={StyleSheet.absoluteFill}
+                    onLayout={(e) =>
+                      setLockedButtonWidth(e.nativeEvent.layout.width)
+                    }
+                  >
+                    <View
+                      style={[
+                        StyleSheet.absoluteFill,
+                        {
+                          backgroundColor: theme.tintColor ?? "#3B82F6",
+                          opacity: 0.15,
+                          borderRadius: 12,
+                        },
+                      ]}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      overflow: "hidden",
+                      ...StyleSheet.absoluteFillObject,
+                      borderRadius: 12,
+                    }}
+                  >
+                    <Animated.View
+                      style={[
+                        StyleSheet.absoluteFill,
+                        {
+                          backgroundColor: theme.tintColor ?? "#3B82F6",
+                          width: "100%",
+                          borderRadius: 12,
+                          opacity: lockedButtonWidth > 0 ? 1 : 0,
+                          transform: [{ translateX: unlockTranslateX }],
+                        },
+                      ]}
+                    />
+                  </View>
+                  <Pressable
+                    style={styles.lockedPillContent}
+                    onPressIn={handleUnlockPressIn}
+                    onPressOut={handleUnlockPressOut}
+                  >
+                    <Lock
+                      size={16}
+                      color={theme.text ?? "#111"}
+                      style={{ marginRight: 8, opacity: 0.7 }}
+                    />
+                    <Text
+                      style={[
+                        styles.lockedText,
+                        { color: theme.text ?? "#111" },
+                      ]}
+                    >
+                      {t("chat:hold_to_unlock", {
+                        defaultValue: "꾹 눌러 입력 잠금 해제",
+                      })}
+                    </Text>
+                  </Pressable>
+                </Animated.View>
+              </View>
+            </Animated.View>
           ) : (
             <>
-              {inlineSearch.open && (
+              {inlineSearch.open && !captureVisualActive && (
                 <ChatSearchBar
                   theme={theme}
                   countLabel={inlineSearch.countLabel}
                   hasSenderFilter={inlineSearch.hasSenderFilter}
                   hasDateFilter={inlineSearch.hasDateFilter}
+                  hasBookmarkFilter={inlineSearch.hasBookmarkFilter}
                   onOpenSender={inlineSearch.openSender}
                   onOpenDate={inlineSearch.openDate}
-                  onPrev={inlineSearch.prev}
-                  onNext={inlineSearch.next}
+                  onToggleBookmark={inlineSearch.toggleBookmarkFilter}
+                  onPrev={handleInlineSearchMoveUp}
+                  onNext={handleInlineSearchMoveDown}
                 />
               )}
-
-              <Animated.View style={{ opacity: inputAnim, transform: [{ translateY: inputMoveY }] }}>
-                <InputBar
+              {captureVisualActive ? (
+                <MessageCaptureOverlay
+                  visible={captureVisualActive}
+                  count={captureSelection.count}
                   theme={theme}
-                  collapseNonce={collapseNonce}
-                  onAttachmentsOpenChange={setAttachmentsOpen}
-                  text={text}
-                  setText={setText}
+                  anonymize={captureAnonymize}
+                  onToggleAnonymize={() => setCaptureAnonymize((prev) => !prev)}
+                  onCancel={captureSelection.exit}
+                  onSave={handleSaveCapture}
+                  onShare={handleShareCapture}
+                />
+              ) : (
+              <Animated.View
+                style={{
+                  opacity: inputAnim,
+                  transform: [{ translateY: inputMoveY }],
+                }}
+              >
+                <View>
+                  <InputBar
+                    ref={inputBarRef as any}
+                    theme={theme}
+                  attachmentsOpen={attachmentsOpen}
+                  onPressAttachmentsToggle={() => {
+                    if (isRoomSendBlocked) return;
+                    if (attachmentsOpen) {
+                      attachmentSheetRef.current?.close();
+                      setAttachmentsOpen(false);
+                      scheduleDockLockRelease(400);
+                      requestAnimationFrame(() =>
+                        inputBarRef.current?.focus?.(),
+                      );
+                    } else {
+                      openedFromKeyboardRef.current =
+                        keyboardVisible || keyboardHeight > 0;
+                      if (keyboardVisible || keyboardHeight > 0) {
+                        dockLockActiveRef.current = true;
+                        setDockLockH((prev) =>
+                          Math.max(prev, Math.max(0, keyboardHeight)),
+                        );
+                      }
+                      Keyboard.dismiss();
+                      setAttachmentsOpen(true);
+                      attachmentSheetRef.current?.open();
+                    }
+                  }}
+                  onFocusInput={() => {
+                    if (attachmentsOpen) {
+                      attachmentSheetRef.current?.close();
+                      setAttachmentsOpen(false);
+                      scheduleDockLockRelease(0);
+                    }
+                  }}
                   replyTo={replyTo}
                   cancelReply={cancelReply}
                   sendMessage={handleSendMessage}
-                  openMedia={() => setMediaVisible(true)}
                   openVoice={() => setVoiceVisible(true)}
+                  showTranslatedOnly={showTranslatedOnly}
                   autoTranslate={autoTranslate}
-                  setAutoTranslate={(v) => {
-                    setAutoTranslate(v);
-                    persistRoomSettingPatch({ auto_translate: !!v });
-                  }}
-                  translationTier={translationTier}
-                  translationTone={translationTone as TranslationTone}
-                  onOpenTranslateSettings={openTranslatePopover}
-                />
+                  setAutoTranslate={setAutoTranslate}
+                  translationTier={translationTier as any}
+                  translationTone={translationTone as any}
+                  keyboardVisible={keyboardVisible || dockLockH > 0}
+                    onBarHeightChange={handleComposerHeightChange}
+                  />
+                </View>
+                <View style={{ height: dockSpacerH }} pointerEvents="none" />
               </Animated.View>
+              )}
             </>
           )}
+        </View>
+
+        <View
+          pointerEvents={attachmentsOpen && !isRoomSendBlocked ? "auto" : "none"}
+          style={[
+            StyleSheet.absoluteFillObject,
+            { zIndex: 999, elevation: 999 },
+          ]}
+        >
+          <AttachmentSheet
+            ref={attachmentSheetRef}
+            theme={theme}
+            roomType={roomType ?? undefined}
+            bottomInset={Math.max(insets.bottom, 0)}
+            defaultOpenSnapIndex={1}
+            onClose={() => {
+              setAttachmentsOpen(false);
+              if (openedFromKeyboardRef.current) {
+                openedFromKeyboardRef.current = false;
+                scheduleDockLockRelease(400);
+                requestAnimationFrame(() => inputBarRef.current?.focus?.());
+                return;
+              }
+              scheduleDockLockRelease(0);
+            }}
+            onPickFromGallery={() => {
+              attachmentSheetRef.current?.close();
+              setAttachmentsOpen(false);
+              openedFromKeyboardRef.current = false;
+              scheduleDockLockRelease(0);
+              setMediaVisible(true);
+            }}
+            onOpenCamera={async () => {
+              attachmentSheetRef.current?.close();
+              setAttachmentsOpen(false);
+              openedFromKeyboardRef.current = false;
+              scheduleDockLockRelease(0);
+              try {
+                const permissionResult =
+                  await ImagePicker.requestCameraPermissionsAsync();
+                if (permissionResult.granted === false) {
+                  Alert.alert(
+                    t("chat:permission.cameraTitle", {
+                      defaultValue: "권한 필요",
+                    }),
+                    t("chat:permission.cameraMessage", {
+                      defaultValue: "카메라 접근 권한이 필요합니다.",
+                    }),
+                  );
+                  return;
+                }
+                const result = await ImagePicker.launchCameraAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                  quality: 0.8,
+                });
+                if (
+                  !result.canceled &&
+                  result.assets &&
+                  result.assets.length > 0
+                ) {
+                  const picked = result.assets.map((a) => ({
+                    uri: a.uri,
+                    filename:
+                      a.fileName ||
+                      a.uri.split("/").pop() ||
+                      "camera_image.jpg",
+                    width: a.width,
+                    height: a.height,
+                    isVideo: a.type === "video",
+                    durationSec: a.duration ? a.duration / 1000 : null,
+                  }));
+                  handleSendSelectedMedia(picked as any, false);
+                }
+              } catch {}
+            }}
+            onOpenCall={handleOpenCommunicationSheet}
+            onOpenVoice={() => {
+              attachmentSheetRef.current?.close();
+              setAttachmentsOpen(false);
+              openedFromKeyboardRef.current = false;
+              scheduleDockLockRelease(0);
+              setVoiceVisible(true);
+            }}
+            onOpenCapture={handleOpenCaptureFromAttachment}
+            onOpenSchedule={handleOpenScheduleFromAttachment}
+            onOpenContact={handleOpenContactShare}
+            onOpenMap={() => {
+              attachmentSheetRef.current?.close();
+              setAttachmentsOpen(false);
+              openedFromKeyboardRef.current = false;
+              scheduleDockLockRelease(0);
+              handleOpenMap();
+            }}
+            onOpenFile={async () => {
+              attachmentSheetRef.current?.close();
+              setAttachmentsOpen(false);
+              openedFromKeyboardRef.current = false;
+              scheduleDockLockRelease(0);
+              if (shouldUseSecureForSend()) {
+                showSecureStatus(
+                  t("chat:secure.fileUnsupported"),
+                );
+                return;
+              }
+              try {
+                const result = await DocumentPicker.getDocumentAsync({
+                  type: "*/*",
+                  multiple: true,
+                  copyToCacheDirectory: true,
+                });
+                if ((result as any)?.canceled) return;
+                const assets = ((result as any)?.assets ?? [])
+                  .map((a: any) => ({
+                    uri: String(a?.uri ?? ""),
+                    name: String(
+                      a?.name ??
+                        a?.fileName ??
+                        a?.uri?.split?.("/")?.pop?.() ??
+                        "file",
+                    ),
+                    filename: String(
+                      a?.name ??
+                        a?.fileName ??
+                        a?.uri?.split?.("/")?.pop?.() ??
+                        "file",
+                    ),
+                    fileName: String(
+                      a?.name ??
+                        a?.fileName ??
+                        a?.uri?.split?.("/")?.pop?.() ??
+                        "file",
+                    ),
+                    mimeType: String(
+                      a?.mimeType ?? a?.mime ?? "application/octet-stream",
+                    ),
+                    mime: String(
+                      a?.mimeType ?? a?.mime ?? "application/octet-stream",
+                    ),
+                    size: typeof a?.size === "number" ? a.size : null,
+                  }))
+                  .filter((a: any) => a.uri);
+                if (!assets.length) return;
+                const replyToMessageUid = parseUuid(replyTo?.id ?? null);
+                await sendFileAction(assets as any, replyToMessageUid);
+                if (replyToMessageUid) cancelReply();
+              } catch {
+                Alert.alert(
+                  t("chat:filePick.failTitle", {
+                    defaultValue: "파일 선택 실패",
+                  }),
+                  t("chat:filePick.failMessage", {
+                    defaultValue: "파일을 선택하지 못했습니다.",
+                  }),
+                );
+              }
+            }}
+            onSendMediaDirect={async (assets, bundleSend) => {
+              const picked = (assets ?? []).map((a: any) => {
+                const uri = String(a?.uri ?? "");
+                const rawType = String(a?.type ?? a?.mediaType ?? a?.mimeType ?? a?.mime ?? "").toLowerCase();
+                const filename = String(a?.fileName ?? a?.filename ?? uri.split("/").pop() ?? "");
+                const isVideo =
+                  !!a?.isVideo ||
+                  rawType.includes("video") ||
+                  /\.(mp4|mov|m4v|webm|mkv|avi|3gp|3gpp)(\?|#|$)/i.test(uri) ||
+                  /\.(mp4|mov|m4v|webm|mkv|avi|3gp|3gpp)$/i.test(filename);
+
+                return {
+                  uri,
+                  filename,
+                  width: typeof a?.width === "number" ? a.width : undefined,
+                  height: typeof a?.height === "number" ? a.height : undefined,
+                  isVideo,
+                  type: isVideo ? "video" : "image",
+                  mediaType: isVideo ? "video" : "image",
+                  mimeType: a?.mimeType ?? a?.mime ?? (isVideo ? "video/mp4" : undefined),
+                  durationSec:
+                    typeof a?.durationSec === "number"
+                      ? a.durationSec
+                      : typeof a?.duration === "number"
+                        ? a.duration / 1000
+                        : undefined,
+                };
+              }) as any;
+              await handleSendSelectedMedia(picked, !!bundleSend);
+            }}
+          />
         </View>
 
         <SenderPickerSheet
@@ -2077,7 +3581,6 @@ export default function Chat() {
             inlineSearch.closeSender();
           }}
         />
-
         <DatePickerSheet
           visible={inlineSearch.dateSheetOpen}
           onClose={inlineSearch.closeDate}
@@ -2087,30 +3590,29 @@ export default function Chat() {
             inlineSearch.setDates(range);
           }}
         />
-
-        <MediaPickerModal
-          visible={mediaVisible}
-          onClose={() => setMediaVisible(false)}
-          photoQuality={photoQuality}
-          videoQuality={videoQuality}
-          onChangePhotoQuality={setPhotoQuality}
-          onChangeVideoQuality={setVideoQuality}
-          onSendSelected={handleSendSelectedMedia}
-          themeColor={THEME_COLOR}
+        <UploadModals
+          mediaVisible={mediaVisible}
+          setMediaVisible={setMediaVisible}
+          voiceVisible={voiceVisible}
+          setVoiceVisible={setVoiceVisible}
+          onSendMedia={handleSendSelectedMedia}
+          onSendVoice={handleSendVoice}
+          theme={theme}
+          roomType={roomType ?? undefined}
         />
 
-        <VoiceRecorderModal
-          visible={voiceVisible}
-          onClose={() => setVoiceVisible(false)}
-          onSend={handleSendVoice}
-          themeColor={THEME_COLOR}
-          roomType={resolveRoomType({ type: roomType ?? 'dm' })}
+        <FriendCommunicationSheet
+          visible={communicationVisible}
+          target={communicationTarget}
+          onClose={() => setCommunicationVisible(false)}
+          onPhoneCall={handlePhoneCallFromChat}
+          onVoiceCall={handleVoiceCallFromChat}
         />
 
-        <TranslatePopover
+        <TranslationSettingsPanel
           visible={translatePopoverVisible}
           onClose={closeTranslatePopover}
-          roomType={resolveRoomType({ type: roomType ?? 'dm' })}
+          roomType={resolveRoomType({ type: roomType ?? "dm" })}
           theme={theme}
           autoTranslate={autoTranslate}
           onToggleAutoTranslate={toggleAutoTranslate}
@@ -2119,10 +3621,10 @@ export default function Chat() {
           setTranslationTier={setTierWithPersist as any}
           translationTone={translationTone as TranslationTone}
           setTranslationTone={setToneWithPersist as any}
-          viewLang={viewLangForPopover}
+          viewLang={viewLangLocal}
           settingLang={settingLangForPopover}
           onChangeViewLang={handleChangeViewLang}
-          preferredLang={preferredLangForPopover}
+          preferredLang={preferredLangLocal}
           onChangePreferredLang={handleChangePreferredLang}
           peerViewLang={peerViewLangForPopover}
           peerSettingLang={peerSettingLangForPopover}
@@ -2133,52 +3635,175 @@ export default function Chat() {
           } as any)}
         />
 
-        <MessageActionSheet
-          visible={actionSheetVisible}
-          onClose={closeMessageActions}
+        <ActionModals
           theme={theme}
-          meId={me}
-          message={actionSheetMsg}
-          onReact={(emoji: string, msg: any) => {
-            console.warn('[react]', emoji, msg?.id);
-          }}
+          actionSheetVisible={actionSheetVisible}
+          closeMessageActions={closeMessageActions}
+          actionSheetMsg={actionSheetMsg}
+          meId={me ?? ""}
+          onReact={handleReactMessage}
+          canShowNoticeAction={canPromoteNoticeInCurrentRoom}
           onAction={async (key: MessageActionKey, msg: any) => {
             try {
-              const pair = deriveTextPairForReplyPreview({ msg, meId: me });
-              const displayText = showTranslatedOnly ? pair.altText : pair.primaryText;
-
+              const pair = deriveTextPairForReplyPreview({ msg, meId: me ?? "" });
+              const displayText = showTranslatedOnly
+                ? pair.altText
+                : pair.primaryText;
               switch (key) {
-                case 'copy': {
-                  const toCopy = displayText || String(msg?.content ?? '');
-                  await Clipboard.setStringAsync(String(toCopy ?? '').trim());
+                case "copy": {
+                  await Clipboard.setStringAsync(
+                    String(
+                      actionSheetCopyText ||
+                        displayText ||
+                        (msg?.content ?? ""),
+                    ).trim(),
+                  );
                   closeMessageActions();
                   return;
                 }
-                case 'select_copy': {
-                  console.warn('[select_copy] not implemented');
+                case "select_copy": {
                   closeMessageActions();
+
+                  if (isSecureMessageForSelectCopy(msg)) {
+                    requestAnimationFrame(() => {
+                      showFloatingToast({
+                        message: t("chat:toast.selectCopySecureBlocked"),
+                        tone: "default",
+                      });
+                    });
+                    return;
+                  }
+
+                  const textOptions = buildMessageTextOptionsForSelectCopy({
+                    msg,
+                    fallbackDisplayText: actionSheetCopyText || displayText,
+                  });
+
+                  if (!textOptions) {
+                    requestAnimationFrame(() => {
+                      showFloatingToast({
+                        message: t("chat:toast.selectCopyUnsupported"),
+                        tone: "default",
+                      });
+                    });
+                    return;
+                  }
+
+                  const senderName = resolveSenderDisplayNameForMessage({
+                    msg,
+                    meId: me ?? "",
+                    fallback: String(displayText || "").trim() ? undefined : t("chat:message"),
+                  });
+
+                  requestAnimationFrame(() => {
+                    setSelectCopyTarget({
+                      senderName,
+                      ...textOptions,
+                    });
+                  });
                   return;
                 }
-                case 'reply': {
+                case "reply": {
                   handleReplyFromList(msg);
                   closeMessageActions();
                   return;
                 }
-                case 'share': {
-                  const toShare = displayText || String(msg?.content ?? '');
-                  await Share.share({ message: String(toShare ?? '') });
+                case "to_me": {
+                  closeMessageActions();
+                  requestAnimationFrame(() => {
+                    shareMessageToSelf(msg).then((result) => {
+                      if (result === "ok") {
+                        showFloatingToast({
+                          message: t("chat:toast.shareToSelfSuccess"),
+                          tone: "success" as any,
+                          showMark: true,
+                        });
+                        return;
+                      }
+
+                      if (result === "secure") {
+                        showFloatingToast({
+                          message: t("chat:toast.shareSecureBlocked"),
+                          tone: "default",
+                        });
+                        return;
+                      }
+
+                      if (result === "unsupported") {
+                        showFloatingToast({
+                          message: t("chat:toast.shareUnsupported"),
+                          tone: "default",
+                        });
+                        return;
+                      }
+
+                      showFloatingToast({
+                        message:
+                          result === "room_unavailable"
+                            ? t("chat:toast.shareSelfRoomUnavailable")
+                            : t("chat:toast.shareFailed"),
+                        tone: "default",
+                      });
+                    });
+                  });
+                  return;
+                }
+                case "share": {
+                  await Share.share({
+                    message: String(displayText || (msg?.content ?? "")),
+                  });
                   closeMessageActions();
                   return;
                 }
-                case 'cancel_moment': {
+                case "cancel_moment": {
                   closeMessageActions();
-                  requestAnimationFrame(() => cancelMomentDelete(msg).catch(() => {}));
+                  requestAnimationFrame(() =>
+                    cancelMomentDelete(msg).then(
+                      () => {},
+                      () => {},
+                    ),
+                  );
                   return;
                 }
-                case 'delete': {
+                case "highlight": {
+                  closeMessageActions();
+                  requestAnimationFrame(() => {
+                    handleToggleBookmarkMessage(msg).then(
+                      () => {},
+                      () => {},
+                    );
+                  });
+                  return;
+                }
+                case "capture": {
+                  closeMessageActions();
+                  requestAnimationFrame(() => handleStartCaptureFromMessage(msg, { displayText: actionSheetCopyText }));
+                  return;
+                }
+                case "delete": {
                   closeMessageActions();
                   Keyboard.dismiss();
-                  requestAnimationFrame(() => selection.enter(String(msg?.id ?? '').trim() || null));
+                  requestAnimationFrame(() => {
+                    selection.enter(String(msg?.id ?? "").trim() || null);
+                  });
+                  return;
+                }
+                case "notice": {
+                  closeMessageActions();
+                  if (!canPromoteNoticeInCurrentRoom) {
+                    requestAnimationFrame(() => {
+                      showFloatingToast({
+                        message: t("chat:toast.noticeNoPermission"),
+                        tone: "default",
+                      });
+                    });
+                    return;
+                  }
+                  await promoteMessageToNotice(msg);
+                  handleRoomRealtimeUpdate();
+                  try {
+                    DeviceEventEmitter.emit('chat:messages_updated', { roomId: resolvedRoomId });
+                  } catch {}
                   return;
                 }
                 default:
@@ -2186,97 +3811,130 @@ export default function Chat() {
                   return;
               }
             } catch (e: any) {
-              console.warn('[MessageActionSheet] onAction error', e?.message ?? String(e));
               closeMessageActions();
             }
           }}
-        />
-
-        <MomentQuickMenu
-          visible={momentMenuVisible}
-          theme={theme}
-          anchor={momentMenuAnchor}
-          canCancel={!!momentMenuMsg && String(momentMenuMsg?.senderId ?? momentMenuMsg?.sender_id ?? '') === String(me)}
-          onClose={closeMomentMenu}
+          momentMenuVisible={momentMenuVisible}
+          closeMomentMenu={closeMomentMenu}
+          momentMenuAnchor={momentMenuAnchor}
+          momentMenuMsg={momentMenuMsg}
           onCancelMoment={() => {
             const msg = momentMenuMsg;
             closeMomentMenu();
-            requestAnimationFrame(() => cancelMomentDelete(msg).catch(() => {}));
+            requestAnimationFrame(() =>
+              cancelMomentDelete(msg).then(
+                () => {},
+                () => {},
+              ),
+            );
           }}
-        />
-
-        <DeleteTypeModal
-          visible={deleteTypeVisible}
-          onClose={closeDeleteType}
-          theme={theme}
-          canDeleteAll={isBulk ? bulkEligibility.canDeleteAll : deleteEligibility.canDeleteAll}
-          canMomentDelete={isBulk ? bulkEligibility.canMomentDelete : deleteEligibility.canMomentDelete}
+          deleteTypeVisible={deleteTypeVisible}
+          closeDeleteType={closeDeleteType}
+          canDeleteAll={
+            isBulk
+              ? bulkEligibility.canDeleteAll
+              : deleteEligibility.canDeleteAll
+          }
+          canMomentDelete={
+            isBulk
+              ? bulkEligibility.canMomentDelete
+              : deleteEligibility.canMomentDelete
+          }
+          allowReadBased={allowReadBasedMomentDelete}
           onDeleteMine={() => {
             closeDeleteType();
-            requestAnimationFrame(() => {
-              const roomId = Number(resolvedRoomId);
-              if (!Number.isFinite(roomId) || roomId <= 0) return;
-
-              if (isBulk) {
-                const ids = selectedMsgs
-                  .map((m) => pickMsgId(m))
-                  .filter((id): id is string => !!id);
-
-                // local_* 은 서버 tombstone 불가 → 로컬만 삭제
-                const localIds = ids.filter((id) => isLocalMsg(id));
-                localIds.forEach((id) => deleteMineLocal({ id }).catch(() => {}));
-
-                // 서버 메시지는 tombstone(chat_message_deletions) 기록 + 로컬 삭제
-                const serverIds = ids.filter((id) => !isLocalMsg(id));
-                if (serverIds.length) {
-                  deleteMessagesMine({ roomId, messageIds: serverIds }).catch(() => {});
-                }
-
-                selection.exit();
-              } else {
-                const id = pickMsgId(deleteTypeMsg);
-                if (!id) return;
-
-                if (isLocalMsg(id)) {
-                  deleteMineLocal({ id }).catch(() => {});
-                } else {
-                  deleteMessageMine({ roomId, messageId: id }).catch(() => {});
-                }
-              }
-            });
+            runDeleteMineNow(undefined, isBulk);
           }}
           onDeleteAll={() => {
             closeDeleteType();
             requestAnimationFrame(() => {
               if (isBulk) {
-                selectedMsgs.forEach((m) => deleteAll(m).catch(() => {}));
+                for (const m of selectedMsgs) {
+                  deleteAll(m);
+                }
                 selection.exit();
               } else {
-                deleteAll(deleteTypeMsg).catch(() => {});
+                deleteAll(deleteTypeMsg);
               }
             });
           }}
           onConfirmMoment={(cfg) => {
             closeDeleteType();
-            requestAnimationFrame(() => {
+            requestAnimationFrame(async () => {
               if (isBulk) {
-                selectedMsgs.forEach((m) => setMomentDelete(m, cfg).catch(() => {}));
+                for (const m of selectedMsgs) {
+                  await setMomentDelete(m, cfg).catch(() => {});
+                }
                 selection.exit();
               } else {
-                setMomentDelete(deleteTypeMsg, cfg).catch(() => {});
+                setMomentDelete(deleteTypeMsg, cfg).then(
+                  () => {},
+                  () => {},
+                );
               }
             });
           }}
         />
 
-        {bootCoverVisible && (
+        <SelectCopyModal
+          visible={!!selectCopyTarget}
+          senderName={selectCopyTarget?.senderName ?? t("chat:message")}
+          originalText={selectCopyTarget?.originalText ?? ""}
+          translatedText={selectCopyTarget?.translatedText ?? null}
+          theme={theme}
+          onClose={() => setSelectCopyTarget(null)}
+          onCopied={() => {
+            showFloatingToast({
+              message: t("chat:toast.copied"),
+              tone: "success" as any,
+              showMark: true,
+            });
+          }}
+        />
+
+        <ReactionUsersSheet
+          visible={!!reactionUsersSheet}
+          roomId={resolvedRoomId}
+          messageUid={reactionUsersSheet?.messageUid ?? null}
+          initialReactionKey={reactionUsersSheet?.reactionKey ?? null}
+          meId={me ?? ""}
+          knownMembers={chatMenuInitialMembers}
+          theme={theme}
+          onClose={closeReactionUsersSheet}
+        />
+
+
+        <CoonnFloatingToast
+          visible={floatingToast.visible && !isKickedRoomBlocked}
+          message={floatingToast.message}
+          tone={floatingToast.tone as any}
+          showMark={floatingToast.showMark}
+          onHidden={hideFloatingToast}
+          bottomOffset={Math.max(150, insets.bottom + 142)}
+        />
+
+        {bootCoverVisible && shellBootLoading && (
           <Animated.View
             pointerEvents="auto"
-            style={[StyleSheet.absoluteFillObject, styles.bootCover, { backgroundColor: theme.background, opacity: bootCoverAnim }]}
+            style={[
+              StyleSheet.absoluteFillObject,
+              styles.bootCover,
+              { backgroundColor: theme.background, opacity: bootCoverAnim },
+            ]}
           >
             <ActivityIndicator size="small" />
           </Animated.View>
         )}
+
+        <RoomAccessBlockOverlay
+          visible={isKickedRoomBlocked}
+          topInset={Math.max(insets.top, 0)}
+          bottomInset={Math.max(insets.bottom, 0)}
+          title={t("chat:room.kickedTitle")}
+          message={t("chat:room.kickedMessage")}
+          confirmLabel={t("common:confirm", { defaultValue: "확인" })}
+          onConfirm={handleConfirmKickedExit}
+        />
       </View>
     </ChatThemeGate>
   );
@@ -2284,40 +3942,105 @@ export default function Chat() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-
   headerWrap: {
+    position: "relative",
     zIndex: 50,
     elevation: 0,
-    shadowColor: 'transparent',
+    overflow: "visible",
+    shadowColor: "transparent",
     shadowOpacity: 0,
     shadowRadius: 0,
     shadowOffset: { width: 0, height: 0 },
     borderBottomWidth: 0,
   },
-
+  nonFriendActionOverlay: {
+    position: "absolute",
+    top: "100%",
+    left: 0,
+    right: 0,
+    zIndex: 70,
+    elevation: 70,
+  },
   listWrap: { flex: 1 },
-
-  inputWrap: {
-    paddingTop: 0,
-    marginTop: 0,
+  inputWrap: { paddingTop: 0, marginTop: 0 },
+  messageBootCenter: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
-
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-
-  bootCover: {
-    zIndex: 9999,
-    alignItems: 'center',
-    justifyContent: 'center',
+  inputBootBar: {
+    minHeight: 58,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 10,
   },
-
-  newPill: {
-    position: 'absolute',
-    alignSelf: 'center',
+  center: { flex: 1, alignItems: "center", justifyContent: "center" },
+  bootCover: { zIndex: 9999, alignItems: "center", justifyContent: "center" },
+  roomClosedBar: {
+    paddingHorizontal: 16,
+    paddingTop: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  roomClosedText: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  latestJumpButton: {
+    position: "absolute",
+    right: 16,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: StyleSheet.hairlineWidth,
+    shadowColor: "transparent",
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 0,
+  },
+  newMessageNoticePill: {
+    position: "absolute",
+    right: 16,
     paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 999,
-    backgroundColor: '#111827',
-    opacity: 0.92,
+    height: 34,
+    borderRadius: 17,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: StyleSheet.hairlineWidth,
+    shadowColor: "transparent",
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 0,
   },
-  newPillText: { color: '#ffffff', fontSize: 12, fontWeight: '600' },
+  newMessageNoticeText: {
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  lockedContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  lockedPillBg: {
+    width: "100%",
+    height: 48,
+    borderRadius: 12,
+    overflow: "hidden",
+    position: "relative",
+  },
+  lockedPillContent: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10,
+  },
+  lockedText: { fontSize: 14, fontWeight: "600" },
 });

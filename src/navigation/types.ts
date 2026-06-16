@@ -1,4 +1,4 @@
-﻿export type RootStackParamList = {
+export type RootStackParamList = {
   // 시스템
   SplashGate: undefined;
   Offline: undefined;
@@ -8,6 +8,7 @@
   // 인증
   Login: undefined;
   PhoneVerification: undefined;
+  ProfileSetup: { nextRoute?: string } | undefined;
 
   // 탭 루트
   MainTabs: undefined;
@@ -42,6 +43,28 @@
   ChatInvite: { roomId: number } | undefined;
   ChatManage: { roomId: number } | undefined;
   ChatMembers: { roomId: number } | undefined;
+  OpenChatProfileViewer:
+    | {
+        roomId?: number | string | null;
+        targetUserId?: string | null;
+        openProfileId?: string | null;
+        nickname?: string | null;
+        statusMessage?: string | null;
+        avatarUrl?: string | null;
+        roomType?: string | null;
+        role?: string | null;
+        myRole?: string | null;
+        isBlocked?: boolean | null;
+        isMe?: boolean | null;
+      }
+    | undefined;
+  OpenChatProfileEdit:
+    | {
+        roomId?: number | string | null;
+        initialTitle?: string | null;
+        initialCoverUrl?: string | null;
+      }
+    | undefined;
   MediaViewer: { uri: string } | undefined;
   ChatSetting:
   | {
@@ -75,11 +98,7 @@
   PostDetail: { postId: string; user_id?: string };
   CreatePost: undefined;
 
-  /** ✅ 추가 */
   EditPost: { postId: string };
-
-  /** ✅ 팔로우 리스트 (팔로잉/팔로워/요청 탭) */
-  ProfileFollowList: undefined;
 
   // 친구
   FriendAdd: undefined;
@@ -94,10 +113,18 @@
   SettingsPrivacy: undefined;
   AccountSettings: {user_id: string; isMe?: boolean; };
   ThemeSettings: undefined;
+  CustomerCenterHome: undefined;
+  CustomerCenterList: undefined;
+  CustomerCenterDetail: { id?: string; item?: unknown } | undefined;
+  PolicyViewer: { title?: string; type?: string; url?: string } | undefined;
+  NoticeList: undefined;
+  ContactForm: undefined;
 
   // 비즈니스
   BusinessRegister: undefined;
   BusinessUnregister: undefined;
   BusinessCreate: undefined;
   BusinessDetail: { businessId: string };
+  MyBusinessList: undefined;
+  BusinessManager: { businessId: string | null } | undefined;
 };

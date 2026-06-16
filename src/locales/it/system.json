@@ -1,0 +1,27 @@
+{
+  "splash_loading": "Preparazione…",
+  "offline": "Sei offline. Controlla la rete.",
+  "not_found": "Pagina non trovata.",
+  "notFound": {
+    "header": "Pagina assente",
+    "title": "Pagina non trovata",
+    "desc": "La schermata richiesta non è disponibile. Controlla percorso o dati.",
+    "retry": "Riprova",
+    "home": "Vai alla Home",
+    "homeShort": "Home",
+    "previous": "Indietro",
+    "quick": {
+      "friends": "Amici",
+      "settings": "Impostazioni"
+    }
+  },
+  "offlineScreen": {
+    "header": "Offline",
+    "title": "Sei offline",
+    "desc": "Controlla la connessione.\nWi‑Fi o dati mobili potrebbero essere disattivati.",
+    "retry": "Riprova",
+    "check": "Verifica connessione",
+    "openSettings": "Apri impostazioni",
+    "home": "Home"
+  }
+}

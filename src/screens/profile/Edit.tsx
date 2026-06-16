@@ -1,158 +1,133 @@
-﻿// src/screens/profile/Edit.tsx
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   ActivityIndicator,
   Alert,
   Pressable,
   TextInput,
   ScrollView,
-  ImageStyle,
   Platform,
   KeyboardAvoidingView,
   Modal,
   GestureResponderEvent,
-  StatusBar,
+  Dimensions,
+  Image as RNImage,
 } from 'react-native';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { Image } from 'expo-image';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRoute, useNavigation, useIsFocused } from '@react-navigation/native';
+// ✅ [변경] Expo StatusBar 사용 (확실한 스타일 제어 + Edge-to-Edge 유지)
+import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
-  ChevronLeft,
-  Edit3,
-  Trash2,
-  Camera,
-  Star,
-  Hand,
-  Type,
-  Calendar,
-  Music,
-  Smile,
-  Check,
+  X, Camera, Check, Palette, Layout, MoreHorizontal, RotateCcw, Edit2, Eye, EyeOff,
+  ArrowUp, ArrowDown, Globe, Lock, Users, Sun, Moon, Trash2, Plus
 } from 'lucide-react-native';
-import * as ImagePicker from 'expo-image-picker';
 import { supabase } from '@/lib/supabase';
+import { useTranslation } from 'react-i18next';
 
-type Profile = {
-  id: string;
-  nickname: string | null;
-  private_avatar_url: string | null;
-  avatar_url: string | null;
-  status_message: string | null;
-  follow_id: string | null;
-  cover_image_url?: string | null;
-  hide_all_tab?: boolean | null;
-  theme_color?: string | null;
-  font_color?: string | null;
-  status_bar_style?: 'light-content' | 'dark-content' | null;
-};
+import SimpleMediaPicker, { SimplePickedImage } from '../../components/SimpleMediaPicker';
+import UniversalImageEditor from '../../components/UniversalImageEditor';
 
-type VisibilityType =
-  | 'public'
-  | 'friends'
-  | 'followers'
-  | 'friends_followers'
-  | 'private'
-  | null;
-
-type ProfileTab = {
-  id: string;
-  name: string;
-  sort_order: number;
-  is_hidden: boolean | null;
-  visibility: VisibilityType;
-};
-
+const SCREEN_WIDTH = Dimensions.get('window').width;
 const DEFAULT_THEME_COLOR = '#5F5747';
 const DEFAULT_FONT_COLOR = '#F9FAFB';
-const DEFAULT_STATUS_BAR_STYLE_DB: 'light-content' | 'dark-content' = 'light-content';
 
-// ===== 색 관련 유틸 =====
 
-// HSL -> HEX
+const PROFILE_EDIT_SELECT =
+  'user_id, id, nickname, private_avatar_url, avatar_url, status_message, follow_id, cover_image_url, hide_all_tab, theme_color, font_color, status_bar_style' as const;
+
+const PROFILE_TAB_SELECT =
+  'id, user_id, name, sort_order, is_hidden, visibility' as const;
+
+// -------------------------------------------------------------------------
+// 이미지 업로드 헬퍼
+// -------------------------------------------------------------------------
+const uploadImage = async (
+  uri: string | null, 
+  userId: string, 
+  type: 'avatar' | 'cover', 
+  bucket: string = 'profile-images'
+) => {
+  if (!uri || !uri.startsWith('file://')) return uri;
+
+  try {
+    const ext = uri.split('.').pop()?.toLowerCase() || 'jpg';
+    const fileName = `profiles/${userId}/${type}_${Date.now()}.${ext}`;
+    
+    const formData = new FormData();
+    formData.append('file', {
+      uri: uri,
+      name: fileName,
+      type: `image/${ext}`,
+    } as any);
+
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(fileName, formData, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+    if (error) throw error;
+
+    const { data: publicUrlData } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(fileName);
+
+    return publicUrlData.publicUrl;
+  } catch (e) {
+    console.error('Image Upload Failed:', e);
+    throw e;
+  }
+};
+
+// -------------------------------------------------------------------------
+// Color Utils
+// -------------------------------------------------------------------------
 function hslToHex(h: number, s: number, l: number) {
   const c = (1 - Math.abs(2 * l - 1)) * s;
   const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
   const m = l - c / 2;
-  let r = 0,
-    g = 0,
-    b = 0;
-
-  if (h >= 0 && h < 60) {
-    r = c;
-    g = x;
-    b = 0;
-  } else if (h >= 60 && h < 120) {
-    r = x;
-    g = c;
-    b = 0;
-  } else if (h >= 120 && h < 180) {
-    r = 0;
-    g = c;
-    b = x;
-  } else if (h >= 180 && h < 240) {
-    r = 0;
-    g = x;
-    b = c;
-  } else if (h >= 240 && h < 300) {
-    r = x;
-    g = 0;
-    b = c;
-  } else {
-    r = c;
-    g = 0;
-    b = x;
-  }
-
+  let r = 0, g = 0, b = 0;
+  if (h >= 0 && h < 60) { r = c; g = x; b = 0; }
+  else if (h >= 60 && h < 120) { r = x; g = c; b = 0; }
+  else if (h >= 120 && h < 180) { r = 0; g = c; b = x; }
+  else if (h >= 180 && h < 240) { r = 0; g = x; b = c; }
+  else if (h >= 240 && h < 300) { r = x; g = 0; b = c; }
+  else { r = c; g = 0; b = x; }
   const toHex = (v: number) => {
     const n = Math.round((v + m) * 255);
-    const s2 = n.toString(16).padStart(2, '0');
-    return s2;
+    return n.toString(16).padStart(2, '0');
   };
-
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
-
-function normalizeHex(hex: string) {
-  if (!hex) return '';
+function normalizeHex(hex: string | null | undefined) {
+  if (!hex) return DEFAULT_THEME_COLOR;
   if (hex.startsWith('#')) {
-    if (hex.length === 9) return hex.slice(0, 7); // #RRGGBBAA -> #RRGGBB
+    if (hex.length === 9) return hex.slice(0, 7);
     return hex;
   }
-  if (hex.length === 6) return `#${hex}`;
-  return hex;
+  return `#${hex}`;
 }
-
+function hexToRgba(hex: string, alpha: number) {
+  const { r, g, b } = hexToRgb(hex);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 type RGB = { r: number; g: number; b: number };
-
-function hexToRgb(hex: string): RGB | null {
+function hexToRgb(hex: string): RGB {
   const normalized = normalizeHex(hex).replace('#', '');
-  if (!/^[0-9a-fA-F]{6}$/.test(normalized)) return null;
   const r = parseInt(normalized.slice(0, 2), 16);
   const g = parseInt(normalized.slice(2, 4), 16);
   const b = parseInt(normalized.slice(4, 6), 16);
   return { r, g, b };
 }
-
 function rgbToHex(r: number, g: number, b: number): string {
-  const to = (v: number) =>
-    Math.max(0, Math.min(255, Math.round(v)))
-      .toString(16)
-      .padStart(2, '0');
+  const to = (v: number) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0');
   return `#${to(r)}${to(g)}${to(b)}`;
 }
-
 function mixRgb(a: RGB, b: RGB, t: number): RGB {
   return {
     r: a.r + (b.r - a.r) * t,
@@ -160,2496 +135,942 @@ function mixRgb(a: RGB, b: RGB, t: number): RGB {
     b: a.b + (b.b - a.b) * t,
   };
 }
-
-// hue(0~1), brightness(0~1) -> HEX
 function computePickerHex(huePos: number, brightnessPos: number): string {
   const h = huePos * 360;
   const baseHex = hslToHex(h, 0.6, 0.5);
-  const baseRgb = hexToRgb(baseHex) ?? { r: 160, g: 140, b: 110 };
-
+  const baseRgb = hexToRgb(baseHex);
   let out: RGB;
-  if (brightnessPos <= 0) {
-    out = { r: 0, g: 0, b: 0 }; // 완전 검정
-  } else if (brightnessPos >= 1) {
-    out = { r: 255, g: 255, b: 255 }; // 완전 흰색
-  } else if (brightnessPos < 0.5) {
-    const t = brightnessPos / 0.5; // 0~0.5: 검정 → 기준색
+  if (brightnessPos <= 0) out = { r: 0, g: 0, b: 0 };
+  else if (brightnessPos >= 1) out = { r: 255, g: 255, b: 255 };
+  else if (brightnessPos < 0.5) {
+    const t = brightnessPos / 0.5;
     out = mixRgb({ r: 0, g: 0, b: 0 }, baseRgb, t);
   } else {
-    const t = (brightnessPos - 0.5) / 0.5; // 0.5~1: 기준색 → 흰색
+    const t = (brightnessPos - 0.5) / 0.5;
     out = mixRgb(baseRgb, { r: 255, g: 255, b: 255 }, t);
   }
-
   return rgbToHex(out.r, out.g, out.b);
 }
 
+// -------------------------------------------------------------------------
+// Main Component
+// -------------------------------------------------------------------------
 export default function ProfileEdit() {
-  const route = useRoute<any>();
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
+  const route = useRoute<any>();
   const insets = useSafeAreaInsets();
+  const isFocused = useIsFocused();
+  const paramUserId = route.params?.user_id;
+  const routeInitialProfile = route.params?.initialProfile ?? null;
+  const routeInitialCoverAspectRatio =
+    typeof route.params?.initialCoverAspectRatio === 'number'
+      ? route.params.initialCoverAspectRatio
+      : null;
 
-  const paramUserId = route.params?.user_id as string | undefined;
-
-  const [meId, setMeId] = useState<string | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+  // --- States ---
+  const [loading, setLoading] = useState(!routeInitialProfile);
   const [saving, setSaving] = useState(false);
+  const [meId, setMeId] = useState<string | null>(null);
+  const [initialProfile, setInitialProfile] = useState<any>(routeInitialProfile);
 
-  const [nickname, setNickname] = useState('');
-  const [statusMsg, setStatusMsg] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [coverUrl, setCoverUrl] = useState<string | null>(null);
-  const [hideAllTab, setHideAllTab] = useState(false);
-  const [themeColor, setThemeColor] = useState(DEFAULT_THEME_COLOR);
-  const [fontColor, setFontColor] = useState(DEFAULT_FONT_COLOR);
+  // Profile Data
+  const [nickname, setNickname] = useState(routeInitialProfile?.nickname ?? '');
+  const [followId, setFollowId] = useState(routeInitialProfile?.follow_id ?? '');
+  const [statusMsg, setStatusMsg] = useState(routeInitialProfile?.status_message ?? '');
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(
+    routeInitialProfile?.avatar_url ?? routeInitialProfile?.private_avatar_url ?? null,
+  );
+  const [coverUrl, setCoverUrl] = useState<string | null>(routeInitialProfile?.cover_image_url ?? null);
+  const [hideAllTab, setHideAllTab] = useState(routeInitialProfile?.hide_all_tab ?? false);
+  const [themeColor, setThemeColor] = useState(normalizeHex(routeInitialProfile?.theme_color));
+  const [fontColor, setFontColor] = useState(normalizeHex(routeInitialProfile?.font_color ?? DEFAULT_FONT_COLOR));
+  const [statusBarStyle, setStatusBarStyle] = useState<'light-content' | 'dark-content'>(
+    routeInitialProfile?.status_bar_style ?? 'light-content',
+  );
+  const [coverAspectRatio, setCoverAspectRatio] = useState<number>(
+    routeInitialCoverAspectRatio ?? 3 / 4,
+  );
 
-  const [coverAspectRatio, setCoverAspectRatio] =
-    useState<number | null>(null);
-
-  // 탭 관련
-  const [tabs, setTabs] = useState<ProfileTab[]>([]);
-  const [tabsLoading, setTabsLoading] = useState(false);
+  // Tabs Data
+  const [tabs, setTabs] = useState<any[]>([]);
   const [newTabName, setNewTabName] = useState('');
-  const [tabMutatingId, setTabMutatingId] = useState<string | null>(null);
-
-  // 탭 옵션 모달
-  const [tabOptionsTarget, setTabOptionsTarget] =
-    useState<ProfileTab | null>(null);
-
-  // 테마/폰트 컬러 피커
+  
+  // UI States
   const [colorPickerVisible, setColorPickerVisible] = useState(false);
-  const [colorPickerTarget, setColorPickerTarget] =
-    useState<'theme' | 'font'>('theme');
-  const [tempColor, setTempColor] = useState(themeColor);
-
-  // hue / brightness 상태
-  const [huePos, setHuePos] = useState(0.6); // 0~1
-  const [brightnessPos, setBrightnessPos] = useState(0.5); // 0~1
+  const [colorPickerTarget, setColorPickerTarget] = useState<'theme' | 'font'>('theme');
+  const [tempColor, setTempColor] = useState(DEFAULT_THEME_COLOR);
+  const [huePos, setHuePos] = useState(0.5);
+  const [brightnessPos, setBrightnessPos] = useState(0.5);
   const [hueBarWidth, setHueBarWidth] = useState(1);
   const [brightnessBarWidth, setBrightnessBarWidth] = useState(1);
 
-  // ✅ StatusBar 글자색(light / dark) 선택 상태
-  type BarStyle = 'light-content' | 'dark-content';
-  const [statusBarStyle, setStatusBarStyle] =
-    useState<BarStyle>('light-content');
+  const [tabOptionTarget, setTabOptionTarget] = useState<any | null>(null);
+  const [visModalVisible, setVisModalVisible] = useState(false);
+  const [visMode, setVisMode] = useState<'public' | 'private' | 'custom'>('public');
+  const [visFriends, setVisFriends] = useState(true);
+  const [visFollowers, setVisFollowers] = useState(true);
 
-  const toggleStatusBarStyle = () => {
-    setStatusBarStyle((prev) =>
-      prev === 'light-content' ? 'dark-content' : 'light-content',
-    );
-  };
+  // Picker & Editor
+  const [pickerVisible, setPickerVisible] = useState(false);
+  const [pickerTarget, setPickerTarget] = useState<'avatar' | 'cover'>('avatar');
+  const [editorVisible, setEditorVisible] = useState(false);
+  const [tempImageUri, setTempImageUri] = useState<string | null>(null);
 
+  // --- Computeds ---
+  const themeGradientColors = useMemo<[string, string, string]>(() => {
+    const hex = normalizeHex(themeColor).replace('#', '');
+    return [`#${hex}00`, `#${hex}80`, `#${hex}FF`];
+  }, [themeColor]);
 
-  // hue 기반 기준색 (밝기 바의 가운데 컬러용)
   const baseHueColor = useMemo(() => {
     const h = huePos * 360;
     return hslToHex(h, 0.6, 0.5);
   }, [huePos]);
 
-  const effectiveFontColor = useMemo(
-    () => normalizeHex(fontColor || DEFAULT_FONT_COLOR),
-    [fontColor],
-  );
+  const handlePillBg = useMemo(() => hexToRgba(themeColor, 0.30), [themeColor]);
+  const handlePillBorder = useMemo(() => hexToRgba(themeColor, 0.40), [themeColor]);
 
-  // 테마 기반 커버 그라데이션 (테마색 → 투명)
-  const themeGradientColors = useMemo<[string, string, string]>(() => {
-    const raw = (themeColor || DEFAULT_THEME_COLOR).replace('#', '');
-    const base =
-      raw.length === 6
-        ? raw
-        : DEFAULT_THEME_COLOR.replace('#', '');
-    return [`#${base}00`, `#${base}80`, `#${base}FF`];
-  }, [themeColor]);
+  // --- Load ---
+  const applyProfileSnapshot = useCallback((profile: any) => {
+    setInitialProfile(profile);
+    setNickname(profile.nickname ?? '');
+    setFollowId(profile.follow_id ?? '');
+    setStatusMsg(profile.status_message ?? '');
+    setAvatarUrl(profile.avatar_url ?? profile.private_avatar_url ?? null);
+    setCoverUrl(profile.cover_image_url ?? null);
+    setThemeColor(normalizeHex(profile.theme_color));
+    setFontColor(normalizeHex(profile.font_color ?? DEFAULT_FONT_COLOR));
+    setStatusBarStyle(profile.status_bar_style ?? 'light-content');
+    setHideAllTab(profile.hide_all_tab ?? false);
 
-  // 공개 범위 모달
-  const [visibilityModalVisible, setVisibilityModalVisible] =
-    useState(false);
-  const [visibilityEditTab, setVisibilityEditTab] =
-    useState<ProfileTab | null>(null);
-  const [visMode, setVisMode] = useState<'public' | 'private' | 'custom'>(
-    'public',
-  );
-  const [visFriends, setVisFriends] = useState(true);
-  const [visFollowers, setVisFollowers] = useState(true);
-
-  const postsCount = 0;
-  const followersCount = 0;
-  const followingCount = 0;
-
-  const effectiveUserId = useMemo(
-    () => paramUserId ?? meId ?? null,
-    [paramUserId, meId],
-  );
+    if (profile.cover_image_url && !routeInitialCoverAspectRatio) {
+      RNImage.getSize(
+        profile.cover_image_url,
+        (w: number, h: number) => {
+          if (w && h) setCoverAspectRatio(w / h);
+          else setCoverAspectRatio(3 / 4);
+        },
+        () => setCoverAspectRatio(3 / 4),
+      );
+    }
+  }, [routeInitialCoverAspectRatio]);
 
   const load = useCallback(async () => {
     try {
-      setLoading(true);
+      if (!routeInitialProfile) setLoading(true);
 
-      const { data: userData, error: userErr } =
-        await supabase.auth.getUser();
-      if (userErr) throw userErr;
-      const user = userData.user;
-      if (!user) throw new Error('로그인이 필요합니다.');
-      setMeId(user.id);
+      const { data: user } = await supabase.auth.getUser();
+      const uid = user.user?.id;
+      if (!uid) throw new Error(t('errors:auth.loginRequired'));
+      setMeId(uid);
 
-      const targetUserId = paramUserId ?? user.id;
-      if (targetUserId !== user.id) {
-        Alert.alert(
-          '접근 불가',
-          '다른 사람의 프로필은 수정할 수 없습니다.',
-        );
+      if (paramUserId && paramUserId !== uid) {
+        Alert.alert(t('common:error'), t('profile:edit.error_permission'));
         navigation.goBack();
         return;
       }
 
-      const { data, error } = (await supabase
-        .from('profiles')
-        .select(
-          [
-            'id',
-            'nickname',
-            'avatar_url',
-            'private_avatar_url',
-            'status_message',
-            'follow_id',
-            'cover_image_url',
-            'hide_all_tab',
-            'theme_color',
-            'font_color',
-            'status_bar_style', // ← StatusBar 스타일
-          ].join(','),
-        )
-        .eq('id', targetUserId)
-        .maybeSingle()) as {
-        data: Profile | null;
-        error: any;
-      };
+      if (!routeInitialProfile) {
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select(PROFILE_EDIT_SELECT)
+          .eq('id', uid)
+          .single();
 
-      if (error) throw error;
-      if (!data) throw new Error('프로필을 찾을 수 없습니다.');
-
-      setProfile(data);
-      setNickname(data.nickname ?? '');
-      setStatusMsg(data.status_message ?? '');
-      setAvatarUrl(
-        data.avatar_url ?? data.private_avatar_url ?? null,
-      );
-      setCoverUrl(data.cover_image_url ?? null);
-      setHideAllTab(data.hide_all_tab ?? false);
-
-      const initialTheme = normalizeHex(
-        data.theme_color ?? DEFAULT_THEME_COLOR,
-      );
-      setThemeColor(initialTheme);
-
-      const initialFont = normalizeHex(
-        data.font_color ?? DEFAULT_FONT_COLOR,
-      );
-      setFontColor(initialFont);
-
-      setTempColor(initialTheme);
-
-      // DB에 저장된 status_bar_style → RN StatusBar 스타일로 변환
-      const dbStyle =
-        (data.status_bar_style as BarStyle | null) ??
-        DEFAULT_STATUS_BAR_STYLE_DB;
-      setStatusBarStyle(dbStyle);
-
-      // 탭들
-      setTabsLoading(true);
-      const { data: tabsData, error: tabsErr } = (await supabase
-        .from('profile_tabs')
-        .select('id,name,sort_order,is_hidden,visibility')
-        .eq('user_id', targetUserId)
-        .order('sort_order', { ascending: true })) as {
-        data: ProfileTab[] | null;
-        error: any;
-      };
-
-      if (tabsErr) {
-        console.log('tabs load error', tabsErr);
-        setTabs([]);
+        if (profileError) throw profileError;
+        if (profile) applyProfileSnapshot(profile);
+        setLoading(false);
       } else {
-        setTabs(tabsData ?? []);
+        setInitialProfile((prev: any) => prev ?? routeInitialProfile);
+        setLoading(false);
       }
+
+      const { data: tabsData, error: tabsError } = await supabase
+        .from('profile_tabs')
+        .select(PROFILE_TAB_SELECT)
+        .eq('user_id', uid)
+        .order('sort_order', { ascending: true });
+
+      if (tabsError) throw tabsError;
+      setTabs(tabsData ?? []);
     } catch (e: any) {
-      Alert.alert('불러오기 실패', e?.message ?? String(e));
+      Alert.alert(t('common:error'), e.message);
+      if (!routeInitialProfile) navigation.goBack();
     } finally {
-      setTabsLoading(false);
       setLoading(false);
     }
-  }, [navigation, paramUserId]);
+  }, [applyProfileSnapshot, navigation, paramUserId, routeInitialProfile, t]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => { load(); }, [load]);
 
-  const mainAvatarUri = useMemo(() => {
-    if (!profile) return avatarUrl ?? undefined;
-    const base =
-      avatarUrl ?? profile.avatar_url ?? profile.private_avatar_url;
-    return base ?? undefined;
-  }, [profile, avatarUrl]);
-
-  const coverImageUri = useMemo(() => {
-    if (coverUrl) return coverUrl;
-    return undefined;
-  }, [coverUrl, mainAvatarUri]);
-
-  useEffect(() => {
-    if (!coverImageUri) {
-      setCoverAspectRatio(null);
-      return;
-    }
-
-    Image.getSize(
-      coverImageUri,
-      (w, h) => {
-        if (w && h) {
-          setCoverAspectRatio(w / h);
-        } else {
-          setCoverAspectRatio(3 / 4);
-        }
-      },
-      () => setCoverAspectRatio(3 / 4),
-    );
-  }, [coverImageUri]);
-
-  /**
-   * 이미지 업로드 - Supabase Storage (profile-images 버킷)
-   */
-  const uploadImage = useCallback(
-    async (uri: string, prefix: string) => {
-      if (!effectiveUserId) throw new Error('로그인 필요');
-
-      const ext = 'jpg';
-      const path = `profiles/${effectiveUserId}/${prefix}_${Date.now()}.${ext}`;
-      const mime = 'image/jpeg';
-
-      const res = await fetch(uri);
-      const bin = await res.arrayBuffer();
-
-      const { error: uploadError } = await supabase.storage
-        .from('profile-images')
-        .upload(path, bin, {
-          contentType: mime,
-          upsert: true,
-        });
-
-      if (uploadError) {
-        console.error(
-          'supabase storage upload error',
-          uploadError,
-        );
-        throw new Error('이미지 업로드 실패');
-      }
-
-      const { data: publicData } = supabase.storage
-        .from('profile-images')
-        .getPublicUrl(path);
-
-      if (!publicData?.publicUrl) {
-        throw new Error('이미지 URL 생성 실패');
-      }
-
-      return publicData.publicUrl as string;
-    },
-    [effectiveUserId],
-  );
-
-  const pickAvatar = useCallback(async () => {
-    try {
-      const perm =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!perm.granted)
-        throw new Error('사진 접근 권한이 없습니다.');
-
-      const picked = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.9,
-      });
-      if (picked.canceled) return;
-      const asset = picked.assets[0];
-      const url = await uploadImage(asset.uri, 'avatar');
-      setAvatarUrl(url);
-    } catch (e: any) {
-      Alert.alert('업로드 실패', e?.message ?? String(e));
-    }
-  }, [uploadImage]);
-
-  const pickCover = useCallback(async () => {
-    try {
-      const perm =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!perm.granted)
-        throw new Error('사진 접근 권한이 없습니다.');
-
-      const picked = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.9,
-      });
-      if (picked.canceled) return;
-      const asset = picked.assets[0];
-      const url = await uploadImage(asset.uri, 'cover');
-      setCoverUrl(url);
-    } catch (e: any) {
-      Alert.alert('업로드 실패', e?.message ?? String(e));
-    }
-  }, [uploadImage]);
-
-  const handleDeleteProfile = () => {
+  // --- Actions ---
+  const handleRevert = useCallback(() => {
+    if (!initialProfile) return;
     Alert.alert(
-      '프로필 초기화',
-      '프로필을 초기화하시겠어요? (계정은 그대로이고 프로필 정보만 제거됩니다.)',
+      t('profile:edit.revert_title'),
+      t('profile:edit.revert_msg'),
       [
-        { text: '취소', style: 'cancel' },
-        {
-          text: '초기화',
-          style: 'destructive',
-          onPress: async () => {
-            if (!effectiveUserId) return;
-            try {
-              setSaving(true);
-              const { error } = await supabase
-                .from('profiles')
-                .update({
-                  nickname: null,
-                  status_message: null,
-                  avatar_url: null,
-                  private_avatar_url: null,
-                  cover_image_url: null,
-                  hide_all_tab: false,
-                  theme_color: DEFAULT_THEME_COLOR,
-                  font_color: DEFAULT_FONT_COLOR,
-                  status_bar_style: DEFAULT_STATUS_BAR_STYLE_DB,
-                })
-                .eq('id', effectiveUserId);
-              if (error) throw error;
-              await load();
-            } catch (e: any) {
-              Alert.alert('초기화 실패', e?.message ?? String(e));
-            } finally {
-              setSaving(false);
-            }
-          },
-        },
-      ],
+        { text: t('common:cancel'), style: 'cancel' },
+        { 
+          text: t('profile:edit.revert_action'), 
+          style: 'destructive', 
+          onPress: () => {
+            setNickname(initialProfile.nickname ?? '');
+            setFollowId(initialProfile.follow_id ?? '');
+            setStatusMsg(initialProfile.status_message ?? '');
+            setAvatarUrl(initialProfile.avatar_url ?? initialProfile.private_avatar_url);
+            setCoverUrl(initialProfile.cover_image_url);
+            setThemeColor(normalizeHex(initialProfile.theme_color));
+            setFontColor(normalizeHex(initialProfile.font_color));
+            setStatusBarStyle(initialProfile.status_bar_style ?? 'light-content');
+            setHideAllTab(initialProfile.hide_all_tab ?? false);
+            load(); 
+          }
+        }
+      ]
     );
-  };
+  }, [initialProfile, load, t]);
 
-  const saveProfile = useCallback(async () => {
-    if (!effectiveUserId || !profile) return;
+  const openCustomPicker = useCallback((type: 'avatar' | 'cover') => {
+    setPickerTarget(type);
+    setPickerVisible(true);
+  }, []);
+
+  const handleMediaSelect = useCallback((images: SimplePickedImage[]) => {
+    if (images.length === 0) return;
+    const selected = images[0];
+    setTempImageUri(selected.uri); 
+    setPickerVisible(false);
+    setTimeout(() => setEditorVisible(true), 200);
+  }, []);
+
+  const handleEditorSave = useCallback((uri: string, width: number, height: number) => {
+    setEditorVisible(false);
+    setTempImageUri(null);
+    if (pickerTarget === 'avatar') {
+      setAvatarUrl(uri);
+    } else {
+      setCoverUrl(uri);
+      if (width && height) setCoverAspectRatio(width / height);
+    }
+  }, [pickerTarget]);
+
+  const openColorPicker = useCallback((target: 'theme' | 'font') => {
+    setColorPickerTarget(target);
+    setTempColor(target === 'theme' ? themeColor : fontColor);
+    setHuePos(0.5); setBrightnessPos(0.5);
+    setColorPickerVisible(true);
+  }, [themeColor, fontColor]);
+
+  const handleHuePress = useCallback((e: GestureResponderEvent) => {
+    if (!hueBarWidth) return;
+    const x = e.nativeEvent.locationX;
+    const pos = Math.max(0, Math.min(1, x / hueBarWidth));
+    setHuePos(pos);
+    setTempColor(computePickerHex(pos, brightnessPos));
+  }, [hueBarWidth, brightnessPos]);
+
+  const handleBrightPress = useCallback((e: GestureResponderEvent) => {
+    if (!brightnessBarWidth) return;
+    const x = e.nativeEvent.locationX;
+    const pos = Math.max(0, Math.min(1, x / brightnessBarWidth));
+    setBrightnessPos(pos);
+    setTempColor(computePickerHex(huePos, pos));
+  }, [brightnessBarWidth, huePos]);
+
+  const applyColor = useCallback(() => {
+    if (colorPickerTarget === 'theme') setThemeColor(tempColor);
+    else setFontColor(tempColor);
+    setColorPickerVisible(false);
+  }, [colorPickerTarget, tempColor]);
+
+  // Tab Logic
+  const addTab = useCallback(async () => {
+    if (!newTabName.trim()) return;
+    try {
+      const nextOrder = (tabs[tabs.length - 1]?.sort_order ?? 0) + 1;
+      const { data, error } = await supabase.from('profile_tabs').insert({
+        user_id: meId,
+        name: newTabName.trim(),
+        sort_order: nextOrder,
+        is_hidden: false,
+        visibility: 'public'
+      }).select(PROFILE_TAB_SELECT).single();
+      if (error) throw error;
+      setTabs(prev => [...prev, data]);
+      setNewTabName('');
+    } catch (e) { Alert.alert(t('common:fail'), t('profile:edit.error_add_tab')); }
+  }, [newTabName, tabs, meId, t]);
+
+  const updateTabName = useCallback((id: string, text: string) => {
+    setTabs(prev => prev.map(t => t.id === id ? { ...t, name: text } : t));
+  }, []);
+
+  const saveTabName = useCallback(async (tab: any) => {
+    if (!tab.name.trim()) return;
+    await supabase.from('profile_tabs').update({ name: tab.name }).eq('id', tab.id);
+  }, []);
+
+  const toggleTabHidden = useCallback(async (tab: any) => {
+    const next = !tab.is_hidden;
+    setTabs(prev => prev.map(t => t.id === tab.id ? { ...t, is_hidden: next } : t));
+    await supabase.from('profile_tabs').update({ is_hidden: next }).eq('id', tab.id);
+  }, []);
+
+  const moveTab = useCallback(async (direction: 'up' | 'down') => {
+    if (!tabOptionTarget) return;
+    const idx = tabs.findIndex(t => t.id === tabOptionTarget.id);
+    if (idx < 0) return;
+    const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (targetIdx < 0 || targetIdx >= tabs.length) return;
+
+    const current = tabs[idx];
+    const target = tabs[targetIdx];
+    const newTabs = [...tabs];
+    newTabs[idx] = target; newTabs[targetIdx] = current;
+    
+    const tempOrder = newTabs[idx].sort_order;
+    newTabs[idx].sort_order = newTabs[targetIdx].sort_order;
+    newTabs[targetIdx].sort_order = tempOrder;
+    
+    setTabs(newTabs);
+    setTabOptionTarget(null);
+    await supabase.from('profile_tabs').update({ sort_order: newTabs[targetIdx].sort_order }).eq('id', current.id);
+    await supabase.from('profile_tabs').update({ sort_order: newTabs[idx].sort_order }).eq('id', target.id);
+  }, [tabs, tabOptionTarget]);
+
+  const deleteTab = useCallback(async () => {
+    if (!tabOptionTarget) return;
+    const target = tabOptionTarget;
+    setTabOptionTarget(null);
+    Alert.alert(t('common:delete'), t('profile:edit.confirm_delete_tab', { name: target.name }), [
+      { text: t('common:cancel'), style: 'cancel' },
+      { text: t('common:delete'), style: 'destructive', onPress: async () => {
+        setTabs(prev => prev.filter(t => t.id !== target.id));
+        await supabase.from('profile_tabs').delete().eq('id', target.id);
+      }}
+    ]);
+  }, [tabOptionTarget, t]);
+
+  const openVisModal = useCallback((tab: any) => {
+    setTabOptionTarget(null);
+    setTabOptionTarget(tab);
+    const v = tab.visibility || 'public';
+    if (v === 'public' || v === 'private') {
+      setVisMode(v); setVisFriends(true); setVisFollowers(true);
+    } else {
+      setVisMode('custom');
+      setVisFriends(v === 'friends' || v === 'friends_followers');
+      setVisFollowers(v === 'followers' || v === 'friends_followers');
+    }
+    setVisModalVisible(true);
+  }, []);
+
+  const saveVisibility = useCallback(async () => {
+    if (!tabOptionTarget) return;
+    let nextVal = 'public';
+    if (visMode === 'private') nextVal = 'private';
+    else if (visMode === 'custom') {
+      if (visFriends && visFollowers) nextVal = 'friends_followers';
+      else if (visFriends) nextVal = 'friends';
+      else if (visFollowers) nextVal = 'followers';
+      else nextVal = 'private';
+    }
+    setTabs(prev => prev.map(t => t.id === tabOptionTarget.id ? { ...t, visibility: nextVal } : t));
+    await supabase.from('profile_tabs').update({ visibility: nextVal }).eq('id', tabOptionTarget.id);
+    setVisModalVisible(false);
+    setTabOptionTarget(null);
+  }, [tabOptionTarget, visMode, visFriends, visFollowers]);
+
+  // -------------------------------------------------------------------------
+  // 저장 핸들러 (수정됨)
+  // -------------------------------------------------------------------------
+// Edit.tsx 내부의 handleSave 함수
+
+  const handleSave = useCallback(async () => {
+    if (!meId) return;
 
     try {
       setSaving(true);
 
-      const dbStatusBarStyle: 'light' | 'dark' =
-        statusBarStyle === 'dark-content' ? 'dark' : 'light';
+      const finalAvatarUrl = await uploadImage(avatarUrl, meId, 'avatar');
+      const finalCoverUrl = await uploadImage(coverUrl, meId, 'cover');
+      const normalizedFollowId = followId.trim().replace(/^@+/, '').replace(/\s+/g, '');
 
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          nickname: nickname.trim() || null,
-          status_message: statusMsg.trim() || null,
-          avatar_url: avatarUrl || null,
-          cover_image_url: coverUrl || null,
-          hide_all_tab: hideAllTab,
-          theme_color: normalizeHex(themeColor),
-          font_color: normalizeHex(fontColor),
-
-          status_bar_style: statusBarStyle,
-        })
-        .eq('id', effectiveUserId);
+      const { error } = await supabase.from('profiles').update({
+        nickname,
+        follow_id: normalizedFollowId || null,
+        status_message: statusMsg,
+        avatar_url: finalAvatarUrl,
+        cover_image_url: finalCoverUrl,
+        theme_color: themeColor,
+        font_color: fontColor,
+        status_bar_style: statusBarStyle, 
+        hide_all_tab: hideAllTab,
+        updated_at: new Date(),
+      }).eq('id', meId);
 
       if (error) throw error;
 
-      Alert.alert('저장됨', '프로필이 저장되었습니다.');
+      // ✅ [핵심 수정] 
+      // navigate('ScreenName')은 스택에 해당 화면이 이미 있다면
+      // 그 위에 있는 화면(현재 Edit 화면)을 닫고(Pop) 돌아갑니다.
+      // 따라서 '뒤로가기'를 해도 Edit 화면이 나오지 않습니다.
       navigation.goBack();
+
     } catch (e: any) {
-      Alert.alert('저장 실패', e?.message ?? String(e));
+      console.error(e);
+      Alert.alert(t('common:fail'), t('profile:edit.error_save'));
     } finally {
       setSaving(false);
-    }
-  }, [
-    nickname,
-    statusMsg,
-    avatarUrl,
-    coverUrl,
-    hideAllTab,
-    themeColor,
-    fontColor,
-    statusBarStyle,
-    effectiveUserId,
-    profile,
-    navigation,
-  ]);
-
-  const refreshTabs = useCallback(async () => {
-    if (!effectiveUserId) return;
-    try {
-      setTabsLoading(true);
-      const { data, error } = (await supabase
-        .from('profile_tabs')
-        .select('id,name,sort_order,is_hidden,visibility')
-        .eq('user_id', effectiveUserId)
-        .order('sort_order', { ascending: true })) as {
-        data: ProfileTab[] | null;
-        error: any;
-      };
-      if (error) throw error;
-      setTabs(data ?? []);
-    } catch (e: any) {
-      Alert.alert('탭 불러오기 실패', e?.message ?? String(e));
-    } finally {
-      setTabsLoading(false);
-    }
-  }, [effectiveUserId]);
-
-  const handleAddTab = useCallback(async () => {
-    const name = newTabName.trim();
-    if (!name || !effectiveUserId) return;
-    try {
-      setTabMutatingId('new');
-      const nextOrder =
-        (tabs[tabs.length - 1]?.sort_order ?? 0) + 1;
-      const { error } = await supabase
-        .from('profile_tabs')
-        .insert({
-          user_id: effectiveUserId,
-          name,
-          sort_order: nextOrder,
-          is_hidden: false,
-          visibility: 'public',
-        });
-      if (error) throw error;
-      setNewTabName('');
-      await refreshTabs();
-    } catch (e: any) {
-      Alert.alert('탭 추가 실패', e?.message ?? String(e));
-    } finally {
-      setTabMutatingId(null);
-    }
-  }, [effectiveUserId, newTabName, refreshTabs, tabs]);
-
-  const handleToggleHide = useCallback(
-    async (tab: ProfileTab) => {
-      if (!effectiveUserId) return;
-      try {
-        setTabMutatingId(tab.id);
-        const { error } = await supabase
-          .from('profile_tabs')
-          .update({ is_hidden: !tab.is_hidden })
-          .eq('id', tab.id)
-          .eq('user_id', effectiveUserId);
-        if (error) throw error;
-        await refreshTabs();
-      } catch (e: any) {
-        Alert.alert('숨기기 실패', e?.message ?? String(e));
-      } finally {
-        setTabMutatingId(null);
-      }
-    },
-    [effectiveUserId, refreshTabs],
-  );
-
-  const handleRenameTabLocal = (id: string, name: string) => {
-    setTabs((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, name } : t)),
-    );
-  };
-
-  const handleRenameTabSave = useCallback(
-    async (tab: ProfileTab) => {
-      if (!effectiveUserId) return;
-      const name = tab.name.trim();
-      if (!name) return;
-      try {
-        setTabMutatingId(tab.id);
-        const { error } = await supabase
-          .from('profile_tabs')
-          .update({ name })
-          .eq('id', tab.id)
-          .eq('user_id', effectiveUserId);
-        if (error) throw error;
-        await refreshTabs();
-      } catch (e: any) {
-        Alert.alert('이름 변경 실패', e?.message ?? String(e));
-      } finally {
-        setTabMutatingId(null);
-      }
-    },
-    [effectiveUserId, refreshTabs],
-  );
-
-  const handleDeleteTab = useCallback(
-    (tab: ProfileTab) => {
-      if (!effectiveUserId) return;
-      Alert.alert(
-        '탭 삭제',
-        `‘${tab.name}’ 탭을 삭제할까요?\n\n탭만 삭제되고, 게시물은 그대로 남습니다.`,
-        [
-          { text: '취소', style: 'cancel' },
-          {
-            text: '계속',
-            style: 'destructive',
-            onPress: () => {
-              Alert.alert(
-                '정말 삭제할까요?',
-                '이 작업은 되돌릴 수 없습니다.',
-                [
-                  { text: '취소', style: 'cancel' },
-                  {
-                    text: '삭제',
-                    style: 'destructive',
-                    onPress: async () => {
-                      try {
-                        setTabMutatingId(tab.id);
-                        const { error } = await supabase
-                          .from('profile_tabs')
-                          .delete()
-                          .eq('id', tab.id)
-                          .eq('user_id', effectiveUserId);
-                        if (error) throw error;
-                        await refreshTabs();
-                      } catch (e: any) {
-                        Alert.alert(
-                          '삭제 실패',
-                          e?.message ?? String(e),
-                        );
-                      } finally {
-                        setTabMutatingId(null);
-                      }
-                    },
-                  },
-                ],
-              );
-            },
-          },
-        ],
-      );
-    },
-    [effectiveUserId, refreshTabs],
-  );
-
-  // 탭 순서 변경 (위/아래)
-  const handleMoveTab = useCallback(
-    async (tabId: string, direction: 'up' | 'down') => {
-      if (!effectiveUserId) return;
-      const idx = tabs.findIndex((t) => t.id === tabId);
-      if (idx === -1) return;
-
-      const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
-      if (targetIdx < 0 || targetIdx >= tabs.length) return;
-
-      const current = tabs[idx];
-      const target = tabs[targetIdx];
-
-      try {
-        setTabMutatingId(tabId);
-
-        const currentOrder = current.sort_order;
-        const targetOrder = target.sort_order;
-
-        const { error: err1 } = await supabase
-          .from('profile_tabs')
-          .update({ sort_order: targetOrder })
-          .eq('id', current.id)
-          .eq('user_id', effectiveUserId);
-        if (err1) throw err1;
-
-        const { error: err2 } = await supabase
-          .from('profile_tabs')
-          .update({ sort_order: currentOrder })
-          .eq('id', target.id)
-          .eq('user_id', effectiveUserId);
-        if (err2) throw err2;
-
-        await refreshTabs();
-      } catch (e: any) {
-        Alert.alert('순서 변경 실패', e?.message ?? String(e));
-      } finally {
-        setTabMutatingId(null);
-      }
-    },
-    [effectiveUserId, tabs, refreshTabs],
-  );
-
-  const visibilityLabel = (v: VisibilityType) => {
-    if (v === 'private') return '나만 보기';
-    if (v === 'friends') return '친구 공개';
-    if (v === 'followers') return '팔로워 공개';
-    if (v === 'friends_followers') return '친구+팔로워';
-    return '전체 공개';
-  };
-
-  // 공개 범위 모달 열기
-  const openVisibilityModal = (tab: ProfileTab) => {
-    setVisibilityEditTab(tab);
-    const v = tab.visibility ?? 'public';
-
-    if (v === 'public') {
-      setVisMode('public');
-      setVisFriends(true);
-      setVisFollowers(true);
-    } else if (v === 'private') {
-      setVisMode('private');
-      setVisFriends(false);
-      setVisFollowers(false);
-    } else {
-      setVisMode('custom');
-      setVisFriends(
-        v === 'friends' || v === 'friends_followers',
-      );
-      setVisFollowers(
-        v === 'followers' || v === 'friends_followers',
-      );
-    }
-
-    setVisibilityModalVisible(true);
-  };
-
-  const applyVisibility = async () => {
-    if (!effectiveUserId || !visibilityEditTab) return;
-    let next: VisibilityType = 'public';
-
-    if (visMode === 'public') {
-      next = 'public';
-    } else if (visMode === 'private') {
-      next = 'private';
-    } else {
-      const f = visFriends;
-      const fo = visFollowers;
-      if (f && fo) next = 'friends_followers';
-      else if (f) next = 'friends';
-      else if (fo) next = 'followers';
-      else next = 'private';
-    }
-
-    try {
-      setTabMutatingId(visibilityEditTab.id);
-      const { error } = await supabase
-        .from('profile_tabs')
-        .update({ visibility: next })
-        .eq('id', visibilityEditTab.id)
-        .eq('user_id', effectiveUserId);
-      if (error) throw error;
-      await refreshTabs();
-    } catch (e: any) {
-      Alert.alert('공개 범위 변경 실패', e?.message ?? String(e));
-    } finally {
-      setTabMutatingId(null);
-      setVisibilityModalVisible(false);
-      setVisibilityEditTab(null);
-    }
-  };
-
-  // 테마 / 폰트 컬러 피커 열기
-  const openThemePicker = () => {
-    setColorPickerTarget('theme');
-    setTempColor(themeColor);
-    setColorPickerVisible(true);
-  };
-
-  const openFontColorPicker = () => {
-    setColorPickerTarget('font');
-    setTempColor(fontColor);
-    setColorPickerVisible(true);
-  };
-
-  const handleHueBarLayout = (w: number) => {
-    if (w > 0) setHueBarWidth(w);
-  };
-
-  const handleBrightnessBarLayout = (w: number) => {
-    if (w > 0) setBrightnessBarWidth(w);
-  };
-
-  const handleHueBarPress = (e: GestureResponderEvent) => {
-    if (!hueBarWidth) return;
-    const x = e.nativeEvent.locationX;
-    let pos = x / hueBarWidth;
-    if (pos < 0) pos = 0;
-    if (pos > 1) pos = 1;
-    setHuePos(pos);
-
-    const hex = computePickerHex(pos, brightnessPos);
-    setTempColor(hex);
-  };
-
-  const handleBrightnessBarPress = (e: GestureResponderEvent) => {
-    if (!brightnessBarWidth) return;
-    const x = e.nativeEvent.locationX;
-    let pos = x / brightnessBarWidth;
-    if (pos < 0) pos = 0;
-    if (pos > 1) pos = 1;
-    setBrightnessPos(pos);
-
-    const hex = computePickerHex(huePos, pos);
-    setTempColor(hex);
-  };
-
-  const applyPickedColor = () => {
-    const normalized = normalizeHex(tempColor);
-    if (!normalized) {
-      setColorPickerVisible(false);
-      return;
-    }
-    if (colorPickerTarget === 'theme') {
-      setThemeColor(normalized);
-    } else {
-      setFontColor(normalized);
-    }
-    setColorPickerVisible(false);
-  };
-
-  if (loading || !profile) {
-    return (
-      <SafeAreaView
-        style={[
-          styles.center,
-          {
-            backgroundColor:
-              themeColor || DEFAULT_THEME_COLOR,
-          },
-        ]}
-      >
-        <ActivityIndicator />
-        <Text style={styles.loadingTxt}>불러오는 중…</Text>
-      </SafeAreaView>
-    );
-  }
-
-  const showBack = true;
-
-  // 탭 옵션 모달용 인덱스/이동 가능 여부
-  const currentOptionIndex =
-    tabOptionsTarget &&
-    tabs.findIndex((t) => t.id === tabOptionsTarget.id);
-  const canMoveUp =
-    currentOptionIndex !== null &&
-    currentOptionIndex !== undefined &&
-    currentOptionIndex > 0;
-  const canMoveDown =
-    currentOptionIndex !== null &&
-    currentOptionIndex !== undefined &&
-    currentOptionIndex >= 0 &&
-    currentOptionIndex < tabs.length - 1;
+    } 
+  }, [nickname, followId, statusMsg, avatarUrl, coverUrl, themeColor, fontColor, statusBarStyle, hideAllTab, meId, navigation, t]);
+  if (loading) return <View style={styles.center}><ActivityIndicator /></View>;
 
   return (
-    <>
-      {/* 상단을 투명하게 만들어서 커버 이미지가 노치까지 꽉 차게 */}
-      <StatusBar
-        translucent
-        backgroundColor="transparent"
-        barStyle={statusBarStyle}
+    <View style={{ flex: 1, backgroundColor: themeColor }}>
+      {/* ✅ [수정] Expo Status Bar 사용 
+          translucent={true}로 Edge-to-Edge 레이아웃은 유지하면서
+          style 속성으로 아이콘 색상(dark/light)을 확실하게 제어함.
+      */}
+      {isFocused && (
+        <StatusBar 
+          style={statusBarStyle === 'dark-content' ? 'dark' : 'light'} 
+          translucent={true}
+          backgroundColor="transparent"
+        />
+      )}
+      
+      {/* HEADER */}
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+        <Pressable onPress={() => navigation.goBack()} style={styles.iconBtn}>
+          <X size={24} color="#FFF" />
+        </Pressable>
+        <Text style={styles.headerTitle}>{t('profile:edit_title')}</Text>
+        <Pressable onPress={handleSave} disabled={saving} style={styles.saveBtn}>
+          {saving ? <ActivityIndicator size="small" color="#FFF" /> : <Check size={20} color="#FFF" />}
+        </Pressable>
+      </View>
+
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -50}
+      >
+        <ScrollView 
+          style={styles.container} 
+          contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* 1. PREVIEW SECTION */}
+          <View style={[styles.previewBox, { aspectRatio: coverAspectRatio }]}>
+            <Pressable style={StyleSheet.absoluteFill} onPress={() => openCustomPicker('cover')}>
+              <Image source={coverUrl ? { uri: coverUrl } : undefined} style={styles.coverImg} contentFit="cover" cachePolicy="memory-disk" />
+              <LinearGradient colors={themeGradientColors} style={styles.gradient} />
+              <View style={styles.editBadgeTop}>
+                <Camera size={14} color="#FFF" />
+                <Text style={styles.editBadgeText}>{t('profile:edit.change_cover')}</Text>
+              </View>
+            </Pressable>
+
+            <View style={styles.previewInfo}>
+              <View style={styles.profileMainRow}>
+                <View style={styles.avatarColumn}>
+                  <Pressable onPress={() => openCustomPicker('avatar')} style={styles.avatarWrap}>
+                    <Image
+                      source={avatarUrl ? { uri: avatarUrl } : undefined}
+                      style={styles.avatar}
+                      contentFit="cover"
+                      cachePolicy="memory-disk"
+                    />
+                    <View style={styles.avatarEditBadge}>
+                      <Camera size={12} color="#000" />
+                    </View>
+                  </Pressable>
+                </View>
+
+                <View style={styles.profileRightColumn}>
+                  <View
+                    style={[
+                      styles.handlePill,
+                      {
+                        backgroundColor: handlePillBg,
+                        borderColor: handlePillBorder,
+                      },
+                    ]}
+                  >
+                    <Text style={[styles.handlePillPrefix, { color: fontColor }]}>@</Text>
+                    <TextInput
+                      value={followId}
+                      onChangeText={(value) =>
+                        setFollowId(value.replace(/^@+/, '').replace(/\s+/g, ''))
+                      }
+                      placeholder="follow_id"
+                      placeholderTextColor="rgba(255,255,255,0.58)"
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      style={[styles.handlePillInput, { color: fontColor }]}
+                      numberOfLines={1}
+                    />
+                  </View>
+
+                  <View style={styles.statsRow}>
+                    <View style={styles.statItem}>
+                      <Text style={[styles.statNumber, { color: fontColor }]}>0</Text>
+                      <Text style={[styles.statLabel, { color: fontColor }]}>
+                        {t('profile:stat_posts')}
+                      </Text>
+                    </View>
+
+                    <View style={styles.statItem}>
+                      <Text style={[styles.statNumber, { color: fontColor }]}>0</Text>
+                      <Text style={[styles.statLabel, { color: fontColor }]}>
+                        {t('profile:stat_followers')}
+                      </Text>
+                    </View>
+
+                    <View style={styles.statItem}>
+                      <Text style={[styles.statNumber, { color: fontColor }]}>0</Text>
+                      <Text style={[styles.statLabel, { color: fontColor }]}>
+                        {t('profile:stat_following')}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+
+              <View style={styles.profileTextRow}>
+                <View style={styles.nicknameColumn}>
+                  <TextInput
+                    value={nickname}
+                    onChangeText={setNickname}
+                    placeholder={t('profile:no_name')}
+                    placeholderTextColor="rgba(255,255,255,0.58)"
+                    style={[styles.nameInput, { color: fontColor }]}
+                    numberOfLines={1}
+                  />
+                </View>
+
+                <View style={styles.statusColumn}>
+                  <TextInput
+                    value={statusMsg}
+                    onChangeText={setStatusMsg}
+                    placeholder={t('profile:edit.status_placeholder')}
+                    placeholderTextColor="rgba(255,255,255,0.58)"
+                    style={[styles.statusInlineInput, { color: fontColor }]}
+                    multiline
+                    numberOfLines={2}
+                  />
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* 2. UNIFIED CONTROL PANEL */}
+          <View style={styles.glassPanel}>
+            {/* Theme & Style */}
+            <View style={styles.panelSection}>
+              <Text style={styles.panelTitle}>{t('profile:edit.section_theme')}</Text>
+              
+              <Pressable style={styles.optionRow} onPress={() => openColorPicker('theme')}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <View style={styles.iconFixedWrap}>
+                    <Palette size={20} color="#374151" />
+                  </View>
+                  <Text style={styles.optionLabel}>{t('profile:edit.theme_color')}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <View style={[styles.colorPreview, { backgroundColor: themeColor }]} />
+                  <Text style={styles.colorHex}>{normalizeHex(themeColor).toUpperCase()}</Text>
+                </View>
+              </Pressable>
+
+              <Pressable style={styles.optionRow} onPress={() => openColorPicker('font')}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <View style={styles.iconFixedWrap}>
+                    <Text style={{ fontSize: 18, fontWeight: '700', color: '#374151' }}>A</Text>
+                  </View>
+                  <Text style={styles.optionLabel}>{t('profile:edit.font_color')}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <View style={[styles.colorPreview, { backgroundColor: fontColor }]} />
+                  <Text style={styles.colorHex}>{normalizeHex(fontColor).toUpperCase()}</Text>
+                </View>
+              </Pressable>
+
+              {/* ✅ 상단바 스타일 선택 */}
+              <Pressable style={styles.optionRow} onPress={() => setStatusBarStyle(prev => prev === 'light-content' ? 'dark-content' : 'light-content')}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <View style={styles.iconFixedWrap}>
+                    {statusBarStyle === 'light-content' ? <Sun size={20} color="#374151" /> : <Moon size={20} color="#374151" />}
+                  </View>
+                  <Text style={styles.optionLabel}>{t('profile:edit.statusbar')}</Text>
+                </View>
+                <Text style={styles.optionValue}>{statusBarStyle === 'light-content' ? t('profile:edit.text_white') : t('profile:edit.text_black')}</Text>
+              </Pressable>
+            </View>
+
+            <View style={styles.divider} />
+
+            {/* Tab Management */}
+            <View style={styles.panelSection}>
+              <View style={styles.panelHeader}>
+                <Text style={styles.panelTitle}>{t('profile:edit.section_tabs')}</Text>
+                <Layout size={16} color="#6B7280" />
+              </View>
+
+              <View style={styles.tabRow}>
+                <Text style={styles.tabNameFixed}>{t('profile:edit.tab_all')}</Text>
+                <Pressable onPress={() => setHideAllTab(!hideAllTab)} style={styles.iconBtnSmall}>
+                  {hideAllTab ? <EyeOff size={18} color="#9CA3AF" /> : <Eye size={18} color="#111827" />}
+                </Pressable>
+              </View>
+
+              {tabs.map((tab) => (
+                <View key={tab.id} style={styles.tabRow}>
+                  <TextInput
+                    value={tab.name}
+                    onChangeText={(txt) => updateTabName(tab.id, txt)}
+                    onBlur={() => saveTabName(tab)}
+                    style={[styles.tabNameInput, tab.is_hidden && { opacity: 0.5 }]}
+                  />
+                  <View style={styles.tabActions}>
+                    <Pressable onPress={() => toggleTabHidden(tab)} style={styles.iconBtnSmall}>
+                      {tab.is_hidden ? <EyeOff size={18} color="#9CA3AF" /> : <Eye size={18} color="#111827" />}
+                    </Pressable>
+                    <Pressable onPress={() => setTabOptionTarget(tab)} style={styles.iconBtnSmall}>
+                      <MoreHorizontal size={18} color="#111827" />
+                    </Pressable>
+                  </View>
+                </View>
+              ))}
+
+              <View style={styles.addTabRow}>
+                <TextInput
+                  value={newTabName}
+                  onChangeText={setNewTabName}
+                  placeholder={t('profile:edit.tab_input_placeholder')}
+                  style={styles.addTabInput}
+                  onSubmitEditing={addTab}
+                />
+                <Pressable onPress={addTab} style={[styles.addBtn, !newTabName && { opacity: 0.3 }]} disabled={!newTabName}>
+                  <Plus size={18} color="#FFF" />
+                </Pressable>
+              </View>
+            </View>
+
+            <View style={styles.divider} />
+
+            <Pressable style={styles.revertBtn} onPress={handleRevert}>
+              <RotateCcw size={16} color="#EF4444" />
+              <Text style={styles.revertText}>{t('profile:edit.revert')}</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+
+      {/* Media Picker & Modals */}
+      <SimpleMediaPicker
+        visible={pickerVisible}
+        onClose={() => setPickerVisible(false)}
+        onSelect={handleMediaSelect}
+        maxSelect={1}
+        headerTitle={pickerTarget === 'avatar' ? t('profile:edit.picker_avatar') : t('profile:edit.picker_cover')}
+        themeColor={themeColor} 
       />
 
-      <SafeAreaView
-        style={[
-          styles.page,
-          {
-            backgroundColor:
-              themeColor || DEFAULT_THEME_COLOR,
-          },
-        ]}
-        edges={['left', 'right', 'bottom']} // top 은 우리가 직접 처리
-      >
-        {/* 키보드 올라올 때 전체 레이아웃을 위로 밀어주기 */}
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={
-            Platform.OS === 'ios'
-              ? insets.top + 8
-              : StatusBar.currentHeight ?? 0
-          }
-        >
-          <ScrollView
-            style={{ flex: 1 }}
-            keyboardDismissMode="interactive"
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={{
-              paddingBottom: 16 + insets.bottom,
-            }}
-          >
-            {/* 헤더 + 커버 */}
-            <View style={styles.headerBlock}>
-              <View
-                style={[
-                  styles.coverWrap,
-                  {
-                    aspectRatio: coverAspectRatio ?? 3 / 4,
-                    backgroundColor: themeColor,
-                  },
-                ]}
-              >
-                {coverImageUri ? (
-                  <Image
-                    source={{ uri: coverImageUri }}
-                    style={styles.coverImg as ImageStyle}
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <View
-                    style={[
-                      styles.coverImg,
-                      { backgroundColor: themeColor },
-                    ]}
-                  />
-                )}
+      <UniversalImageEditor 
+        visible={editorVisible}
+        sourceUri={tempImageUri || ''}
+        onClose={() => {
+          setEditorVisible(false);
+          setTempImageUri(null);
+        }}
+        onSave={handleEditorSave}
+        themeColor={themeColor}
+      />
 
-                <LinearGradient
-                  colors={themeGradientColors}
-                  locations={[0, 0.55, 1]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 0, y: 1 }}
-                  style={styles.coverGradient}
-                />
-
-                {/* 상단 네비게이션: 노치 높이만큼 내려줌 */}
-                <View
-                  style={[
-                    styles.coverTopRow,
-                    {
-                      top:
-                        insets.top +
-                        (Platform.OS === 'ios' ? 8 : 4),
-                    },
-                  ]}
-                >
-                  <View style={styles.navLeft}>
-                    {showBack && (
-                      <Pressable
-                        style={styles.backBtn}
-                        onPress={() => navigation.goBack()}
-                      >
-                        <ChevronLeft size={20} color="#FFFFFF" />
-                      </Pressable>
-                    )}
-                    <Text style={styles.editTitle}>
-                      프로필 편집
-                    </Text>
-                  </View>
-
-                  <View style={styles.navRight}>
-                    {/* ✅ StatusBar 글자색 토글 버튼 (휴지통 왼쪽) */}
-                    <Pressable
-                      style={styles.roundBtn}
-                      onPress={toggleStatusBarStyle}
-                    >
-                      <Text
-                        style={{
-                          color: '#F9FAFB',
-                          fontSize: 11,
-                          fontWeight: '700',
-                        }}
-                      >
-                        {statusBarStyle === 'light-content'
-                          ? 'W'
-                          : 'B'}
-                      </Text>
-                    </Pressable>
-
-                    <Pressable
-                      style={styles.roundBtn}
-                      onPress={handleDeleteProfile}
-                    >
-                      <Trash2 size={16} color="#FFFFFF" />
-                    </Pressable>
-                    <Pressable
-                      style={[
-                        styles.doneBtn,
-                        saving && { opacity: 0.6 },
-                      ]}
-                      disabled={saving}
-                      onPress={saveProfile}
-                    >
-                      <Text style={styles.doneTxt}>
-                        {saving ? '저장 중…' : '완료'}
-                      </Text>
-                    </Pressable>
-                  </View>
-                </View>
-
-                <View style={styles.coverBottomContent}>
-                  <View style={styles.nameTopBox}>
-                    <View style={styles.nameEditRow}>
-                      <TextInput
-                        value={nickname}
-                        onChangeText={setNickname}
-                        placeholder="이름 없음"
-                        placeholderTextColor="rgba(249,250,251,0.6)"
-                        style={[
-                          styles.nameEditInput,
-                          { color: effectiveFontColor },
-                        ]}
-                      />
-                      <Edit3
-                        size={16}
-                        color={effectiveFontColor}
-                      />
-                    </View>
-                  </View>
-
-                  <View style={styles.profileRow}>
-                    <Pressable onPress={pickAvatar}>
-                      {mainAvatarUri ? (
-                        <View style={styles.avatarEditWrapper}>
-                          <Image
-                            source={{ uri: mainAvatarUri }}
-                            style={
-                              styles.avatarBig as ImageStyle
-                            }
-                          />
-                          <View
-                            style={styles.avatarCameraBadge}
-                          >
-                            <Camera
-                              size={14}
-                              color="#111827"
-                            />
-                          </View>
-                        </View>
-                      ) : (
-                        <View
-                          style={[
-                            styles.avatarBig,
-                            styles.avatarPlaceholder,
-                          ]}
-                        >
-                          <Text
-                            style={[
-                              styles.avatarInitialBig,
-                              { color: effectiveFontColor },
-                            ]}
-                          >
-                            {nickname
-                              ?.trim()
-                              ?.[0]
-                              ?.toUpperCase() ?? 'U'}
-                          </Text>
-                          <View
-                            style={styles.avatarCameraBadge}
-                          >
-                            <Camera
-                              size={14}
-                              color="#111827"
-                            />
-                          </View>
-                        </View>
-                      )}
-                    </Pressable>
-
-                    <View style={styles.statsRow}>
-                      <View style={styles.statItem}>
-                        <Text
-                          style={[
-                            styles.statNumber,
-                            { color: effectiveFontColor },
-                          ]}
-                        >
-                          {postsCount}
-                        </Text>
-                        <Text style={styles.statLabel}>
-                          게시물
-                        </Text>
-                      </View>
-                      <View style={styles.statItem}>
-                        <Text
-                          style={[
-                            styles.statNumber,
-                            { color: effectiveFontColor },
-                          ]}
-                        >
-                          {followersCount}
-                        </Text>
-                        <Text style={styles.statLabel}>
-                          팔로워
-                        </Text>
-                      </View>
-                      <View style={styles.statItem}>
-                        <Text
-                          style={[
-                            styles.statNumber,
-                            { color: effectiveFontColor },
-                          ]}
-                        >
-                          {followingCount}
-                        </Text>
-                        <Text style={styles.statLabel}>
-                          팔로잉
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                </View>
-
-                <View style={styles.coverEditRow}>
-                  <Pressable
-                    style={styles.coverEditBtn}
-                    onPress={pickCover}
-                  >
-                    <Camera size={14} color="#F9FAFB" />
-                    <Text style={styles.coverEditTxt}>
-                      배경 편집
-                    </Text>
-                  </Pressable>
-                </View>
-              </View>
+      <Modal visible={colorPickerVisible} transparent animationType="fade" onRequestClose={() => setColorPickerVisible(false)}>
+        <Pressable style={styles.backdrop} onPress={() => setColorPickerVisible(false)}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>{colorPickerTarget === 'theme' ? t('profile:edit.theme_color') : t('profile:edit.font_color')}</Text>
+            <View style={styles.previewHexRow}>
+              <View style={[styles.bigColorCircle, { backgroundColor: tempColor }]} />
+              <Text style={styles.previewHexText}>{normalizeHex(tempColor).toUpperCase()}</Text>
             </View>
-
-            {/* 상태 메시지 */}
-            <View
-              style={[
-                styles.headerBody,
-                { backgroundColor: themeColor },
-              ]}
-            >
-              <View style={styles.statusEditRow}>
-                <TextInput
-                  value={statusMsg}
-                  onChangeText={setStatusMsg}
-                  placeholder="상태 메시지를 입력하세요"
-                  placeholderTextColor="rgba(249,250,251,0.7)"
-                  style={[
-                    styles.statusEditInput,
-                    { color: effectiveFontColor },
-                  ]}
-                  multiline
-                />
-                <Edit3
-                  size={16}
-                  color={effectiveFontColor}
-                />
-              </View>
+            <Text style={styles.sliderLabel}>{t('profile:edit.hue')}</Text>
+            <View style={styles.sliderTrack} onLayout={(e) => setHueBarWidth(e.nativeEvent.layout.width)}>
+              <Pressable style={StyleSheet.absoluteFill} onPress={handleHuePress}>
+                <LinearGradient colors={['#FF0000', '#FFFF00', '#00FF00', '#00FFFF', '#0000FF', '#FF00FF', '#FF0000']} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={{ flex: 1, borderRadius: 8 }} />
+                <View style={[styles.thumb, { left: huePos * (hueBarWidth - 20) }]} />
+              </Pressable>
             </View>
-
-            {/* 테마 색상 + 폰트 색상 + 꾸미기 */}
-            <View
-              style={[
-                styles.ctaWrapper,
-                { backgroundColor: themeColor },
-              ]}
-            >
-              {/* 테마 색상 선택 */}
-              <Pressable
-                style={styles.themeRow}
-                onPress={openThemePicker}
-              >
-                <View style={styles.themeLeft}>
-                  <Text style={styles.themeLabel}>
-                    테마 색상
-                  </Text>
-                  <Text style={styles.themeSub}>
-                    프로필 배경에 사용할 메인 컬러를 선택해요.
-                  </Text>
-                </View>
-                <View style={styles.themeRight}>
-                  <View
-                    style={[
-                      styles.themeColorPreview,
-                      { backgroundColor: themeColor },
-                    ]}
-                  />
-                  <Text style={styles.themeHex}>
-                    {normalizeHex(themeColor).toUpperCase()}
-                  </Text>
-                </View>
+            <Text style={styles.sliderLabel}>{t('profile:edit.brightness')}</Text>
+            <View style={styles.sliderTrack} onLayout={(e) => setBrightnessBarWidth(e.nativeEvent.layout.width)}>
+              <Pressable style={StyleSheet.absoluteFill} onPress={handleBrightPress}>
+                <LinearGradient colors={['#000000', baseHueColor, '#FFFFFF']} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={{ flex: 1, borderRadius: 8 }} />
+                <View style={[styles.thumb, { left: brightnessPos * (brightnessBarWidth - 20) }]} />
               </Pressable>
-
-              {/* 폰트 색상 선택 */}
-              <Pressable
-                style={[styles.themeRow, { marginTop: 8 }]}
-                onPress={openFontColorPicker}
-              >
-                <View style={styles.themeLeft}>
-                  <Text style={styles.themeLabel}>폰트 색상</Text>
-                  <Text style={styles.themeSub}>
-                    이름 / 상태 메시지 / 주요 숫자에 사용할 폰트
-                    색이에요.
-                  </Text>
-                </View>
-                <View style={styles.themeRight}>
-                  <View
-                    style={[
-                      styles.themeColorPreview,
-                      { backgroundColor: effectiveFontColor },
-                    ]}
-                  />
-                  <Text style={styles.themeHex}>
-                    {normalizeHex(
-                      effectiveFontColor,
-                    ).toUpperCase()}
-                  </Text>
-                </View>
-              </Pressable>
-
-              {/* 꾸미기 섹션 */}
-              <View style={styles.decorateInlineSection}>
-                <Text style={styles.decorateTitle}>
-                  꾸미기 (준비 중)
-                </Text>
-                <View style={styles.decorateRow}>
-                  <DecorIcon
-                    label="배지"
-                    Icon={Star}
-                    onPress={() =>
-                      Alert.alert(
-                        '준비 중',
-                        '프로필 배지는 추후 제공됩니다.',
-                      )
-                    }
-                  />
-                  <DecorIcon
-                    label="터치"
-                    Icon={Hand}
-                    onPress={() =>
-                      Alert.alert(
-                        '준비 중',
-                        '터치 효과는 추후 제공됩니다.',
-                      )
-                    }
-                  />
-                  <DecorIcon
-                    label="텍스트"
-                    Icon={Type}
-                    onPress={() =>
-                      Alert.alert(
-                        '준비 중',
-                        '텍스트 꾸미기는 추후 제공됩니다.',
-                      )
-                    }
-                  />
-                  <DecorIcon
-                    label="디데이"
-                    Icon={Calendar}
-                    onPress={() =>
-                      Alert.alert(
-                        '준비 중',
-                        '디데이는 추후 제공됩니다.',
-                      )
-                    }
-                  />
-                  <DecorIcon
-                    label="뮤직"
-                    Icon={Music}
-                    onPress={() =>
-                      Alert.alert(
-                        '준비 중',
-                        '프로필 뮤직은 추후 제공됩니다.',
-                      )
-                    }
-                  />
-                  <DecorIcon
-                    label="이모티콘"
-                    Icon={Smile}
-                    onPress={() =>
-                      Alert.alert(
-                        '준비 중',
-                        '이모티콘 꾸미기는 추후 제공됩니다.',
-                      )
-                    }
-                  />
-                </View>
-              </View>
             </View>
-
-            {/* 탭 미리보기 바 */}
-            {(!hideAllTab || tabs.length > 0) && (
-              <View
-                style={[
-                  styles.tabBarWrapper,
-                  { backgroundColor: themeColor },
-                ]}
-              >
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.tabBar}
-                >
-                  {!hideAllTab && (
-                    <View
-                      style={[
-                        styles.tabChip,
-                        styles.tabChipActive,
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.tabChipText,
-                          styles.tabChipTextActive,
-                        ]}
-                      >
-                        전체
-                      </Text>
-                    </View>
-                  )}
-                  {tabs.map((tab) => (
-                    <View key={tab.id} style={styles.tabChip}>
-                      <Text
-                        style={[
-                          styles.tabChipText,
-                          tab.is_hidden && { opacity: 0.5 },
-                        ]}
-                        numberOfLines={1}
-                      >
-                        {tab.name}
-                      </Text>
-                    </View>
-                  ))}
-                </ScrollView>
-              </View>
-            )}
-
-            {/* 탭 편집 (하단 전용) */}
-            <View style={styles.bottomSections}>
-              <View
-                style={[
-                  styles.tabEditSection,
-                  { backgroundColor: themeColor },
-                ]}
-              >
-                <View style={styles.tabEditHeader}>
-                  <Text style={styles.tabEditTitle}>
-                    탭 편집
-                  </Text>
-                  <Text style={styles.tabEditSub}>
-                    탭 이름 / 공개 범위 / 숨기기 / 삭제를
-                    관리합니다.
-                  </Text>
-                </View>
-
-                {/* 전체 탭 숨기기 */}
-                <View
-                  style={[
-                    styles.tabEditRow,
-                    { marginTop: 8 },
-                  ]}
-                >
-                  <View style={styles.tabNameCol}>
-                    <Text style={styles.allTabTitle}>
-                      전체 탭
-                    </Text>
-                    <Text style={styles.allTabSub}>
-                      기본 전체 보기 탭입니다. 삭제는
-                      불가하지만 숨길 수 있어요.
-                    </Text>
-                  </View>
-                  <Pressable
-                    style={[
-                      styles.tabVisibilityBtn,
-                      hideAllTab && styles.allTabHiddenBtn,
-                    ]}
-                    onPress={() => setHideAllTab((v) => !v)}
-                  >
-                    <Text style={styles.tabVisibilityTxt}>
-                      {hideAllTab ? '숨김 중' : '보이기'}
-                    </Text>
-                  </Pressable>
-                </View>
-
-                {tabsLoading && (
-                  <View style={{ paddingVertical: 8 }}>
-                    <ActivityIndicator
-                      size="small"
-                      color="#9CA3AF"
-                    />
-                  </View>
-                )}
-
-                {tabs.map((tab) => (
-                  <View key={tab.id} style={styles.tabEditRow}>
-                    <View style={styles.tabNameCol}>
-                      <TextInput
-                        value={tab.name}
-                        onChangeText={(txt) =>
-                          handleRenameTabLocal(tab.id, txt)
-                        }
-                        onBlur={() => handleRenameTabSave(tab)}
-                        placeholder="탭 이름"
-                        placeholderTextColor="#9CA3AF"
-                        style={[
-                          styles.tabNameInput,
-                          tab.is_hidden && { opacity: 0.6 },
-                        ]}
-                      />
-                    </View>
-
-                    {/* 옵션 버튼 한 개 */}
-                    <View style={styles.tabActionsCol}>
-                      <Pressable
-                        style={[
-                          styles.tabVisibilityBtn,
-                          styles.tabOptionBtn,
-                          { marginLeft: 0 },
-                          tabMutatingId === tab.id && {
-                            opacity: 0.6,
-                          },
-                        ]}
-                        disabled={tabMutatingId === tab.id}
-                        onPress={() => setTabOptionsTarget(tab)}
-                      >
-                        <Text style={styles.tabVisibilityTxt}>
-                          옵션
-                        </Text>
-                      </Pressable>
-                    </View>
-                  </View>
-                ))}
-
-                <View
-                  style={[
-                    styles.tabEditRow,
-                    { marginTop: 10 },
-                  ]}
-                >
-                  <View style={styles.tabNameCol}>
-                    <TextInput
-                      value={newTabName}
-                      onChangeText={setNewTabName}
-                      placeholder="새 탭 이름 (예: 맛집, 여행)"
-                      placeholderTextColor="#9CA3AF"
-                      style={styles.tabNameInput}
-                    />
-                  </View>
-                  <Pressable
-                    style={[
-                      styles.tabVisibilityBtn,
-                      styles.tabAddBtn,
-                      (!newTabName.trim() ||
-                        tabMutatingId === 'new') && {
-                        opacity: 0.6,
-                      },
-                    ]}
-                    disabled={
-                      !newTabName.trim() ||
-                      tabMutatingId === 'new'
-                    }
-                    onPress={handleAddTab}
-                  >
-                    <Text style={styles.tabAddTxt}>
-                      ＋ 추가
-                    </Text>
-                  </Pressable>
-                </View>
-              </View>
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-
-        {/* 탭 옵션 모달 */}
-        <Modal
-          visible={!!tabOptionsTarget}
-          animationType="fade"
-          transparent
-          onRequestClose={() => setTabOptionsTarget(null)}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalCard}>
-              <Text style={styles.modalTitle}>
-                탭 옵션
-              </Text>
-              <Text style={styles.modalSub}>
-                {tabOptionsTarget
-                  ? `‘${tabOptionsTarget.name}’ 탭 설정`
-                  : ''}
-              </Text>
-
-              {/* 순서 변경 */}
-              <Pressable
-                style={[
-                  styles.modalRadioRow,
-                  !canMoveUp && { opacity: 0.4 },
-                ]}
-                disabled={!tabOptionsTarget || !canMoveUp}
-                onPress={() => {
-                  if (!tabOptionsTarget) return;
-                  setTabOptionsTarget(null);
-                  handleMoveTab(tabOptionsTarget.id, 'up');
-                }}
-              >
-                <Text style={styles.modalRadioLabel}>
-                  위로 올리기
-                </Text>
-              </Pressable>
-
-              <Pressable
-                style={[
-                  styles.modalRadioRow,
-                  !canMoveDown && { opacity: 0.4 },
-                ]}
-                disabled={!tabOptionsTarget || !canMoveDown}
-                onPress={() => {
-                  if (!tabOptionsTarget) return;
-                  setTabOptionsTarget(null);
-                  handleMoveTab(tabOptionsTarget.id, 'down');
-                }}
-              >
-                <Text style={styles.modalRadioLabel}>
-                  아래로 내리기
-                </Text>
-              </Pressable>
-
-              <View style={styles.modalDivider} />
-
-              {/* 공개 범위 */}
-              <Pressable
-                style={styles.modalRadioRow}
-                disabled={!tabOptionsTarget}
-                onPress={() => {
-                  if (!tabOptionsTarget) return;
-                  const t = tabOptionsTarget;
-                  setTabOptionsTarget(null);
-                  openVisibilityModal(t);
-                }}
-              >
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.modalRadioLabel}>
-                    공개 범위
-                  </Text>
-                  <Text style={styles.modalRadioSub}>
-                    {tabOptionsTarget
-                      ? visibilityLabel(
-                          tabOptionsTarget.visibility,
-                        )
-                      : ''}
-                  </Text>
-                </View>
-              </Pressable>
-
-              {/* 숨기기 / 숨김 해제 */}
-              <Pressable
-                style={styles.modalRadioRow}
-                disabled={!tabOptionsTarget}
-                onPress={() => {
-                  if (!tabOptionsTarget) return;
-                  const t = tabOptionsTarget;
-                  setTabOptionsTarget(null);
-                  handleToggleHide(t);
-                }}
-              >
-                <Text style={styles.modalRadioLabel}>
-                  {tabOptionsTarget?.is_hidden
-                    ? '숨김 해제'
-                    : '탭 숨기기'}
-                </Text>
-              </Pressable>
-
-              {/* 삭제 */}
-              <Pressable
-                style={styles.modalRadioRow}
-                disabled={!tabOptionsTarget}
-                onPress={() => {
-                  if (!tabOptionsTarget) return;
-                  const t = tabOptionsTarget;
-                  setTabOptionsTarget(null);
-                  handleDeleteTab(t);
-                }}
-              >
-                <Text
-                  style={[
-                    styles.modalRadioLabel,
-                    { color: '#FCA5A5' },
-                  ]}
-                >
-                  탭 삭제
-                </Text>
-              </Pressable>
-
-              <View style={styles.modalFooter}>
-                <Pressable
-                  style={styles.modalCancelBtn}
-                  onPress={() => setTabOptionsTarget(null)}
-                >
-                  <Text style={styles.modalCancelTxt}>
-                    닫기
-                  </Text>
-                </Pressable>
-              </View>
+            <View style={styles.modalBtns}>
+              <Pressable style={styles.modalBtnCancel} onPress={() => setColorPickerVisible(false)}><Text>{t('common:cancel')}</Text></Pressable>
+              <Pressable style={styles.modalBtnOk} onPress={applyColor}><Text style={{color:'#fff', fontWeight:'700'}}>{t('profile:edit.apply')}</Text></Pressable>
             </View>
           </View>
-        </Modal>
+        </Pressable>
+      </Modal>
 
-        {/* 공개 범위 선택 모달 */}
-        <Modal
-          visible={visibilityModalVisible}
-          animationType="fade"
-          transparent
-          onRequestClose={() =>
-            setVisibilityModalVisible(false)
-          }
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalCard}>
-              <Text style={styles.modalTitle}>
-                공개 범위 설정
-              </Text>
-              <Text style={styles.modalSub}>
-                전체 공개 / 나만 보기 / 친구·팔로워 공개를
-                선택해요.
-              </Text>
-
-              <Pressable
-                style={[
-                  styles.modalRadioRow,
-                  visMode === 'public' &&
-                    styles.modalRadioRowActive,
-                ]}
-                onPress={() => setVisMode('public')}
-              >
-                <View style={styles.radioOuter}>
-                  {visMode === 'public' && (
-                    <View style={styles.radioInner} />
-                  )}
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.modalRadioLabel}>
-                    전체 공개
-                  </Text>
-                  <Text style={styles.modalRadioSub}>
-                    누구나 이 탭을 볼 수 있어요.
-                  </Text>
-                </View>
-              </Pressable>
-
-              <Pressable
-                style={[
-                  styles.modalRadioRow,
-                  visMode === 'private' &&
-                    styles.modalRadioRowActive,
-                ]}
-                onPress={() => setVisMode('private')}
-              >
-                <View style={styles.radioOuter}>
-                  {visMode === 'private' && (
-                    <View style={styles.radioInner} />
-                  )}
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.modalRadioLabel}>
-                    나만 보기
-                  </Text>
-                  <Text style={styles.modalRadioSub}>
-                    본인만 확인할 수 있는 비공개 탭입니다.
-                  </Text>
-                </View>
-              </Pressable>
-
-              <View style={styles.modalDivider} />
-
-              <Text style={styles.modalSectionTitle}>
-                선택 공개 (중복 선택 가능)
-              </Text>
-
-              {/* 친구 / 팔로워를 하나의 박스 안에 배치 */}
-              <View
-                style={{
-                  borderWidth: 1,
-                  borderColor: '#4B5563',
-                  borderRadius: 12,
-                  paddingHorizontal: 4,
-                  paddingVertical: 4,
-                  flexDirection: 'row',
-                  alignItems: 'stretch',
-                  marginBottom: 10,
-                }}
-              >
-                <Pressable
-                  style={[
-                    styles.checkboxRow,
-                    {
-                      flex: 1,
-                      marginRight: 0,
-                      borderWidth: 0,
-                      borderRadius: 8,
-                    },
-                    visMode === 'custom' &&
-                      visFriends && {
-                        backgroundColor:
-                          'rgba(251,191,36,0.18)',
-                      },
-                  ]}
-                  onPress={() => {
-                    setVisMode('custom');
-                    setVisFriends((v) => !v);
-                  }}
-                >
-                  <View style={styles.checkboxBox}>
-                    {visMode === 'custom' && visFriends && (
-                      <Check size={13} color="#111827" />
-                    )}
-                  </View>
-                  <Text style={styles.checkboxLabel}>
-                    친구 공개
-                  </Text>
-                </Pressable>
-
-                <View
-                  style={{
-                    width: 1,
-                    backgroundColor:
-                      'rgba(75,85,99,0.9)',
-                  }}
-                />
-
-                <Pressable
-                  style={[
-                    styles.checkboxRow,
-                    {
-                      flex: 1,
-                      marginRight: 0,
-                      borderWidth: 0,
-                      borderRadius: 8,
-                    },
-                    visMode === 'custom' &&
-                      visFollowers && {
-                        backgroundColor:
-                          'rgba(251,191,36,0.18)',
-                      },
-                  ]}
-                  onPress={() => {
-                    setVisMode('custom');
-                    setVisFollowers((v) => !v);
-                  }}
-                >
-                  <View style={styles.checkboxBox}>
-                    {visMode === 'custom' &&
-                      visFollowers && (
-                        <Check size={13} color="#111827" />
-                      )}
-                  </View>
-                  <Text style={styles.checkboxLabel}>
-                    팔로워 공개
-                  </Text>
-                </Pressable>
+      <Modal visible={!!tabOptionTarget && !visModalVisible} transparent animationType="fade" onRequestClose={() => setTabOptionTarget(null)}>
+        <Pressable style={styles.backdrop} onPress={() => setTabOptionTarget(null)}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>{t('profile:edit.setting_tab', { name: tabOptionTarget?.name })}</Text>
+            <Pressable style={styles.menuItem} onPress={() => moveTab('up')}>
+              <ArrowUp size={20} color="#374151" />
+              <Text style={styles.menuText}>{t('profile:edit.move_up')}</Text>
+            </Pressable>
+            <Pressable style={styles.menuItem} onPress={() => moveTab('down')}>
+              <ArrowDown size={20} color="#374151" />
+              <Text style={styles.menuText}>{t('profile:edit.move_down')}</Text>
+            </Pressable>
+            <View style={styles.divider} />
+            <Pressable style={styles.menuItem} onPress={() => openVisModal(tabOptionTarget)}>
+              <Globe size={20} color="#374151" />
+              <View>
+                <Text style={styles.menuText}>{t('profile:edit.visibility')}</Text>
+                <Text style={styles.menuSub}>{t('profile:edit.current_vis', { val: tabOptionTarget?.visibility || t('profile:edit.vis_public') })}</Text>
               </View>
+            </Pressable>
+            <View style={styles.divider} />
+            <Pressable style={styles.menuItem} onPress={deleteTab}>
+              <Trash2 size={20} color="#EF4444" />
+              <Text style={[styles.menuText, { color: '#EF4444' }]}>{t('common:delete')}</Text>
+            </Pressable>
+          </View>
+        </Pressable>
+      </Modal>
 
-              <View style={styles.modalFooter}>
-                <Pressable
-                  style={styles.modalCancelBtn}
-                  onPress={() =>
-                    setVisibilityModalVisible(false)
-                  }
-                >
-                  <Text style={styles.modalCancelTxt}>
-                    취소
-                  </Text>
-                </Pressable>
-                <Pressable
-                  style={styles.modalConfirmBtn}
-                  onPress={applyVisibility}
-                >
-                  <Text style={styles.modalConfirmTxt}>
-                    완료
-                  </Text>
-                </Pressable>
-              </View>
+      <Modal visible={visModalVisible} transparent animationType="fade">
+        <Pressable style={styles.backdrop} onPress={() => setVisModalVisible(false)}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>{t('beacons:visibility')}</Text>
+            <Pressable style={styles.visRow} onPress={() => setVisMode('public')}>
+              <View style={[styles.radio, visMode === 'public' && styles.radioOn]} />
+              <Globe size={18} color="#374151" />
+              <Text style={styles.visText}>{t('profile:edit.vis_public')}</Text>
+            </Pressable>
+            <Pressable style={styles.visRow} onPress={() => setVisMode('private')}>
+              <View style={[styles.radio, visMode === 'private' && styles.radioOn]} />
+              <Lock size={18} color="#374151" />
+              <Text style={styles.visText}>{t('profile:edit.vis_private')}</Text>
+            </Pressable>
+            <View style={styles.visRowCustom}>
+              <Pressable style={styles.visRow} onPress={() => setVisMode('custom')}>
+                <View style={[styles.radio, visMode === 'custom' && styles.radioOn]} />
+                <Users size={18} color="#374151" />
+                <Text style={styles.visText}>{t('profile:edit.vis_custom')}</Text>
+              </Pressable>
+              {visMode === 'custom' && (
+                <View style={styles.checkboxArea}>
+                  <Pressable style={styles.checkRow} onPress={() => setVisFriends(!visFriends)}>
+                    <View style={[styles.check, visFriends && styles.checkOn]}><Check size={12} color="#FFF" /></View>
+                    <Text>{t('profile:edit.vis_friends')}</Text>
+                  </Pressable>
+                  <Pressable style={styles.checkRow} onPress={() => setVisFollowers(!visFollowers)}>
+                    <View style={[styles.check, visFollowers && styles.checkOn]}><Check size={12} color="#FFF" /></View>
+                    <Text>{t('profile:edit.vis_followers')}</Text>
+                  </Pressable>
+                </View>
+              )}
+            </View>
+            <View style={styles.modalBtns}>
+              <Pressable style={styles.modalBtnCancel} onPress={() => setVisModalVisible(false)}><Text>{t('common:cancel')}</Text></Pressable>
+              <Pressable style={styles.modalBtnOk} onPress={saveVisibility}><Text style={{color:'#fff', fontWeight:'700'}}>{t('common:save')}</Text></Pressable>
             </View>
           </View>
-        </Modal>
-
-        {/* 테마 / 폰트 색상 선택 모달 */}
-        <Modal
-          visible={colorPickerVisible}
-          animationType="fade"
-          transparent
-          onRequestClose={() => setColorPickerVisible(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.colorModalCard}>
-              <Text style={styles.modalTitle}>
-                {colorPickerTarget === 'theme'
-                  ? '테마 색상 선택'
-                  : '폰트 색상 선택'}
-              </Text>
-              <Text style={styles.modalSub}>
-                색상과 밝기를 조절해서 원하는 톤을 골라요.
-              </Text>
-
-              <View style={styles.colorPreviewRow}>
-                <View
-                  style={[
-                    styles.bigColorCircle,
-                    { backgroundColor: tempColor },
-                  ]}
-                />
-                <Text style={styles.colorHexText}>
-                  {normalizeHex(tempColor).toUpperCase()}
-                </Text>
-              </View>
-
-              {/* 색상 바 */}
-              <Text style={styles.colorBarLabel}>색상</Text>
-              <View
-                style={styles.colorBarOuter}
-                onLayout={(e) =>
-                  handleHueBarLayout(
-                    e.nativeEvent.layout.width,
-                  )
-                }
-              >
-                <Pressable
-                  style={styles.colorBarPress}
-                  onPress={handleHueBarPress}
-                >
-                  <LinearGradient
-                    style={StyleSheet.absoluteFillObject}
-                    colors={[
-                      '#ff0000',
-                      '#ffff00',
-                      '#00ff00',
-                      '#00ffff',
-                      '#0000ff',
-                      '#ff00ff',
-                      '#ff0000',
-                    ]}
-                    start={{ x: 0, y: 0.5 }}
-                    end={{ x: 1, y: 0.5 }}
-                  />
-                  <View
-                    style={[
-                      styles.colorThumb,
-                      {
-                        left: huePos * hueBarWidth - 10,
-                      },
-                    ]}
-                  />
-                </Pressable>
-              </View>
-
-              {/* 밝기 바 */}
-              <Text
-                style={[
-                  styles.colorBarLabel,
-                  { marginTop: 6 },
-                ]}
-              >
-                밝기
-              </Text>
-              <View
-                style={styles.colorBarOuter}
-                onLayout={(e) =>
-                  handleBrightnessBarLayout(
-                    e.nativeEvent.layout.width,
-                  )
-                }
-              >
-                <Pressable
-                  style={styles.colorBarPress}
-                  onPress={handleBrightnessBarPress}
-                >
-                  <LinearGradient
-                    style={StyleSheet.absoluteFillObject}
-                    colors={['#000000', baseHueColor, '#ffffff']}
-                    start={{ x: 0, y: 0.5 }}
-                    end={{ x: 1, y: 0.5 }}
-                  />
-                  <View
-                    style={[
-                      styles.colorThumb,
-                      {
-                        left:
-                          brightnessPos *
-                            brightnessBarWidth -
-                          10,
-                      },
-                    ]}
-                  />
-                </Pressable>
-              </View>
-
-              {/* 밝기 아래에 버튼 배치 */}
-              <View style={styles.modalFooter}>
-                <Pressable
-                  style={styles.modalCancelBtn}
-                  onPress={() => setColorPickerVisible(false)}
-                >
-                  <Text style={styles.modalCancelTxt}>
-                    취소
-                  </Text>
-                </Pressable>
-                <Pressable
-                  style={styles.modalConfirmBtn}
-                  onPress={applyPickedColor}
-                >
-                  <Text style={styles.modalConfirmTxt}>
-                    적용
-                  </Text>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-        </Modal>
-      </SafeAreaView>
-    </>
-  );
-}
-
-type DecorProps = {
-  label: string;
-  Icon: typeof Star;
-  onPress: () => void;
-};
-
-function DecorIcon({ label, Icon, onPress }: DecorProps) {
-  return (
-    <Pressable style={styles.decorIcon} onPress={onPress}>
-      <View style={styles.decorIconCircle}>
-        <Icon size={18} color="#F9FAFB" />
-      </View>
-      <Text style={styles.decorIconLabel}>{label}</Text>
-    </Pressable>
+        </Pressable>
+      </Modal>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  page: {
-    flex: 1,
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#111' },
+  container: { flex: 1 },
+  
+  header: {
+    position: 'absolute', top: 0, left: 0, right: 0, zIndex: 100,
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    paddingHorizontal: 16, height: 90, 
   },
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+  iconBtn: {
+    width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(0,0,0,0.3)',
+    alignItems: 'center', justifyContent: 'center',
   },
-  loadingTxt: {
-    color: '#E5E7EB',
-    marginTop: 8,
+  headerTitle: { color: '#FFF', fontSize: 16, fontWeight: '700', textShadowColor: 'rgba(0,0,0,0.3)', textShadowRadius: 4 },
+  saveBtn: {
+    width: 40, height: 40, borderRadius: 20, backgroundColor: '#0A0A0A',
+    alignItems: 'center', justifyContent: 'center',
   },
-  headerBlock: {
-    backgroundColor: DEFAULT_THEME_COLOR,
+
+  previewBox: { width: SCREEN_WIDTH, position: 'relative' },
+  coverImg: { ...StyleSheet.absoluteFillObject },
+  gradient: { position: 'absolute', bottom: 0, left: 0, right: 0, height: '60%' },
+  editBadgeTop: {
+    position: 'absolute', top: '40%', alignSelf: 'center',
+    backgroundColor: 'rgba(0,0,0,0.4)', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6,
+    flexDirection: 'row', alignItems: 'center', gap: 6,
   },
-  coverWrap: {
-    width: '100%',
-    overflow: 'hidden',
-    position: 'relative',
+  editBadgeText: { color: '#FFF', fontSize: 12, fontWeight: '600' },
+  
+  previewInfo: { position: 'absolute', bottom: 12, left: 16, right: 16 },
+
+  profileMainRow: { flexDirection: 'row', alignItems: 'flex-end' },
+  avatarColumn: { width: 88, alignItems: 'center', justifyContent: 'flex-end', marginRight: 12 },
+  profileRightColumn: { flex: 1, minWidth: 0, justifyContent: 'flex-end' },
+
+  avatarWrap: { position: 'relative' },
+  avatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: '#E5E7EB' },
+  avatarEditBadge: {
+    position: 'absolute', bottom: 0, right: 0, width: 24, height: 24, borderRadius: 12,
+    backgroundColor: '#FFF', alignItems: 'center', justifyContent: 'center',
   },
-  coverImg: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 1,
-  },
-  coverGradient: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: '50%',
-    zIndex: 5,
-  },
-  coverTopRow: {
-    position: 'absolute',
-    left: 12,
-    right: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    zIndex: 10,
-  },
-  navLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  navRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: 'rgba(0,0,0,0.55)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 4,
-  },
-  roundBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: 'rgba(0,0,0,0.55)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 6,
-    paddingHorizontal: 4,
-  },
-  editTitle: {
-    color: '#F9FAFB',
-    fontSize: 15,
-    fontWeight: '700',
-    marginLeft: 4,
-  },
-  doneBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 999,
-    backgroundColor: '#111827',
-  },
-  doneTxt: {
-    color: '#F9FAFB',
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  coverBottomContent: {
-    position: 'absolute',
-    left: 16,
-    right: 16,
-    bottom: 30,
-    zIndex: 6,
-  },
-  nameTopBox: {
-    marginBottom: 10,
-  },
-  nameEditRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  nameEditInput: {
-    flex: 1,
-    fontSize: 20,
-    fontWeight: '700',
-    paddingVertical: 0,
-    marginRight: 6,
-  },
-  profileRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  avatarEditWrapper: {
-    position: 'relative',
-    marginRight: 18,
-  },
-  avatarBig: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#E5E7EB',
-  },
-  avatarPlaceholder: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarInitialBig: {
-    fontSize: 28,
-    fontWeight: '800',
-  },
-  avatarCameraBadge: {
-    position: 'absolute',
-    right: -2,
-    bottom: -2,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#F9FAFB',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  statsRow: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  statItem: {
-    flex: 1,
-    alignItems: 'center',
+
+  handlePill: {
+    alignSelf: 'flex-end',
+    maxWidth: '100%',
+    minHeight: 25,
+    paddingHorizontal: 10,
     paddingVertical: 4,
-  },
-  statNumber: {
-    fontSize: 20,
-    fontWeight: '800',
-  },
-  statLabel: {
-    color: '#E5E7EB',
-    fontSize: 12,
-    marginTop: 2,
-  },
-  coverEditRow: {
-    position: 'absolute',
-    bottom: 14,
-    width: '100%',
-    alignItems: 'center',
-    zIndex: 7,
-  },
-  coverEditBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
     borderRadius: 999,
-    backgroundColor: 'rgba(0,0,0,0.55)',
-    gap: 6,
-  },
-  coverEditTxt: {
-    color: '#F9FAFB',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  headerBody: {
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 8,
-  },
-  statusEditRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  statusEditInput: {
-    flex: 1,
-    fontSize: 13,
-    minHeight: 32,
-    paddingVertical: 0,
-    marginRight: 6,
-  },
-  ctaWrapper: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 12,
-  },
-  ctaBox: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(0,0,0,0.28)',
-    borderRadius: 12,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.35)',
-    minHeight: 44,
-  },
-  ctaCell: {
-    flex: 1,
+    borderWidth: StyleSheet.hairlineWidth,
+    marginBottom: 7,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    gap: 6,
   },
-  ctaCellBorder: {
-    borderRightWidth: 1,
-    borderColor: 'rgba(255,255,255,0.35)',
+  handlePillPrefix: { fontSize: 13, lineHeight: 16, fontWeight: '800' },
+  handlePillInput: {
+    minWidth: 58,
+    maxWidth: '100%',
+    padding: 0,
+    margin: 0,
+    fontSize: 13,
+    lineHeight: 16,
+    fontWeight: '700',
   },
-  ctaPlus: {
+
+  statsRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  statItem: { flex: 1, alignItems: 'center', paddingVertical: 4 },
+  statNumber: { fontSize: 20, lineHeight: 22, fontWeight: '800', textShadowColor: 'rgba(0,0,0,0.16)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 },
+  statLabel: { fontSize: 12, lineHeight: 15, marginTop: 2, opacity: 0.96 },
+
+  profileTextRow: { flexDirection: 'row', alignItems: 'flex-start', marginTop: 5 },
+  nicknameColumn: { width: 88, marginRight: 12, alignItems: 'center', justifyContent: 'flex-start' },
+  statusColumn: { flex: 1, minWidth: 0, alignItems: 'flex-start', justifyContent: 'flex-start', paddingTop: 1 },
+  nameInput: {
+    width: '100%',
+    padding: 0,
+    margin: 0,
     fontSize: 18,
-    marginTop: -1,
-    color: '#FFFFFF',
-    fontWeight: '700',
-  },
-  ctaText: {
-    fontWeight: '700',
-    color: '#FFFFFF',
-    fontSize: 15,
-  },
-  themeRow: {
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.16)',
-  },
-  themeLeft: {
-    flex: 1,
-    paddingRight: 10,
-  },
-  themeLabel: {
-    color: '#F9FAFB',
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  themeSub: {
-    color: '#D1D5DB',
-    fontSize: 11,
-    marginTop: 2,
-  },
-  themeRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  themeColorPreview: {
-    width: 32,
-    height: 18,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: 'rgba(249,250,251,0.8)',
-    marginRight: 6,
-  },
-  themeHex: {
-    color: '#E5E7EB',
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  tabBarWrapper: {
-    paddingHorizontal: 10,
-    paddingTop: 4,
-    paddingBottom: 8,
-  },
-  tabBar: {
-    alignItems: 'center',
-  },
-  tabChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: 'rgba(249,250,251,0.25)',
-    marginRight: 3,
-    backgroundColor: 'rgba(0,0,0,0.18)',
-  },
-  tabChipActive: {
-    backgroundColor: '#F9FAFB',
-    borderColor: '#F9FAFB',
-  },
-  tabChipText: {
-    color: '#F9FAFB',
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  tabChipTextActive: {
-    color: '#111827',
-  },
-  bottomSections: {
-    marginTop: 2,
-  },
-  tabEditSection: {
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 16,
-    backgroundColor: '#3F3A31',
-    borderTopWidth: 1,
-    borderColor: 'rgba(0,0,0,0.45)',
-  },
-  tabEditHeader: {
-    marginBottom: 8,
-  },
-  tabEditTitle: {
-    color: '#F9FAFB',
-    fontSize: 14,
+    lineHeight: 21,
     fontWeight: '800',
+    textAlign: 'center',
+    textShadowColor: 'rgba(0,0,0,0.18)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
-  tabEditSub: {
-    color: '#E5E7EB',
-    fontSize: 11,
-    marginTop: 2,
-  },
-  allTabTitle: {
-    color: '#F9FAFB',
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  allTabSub: {
-    color: '#E5E7EB',
-    fontSize: 11,
-    marginTop: 2,
-  },
-  tabEditRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 6,
-  },
-  tabNameCol: {
-    flex: 1,
-  },
-  tabNameInput: {
-    borderWidth: 1,
-    borderColor: '#4B5563',
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    fontSize: 13,
-    color: '#F9FAFB',
-    backgroundColor: 'rgba(0,0,0,0.25)',
-  },
-  tabVisibilityBtn: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: '#6B7280',
-    marginLeft: 8,
-    backgroundColor: 'rgba(0,0,0,0.2)',
-  },
-  tabOptionBtn: {
-    minWidth: 60,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 8,
-  },
-  allTabHiddenBtn: {
-    borderColor: '#F59E0B',
-    backgroundColor: 'rgba(245,158,11,0.16)',
-  },
-  tabVisibilityTxt: {
-    color: '#E5E7EB',
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  tabActionsCol: {
-    flexDirection: 'row',
-    marginLeft: 8,
-  },
-  tabSmallBtn: {
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    borderRadius: 6,
-    marginLeft: 4,
-  },
-  tabSmallBtnGhost: {
-    borderWidth: 1,
-    borderColor: '#6B7280',
-    backgroundColor: 'transparent',
-  },
-  tabSmallBtnGhostTxt: {
-    color: '#E5E7EB',
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  tabSmallBtnDanger: {
-    backgroundColor: '#7F1D1D',
-  },
-  tabSmallBtnDangerTxt: {
-    color: '#FEE2E2',
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  tabAddBtn: {
-    borderColor: '#F9FAFB',
-  },
-  tabAddTxt: {
-    color: '#F9FAFB',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  decorateInlineSection: {
-    marginTop: 12,
-  },
-  decorateSection: {
-    backgroundColor: '#2F2B24',
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 18,
-    borderTopWidth: 1,
-    borderColor: 'rgba(0,0,0,0.55)',
-  },
-  decorateTitle: {
-    color: '#F9FAFB',
-    fontSize: 13,
-    fontWeight: '700',
-    marginBottom: 8,
-  },
-  decorateRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  decorIcon: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-  },
-  decorIconCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 4,
-  },
-  decorIconLabel: {
-    color: '#E5E7EB',
-    fontSize: 10,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(15,23,42,0.7)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-  },
-  modalCard: {
+  statusInlineInput: {
     width: '100%',
-    borderRadius: 18,
-    backgroundColor: '#111827',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-  },
-  modalTitle: {
-    color: '#F9FAFB',
-    fontSize: 15,
-    fontWeight: '800',
-    marginBottom: 4,
-  },
-  modalSub: {
-    color: '#9CA3AF',
-    fontSize: 11,
-    marginBottom: 10,
-  },
-  modalRadioRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 4,
-    borderRadius: 10,
-  },
-  modalRadioRowActive: {
-    backgroundColor: 'rgba(55,65,81,0.8)',
-  },
-  radioOuter: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    borderWidth: 2,
-    borderColor: '#E5E7EB',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-  },
-  radioInner: {
-    width: 9,
-    height: 9,
-    borderRadius: 4.5,
-    backgroundColor: '#F9FAFB',
-  },
-  modalRadioLabel: {
-    color: '#F9FAFB',
+    minHeight: 34,
+    maxHeight: 42,
+    padding: 0,
+    margin: 0,
     fontSize: 13,
-    fontWeight: '700',
+    lineHeight: 17,
+    opacity: 0.96,
+    textAlign: 'left',
+    textShadowColor: 'rgba(0,0,0,0.16)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
-  modalRadioSub: {
-    color: '#9CA3AF',
-    fontSize: 11,
+
+  glassPanel: {
+    marginHorizontal: 16,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    padding: 24,
+    shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10, elevation: 5,
   },
-  modalDivider: {
-    height: 1,
-    backgroundColor: 'rgba(55,65,81,0.9)',
-    marginVertical: 10,
+  panelSection: { marginBottom: 10 },
+  panelHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
+  panelTitle: { fontSize: 16, fontWeight: '800', color: '#111827', marginBottom: 12 },
+  
+  optionRow: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    paddingVertical: 14, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: 'rgba(0,0,0,0.08)',
   },
-  modalSectionTitle: {
-    color: '#E5E7EB',
-    fontSize: 12,
-    fontWeight: '700',
-    marginBottom: 6,
+  optionLabel: { fontSize: 15, color: '#374151', fontWeight: '600' },
+  optionValue: { fontSize: 13, color: '#6B7280' },
+  colorPreview: { width: 24, height: 24, borderRadius: 12, borderWidth: StyleSheet.hairlineWidth, borderColor: 'rgba(0,0,0,0.08)' },
+  colorHex: { fontSize: 13, color: '#6B7280', fontWeight: '600' },
+
+  iconFixedWrap: { width: 28, alignItems: 'center', justifyContent: 'center' },
+
+  divider: { height: StyleSheet.hairlineWidth, backgroundColor: 'rgba(0,0,0,0.08)', marginVertical: 16 },
+
+  tabRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: 'rgba(0,0,0,0.08)',
   },
-  checkboxRowWrap: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
+  tabNameFixed: { fontSize: 15, fontWeight: '600', color: '#9CA3AF', paddingLeft: 10 },
+  tabNameInput: { fontSize: 15, fontWeight: '600', color: '#111827', flex: 1, paddingVertical: 4, paddingHorizontal: 10 },
+  tabActions: { flexDirection: 'row', gap: 4 },
+  iconBtnSmall: { padding: 8 },
+  
+  addTabRow: { flexDirection: 'row', marginTop: 12, alignItems: 'center', gap: 10 },
+  addTabInput: {
+    flex: 1, backgroundColor: '#F9FAFB', borderRadius: 8, paddingHorizontal: 12, height: 42,
+    borderWidth: StyleSheet.hairlineWidth, borderColor: 'rgba(0,0,0,0.08)', borderStyle: 'dashed',
   },
-  checkboxRow: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 7,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#4B5563',
-    backgroundColor: 'rgba(17,24,39,0.8)',
-    marginRight: 6,
+  addBtn: {
+    backgroundColor: '#111827', borderRadius: 8, width: 42, height: 42,
+    alignItems: 'center', justifyContent: 'center',
   },
-  checkboxRowActive: {
-    borderColor: '#FBBF24',
-    backgroundColor: 'rgba(251,191,36,0.18)',
+  addBtnText: { color: '#FFF', fontWeight: '700' },
+
+  revertBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, gap: 8 },
+  revertText: { color: '#EF4444', fontWeight: '600', fontSize: 14 },
+
+  backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', padding: 20, zIndex: 999 },
+  modalCard: { width: '100%', maxWidth: 340, backgroundColor: '#FFF', borderRadius: 20, padding: 20, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 20, elevation: 10 },
+  modalTitle: { fontSize: 18, fontWeight: '800', color: '#111827', marginBottom: 16, textAlign: 'center' },
+  
+  previewHexRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 20, gap: 10 },
+  bigColorCircle: { width: 40, height: 40, borderRadius: 20, borderWidth: StyleSheet.hairlineWidth, borderColor: 'rgba(0,0,0,0.08)' },
+  previewHexText: { fontSize: 16, fontWeight: '700', color: '#374151' },
+  sliderLabel: { fontSize: 13, fontWeight: '600', color: '#4B5563', marginBottom: 8 },
+  sliderTrack: { height: 32, borderRadius: 16, overflow: 'hidden', marginBottom: 16, borderWidth: StyleSheet.hairlineWidth, borderColor: 'rgba(0,0,0,0.08)' },
+  thumb: { 
+    position: 'absolute', top: 0, bottom: 0, width: 20, borderRadius: 10, 
+    borderWidth: 2, borderColor: '#FFF', backgroundColor: 'rgba(255,255,255,0.3)', 
+    shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 2 
   },
-  checkboxBox: {
-    width: 18,
-    height: 18,
-    borderRadius: 5,
-    borderWidth: 1.5,
-    borderColor: '#E5E7EB',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-    backgroundColor: '#F9FAFB',
-  },
-  checkboxLabel: {
-    color: '#E5E7EB',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  modalFooter: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: 10,
-  },
-  modalCancelBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: '#4B5563',
-    marginRight: 8,
-  },
-  modalCancelTxt: {
-    color: '#E5E7EB',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  modalConfirmBtn: {
-    paddingHorizontal: 16,
-    paddingVertical: 7,
-    borderRadius: 999,
-    backgroundColor: '#F9FAFB',
-  },
-  modalConfirmTxt: {
-    color: '#111827',
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  colorModalCard: {
-    width: '100%',
-    borderRadius: 18,
-    backgroundColor: '#111827',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-  },
-  colorPreviewRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 10,
-  },
-  bigColorCircle: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    borderWidth: 1,
-    borderColor: '#F9FAFB',
-    marginRight: 10,
-  },
-  colorHexText: {
-    color: '#E5E7EB',
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  colorBarLabel: {
-    color: '#E5E7EB',
-    fontSize: 12,
-    marginBottom: 4,
-  },
-  colorBarOuter: {
-    width: '100%',
-    height: 30,
-    borderRadius: 14,
-    overflow: 'hidden',
-    backgroundColor: '#1F2937',
-    borderWidth: 1,
-    borderColor: '#374151',
-    marginBottom: 4,
-  },
-  colorBarPress: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  colorThumb: {
-    position: 'absolute',
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#F9FAFB',
-    backgroundColor: 'transparent',
-  },
+
+  menuItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, gap: 12 },
+  menuText: { fontSize: 16, color: '#374151', fontWeight: '500' },
+  menuSub: { fontSize: 12, color: '#9CA3AF' },
+
+  visRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, gap: 10 },
+  visRowCustom: { paddingVertical: 10 },
+  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: '#D1D5DB' },
+  radioOn: { borderColor: '#3B82F6', borderWidth: 6 },
+  visText: { fontSize: 16, color: '#374151' },
+  checkboxArea: { flexDirection: 'row', gap: 16, paddingLeft: 34, paddingTop: 8 },
+  checkRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  check: { width: 20, height: 20, borderRadius: 6, borderWidth: 2, borderColor: '#D1D5DB', alignItems: 'center', justifyContent: 'center' },
+  checkOn: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
+
+  modalBtns: { flexDirection: 'row', justifyContent: 'flex-end', gap: 10, marginTop: 20 },
+  modalBtnCancel: { paddingHorizontal: 16, paddingVertical: 10 },
+  modalBtnOk: { backgroundColor: '#111827', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10 },
 });

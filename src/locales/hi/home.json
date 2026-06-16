@@ -1,0 +1,183 @@
+{
+  "briefing_title": "आज",
+  "briefing_toggle_show": "दिखाएँ",
+  "briefing_toggle_hide": "छिपाएँ",
+  "briefing_unread_chat": "अनपढ़ चैट",
+  "briefing_nearby_beacon": "आसपास के बीकन",
+  "briefing_new_friend_post": "मित्र पोस्ट",
+  "briefing_new_follower": "नए फ़ॉलोअर",
+  "briefing_count_unit": "गिनती",
+  "briefing_people_unit": "",
+  "tabs": {
+    "friends": "मित्र",
+    "following": "फ़ॉलोइंग",
+    "local": "स्थानीय"
+  },
+  "banner_headerTitle": "आसपास",
+  "banner_fallback_title": "आसपास की पसंद",
+  "banner_fallback_desc": "आसपास के स्थान खोजे जा रहे हैं",
+  "banner_default_headline": "आज का स्थान",
+  "banner_unknown_place": "अज्ञात स्थान",
+  "banner_status_open": "खोलें",
+  "banner_status_closed": "बंद",
+  "banner_tag_fallback": "अनुशंसित",
+  "empty_feed": "दिखाने के लिए कोई फ़ीड नहीं।",
+  "scroll_top": "शीर्ष",
+  "briefing_nearby_beacon_title": "आसपास के बीकन",
+  "briefing_today_schedule_title": "शेड्यूल",
+  "briefing_continue_chat_title": "चैट जारी रखें",
+  "briefing_near_news_title": "आसपास की खबरें",
+  "unknown_user": "अज्ञात",
+  "near_news": {
+    "filters": {
+      "all": "सभी",
+      "post": "फ़ीड",
+      "event": "इवेंट",
+      "notice": "सूचना"
+    },
+    "kind": {
+      "post": "फ़ीड",
+      "event": "इवेंट",
+      "notice": "सूचना"
+    },
+    "kind_en": {
+      "post": "FEED",
+      "event": "EVENT",
+      "notice": "NOTICE"
+    },
+    "masthead_overline": "CO·ONN LOCAL JOURNAL",
+    "masthead_title": "NEARBY NEWS",
+    "edition_line": "LOCAL EDITION · {{distance}}",
+    "count_line": "FEED {{post}} · EVENT {{event}} · NOTICE {{notice}}",
+    "self": "मैं",
+    "unknown_user": "अज्ञात",
+    "unknown_place": "आसपास का स्थान",
+    "distance_pending": "दूरी जाँची जा रही है",
+    "just_now": "अभी",
+    "minutes_ago": "{{value}} मिनट पहले",
+    "hours_ago": "{{value}} घंटे पहले",
+    "days_ago": "{{value}} दिन पहले",
+    "always": "हमेशा",
+    "until": "{{date}} तक",
+    "ongoing": "चल रहा है",
+    "category": {
+      "restaurant": "रेस्तरां",
+      "cafe": "कैफ़े",
+      "bakery": "बेकरी",
+      "market": "मार्केट",
+      "drink": "पब",
+      "store": "दुकान"
+    },
+    "place": "स्थान",
+    "nearby_place": "आसपास का स्थान",
+    "nearby_feed": "खबरें आसपास फ़ीड",
+    "event_title": "इवेंट",
+    "notice_title": "सूचना",
+    "event_body": "नया इवेंट उपलब्ध है।",
+    "notice_body": "नई सूचना पोस्ट हुई।",
+    "load_error": "आसपास की खबरें लोड नहीं हुईं।",
+    "collection_title": "आसपास की खबरें",
+    "media_title": "आसपास की खबरें",
+    "empty_title": "कोई खबर नहीं",
+    "empty_desc": "आसपास की पोस्ट और स्थान अपडेट यहाँ दिखेंगे।",
+    "editing": "पृष्ठ तैयार हो रहा है",
+    "load_failed": "लोड नहीं हो सका",
+    "retry": "फिर प्रयास करें",
+    "local_note": "खबरें स्थानीय",
+    "by_prefix": "BY "
+  },
+  "schedule_sheet": {
+    "weekdays": {
+      "sun": "रवि",
+      "mon": "सोम",
+      "tue": "मंगल",
+      "wed": "बुध",
+      "thu": "गुरु",
+      "fri": "शुक्र",
+      "sat": "शनि"
+    },
+    "date_title": "{{month}}/{{day}} ({{weekday}})",
+    "period": {
+      "am": "AM",
+      "pm": "PM"
+    },
+    "time_range_cross_day": "{{start}} - {{date}} {{end}}",
+    "default_room_title": "चैट रूम",
+    "participation": {
+      "joined": "शामिल",
+      "pending": "शामिल नहीं"
+    },
+    "search_placeholder": {
+      "joined": "शामिल शेड्यूल खोजें",
+      "pending": "उपलब्ध शेड्यूल खोजें"
+    },
+    "load_error": "शेड्यूल लोड नहीं हुए।",
+    "people_count": "{{value}} लोग",
+    "default_title": "शेड्यूल",
+    "time_unknown": "समय तय नहीं",
+    "today_title": "शेड्यूल",
+    "today_empty": "आज कोई शेड्यूल नहीं",
+    "count": "{{value}}",
+    "header_title": "शेड्यूल",
+    "empty": {
+      "load_failed_title": "लोड नहीं हो सका",
+      "load_failed_desc": "बाद में फिर देखें।",
+      "joined_title": "कोई शामिल शेड्यूल नहीं",
+      "joined_desc": "आपके शामिल शेड्यूल यहाँ दिखेंगे।",
+      "pending_title": "कोई खुला शेड्यूल नहीं",
+      "pending_desc": "उपलब्ध शेड्यूल यहाँ दिखेंगे।"
+    }
+  },
+  "notifications": {
+    "header_title": "सूचनाएँ",
+    "mark_all_read": "सब पढ़ा हुआ करें",
+    "follow_back": "फ़ॉलो बैक",
+    "following": "फ़ॉलोइंग",
+    "retry": "फिर लोड करें",
+    "empty_title": "कोई सूचना नहीं",
+    "empty_desc": "नए अपडेट यहाँ दिखेंगे।",
+    "fallback_actor": "कोई",
+    "fallback_schedule": "शेड्यूल",
+    "fallback_beacon": "बीकन",
+    "fallback_room": "चैट रूम",
+    "fallback_notification": "नई सूचना",
+    "sections": {
+      "today": "आज",
+      "recent": "हाल का",
+      "unread": "अपठित",
+      "earlier": "पहले",
+      "this_week": "इस सप्ताह",
+      "older": "पहले",
+      "thisWeek": "इस सप्ताह"
+    },
+    "time": {
+      "just_now": "अभी",
+      "minutes": "{{value}}मि",
+      "hours": "{{value}}घं",
+      "days": "{{value}}दि",
+      "weeks": "{{value}}स",
+      "months": "{{value}}माह",
+      "years": "{{value}}व"
+    },
+    "copy": {
+      "others": " और {{value}} अन्य",
+      "follow_created": "{{name}} ने आपको फ़ॉलो किया",
+      "chat_reply_created": "{{name}} ने जवाब दिया",
+      "chat_mention_created": "{{name}} ने आपका उल्लेख किया",
+      "beacon_join_request_created": "{{name}} ने आपके बीकन में शामिल होने का अनुरोध किया",
+      "beacon_join_approved": "बीकन अनुरोध स्वीकृत",
+      "beacon_friend_created": "{{name}} ने नया बीकन बनाया",
+      "schedule_created": "{{room}} · {{target}} जोड़ा गया",
+      "schedule_updated": "{{room}} · {{target}} अपडेट हुआ",
+      "schedule_cancelled": "{{room}} · {{target}} रद्द हुआ",
+      "post_like_grouped": "{{name}}{{others}} ने आपकी पोस्ट पसंद की",
+      "post_comment_grouped": "{{name}}{{others}} ने टिप्पणी की",
+      "post_reply_grouped": "{{name}}{{others}} ने आपकी टिप्पणी का जवाब दिया",
+      "post_mention_grouped": "{{name}}{{others}} ने आपका उल्लेख किया"
+    },
+    "error": {
+      "load_failed": "सूचनाएँ लोड नहीं हो सकीं।"
+    },
+    "loading_short": "…"
+  }
+}

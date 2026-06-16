@@ -1,0 +1,253 @@
+{
+  "title": "الأصدقاء",
+  "requests": "طلبات الصداقة",
+  "requests_empty": "لا توجد طلبات صداقة جديدة.",
+  "requests_received": "الواردة",
+  "requests_sent": "المرسلة",
+  "add_friend": "إضافة صديق",
+  "send_request": "إرسال طلب صداقة",
+  "request_sent": "تم إرسال طلب الصداقة.",
+  "request_send_failed": "فشل إرسال طلب الصداقة.",
+  "request_cancel": "إلغاء الطلب",
+  "request_canceled": "تم إلغاء طلب الصداقة.",
+  "request_cancel_failed": "فشل إلغاء طلب الصداقة.",
+  "accept": "قبول",
+  "decline": "رفض",
+  "accepted": "تم قبول طلب الصداقة.",
+  "declined": "تم رفض طلب الصداقة.",
+  "accept_failed": "فشل قبول طلب الصداقة.",
+  "decline_failed": "فشل رفض طلب الصداقة.",
+  "remove_friend": "حذف الصديق",
+  "remove_friend_confirm": "هل تريد حذف هذا الصديق؟",
+  "remove_friend_done": "تم حذف الصديق.",
+  "remove_friend_failed": "فشل حذف الصديق.",
+  "blocked": "محظور",
+  "block": "حظر",
+  "unblock": "إلغاء الحظر",
+  "block_done": "تم الحظر.",
+  "unblock_done": "تم إلغاء الحظر.",
+  "search_placeholder": "ابحث بالاسم أو ID أو رمز الصديق",
+  "code_placeholder": "أدخل رمز الصديق",
+  "already_friends": "أنتما صديقان بالفعل.",
+  "already_requested": "تم إرسال طلب صداقة بالفعل.",
+  "self_not_allowed": "لا يمكنك إرسال طلب صداقة إلى نفسك.",
+  "hidden": "مخفي",
+  "favorite": "المفضلة",
+  "memo": "ملاحظة",
+  "alias": "اسم بديل",
+  "group": {
+    "title": "المجموعات",
+    "manageTitle": "مجموعات الأصدقاء",
+    "createTitle": "مجموعة جديدة",
+    "createDesc": "أدخل اسم المجموعة.",
+    "createPlaceholder": "مثال: زملاء العمل، أصدقاء الحي، الدراسة",
+    "createAction": "إنشاء",
+    "createFail": "فشل الإنشاء",
+    "editTitle": "تعديل اسم المجموعة",
+    "editDesc": "أدخل اسمًا جديدًا.",
+    "editPlaceholder": "اسم المجموعة",
+    "saveAction": "حفظ",
+    "renameFail": "فشل التعديل",
+    "nameRequired": "أدخل اسم المجموعة.",
+    "deleteTitle": "حذف المجموعة",
+    "deleteMessage": "هل تريد حذف مجموعة \"{{name}}\"؟",
+    "emptyTitle": "لا توجد مجموعات",
+    "emptyDesc": "أنشئ مجموعة جديدة.",
+    "memberEmpty": "لا يوجد أعضاء في المجموعة.",
+    "addTitle": "إضافة أصدقاء",
+    "addSuccess": "تمت الإضافة.",
+    "addFail": "فشلت الإضافة",
+    "addEmpty": "لا يوجد أصدقاء لإضافتهم.",
+    "removeSuccess": "تمت الإزالة.",
+    "removeFail": "فشلت الإزالة",
+    "memberCount": "{{count}} عضو"
+  },
+  "userFallback": "مستخدم",
+  "list": {
+    "favoriteFriendsCount": "المفضلة {{count}}",
+    "friendsCount": "الأصدقاء {{count}}"
+  },
+  "tabs": {
+    "friends": "الأصدقاء",
+    "groups": "المجموعات"
+  },
+  "search": {
+    "placeholder": "أدخل كلمة بحث",
+    "friendPlaceholder": "ابحث باسم الصديق أو ID",
+    "groupPlaceholder": "ابحث في المجموعات أو الأعضاء",
+    "namePlaceholder": "ابحث بالاسم",
+    "friendPickerPlaceholder": "ابحث عن صديق",
+    "contactsPlaceholder": "ابحث بالاسم أو الرقم",
+    "waitTitle": "بانتظار الإدخال",
+    "waitCaption": "أدخل المعلومات ثم ابحث.",
+    "emptyTitle": "لا توجد نتائج",
+    "emptyCaption": "لا يوجد مستخدم مطابق.",
+    "contactEmptyTitle": "لا توجد جهات اتصال",
+    "contactEmptyCaption": "لا توجد جهات اتصال مطابقة.",
+    "groupNamePlaceholder": "ابحث عن مجموعة"
+  },
+  "action": {
+    "favoriteAdd": "إضافة للمفضلة",
+    "favoriteRemove": "إزالة",
+    "manageFriend": "إدارة الصديق",
+    "manageGroup": "إدارة المجموعة",
+    "contact": "تواصل",
+    "create": "إنشاء",
+    "save": "حفظ",
+    "add": "إضافة",
+    "remove": "إزالة",
+    "select": "اختيار",
+    "search": "بحث",
+    "processing": "جارٍ المعالجة",
+    "saving": "جارٍ الحفظ"
+  },
+  "alert": {
+    "notice": "تنبيه",
+    "fail": "فشل",
+    "loadFail": "فشل التحميل",
+    "deleteFail": "فشل الحذف",
+    "profileRouteMissing": "تعذر العثور على شاشة الملف الشخصي.",
+    "chatRouteMissing": "تعذر العثور على شاشة الدردشة.",
+    "phoneMissing": "لا يوجد رقم هاتف.",
+    "phoneOpenFail": "تعذر فتح تطبيق الهاتف.",
+    "removeFriendTitle": "حذف الصديق",
+    "removeFriendMessage": "هل تريد حذف {{name}}؟",
+    "blockTitle": "حظر",
+    "blockMessage": "هل تريد حظر {{name}}؟",
+    "blockFail": "فشل الحظر",
+    "friendEditRouteMissing": "تعذر العثور على شاشة إدارة الصديق."
+  },
+  "add": {
+    "title": "إضافة صديق",
+    "loginRequired": "تسجيل الدخول مطلوب.",
+    "contactSearch": "البحث في جهات الاتصال",
+    "userFallback": "مستخدم {{id}}",
+    "noName": "بدون اسم",
+    "myProfile": "ملفي الشخصي",
+    "notSet": "غير محدد",
+    "friendCodeLabel": "رمز الصديق",
+    "qrOfflineHint": "يمكن الاتصال مباشرة عبر رمز QR.",
+    "shareLink": "مشاركة الرابط",
+    "scanQr": "مسح QR",
+    "qrTitle": "رمز الاتصال الخاص بي",
+    "qrDesc": "عند مسحه من الطرف الآخر\nيتم الاتصال مباشرة.",
+    "scanGuide": "امسح رمز QR الخاص بالطرف الآخر.",
+    "contactsTitle": "البحث عبر جهات الاتصال",
+    "contactsDesc": "اختر من دفتر العناوين للبحث.",
+    "mode": {
+      "coonnIdTitle": "CO·ONN ID",
+      "coonnIdHint": "أدخل ID العام للطرف الآخر.",
+      "coonnIdPlaceholder": "أدخل ID",
+      "friendCodeTitle": "رمز الصديق",
+      "friendCodeHint": "أدخل رمز الصديق.",
+      "friendCodePlaceholder": "أدخل رمز الصديق",
+      "phoneTitle": "جهات الاتصال",
+      "phoneHint": "ابحث برقم الهاتف المحمول.",
+      "phonePlaceholder": "أدخل الرقم"
+    },
+    "result": {
+      "noPublicId": "لا يوجد ID عام",
+      "friendCodeVerified": "تم التحقق من رمز الصديق",
+      "friendCodeMatched": "رمز الصديق مطابق",
+      "contact": "جهة اتصال · {{phone}}",
+      "added": "تمت الإضافة",
+      "limited": "محدود",
+      "add": "إضافة"
+    },
+    "share": {
+      "myId": "معرّفي",
+      "friendCode": "رمز الصديق",
+      "title": "مشاركة رابط CO·ONN",
+      "message": "[CO·ONN] تواصل معي.{{idText}}{{codeText}}\n\nيمكنك فتح شاشة إضافة الصديق عبر الرابط أدناه.\n{{url}}"
+    },
+    "toast": {
+      "added": "تمت الإضافة كصديق."
+    },
+    "alert": {
+      "permissionRequired": "الإذن مطلوب",
+      "cameraPermissionRequired": "إذن الكاميرا مطلوب.",
+      "contactsPermissionRequired": "إذن جهات الاتصال مطلوب.",
+      "contactsLoadFail": "فشل تحميل جهات الاتصال",
+      "searchFail": "فشل البحث",
+      "addFail": "فشلت الإضافة"
+    },
+    "error": {
+      "invalidUser": "مستخدم غير صالح.",
+      "selfQr": "هذا رمز QR الخاص بك.",
+      "userNotFound": "تعذر العثور على المستخدم.",
+      "invalidQr": "رمز غير صالح.",
+      "minLength": "أدخل {{count}} أحرف على الأقل."
+    },
+    "findTitle": "العثور على أصدقاء جدد",
+    "card": {
+      "idTitle": "البحث عبر ID",
+      "idDesc": "ابحث عن CO·ONN ID",
+      "codeTitle": "البحث بالرمز",
+      "codeDesc": "ابحث برمز الصديق",
+      "contactsTitle": "جهات الاتصال",
+      "contactsDesc": "من دفتر العناوين"
+    },
+    "digitalCardTitle": "بطاقتي"
+  },
+  "communication": {
+    "noPhone": "لا يوجد رقم هاتف",
+    "phoneCall": "مكالمة عادية",
+    "voiceCall": "مكالمة صوتية",
+    "comingSoon": "قريبًا"
+  },
+  "edit": {
+    "title": "إعدادات الصديق",
+    "unknownUser": "غير معروف",
+    "none": "لا شيء",
+    "field": {
+      "name": "الاسم"
+    },
+    "placeholder": {
+      "alias": "أدخل اسمًا بديلًا",
+      "memo": "أدخل ملاحظة"
+    },
+    "helper": {
+      "friendName": "اسم الصديق · {{name}}",
+      "privateMemo": "تظهر لك فقط."
+    },
+    "section": {
+      "groups": "المجموعات",
+      "security": "الأمان"
+    },
+    "state": {
+      "on": "مفعل",
+      "off": "متوقف",
+      "hidden": "مخفي",
+      "visible": "ظاهر",
+      "blocked": "محظور",
+      "unblocked": "غير محظور"
+    },
+    "toast": {
+      "saved": "تم الحفظ."
+    },
+    "alert": {
+      "loadFail": "فشل التحميل",
+      "saveFail": "فشل الحفظ",
+      "removeFail": "فشل الحذف",
+      "userLoadFail": "تعذر تحميل المستخدم.",
+      "blockedByPeer": "قام الطرف الآخر بحظرك."
+    },
+    "remove": {
+      "title": "حذف الصديق",
+      "message": "هل تريد حذف {{name}}؟"
+    },
+    "unsaved": {
+      "title": "تغييرات",
+      "message": "هناك تغييرات غير محفوظة.",
+      "discard": "عدم الحفظ"
+    },
+    "groups": {
+      "title": "إدارة المجموعات",
+      "subtitle": "اختر المجموعات التي تريد تضمينها.",
+      "selectedCount": "المحدد {{count}}",
+      "inGroup": "مضاف حاليًا",
+      "addHint": "اضغط للإضافة",
+      "emptySearch": "جرّب اسمًا آخر."
+    }
+  }
+}

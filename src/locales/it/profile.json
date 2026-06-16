@@ -1,0 +1,133 @@
+{
+  "view_title": "Profilo",
+  "edit_title": "Modifica profilo",
+  "nickname": "Nickname",
+  "handle": "Handle",
+  "status_message": "Stato",
+  "public_default": "Profilo pubblico predefinito",
+  "save_done": "Salvato.",
+  "no_name": "Senza nome",
+  "no_id": "ID non impostato",
+  "follow": "Segui",
+  "following": "Segui già",
+  "stat_posts": "Post",
+  "stat_followers": "Follower",
+  "stat_following": "Seguiti",
+  "empty_posts": "Nessun post",
+  "empty_posts_tab": "Nessun post",
+  "swipe": {
+    "new_post": "＋ Nuovo post",
+    "chat_1on1": "Chat 1:1",
+    "chat_me": "Chat con me",
+    "call": "Chiama",
+    "more": "Altro →"
+  },
+  "alert": {
+    "setting_soon": "In arrivo.",
+    "call_friend_only_title": "Chiamata non disponibile",
+    "call_friend_only_desc": "Disponibile solo per amici.",
+    "call_feature_soon": "In arrivo.",
+    "unfollow_title": "Smetti di seguire",
+    "unfollow_desc": "Vuoi smettere di seguire?",
+    "keep": "Mantieni",
+    "follow_fail": "Impossibile seguire.",
+    "unfollow_fail": "Annullamento non riuscito.",
+    "self_chat_fail": "Impossibile avviare la chat."
+  },
+  "edit": {
+    "error_permission": "Puoi modificare solo il tuo profilo.",
+    "revert_title": "Annulla modifiche",
+    "revert_msg": "Annullare le modifiche?",
+    "revert_action": "Annulla",
+    "revert": "Annulla modifiche",
+    "error_add_tab": "Impossibile aggiungere la tab.",
+    "confirm_delete_tab": "Eliminare la tab “{{name}}”?",
+    "error_save": "Salvataggio non riuscito.",
+    "change_cover": "Cambia sfondo",
+    "status_placeholder": "Scrivi uno stato",
+    "section_theme": "Stile",
+    "theme_color": "Colore tema",
+    "font_color": "Colore testo",
+    "statusbar": "Barra superiore",
+    "text_white": "Testo bianco",
+    "text_black": "Testo nero",
+    "section_tabs": "Gestione tab",
+    "tab_all": "Tutto",
+    "tab_input_placeholder": "+ Nuova tab",
+    "hue": "Tonalità (Hue)",
+    "brightness": "Luminosità (Brightness)",
+    "apply": "Applica",
+    "setting_tab": "Impostazioni “{{name}}”",
+    "move_up": "Sposta su",
+    "move_down": "Sposta giù",
+    "visibility": "Visibilità",
+    "current_vis": "Attuale: {{val}}",
+    "vis_public": "Tutti",
+    "vis_private": "Solo io",
+    "vis_custom": "Selezione",
+    "vis_friends": "Amici",
+    "vis_followers": "Follower",
+    "picker_avatar": "Scegli foto profilo",
+    "picker_cover": "Scegli foto sfondo"
+  },
+  "menu": {
+    "settings": "Impostazioni",
+    "message": "Messaggio",
+    "unfollow": "Smetti di seguire",
+    "hide": "Nascondi",
+    "hide_confirm": "Nascondere questo utente?",
+    "block": "Blocca",
+    "block_confirm": "Bloccare questo utente?",
+    "report": "Segnala"
+  },
+  "followList": {
+    "title": "Follow",
+    "searchPlaceholder": "Cerca nickname o ID",
+    "searchHint": "Inserisci una ricerca",
+    "searchEmpty": "Nessun risultato",
+    "retry": "Ricarica",
+    "unfollowTitle": "Smetti di seguire",
+    "unfollowMessage": "Smettere di seguire {{name}}?",
+    "unfollowAction": "Annulla",
+    "tab": {
+      "following": "Seguiti",
+      "followers": "Follower",
+      "requests": "Richieste"
+    },
+    "list": {
+      "following": "Lista seguiti",
+      "followers": "Lista follower",
+      "requests": "Richieste follow"
+    },
+    "section": {
+      "outgoing": "Inviate",
+      "incoming": "Ricevute"
+    },
+    "badge": {
+      "follower": "Follower",
+      "pending": "In attesa"
+    },
+    "action": {
+      "accept": "Accetta",
+      "decline": "Rifiuta"
+    },
+    "empty": {
+      "followingTitle": "Nessun seguito",
+      "followersTitle": "Nessun follower",
+      "requestsTitle": "Nessuna richiesta",
+      "followingDesc": "Segui persone che ti interessano.",
+      "followersDesc": "Condividi il tuo profilo.",
+      "requestsDesc": "Invia o accetta richieste."
+    },
+    "error": {
+      "loadFollowing": "Impossibile caricare i seguiti.",
+      "loadFollowers": "Impossibile caricare i follower.",
+      "loadRequests": "Impossibile caricare le richieste.",
+      "loadList": "Impossibile caricare la lista.",
+      "unfollow": "Annullamento non riuscito.",
+      "cancelRequest": "Impossibile annullare la richiesta.",
+      "acceptRequest": "Impossibile accettare la richiesta.",
+      "rejectRequest": "Impossibile rifiutare la richiesta."
+    }
+  }
+}

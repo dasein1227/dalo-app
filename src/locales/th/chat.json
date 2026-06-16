@@ -1,0 +1,1293 @@
+{
+  "title": "แชท",
+  "send": "ส่ง",
+  "attach": "ไฟล์",
+  "gallery": "แกลเลอรี",
+  "invite": "เชิญ",
+  "manage": "จัดการ",
+  "members": "สมาชิก",
+  "placeholder": "พิมพ์ข้อความ…",
+  "date": {
+    "today": "วันนี้",
+    "yesterday": "เมื่อวาน",
+    "separatorLabel": "{{day}} {{month}} {{year}} {{weekday}}",
+    "floatingLabel": "{{day}} {{month}} {{year}} · {{weekday}}"
+  },
+  "all": "ทั้งหมด",
+  "and_others_n": "+ N",
+  "others_suffix": "คนอื่น",
+  "anonymous": "ไม่ระบุชื่อ",
+  "message": "ข้อความ",
+  "message_search": "ค้นหาข้อความ",
+  "message_send": "ส่งข้อความ",
+  "message_send_failed": "ส่งข้อความไม่สำเร็จ",
+  "message_delete_failed": "ลบข้อความไม่ได้",
+  "message_deleted": "ลบข้อความแล้ว",
+  "new_message_one": "ข้อความใหม่ 1 รายการ",
+  "new_messages_count": "ข้อความใหม่ {{count}} รายการ",
+  "chat_with_me": "แชทกับตัวเอง",
+  "self_badge": "ฉัน",
+  "chat_room_title": "ห้องแชท",
+  "one_to_one_chat": "แชท 1:1",
+  "group_chat_title": "แชทกลุ่ม",
+  "open_chat_title": "โอเพนแชท",
+  "beacon_chat_title": "แชทบีคอน",
+  "room_not_found": "ไม่มีข้อมูลห้อง",
+  "chat_room_not_found": "ไม่พบห้องแชท",
+  "conversation_partner": "คู่สนทนา",
+  "audio_send_failed": "ส่งเสียงไม่สำเร็จ",
+  "video": "วิดีโอ",
+  "photo": "รูปภาพ",
+  "file_label": "ไฟล์",
+  "open_file": "เปิดไฟล์",
+  "play_video": "เล่นวิดีโอ",
+  "voice_message": "ข้อความเสียง",
+  "share_location": "แชร์ตำแหน่ง",
+  "map_location_shared_title": "แชร์ตำแหน่งแล้ว",
+  "map_tap_to_open": "แตะเพื่อเปิดแผนที่",
+  "cannot_open_map": "เปิดแผนที่ไม่ได้",
+  "no_coordinate_info": "ไม่มีพิกัด",
+  "send_failed": "ส่งไม่สำเร็จ",
+  "share": "แชร์",
+  "share_failed": "แชร์ไม่สำเร็จ",
+  "delete_failed": "ลบไม่สำเร็จ",
+  "upload_failed": "อัปโหลดไม่สำเร็จ",
+  "selection_mode": "โหมดเลือก",
+  "selection_mode_hint": "แตะข้อความที่ต้องการลบ",
+  "selection_clear": "ล้างการเลือก",
+  "delete_dialog_title": "ลบข้อความ",
+  "delete_dialog_desc": "เลือกวิธีลบ",
+  "delete_for_everyone": "ลบสำหรับทุกคน",
+  "delete_hide_for_everyone": "ซ่อนสำหรับทุกคน",
+  "delete_for_me": "ลบเฉพาะฉัน",
+  "delete_for_me_hint": "ลบข้อความที่เลือกได้เฉพาะฝั่งคุณ",
+  "reply": "ตอบกลับ",
+  "reply_to_me": "ตอบกลับข้อความของฉัน",
+  "reply_to_user": "ตอบกลับ {{nickname}}",
+  "msg_deleted_by_user": "{{nickname}} ลบข้อความแล้ว",
+  "notice": "ประกาศ",
+  "notice_coming_soon": "เร็ว ๆ นี้",
+  "korean_label": "เกาหลี",
+  "auto_translate_paid_only": "แปลอัตโนมัติใช้ได้ใน Standard หรือ Premium",
+  "translation_paid_only": "การแปลสำหรับสมาชิกแบบชำระเงินเท่านั้น",
+  "premium_only": "เฉพาะ Premium",
+  "premium_only_feature_hint": "ใช้ได้กับ Premium",
+  "tone_neutral": "เป็นกลาง",
+  "tone_casual": "เป็นกันเอง",
+  "tone_formal": "เป็นทางการ",
+  "tone_business": "ธุรกิจ",
+  "tone_playful": "สนุกสนาน",
+  "tone_change_premium_only": "ตั้งค่าน้ำเสียงได้กับ Premium",
+  "tone_premium_only_hint": "ใช้ได้กับการแปล Premium",
+  "login_required": "ต้องเข้าสู่ระบบ",
+  "no_permission_send_rls": "คุณไม่มีสิทธิ์ส่งข้อความ (RLS)\n",
+  "rls_help_chat_members": "→ ตรวจสอบว่าคุณอยู่ใน chat_members และตรวจนโยบาย chat_messages",
+  "search_placeholder": "ใส่คำค้นหา",
+  "search_result_count": "{{count}} ผลลัพธ์",
+  "show_original": "ดูต้นฉบับ",
+  "show_translation": "ดูคำแปล",
+  "translating": "กำลังแปล…",
+  "input": {
+    "placeholder": "ส่งข้อความ",
+    "placeholderLong": "พิมพ์ข้อความ…"
+  },
+  "hold_to_unlock": "กดค้างเพื่อปลดล็อกช่องพิมพ์",
+  "error": {
+    "loginRequired": "ต้องเข้าสู่ระบบ",
+    "roomNotFound": "ไม่พบห้องแชท",
+    "createRoomTitle": "ไม่สามารถดำเนินการแชท สร้าง ห้องได้",
+    "createRoomMessage": "ลองใหม่อีกครั้งในภายหลัง"
+  },
+  "sheet": {
+    "moreActions": "การทำงานเพิ่มเติม",
+    "media": "รูปภาพ/วิดีโอ",
+    "file": "ไฟล์",
+    "location": "แชร์ตำแหน่ง",
+    "inviteFriend": "เพื่อน",
+    "inviteLink": "ลิงก์เชิญ",
+    "translate": "แปล"
+  },
+  "translate": {
+    "title": "แปล",
+    "current_lang_prefix": "ปัจจุบัน: {{code}}",
+    "tone_label": "น้ำเสียง",
+    "toneNeutral": "เป็นกลาง",
+    "toneNeutralDesc": "แปลแบบเป็นธรรมชาติ",
+    "toneCasual": "เป็นกันเอง",
+    "toneCasualDesc": "แปล น้ำเสียง",
+    "toneFormal": "เป็นทางการ",
+    "toneFormalDesc": "สุภาพและให้เกียรติ",
+    "toneBusiness": "ธุรกิจ",
+    "toneBusinessDesc": "แปล น้ำเสียง ธุรกิจ",
+    "tonePlayful": "สนุกสนาน",
+    "tonePlayfulDesc": "แปล น้ำเสียง"
+  },
+  "unknown": "ไม่ทราบ",
+  "voice": "เสียง",
+  "list": {
+    "tab": {
+      "chat": "แชท",
+      "open": "เปิด",
+      "beacon": "บีคอน",
+      "business": "ธุรกิจ"
+    },
+    "empty": {
+      "chatTitle": "ไม่มีแชท",
+      "chatSub": "เริ่มคุยกับเพื่อน",
+      "openTitle": "ไม่มีโอเพนแชท",
+      "openSub": "แชท รายการ โอเพน",
+      "beaconTitle": "ยังไม่ได้เข้าร่วมบีคอน",
+      "beaconSub": "แชท รายการ บีคอน",
+      "businessTitle": "ไม่มีแชทธุรกิจ",
+      "businessSub": "แชท รายการ ธุรกิจ"
+    },
+    "leaveConfirmTitle": "ออกจากแชท?",
+    "leaveConfirmMessage": "แชทนี้จะหายไปจากรายการของคุณ",
+    "leaveConfirmAction": "ออก"
+  },
+  "menu": {
+    "title": "เมนูแชท",
+    "joinedDate": "เข้าร่วม {{date}}",
+    "media": "รูปภาพ/วิดีโอ",
+    "mediaEmpty": "สื่อล่าสุดจะแสดงที่นี่",
+    "noticeSchedule": "ประกาศและกำหนดการ",
+    "me": "ฉัน"
+  },
+  "membersScreen": {
+    "title": "สมาชิก",
+    "loading": "กำลังโหลด…",
+    "empty": "ไม่มีสมาชิก",
+    "owner": "โฮสต์",
+    "participant": "ผู้เข้าร่วม",
+    "remove": "นำออก",
+    "removeTitle": "นำออก",
+    "removeMessage": "นำ {{name}} ออกไหม?",
+    "loadFail": "โหลดไม่ได้",
+    "noName": "ไม่มีชื่อ"
+  },
+  "inviteScreen": {
+    "title": "เชิญเพื่อน",
+    "roomMissingTitle": "ห้อง",
+    "roomMissingMessage": "กรอกห้อง",
+    "tryAgain": "ลองใหม่อีกครั้งในภายหลัง",
+    "loadFailTitle": "โหลดรายชื่อเพื่อนไม่ได้",
+    "selectFriend": "เลือกเพื่อน",
+    "selectForAdd": "เลือกเพื่อนที่จะเพิ่ม",
+    "selectForNewGroup": "เลือกใหม่ กลุ่ม",
+    "addSuccessTitle": "เพิ่ม สำเร็จ",
+    "addSuccessMessage": "เพิ่มแล้ว {{count}} คน",
+    "addFailTitle": "ไม่สามารถดำเนินการเพิ่ม ล้มเหลวได้",
+    "createFailTitle": "สร้างแชทกลุ่มไม่ได้",
+    "friendRowAdd": "เพิ่มในกลุ่มนี้",
+    "friendRowNewGroup": "รวมในกลุ่มใหม่",
+    "groupAddTitle": "กลุ่ม เพิ่ม",
+    "newGroupTitle": "แชทกลุ่มใหม่",
+    "groupAddDesc": "กลุ่ม เพิ่ม",
+    "newGroupDesc": "สร้างกลุ่มใหม่กับเพื่อนที่เลือก",
+    "loading": "กำลังโหลดเพื่อน",
+    "emptyTitle": "ไม่มีเพื่อนให้เชิญ",
+    "emptyDesc": "แชท",
+    "addCount": "เพิ่ม {{count}} คน",
+    "makeGroupCount": "สร้างกลุ่มกับ {{count}} คน",
+    "noName": "ไม่มีชื่อ",
+    "groupFallbackTitle": "แชทกลุ่ม",
+    "groupTitleWithOthers": "{{names}} + {{count}} คน"
+  },
+  "roomEdit": {
+    "title": "ข้อมูลห้องแชท",
+    "nameLabel": "ห้อง แก้ไข ชื่อ",
+    "hidePhoto": "ซ่อนรูปภาพ",
+    "hidePhotoDesc": "แก้ไข ซ่อน รูปภาพ",
+    "helperLine1": "รูปและชื่อที่ตั้งจะแสดงเฉพาะคุณ",
+    "helperLine2": "ไม่มีผลต่ออีกฝ่าย",
+    "alertTitle": "ประกาศ",
+    "unhideBeforeChange": "รายการ",
+    "saveFail": "บันทึกไม่สำเร็จ"
+  },
+  "roomData": {
+    "title": "จัดการข้อมูล",
+    "ratioTitle": "ข้อมูลตามประเภท",
+    "noMedia": "ไม่มีสื่อที่บันทึก",
+    "savedCount": "บันทึกแล้ว {{value}} รายการ",
+    "deleteAllWithSize": "ลบสื่อทั้งหมด ({{size}})",
+    "photoData": "ข้อมูลรูปภาพ",
+    "videoData": "ข้อมูลวิดีโอ",
+    "audioData": "ข้อมูลเสียง",
+    "fileData": "ข้อมูลไฟล์",
+    "storageCenter": "พื้นที่จัดเก็บ CO·ONN",
+    "loadFail": "โหลดข้อมูลพื้นที่ไม่ได้",
+    "actionFail": "ทำรายการไม่สำเร็จ",
+    "clear": {
+      "photoTitle": "ลบข้อมูลรูปภาพ",
+      "photoMessage": "ข้อมูล ล้าง รูปภาพ",
+      "photoSuccess": "ลบข้อมูลรูปภาพแล้ว",
+      "videoTitle": "ลบข้อมูลวิดีโอ",
+      "videoMessage": "ข้อมูล ล้าง วิดีโอ",
+      "videoSuccess": "ลบข้อมูลวิดีโอแล้ว",
+      "audioTitle": "ลบข้อมูลเสียง",
+      "audioMessage": "ข้อมูล ล้าง เสียง",
+      "audioSuccess": "ลบข้อมูลเสียงแล้ว",
+      "fileTitle": "ลบข้อมูลไฟล์",
+      "fileMessage": "ข้อมูล ล้าง ไฟล์",
+      "fileSuccess": "ลบข้อมูลไฟล์แล้ว",
+      "allTitle": "ลบสื่อทั้งหมด",
+      "allMessage": "ข้อมูล ล้าง ทั้งหมด",
+      "allSuccess": "ลบข้อมูลสื่อแล้ว"
+    }
+  },
+  "collection": {
+    "title": "รวมไว้",
+    "count": "{{count}} รายการ",
+    "total": "รวม {{value}}",
+    "tabs": {
+      "links": "ลิงก์",
+      "schedules": "กำหนดการ",
+      "bookmarks": "บุ๊กมาร์ก"
+    },
+    "empty": {
+      "media": "ไม่มีรูปภาพหรือวิดีโอ",
+      "files": "ไม่มีไฟล์",
+      "links": "ไม่มีลิงก์",
+      "notices": "ไม่มีประกาศ",
+      "schedules": "ไม่มีกำหนดการ",
+      "bookmarks": "ไม่มีบุ๊กมาร์ก"
+    },
+    "noDate": "ไม่มีวันที่",
+    "tapToView": "แตะเพื่อดู",
+    "bookmarkMissingMessage": "ไม่พบข้อความนี้บนอุปกรณ์นี้",
+    "scheduleEmptyBody": "ไม่มีรายละเอียดกำหนดการ",
+    "secureRecovery": {
+      "completedBody": "นำเข้าคีย์ความปลอดภัยเก่าแล้ว",
+      "rejectedBody": "คำขอคีย์เก่าถูกปฏิเสธ"
+    },
+    "scheduleStatus": {
+      "cancelled": "ยกเลิกแล้ว",
+      "completed": "เสร็จสิ้น",
+      "joined": "เข้าร่วม",
+      "joinedOngoing": "เข้าร่วม"
+    },
+    "section": {
+      "latestNotice": "ประกาศล่าสุด",
+      "previousNotice": "ประกาศก่อนหน้า",
+      "activeSchedules": "กำลังดำเนินการ/เปิดรับ",
+      "closedSchedules": "ปิด กำหนดการ"
+    }
+  },
+  "settings": {
+    "title": "แชท การตั้งค่า",
+    "memberCount": "{{count}} คน",
+    "startedAt": "เริ่มสนทนา {{date}}",
+    "inputLock": "ล็อกช่องพิมพ์",
+    "theme": {
+      "title": "แชท การตั้งค่า",
+      "default": "ค่าเริ่มต้น",
+      "byRoomType": "ตามประเภทห้อง"
+    },
+    "themePreview": {
+      "other": "รายการ",
+      "mine": "เข้าใจแล้ว"
+    },
+    "translation": {
+      "title": "ตั้งค่าการแปล"
+    },
+    "sound": {
+      "title": "แชท การตั้งค่า",
+      "default": "ค่าเริ่มต้น",
+      "clear": "ใส",
+      "calm": "สงบ",
+      "short": "สั้น",
+      "soft": "นุ่ม",
+      "quiet": "เงียบ",
+      "deep": "ทุ้ม",
+      "light": "สว่าง",
+      "mute": "ปิดเสียง"
+    },
+    "data": {
+      "section": "ข้อมูล",
+      "manage": "การตั้งค่า ข้อมูล"
+    },
+    "export": {
+      "title": "ส่งออกแชท",
+      "message": "แชท การตั้งค่า",
+      "saveFile": "บันทึกไฟล์",
+      "share": "แชร์",
+      "saveSuccess": "บันทึก สำเร็จ",
+      "shareSuccess": "เปิดหน้าจอแชร์แล้ว",
+      "saveCancelled": "บันทึก ยกเลิก",
+      "fail": "ส่งออกไม่ได้",
+      "deletedMessage": "[ข้อความที่ถูกลบ]",
+      "secureExcluded": "[ข้อความปลอดภัย - ไม่รวม]",
+      "imageLabel": "[รูปภาพ]",
+      "videoLabel": "[วิดีโอ]",
+      "audioLabel": "การตั้งค่า เสียง",
+      "fileLabel": "[ไฟล์]",
+      "unknownSender": "ไม่ทราบ",
+      "meSender": "ฉัน",
+      "userSender": "ผู้ใช้",
+      "fileTitle": "ส่งออกแชท CO·ONN",
+      "roomLine": "ห้องแชท: {{roomTitle}}",
+      "exportedAtLine": "ส่งออกเมื่อ: {{exportedAt}}",
+      "noteLocal": "ท้องถิ่น",
+      "noteText": "การตั้งค่า",
+      "noteSecure": "ปลอดภัย",
+      "noteGallery": "แกลเลอรี",
+      "attachmentLine": "- ไฟล์แนบ: {{type}}{{fileNamePart}}{{mimePart}}",
+      "shareDialogTitle": "แชร์แชท"
+    },
+    "leave": {
+      "title": "แชท การตั้งค่า",
+      "action": "ออก",
+      "rejectInvite": "รายการ",
+      "reportAndLeave": "รายงานและออก",
+      "groupMessage": "การตั้งค่า กลุ่ม",
+      "reportMessage": "การตั้งค่า",
+      "defaultMessage": "การตั้งค่า ค่าเริ่มต้น",
+      "fail": "ไม่สามารถดำเนินการการตั้งค่า ล้มเหลวได้",
+      "selfBlocked": "ฉัน"
+    },
+    "secure": {
+      "section": "คีย์ความปลอดภัย",
+      "me": "ฉัน",
+      "peer": "คู่สนทนา",
+      "authCancelled": "ปลอดภัย ยกเลิก",
+      "decline": "ปฏิเสธ",
+      "newKey": "สร้างคีย์ความปลอดภัยใหม่",
+      "newKeyDesc": "ปลอดภัย ใหม่ คีย์",
+      "newKeyConfirmTitle": "ปลอดภัย ใหม่ คีย์ไหม?",
+      "newKeyConfirmMessage": "ปลอดภัย ใหม่ คีย์",
+      "create": "สร้าง",
+      "newKeySuccessTitle": "ใหม่ คีย์ สำเร็จ",
+      "newKeySuccessMessage": "จากนี้จะเข้ารหัสด้วยคีย์ epoch {{epoch}}",
+      "newKeyFailTitle": "ใหม่ คีย์ ล้มเหลวไม่สำเร็จ",
+      "newKeyFail": "ไม่สามารถดำเนินการใหม่ คีย์ ล้มเหลวได้",
+      "historyRequest": "ปลอดภัย คำขอ",
+      "historyRequestDesc": "ปลอดภัย คำขอ",
+      "historyRequestConfirmTitle": "ปลอดภัย คำขอไหม?",
+      "historyRequestConfirmMessage": "ปลอดภัย คำขอ",
+      "request": "ขอ",
+      "historyRequestSuccessTitle": "ส่งคำขอแล้ว",
+      "historyRequestSuccessMessage": "ส่งคำขอถึง {{count}} คนแล้ว",
+      "historyRequestEmpty": "ไม่มีปลอดภัย คำขอ",
+      "historyRequestFailTitle": "ขอไม่สำเร็จ",
+      "historyRequestFail": "ไม่สามารถดำเนินการคำขอ ล้มเหลวได้",
+      "claimApproved": "ปลอดภัย",
+      "claimApprovedDesc": "ปลอดภัย",
+      "claimSuccessTitle": "ปลอดภัย สำเร็จ",
+      "claimSuccessMessage": "บันทึก {{imported}} · ข้าม {{skipped}}{{conflictText}}",
+      "claimFailTitle": "นำเข้าไม่สำเร็จ",
+      "claimFail": "ไม่สามารถดำเนินการปลอดภัย ล้มเหลวได้",
+      "incomingRequestTitle": "คำขอคีย์เก่าจาก {{name}}",
+      "shareApprovedDesc": "ปลอดภัย แชร์",
+      "historyShareConfirmTitle": "ปลอดภัย แชร์ไหม?",
+      "historyShareConfirmMessage": "แชร์คีย์เก่ากับ {{name}} ไหม?",
+      "historyShareSuccessTitle": "แชร์แล้ว",
+      "historyShareSuccessMessage": "แชร์กับ {{name}} แล้ว",
+      "historyShareFailTitle": "แชร์ไม่สำเร็จ",
+      "historyShareFail": "ไม่สามารถดำเนินการแชร์ ล้มเหลวได้",
+      "historyRejectConfirmTitle": "ปฏิเสธคำขอไหม?",
+      "historyRejectConfirmMessage": "ปฏิเสธคำขอจาก {{name}} ไหม?",
+      "rejectSuccessTitle": "ปฏิเสธแล้ว",
+      "rejectSuccessMessage": "ปฏิเสธคำขอจาก {{name}} แล้ว",
+      "rejectFailTitle": "ปฏิเสธไม่สำเร็จ",
+      "rejectFail": "ไม่สามารถดำเนินการปลอดภัย ล้มเหลวได้",
+      "backupSection": "สำรองคีย์ความปลอดภัย",
+      "backup": "การตั้งค่า ปลอดภัย สำรอง",
+      "backupSummary": "ปลอดภัย สำรอง สรุป {{rooms}} {{keys}}",
+      "noBackup": "ไม่มีข้อมูลสำรอง",
+      "backupConfirmTitle": "สำรองคีย์ความปลอดภัยไหม?",
+      "backupCreateMessage": "ปลอดภัย สำรอง สร้าง",
+      "backupReplaceMessage": "ปลอดภัย สำรอง",
+      "backupAction": "สำรอง",
+      "backupFailTitle": "สำรองไม่สำเร็จ",
+      "backupCreateFail": "ไม่สามารถดำเนินการสำรอง สร้าง ล้มเหลวได้",
+      "restore": "การตั้งค่า ปลอดภัย กู้คืน",
+      "restoreDesc": "การตั้งค่า ปลอดภัย กู้คืน",
+      "restoreMessage": "กรอกการตั้งค่า ปลอดภัย กู้คืน",
+      "restoreAction": "กู้คืน",
+      "restoreCodeRequired": "กรอกกู้คืน รหัส จำเป็น",
+      "restoreSuccessTitle": "กู้คืนเสร็จสิ้น",
+      "restoreSuccessMessage": "นำเข้า {{imported}} · ข้าม {{skipped}}{{conflictText}}",
+      "restoreFail": "ไม่สามารถดำเนินการปลอดภัย กู้คืน ล้มเหลวได้",
+      "conflictText": " · ขัดแย้ง {{conflicts}} รายการ\nคงคีย์ในเครื่องเดิมไว้",
+      "conflictShort": " · ขัดแย้ง {{conflicts}} รายการ",
+      "recoveryCodeTitle": "ปลอดภัย รหัส",
+      "recoveryCodeMessage": "ปลอดภัย รหัส",
+      "copyRecoveryCode": "คัดลอกรหัสกู้คืน",
+      "codeStored": "บันทึกรหัสกู้คืนแล้ว",
+      "codeCopied": "คัดลอกรหัสกู้คืนแล้ว",
+      "codeCopyFail": "คัดลอกไม่ได้",
+      "codeConfirmRequired": "ปลอดภัย รหัส จำเป็น",
+      "deleteServerBackup": "ลบข้อมูลสำรองบนเซิร์ฟเวอร์",
+      "deleteServerBackupDesc": "ลบ สำรอง",
+      "backupDeleteConfirmTitle": "ลบข้อมูลสำรองคีย์ไหม?",
+      "backupDeleteConfirmMessage": "ปลอดภัย สำรอง ลบ",
+      "backupDeleteSuccessTitle": "ลบข้อมูลสำรองแล้ว",
+      "backupDeleteSuccessMessage": "สำรอง ลบ สำเร็จ",
+      "backupDeleteFailTitle": "ลบข้อมูลสำรองไม่สำเร็จ",
+      "backupDeleteFail": "ไม่สามารถดำเนินการสำรอง ลบ ล้มเหลวได้"
+    },
+    "openProfileEditAccessibility": "โอเพน โปรไฟล์ แก้ไข"
+  },
+  "me": "ฉัน",
+  "noticePromote": {
+    "unsupported": "ไม่สามารถดำเนินการประกาศ เลื่อนสิทธิ์ได้",
+    "ownerOnly": "เลื่อนสิทธิ์ เจ้าของ",
+    "noPermission": "เลื่อนสิทธิ์ ไม่ สิทธิ์",
+    "secureBlocked": "เลื่อนสิทธิ์ ปลอดภัย",
+    "systemBlocked": "เลื่อนสิทธิ์",
+    "deletedBlocked": "เลื่อนสิทธิ์",
+    "missingMessage": "ไม่สามารถดำเนินการประกาศ เลื่อนสิทธิ์ได้"
+  },
+  "secure": {
+    "promptAuth": "ปลอดภัย",
+    "on": "เปิดโหมดปลอดภัย",
+    "off": "ปิดโหมดปลอดภัย",
+    "readyFail": "ปลอดภัย ล้มเหลวไม่สำเร็จ",
+    "sendReadyFail": "เตรียมส่งแบบปลอดภัยไม่สำเร็จ",
+    "mediaUnsupported": "ปลอดภัย สื่อ",
+    "fileUnsupported": "ปลอดภัย ไฟล์",
+    "content": {
+      "image": "🔐 รูปภาพเข้ารหัส",
+      "video": "🔐 วิดีโอเข้ารหัส",
+      "audio": "🔐 เสียงเข้ารหัส",
+      "location": "🔐 ตำแหน่งเข้ารหัส"
+    },
+    "enabled": "เปิดโหมดปลอดภัย",
+    "disabled": "ปิดโหมดปลอดภัย",
+    "lockedLabel": "🔐 ข้อความเข้ารหัส",
+    "prompt": {
+      "keyUse": "คีย์",
+      "deviceRegister": "ลงทะเบียน",
+      "backupCreate": "สำรอง สร้าง",
+      "backupRestore": "สำรอง กู้คืน",
+      "newRoomKey": "ใหม่ ห้อง คีย์",
+      "historyRequest": "คำขอ",
+      "historyShare": "แชร์",
+      "historyReject": "รายการ",
+      "historyClaim": "รายการ",
+      "decrypt": "ปลอดภัย"
+    },
+    "error": {
+      "loginRequired": "ต้องเข้าสู่ระบบ",
+      "backupEmpty": "ไม่มีแชท ปลอดภัย สำรอง",
+      "backupMissing": "ไม่มีปลอดภัย สำรอง",
+      "backupWrongAccount": "สำรอง บัญชี",
+      "requesterDeviceMissing": "ไม่สามารถดำเนินการรายการได้",
+      "noHistoryKeyToShare": "ไม่มีคีย์ แชร์",
+      "parcelCreateFailed": "ไม่สามารถดำเนินการสร้าง ล้มเหลวได้"
+    }
+  },
+  "jump": {
+    "newMessage": "ข้อความใหม่",
+    "newMessageAccessibility": "ไปยังข้อความใหม่",
+    "latestAccessibility": "ไปยังข้อความล่าสุด"
+  },
+  "permission": {
+    "cameraTitle": "ต้องการสิทธิ์",
+    "cameraMessage": "ต้องอนุญาตเข้าถึงกล้อง",
+    "contactsTitle": "ต้องการสิทธิ์",
+    "contactsMessage": "ต้องอนุญาตเข้าถึงรายชื่อ"
+  },
+  "filePick": {
+    "failTitle": "เลือกไฟล์ไม่สำเร็จ",
+    "failMessage": "เลือกไฟล์ไม่ได้"
+  },
+  "newChat": {
+    "title": "แชทใหม่",
+    "create": "สร้าง",
+    "start": "เริ่ม",
+    "noName": "ไม่มีชื่อ",
+    "selectPartnerRequired": "เลือกคู่สนทนา",
+    "openTitleRequired": "ใส่ชื่อโอเพนแชท",
+    "modeNormal": "ปกติ",
+    "modeOpen": "เปิด",
+    "openSectionTitle": "สร้างโอเพนแชท",
+    "openNamePlaceholder": "ชื่อโอเพนแชท",
+    "openHelper": "แชท โอเพน",
+    "partnerSectionTitle": "เลือกคู่สนทนา",
+    "groupTitlePlaceholder": "ชื่อแชทกลุ่ม",
+    "searchNamePlaceholder": "ค้นหาชื่อ",
+    "emptyFriends": "ไม่มีเพื่อน",
+    "userFallback": "ผู้ใช้",
+    "privateChatTitle": "แชทส่วนตัว",
+    "groupChatTitle": "แชทกลุ่ม",
+    "openChatTitle": "โอเพนแชท",
+    "coverPhoto": "ภาพหน้าปก",
+    "selectPhoto": "เลือกรูปภาพ",
+    "openDescriptionPlaceholder": "คำอธิบายห้อง",
+    "openTagsPlaceholder": "เช่น ย่านนี้ กาแฟ วิ่ง",
+    "searchVisible": "แชท ค้นหา มองเห็น",
+    "searchVisibleDesc": "ค้นหาห้องนี้ได้จากชื่อ คำอธิบาย และแท็ก",
+    "groupModeTitle": "แชทกลุ่ม",
+    "groupModeAutoDesc": "กลุ่ม",
+    "groupModeSingleDesc": "กลุ่ม"
+  },
+  "menuModal": {
+    "markRead": "ทำเครื่องหมายว่าอ่านแล้ว",
+    "roomInfo": "ข้อมูลห้องแชท",
+    "pin": "ปักหมุด",
+    "unpin": "เลิกปักหมุด",
+    "mute": "ปิดเสียง",
+    "unmute": "แชท เมนู",
+    "leave": "ออก",
+    "selfRoomTitle": "เมนู ฉัน ห้อง"
+  },
+  "roomCard": {
+    "pending": "รอการตอบรับ",
+    "emptyMessage": "ไม่มีข้อความ",
+    "messageFallback": "ข้อความ",
+    "am": "AM",
+    "pm": "PM",
+    "date": "{{day}}/{{month}}",
+    "preview": {
+      "image": "[รูปภาพ]",
+      "video": "[วิดีโอ]",
+      "audio": "[เสียง]",
+      "file": "[ไฟล์]",
+      "map": "[ตำแหน่ง]",
+      "notice": "[ประกาศ]"
+    }
+  },
+  "searchModal": {
+    "rooms": "ห้องแชท",
+    "messages": "ข้อความ",
+    "placeholder": "ค้นหา",
+    "emptyTitle": "ค้นหา",
+    "emptyDesc": "แชท ค้นหา",
+    "noResultTitle": "ไม่มีผลลัพธ์",
+    "noResultDesc": "ลองใช้คำค้นอื่น",
+    "roomPrefix": "ห้องแชท",
+    "visibleName": "ชื่อที่แสดง",
+    "messageSender": "ผู้ส่ง",
+    "filterNormal": "ปกติ",
+    "filterOpen": "เปิด",
+    "filterBeacon": "บีคอน",
+    "filterBusiness": "ธุรกิจ",
+    "dateAll": "ทั้งหมด",
+    "dateToday": "วันนี้",
+    "date7d": "แชท ค้นหา",
+    "date30d": "แชท ค้นหา",
+    "tabChat": "แชท",
+    "tabParticipant": "สมาชิก",
+    "tabOpen": "โอเพนแชท",
+    "participants": "สมาชิก",
+    "openRooms": "โอเพนแชท",
+    "participantEmptyTitle": "แชท ค้นหา ผู้เข้าร่วม",
+    "participantEmptyDesc": "แชท ค้นหา ผู้เข้าร่วม",
+    "participantNoResultTitle": "ไม่มีสมาชิก",
+    "participantNoResultDesc": "ผู้เข้าร่วม ไม่ ผลลัพธ์",
+    "openEmptyTitle": "ค้นหาโอเพนแชท",
+    "openEmptyDesc": "แชท ค้นหา โอเพน",
+    "openNoResultTitle": "ไม่มีโอเพนแชท",
+    "openNoResultDesc": "ลองใช้คำค้นอื่น",
+    "typeFilter": "ประเภท",
+    "dateFilter": "วันที่",
+    "openJoined": "เข้าร่วม",
+    "openPublic": "โอเพนแชท",
+    "participatingRoom": "ห้องที่เข้าร่วม"
+  },
+  "location": {
+    "fallbackTitle": "ตำแหน่ง",
+    "selectMapApp": "เลือกเลือก แผนที่",
+    "openMapHint": "แตะแผนที่เพื่อขอเส้นทาง"
+  },
+  "translationPanel": {
+    "title": "ตั้งค่าการแปล",
+    "subtitle": "ใช้เฉพาะห้องนี้",
+    "autoTranslate": {
+      "title": "แปล",
+      "desc": "แสดงข้อความที่ได้รับเป็นภาษาที่เลือก"
+    },
+    "showTranslatedOnly": {
+      "title": "เฉพาะคำแปล",
+      "desc": "แสดงคำแปลเป็นหลัก"
+    },
+    "tier": {
+      "title": "แผน",
+      "desc": "เลือกคุณภาพการแปล",
+      "upgrade": "อัปเกรด",
+      "options": {
+        "free": {
+          "label": "Basic",
+          "desc": "การแปลพื้นฐาน"
+        },
+        "mid": {
+          "label": "Standard",
+          "desc": "แปลบทสนทนาอย่างเป็นธรรมชาติ"
+        },
+        "high": {
+          "label": "Premium",
+          "desc": "คำนึงถึงบริบทและน้ำเสียง"
+        }
+      }
+    },
+    "tone": {
+      "title": "น้ำเสียง",
+      "desc": "การแปล น้ำเสียง",
+      "disabled": "ใช้ได้กับ Premium",
+      "options": {
+        "business": {
+          "label": "ธุรกิจ",
+          "desc": "น้ำเสียง ธุรกิจ"
+        },
+        "polite": {
+          "label": "น้ำเสียง",
+          "desc": "น้ำเสียง"
+        },
+        "casual": {
+          "label": "เป็นกันเอง",
+          "desc": "น้ำเสียง"
+        },
+        "neutral": {
+          "label": "เป็นกลาง",
+          "desc": "น้ำเสียง"
+        },
+        "creative": {
+          "label": "น้ำเสียง",
+          "desc": "น้ำเสียง"
+        }
+      }
+    },
+    "sendLang": {
+      "title": "ภาษาที่ส่ง",
+      "desc": "รายการ",
+      "auto": "อัตโนมัติ",
+      "autoDesc": "รายการ",
+      "autoPeerDesc": "ปัจจุบันตามคู่สนทนา: {{label}} ({{code}})",
+      "peerBase": "คู่สนทนา",
+      "peerDefault": "ค่าเริ่มต้นของคู่สนทนา"
+    },
+    "receiveLang": {
+      "title": "ภาษาที่รับ",
+      "desc": "รายการ"
+    },
+    "status": {
+      "off": "ปิด",
+      "on": "ON",
+      "auto": "อัตโนมัติ",
+      "receive": "รับ",
+      "send": "ส่ง",
+      "translatedOnly": "เฉพาะคำแปล"
+    },
+    "language": {
+      "EN": "อังกฤษ",
+      "ES": "สเปน",
+      "FR": "ฝรั่งเศส",
+      "DE": "เยอรมัน",
+      "IT": "อิตาลี",
+      "PT": "โปรตุเกส",
+      "NL": "ดัตช์",
+      "PL": "โปแลนด์",
+      "RU": "รัสเซีย",
+      "JA": "ญี่ปุ่น",
+      "KO": "เกาหลี",
+      "ZH": "จีน",
+      "TR": "ตุรกี",
+      "SV": "สวีเดน",
+      "ID": "อินโดนีเซีย",
+      "TH": "ไทย",
+      "UK": "ยูเครน",
+      "RO": "โรมาเนีย",
+      "CS": "เช็ก",
+      "DA": "เดนมาร์ก",
+      "EL": "กรีก",
+      "FI": "ฟินแลนด์",
+      "HU": "ฮังการี",
+      "SK": "สโลวัก",
+      "SL": "สโลวีเนีย",
+      "BG": "บัลแกเรีย",
+      "ET": "เอสโตเนีย",
+      "LT": "ลิทัวเนีย",
+      "LV": "ลัตเวีย",
+      "AR": "อาหรับ",
+      "ZH_HANS": "จีนตัวย่อ",
+      "ZH_HANT": "จีนตัวเต็ม",
+      "VI": "เวียดนาม",
+      "HI": "ฮินดี",
+      "HE": "ฮีบรู"
+    }
+  },
+  "header": {
+    "searchPlaceholder": "แชท ค้นหา",
+    "advanced": "ขั้นสูง",
+    "sender": "ผู้ส่ง",
+    "date": "วันที่"
+  },
+  "attachment": {
+    "photo": "รูปภาพ",
+    "camera": "แชท กล้อง",
+    "call": "โทร",
+    "pay": "แชท ชำระเงิน",
+    "map": "แผนที่",
+    "music": "แชท เพลง",
+    "file": "ไฟล์",
+    "cloud": "แชท คลาวด์",
+    "contact": "ติดต่อ",
+    "recentPhotos": "ล่าสุด",
+    "send": "ส่ง",
+    "photoPermissionRequired": "ต้องอนุญาตเข้าถึงรูปภาพ",
+    "openSettings": "โอเพน การตั้งค่า",
+    "callUnavailable": "เริ่มโทรไม่ได้",
+    "phoneMissing": "ไม่มีโทรศัพท์",
+    "phoneOpenFail": "ไม่สามารถดำเนินการโทรศัพท์ โอเพน ล้มเหลวได้",
+    "voiceCallUnavailable": "การโทรเสียงกำลังเตรียมพร้อม",
+    "contactEmpty": "ไม่มีข้อมูลติดต่อให้แชร์",
+    "contactShareTitle": "ติดต่อ",
+    "contactName": "ชื่อ",
+    "contactPhone": "โทรศัพท์",
+    "contactShareFail": "แชร์ผู้ติดต่อไม่ได้",
+    "voiceMessage": "เสียง",
+    "capture": "จับภาพ",
+    "schedule": "แชท กำหนดการ"
+  },
+  "accessibility": {
+    "attachmentClose": "แชท",
+    "attachmentOpen": "แชท โอเพน",
+    "messageInput": "ช่องพิมพ์ข้อความ",
+    "sendMessage": "ส่งข้อความ",
+    "voiceMessage": "ข้อความเสียง"
+  },
+  "replyPreview": {
+    "peer": "คู่สนทนา",
+    "replyTo": "ตอบกลับ {{name}}",
+    "cancel": "ยกเลิกตอบกลับ"
+  },
+  "mediaKind": {
+    "image": "รูปภาพ",
+    "video": "วิดีโอ",
+    "audio": "ข้อความเสียง",
+    "file": "ไฟล์",
+    "map": "ตำแหน่ง",
+    "notice": "ประกาศ",
+    "text": "ข้อความ"
+  },
+  "deleteModal": {
+    "title": "ลบ",
+    "mine": "ลบเฉพาะฉัน",
+    "all": "ลบสำหรับทุกคน",
+    "moment": "ลบตามเวลา",
+    "sectionTitle": "แชท ลบ",
+    "selectTime": "เลือกลบ เลือก เวลา",
+    "readBased": "ลบหลังอ่าน",
+    "readAfterWithDelay": "หลังอ่าน +{{delay}}",
+    "afterDelete": "ลบหลัง {{delay}}",
+    "unit": {
+      "hour": "ชม.",
+      "minute": "นาที",
+      "second": "วิ"
+    },
+    "cancelTitle": "ยกเลิกไหม?",
+    "cancelDesc": "การตั้งค่าที่เลือกจะไม่ถูกบันทึก",
+    "keepEditing": "แก้ไขต่อ",
+    "discard": "แชท ลบ"
+  },
+  "messageAction": {
+    "copy": "คัดลอก",
+    "selectCopy": "เลือกแชท เลือก",
+    "reply": "ตอบกลับ",
+    "share": "แชร์",
+    "toMe": "แชท",
+    "notice": "ประกาศ",
+    "highlight": "แชท",
+    "capture": "จับภาพ",
+    "delete": "ลบ",
+    "cancelMoment": "ยกเลิกตั้งค่าลบ",
+    "viewOriginalTranslation": "ต้นฉบับ/การแปล",
+    "translateOther": "แปลเป็นภาษาอื่น",
+    "reactors": "แชท",
+    "shareToMe": "แชร์",
+    "unhighlight": "แชท"
+  },
+  "moment": {
+    "title": "แชท",
+    "cancel": "ยกเลิกตั้งค่าลบ",
+    "expiredMessage": "ข้อความหมดอายุ"
+  },
+  "noticeBanner": {
+    "open": "ประกาศ โอเพน",
+    "close": "ปิดประกาศ"
+  },
+  "newMessagePill": {
+    "label": "ข้อความใหม่ {{count}} รายการ",
+    "accessibility": "ดูข้อความใหม่ {{count}} รายการ"
+  },
+  "search": {
+    "sender": "ผู้ส่ง",
+    "senderFilter": "ตัวกรองผู้ส่ง",
+    "dateFilter": "ตัวกรองวันที่",
+    "prevResult": "ผลลัพธ์ก่อนหน้า",
+    "nextResult": "ผลลัพธ์ถัดไป",
+    "close": "ปิดการค้นหา",
+    "clearSender": "ล้างตัวกรองผู้ส่ง",
+    "placeholder": "ค้นหา",
+    "inputAccessibility": "ช่องค้นหา",
+    "clearKeyword": "ค้นหา ล้าง",
+    "bookmarkFilter": "ตัวกรองบุ๊กมาร์ก"
+  },
+  "datePicker": {
+    "title": "เลือกแชท วันที่ ตัวเลือก",
+    "clear": "ใส",
+    "prevMonth": "เดือนก่อน",
+    "nextMonth": "เดือนถัดไป",
+    "monthTitle": "{{month}} {{year}}",
+    "weekday": {
+      "sun": "อา.",
+      "mon": "จ.",
+      "tue": "อ.",
+      "wed": "พ.",
+      "thu": "พฤ.",
+      "fri": "ศ.",
+      "sat": "ส."
+    },
+    "dayAccessibility": "วันที่ {{day}}",
+    "selected": "เลือกแล้ว",
+    "none": "ไม่มี"
+  },
+  "selection": {
+    "title": "ลบ",
+    "selectAll": "เลือกทั้งหมด",
+    "deleteCount": "ลบ {{count}}"
+  },
+  "noticeModel": {
+    "fallback": "แชท ประกาศ",
+    "scheduleTitle": "ประกาศ กำหนดการ",
+    "media": {
+      "image": "รูปภาพ",
+      "video": "วิดีโอ",
+      "audio": "ข้อความเสียง",
+      "file": "ไฟล์",
+      "map": "ตำแหน่ง"
+    },
+    "secureRecovery": {
+      "requestCreated": {
+        "title": "คำขอ",
+        "body": "คำขอ"
+      },
+      "approved": {
+        "title": "ปลอดภัย",
+        "body": "ปลอดภัย"
+      },
+      "completed": {
+        "title": "ปลอดภัย เสร็จสิ้น",
+        "body": "ปลอดภัย เสร็จสิ้น"
+      },
+      "rejected": {
+        "title": "ปลอดภัย",
+        "body": "ปลอดภัย"
+      }
+    },
+    "scheduleTitleWithPrefix": "[กำหนดการ] กำหนดการ",
+    "weekday": {
+      "sun": "อา.",
+      "mon": "จ.",
+      "tue": "อ.",
+      "wed": "พ.",
+      "thu": "พฤ.",
+      "fri": "ศ.",
+      "sat": "ส."
+    }
+  },
+  "messageItem": {
+    "noticeFallback": "แชท ประกาศ",
+    "secureLinkFallback": "ลิงก์",
+    "mapAddressFallback": "ข้อมูลตำแหน่ง",
+    "secure": {
+      "genericTitle": "ปลอดภัย",
+      "genericBody": "อัปเดตปลอดภัยแล้ว",
+      "fileFallback": "ไฟล์ปลอดภัย"
+    },
+    "tombstone": {
+      "deleted": "ลบรายการแล้ว",
+      "expired": "รายการ"
+    },
+    "longMessage": {
+      "viewAll": "ดูทั้งหมด"
+    },
+    "action": {
+      "confirm": "OK"
+    }
+  },
+  "linkPreview": {
+    "link": "ลิงก์",
+    "web": "เว็บ",
+    "searchTitle": "ค้นหา {{query}}",
+    "searchTitleWithProvider": "ค้นหา {{query}} · {{provider}}",
+    "searchResult": "ผลค้นหา {{query}}",
+    "searchResultWithProvider": "ผลค้นหา {{query}} · {{provider}}",
+    "provider": {
+      "naver": "Naver",
+      "google": "Google",
+      "daum": "Daum"
+    }
+  },
+  "messageMeta": {
+    "deleteSuffix": "ลบ",
+    "cancelMoment": "ยกเลิก"
+  },
+  "messageBody": {
+    "link": "ลิงก์",
+    "secureMessage": "ข้อความเข้ารหัส",
+    "file": "ไฟล์",
+    "tapToOpen": "แตะเพื่อเปิด",
+    "locationInfo": "ข้อมูลตำแหน่ง",
+    "secureFile": "ไฟล์ปลอดภัย"
+  },
+  "replyBlock": {
+    "peer": "คู่สนทนา",
+    "replyTo": "ตอบกลับ {{name}}"
+  },
+  "voiceRecorder": {
+    "totalDuration": "รวม {{duration}}"
+  },
+  "actions": {
+    "momentCancelFailTitle": "ไม่สามารถดำเนินการยกเลิก ล้มเหลวได้",
+    "tryAgain": "ลองใหม่อีกครั้งในภายหลัง",
+    "deleteFailTitle": "ลบไม่สำเร็จ",
+    "missingServerMessage": "ไม่สามารถดำเนินการการทำงานได้",
+    "deleteNetworkFail": "ไม่สามารถดำเนินการลบ ล้มเหลวได้",
+    "momentSetFailTitle": "ล้มเหลวไม่สำเร็จ",
+    "momentSetNetworkFail": "ตั้งค่าลบตามเวลาไม่ได้เนื่องจากเครือข่ายผิดพลาด",
+    "uploadFailTitle": "อัปโหลดไม่สำเร็จ",
+    "imageUploadFail": "อัปโหลดรูปขึ้นเซิร์ฟเวอร์ไม่ได้",
+    "errorTitle": "แชท การทำงาน",
+    "mediaSendFail": "สื่อ ล้มเหลว",
+    "voiceUploadFail": "เสียง อัปโหลด ล้มเหลวไม่สำเร็จ",
+    "fileUploadFail": "อัปโหลดไฟล์ไม่สำเร็จ"
+  },
+  "bridge": {
+    "messageNotFound": "ไม่สามารถดำเนินการรายการได้",
+    "editedImageSent": "ส่งรูปที่แก้ไขแล้ว",
+    "editedImageSendFail": "ส่งรูปที่แก้ไขไม่ได้"
+  },
+  "capture": {
+    "title": "เลือกแชท จับภาพ",
+    "desc": "เลือกช่วงข้อความ",
+    "exit": "ออกจากการจับภาพ",
+    "clear": "ใส",
+    "share": "แชร์",
+    "save": "แชท จับภาพ บันทึก",
+    "shareCapture": "แชร์ภาพจับหน้าจอ",
+    "saveCapture": "บันทึกภาพจับหน้าจอ",
+    "anonymousOn": "จับภาพ ไม่ระบุชื่อ เปิด",
+    "anonymousOff": "จับภาพ ไม่ระบุชื่อ ปิด",
+    "anonymousUser": "ผู้ใช้ {{index}}",
+    "error": {
+      "secureBlocked": "แชทปลอดภัยจับภาพไม่ได้",
+      "messageNotFound": "ไม่พบข้อความ",
+      "areaNotFound": "ไม่พบพื้นที่จับภาพ",
+      "selectedAreaNotFound": "ไม่พบพื้นที่ที่เลือก",
+      "areaCalcFailed": "คำนวณพื้นที่ไม่ได้",
+      "outOfView": "รายการ",
+      "imageCreateFailed": "สร้างภาพจับหน้าจอไม่ได้",
+      "emptySelection": "ไม่มีแชท จับภาพ",
+      "permissionRequired": "ต้องอนุญาตบันทึกรูปภาพ",
+      "saveFailed": "บันทึกไม่ได้",
+      "shareUnavailable": "จับภาพ แชร์ ใช้ไม่ได้",
+      "shareFailed": "แชร์ไม่ได้"
+    },
+    "success": {
+      "saved": "บันทึกภาพจับหน้าจอแล้ว",
+      "savedPartial": "บันทึกเฉพาะบางช่วง",
+      "savedVisibleOnly": "บันทึกเฉพาะช่วงที่มองเห็น"
+    },
+    "anonymousInitial": "ผ"
+  },
+  "schedule": {
+    "common": {
+      "title": "แชท กำหนดการ",
+      "fallbackTitle": "ไม่มีชื่อ",
+      "roomFallback": "ห้องแชท",
+      "participantFallback": "ผู้เข้าร่วม",
+      "confirm": "OK",
+      "cancel": "แชท กำหนดการ ยกเลิก",
+      "close": "ปิด",
+      "delete": "ลบ",
+      "done": "เสร็จสิ้น",
+      "save": "แชท กำหนดการ บันทึก",
+      "saving": "กำลังบันทึก",
+      "select": "แชท กำหนดการ เลือก",
+      "weekdays": {
+        "sun": "อา.",
+        "mon": "จ.",
+        "tue": "อ.",
+        "wed": "พ.",
+        "thu": "พฤ.",
+        "fri": "ศ.",
+        "sat": "ส."
+      },
+      "period": {
+        "am": "AM",
+        "pm": "PM"
+      },
+      "date": "{{day}}/{{month}} ({{weekday}})",
+      "compactDate": "{{day}}/{{month}} {{weekday}}",
+      "timeWithPeriod": "{{period}} {{hour}}:{{minute}}",
+      "participantCount": "ผู้เข้าร่วม {{count}} คน",
+      "participantCountShort": "เข้าร่วม {{count}} คน",
+      "participantCountCompact": "เข้าร่วม {{count}}",
+      "openDetail": "ดูรายละเอียด {{title}}"
+    },
+    "reminder": {
+      "off": "ปิด",
+      "before30m": "ก่อน 30 นาที",
+      "before1h": "ก่อน 1 ชั่วโมง",
+      "before3h": "ก่อน 3 ชั่วโมง",
+      "before1d": "ก่อน 1 วัน",
+      "afterJoin": "ตั้งค่าได้หลังเข้าร่วม"
+    },
+    "api": {
+      "messageTitle": "กำหนดการ · {{title}}",
+      "calendarDefaultTitle": "กำหนดการ CO·ONN",
+      "calendarPlace": "สถานที่: {{place}}",
+      "calendarAddress": "ที่อยู่: {{address}}",
+      "calendarNoteFooter": "กำหนดการ CO·ONN",
+      "notificationChannel": "กำหนดการ",
+      "reminderTimeBody": "กำหนดการเริ่มเวลา {{time}}",
+      "reminderSoonBody": "เร็ว ๆ นี้กำลังเตรียมพร้อม",
+      "reminderTitle": "กำหนดการ"
+    },
+    "detail": {
+      "notFound": "ไม่พบกำหนดการ",
+      "cancelled": "กำหนดการที่ยกเลิก",
+      "completed": "กำหนดการที่เสร็จสิ้น",
+      "directions": "เส้นทาง",
+      "notification": "การแจ้งเตือน",
+      "appPush": "พุชในแอป",
+      "calendar": "ปฏิทิน",
+      "syncCalendar": "ซิงก์กับปฏิทินของฉัน",
+      "synced": "ซิงก์แล้ว",
+      "notSynced": "ยังไม่ซิงก์",
+      "join": "เข้าร่วม",
+      "leave": "กำหนดการ รายละเอียด",
+      "noticeBadge": "ประกาศ",
+      "noParticipants": "ยังไม่มีผู้เข้าร่วม",
+      "moveToChat": "แชท",
+      "menu": {
+        "edit": "แก้ไขกำหนดการ",
+        "cancel": "รายละเอียด เมนู ยกเลิก",
+        "complete": "เสร็จสิ้น"
+      },
+      "alert": {
+        "processFailTitle": "ไม่สามารถดำเนินการรายละเอียด ล้มเหลวได้",
+        "joinChangeFail": "ไม่สามารถดำเนินการล้มเหลวได้",
+        "participantSettingTitle": "รายละเอียด ผู้เข้าร่วม การตั้งค่า",
+        "promoteNotice": "รายละเอียด เลื่อนสิทธิ์ ประกาศ",
+        "removeNotice": "รายละเอียด นำออก ประกาศ",
+        "promoteNoticeMessage": "ตั้ง {{name}} เป็นผู้เข้าร่วมที่ไฮไลต์ไหม?",
+        "removeNoticeMessage": "ยกเลิกไฮไลต์ของ {{name}} ไหม?",
+        "settingFailTitle": "รายละเอียด การตั้งค่า ล้มเหลวไม่สำเร็จ",
+        "participantSettingFail": "เปลี่ยนการตั้งค่าผู้เข้าร่วมไม่ได้",
+        "reminderFailTitle": "รายละเอียด ล้มเหลวไม่สำเร็จ",
+        "calendarReminderFailTitle": "แจ้งเตือนปฏิทินไม่สำเร็จ",
+        "calendarSyncFailTitle": "ซิงก์ปฏิทินไม่สำเร็จ",
+        "calendarDeleteFailTitle": "ลบจากปฏิทินไม่สำเร็จ",
+        "cancelTitle": "ยกเลิกกำหนดการ",
+        "cancelMessage": "กำหนดการ รายละเอียด ยกเลิก",
+        "cancelAction": "ยกเลิกกำหนดการ",
+        "cancelFailTitle": "รายละเอียด ยกเลิก ล้มเหลวไม่สำเร็จ",
+        "cancelFail": "ยกเลิกกำหนดการไม่ได้",
+        "completeTitle": "กำหนดการ รายละเอียด เสร็จสิ้น",
+        "completeMessage": "กำหนดการ รายละเอียด เสร็จสิ้น",
+        "completeFailTitle": "รายละเอียด เสร็จสิ้น ล้มเหลวไม่สำเร็จ",
+        "completeFail": "ทำกำหนดการให้เสร็จไม่ได้",
+        "calendarRemoveTitle": "รายละเอียด นำออก",
+        "calendarRemoveMessage": "รายละเอียด นำออกไหม?"
+      },
+      "error": {
+        "calendarPermissionDenied": "ต้องอนุญาตปฏิทิน",
+        "calendarNotFound": "ไม่มีกำหนดการ",
+        "invalidScheduleTime": "ไม่สามารถดำเนินการกำหนดการ เวลาได้",
+        "calendarApiUnavailable": "ใช้ไม่ได้",
+        "calendarDefault": "ทำรายการปฏิทินไม่สำเร็จ",
+        "notificationPermissionDenied": "ต้องอนุญาตการแจ้งเตือน",
+        "reminderTimePast": "เวลาการแจ้งเตือนผ่านไปแล้ว",
+        "reminderDefault": "ตั้งการแจ้งเตือนไม่ได้"
+      }
+    },
+    "editor": {
+      "createTitle": "สร้างกำหนดการ",
+      "editTitle": "แก้ไขกำหนดการ",
+      "titlePlaceholder": "แชท กำหนดการ ตัวแก้ไข",
+      "allDay": "ทั้งวัน",
+      "startDate": "วันเริ่ม",
+      "endDate": "วันสิ้นสุด",
+      "place": "สถานที่",
+      "map": "แผนที่",
+      "placeNamePlaceholder": "ชื่อสถานที่",
+      "memoPlaceholder": "กรอกกำหนดการ ตัวแก้ไข",
+      "cancelledLocked": "แก้ไขกำหนดการที่ยกเลิกไม่ได้",
+      "locationPickerTitle": "เลือกตัวแก้ไข ตำแหน่ง ตัวเลือก",
+      "locationPickerHelper": "ตำแหน่ง ตัวเลือก",
+      "validation": {
+        "titleRequired": "ใส่ชื่อ",
+        "startInvalid": "เริ่ม",
+        "endInvalid": "สิ้นสุด",
+        "endBeforeStart": "เวลาสิ้นสุดก่อนเวลาเริ่ม",
+        "roomMissing": "ไม่พบข้อมูลห้องแชท"
+      }
+    },
+    "listScreen": {
+      "loadFail": "โหลดกำหนดการไม่ได้",
+      "roomMissing": "ไม่พบข้อมูลห้องแชท",
+      "createAccessibility": "สร้างกำหนดการ",
+      "retry": "ลองอีกครั้ง",
+      "activeCount": "รายการ กำลังดำเนินการ จำนวน {{count}}",
+      "summary": "กำหนดการ รายการ สรุป",
+      "emptyTitle": "ยังไม่มีกำหนดการ",
+      "emptyDesc": "สร้างกำหนดการเพื่อแชร์ร่วมกัน",
+      "beaconUnavailableTitle": "รายการ บีคอน ใช้ไม่ได้",
+      "beaconUnavailableDesc": "รายการ บีคอน ใช้ไม่ได้",
+      "create": "สร้างกำหนดการ",
+      "joined": "เข้าร่วม",
+      "notJoined": "ยังไม่เข้าร่วม",
+      "cancelled": "ยกเลิกแล้ว",
+      "completed": "เสร็จสิ้น",
+      "past": "กำหนดการ รายการ"
+    },
+    "messageCard": {
+      "cancelled": "ยกเลิกแล้ว",
+      "completed": "เสร็จสิ้น"
+    }
+  },
+  "openProfile": {
+    "common": {
+      "confirm": "OK",
+      "cancel": "โอเพน โปรไฟล์ ยกเลิก",
+      "save": "โอเพน โปรไฟล์ บันทึก",
+      "delete": "ลบ",
+      "default": "ค่าเริ่มต้น",
+      "user": "ผู้ใช้",
+      "openChat": "โอเพนแชท",
+      "business": "ธุรกิจ",
+      "openTalk": "โอเพนแชท",
+      "fallbackName": "โอเพน โปรไฟล์ ชื่อ",
+      "statusEmpty": "ไม่มีสถานะ",
+      "selectPhoto": "เลือกโปรไฟล์ เลือก รูปภาพ",
+      "photoApplied": "ใช้รูปภาพแล้ว",
+      "saved": "บันทึกแล้ว",
+      "deleted": "ลบแล้ว",
+      "tryAgain": "ลองใหม่อีกครั้งในภายหลัง",
+      "notice": "ประกาศ",
+      "actionFailed": "ดำเนินการไม่ได้",
+      "saveFailed": "บันทึกไม่ได้",
+      "profileSaveFailed": "บันทึกโปรไฟล์ไม่ได้"
+    },
+    "list": {
+      "title": "โอเพน โปรไฟล์ รายการ",
+      "loadFailed": "โหลดโอเพนโปรไฟล์ไม่ได้",
+      "nicknameRequired": "ใส่ชื่อเล่น",
+      "createSuccess": "สร้างโอเพนโปรไฟล์แล้ว",
+      "createFailed": "สร้างไม่สำเร็จ",
+      "saveFailed": "บันทึกไม่สำเร็จ",
+      "deleteFailed": "ลบไม่สำเร็จ",
+      "deleteTitle": "ลบโอเพนโปรไฟล์ไหม?",
+      "deleteDescInUse": "โปรไฟล์เดิมในโอเพนแชทที่ใช้อยู่จะยังคงอยู่",
+      "deleteDescDefault": "โปรไฟล์ที่ลบแล้วจะใช้ไม่ได้อีก",
+      "editAccessibility": "แก้ไขโอเพนโปรไฟล์",
+      "usedRoomsCount": "ใช้ในโอเพนแชท {{count}} ห้อง",
+      "usedRoomsEmpty": "ไม่มีรายการ",
+      "emptyTitle": "ไม่มีโอเพนโปรไฟล์",
+      "emptyDesc": "โอเพน โปรไฟล์ รายการ"
+    },
+    "viewer": {
+      "action": {
+        "transferOwner": "โอนโฮสต์",
+        "promoteManager": "ตัวดู เลื่อนสิทธิ์ ผู้จัดการ",
+        "demoteManager": "ตัวดู ลดสิทธิ์ ผู้จัดการ",
+        "kick": "นำออก",
+        "block": "บล็อก",
+        "unblock": "เลิกบล็อก",
+        "release": "ยกเลิก",
+        "delegate": "โปรไฟล์ ตัวดู",
+        "appoint": "แต่งตั้ง",
+        "changePhoto": "เปลี่ยนรูป",
+        "showPhoto": "แสดงรูป"
+      },
+      "confirm": {
+        "blockMessage": "โปรไฟล์ ตัวดู บล็อกไหม?",
+        "unblockMessage": "แสดงข้อความของผู้ใช้นี้อีกครั้งไหม?",
+        "transferOwnerMessage": "โอนสิทธิ์โฮสต์ให้ {{name}} ไหม?",
+        "promoteManagerMessage": "แต่งตั้ง {{name}} เป็นผู้จัดการไหม?",
+        "demoteManagerMessage": "ยกเลิกสิทธิ์ผู้จัดการของ {{name}} ไหม?",
+        "kickMessage": "นำ {{name}} ออกจากห้องไหม? ผู้ใช้ที่ถูกนำออกจะกลับเข้าไม่ได้"
+      },
+      "accessibility": {
+        "save": "โปรไฟล์ ตัวดู บันทึก"
+      },
+      "placeholder": {
+        "status": "สถานะ"
+      }
+    },
+    "edit": {
+      "loadFailed": "โหลดข้อมูลโอเพนแชทไม่ได้",
+      "titleRequired": "ใส่ชื่อห้อง",
+      "saveFailed": "บันทึกไม่ได้ ลองใหม่อีกครั้ง",
+      "categoryFallback": "โอเพนแชท",
+      "titlePlaceholder": "ชื่อโอเพนแชท",
+      "changePhoto": "เปลี่ยนรูป",
+      "descriptionPlaceholder": "โอเพน โปรไฟล์ แก้ไข",
+      "tagsPlaceholder": "กรอกโปรไฟล์ แก้ไข",
+      "publicTitle": "สาธารณะ",
+      "publicDesc": "ค้นหาห้องนี้ได้จากชื่อ คำอธิบาย และแท็ก",
+      "selectCover": "เลือกแก้ไข เลือก"
+    },
+    "gate": {
+      "loadFailed": "โหลดข้อมูลไม่ได้",
+      "joinFailed": "เข้าด้วยโอเพนโปรไฟล์ไม่ได้ ลองใหม่อีกครั้ง",
+      "enterChat": "กรอกแชท",
+      "startConsult": "เริ่ม",
+      "selectProfileEnter": "เลือกเลือก โปรไฟล์",
+      "joinOpenChat": "เข้าร่วมโอเพนแชท",
+      "openNow": "เปิด",
+      "closed": "ปิด",
+      "participants": "ผู้เข้าร่วม {{count}} คน",
+      "participantsWithMax": "ผู้เข้าร่วม {{count}}/{{max}}",
+      "createdAt": "สร้างเมื่อ {{date}}",
+      "host": "โฮสต์",
+      "introEmpty": "ยังไม่มีคำแนะนำ"
+    }
+  },
+  "userFallback": "ผู้ใช้",
+  "room": {
+    "deletedReadonly": "ห้อง",
+    "leftReadonly": "ห้อง",
+    "kickedTitle": "คุณถูกนำออก",
+    "kickedMessage": "แชท ห้อง"
+  },
+  "toast": {
+    "selectCopySecureBlocked": "เลือก ปลอดภัย",
+    "selectCopyUnsupported": "ข้อความแจ้ง เลือก",
+    "shareToSelfSuccess": "ฉัน สำเร็จ",
+    "shareSecureBlocked": "ข้อความปลอดภัยแชร์ไม่ได้",
+    "shareUnsupported": "ข้อความนี้แชร์ไม่ได้",
+    "shareSelfRoomUnavailable": "ไม่สามารถดำเนินการฉัน ห้อง ใช้ไม่ได้ได้",
+    "shareFailed": "แชร์ไม่ได้",
+    "noticeNoPermission": "ประกาศ ไม่ สิทธิ์",
+    "copied": "คัดลอกแล้ว"
+  },
+  "longMessage": {
+    "message": "ข้อความ",
+    "translation": "การแปล",
+    "original": "ต้นฉบับ"
+  },
+  "selectCopy": {
+    "titleFallback": "ข้อความ",
+    "translated": "การแปล",
+    "original": "ต้นฉบับ",
+    "hint": "กดค้างเพื่อเลือกข้อความ",
+    "copied": "คัดลอกแล้ว",
+    "copyAll": "แชท เลือก ทั้งหมด",
+    "empty": "ไม่มีข้อความให้เลือก"
+  },
+  "system": {
+    "notice": "อัปเดตแชท",
+    "memberJoined": "{{name}} เข้าร่วมแล้ว",
+    "memberLeft": "{{name}} ออกจากแชทแล้ว",
+    "memberKicked": "{{name}} ถูกนำออกแล้ว",
+    "managerPromoted": "{{name}} เป็นผู้ดูแลแล้ว",
+    "managerDemoted": "{{name}} ไม่ใช่ผู้ดูแลแล้ว",
+    "ownerTransferred": "{{name}} เป็นเจ้าของห้องแล้ว",
+    "roomDeleted": "ห้องนี้ถูกลบแล้ว"
+  },
+  "cancel": "ยกเลิก"
+}

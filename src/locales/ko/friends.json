@@ -1,0 +1,253 @@
+{
+  "title": "친구",
+  "requests": "친구 요청",
+  "requests_empty": "새로운 친구 요청이 없습니다.",
+  "requests_received": "받은 요청",
+  "requests_sent": "보낸 요청",
+  "add_friend": "친구 추가",
+  "send_request": "친구 요청 보내기",
+  "request_sent": "친구 요청을 보냈습니다.",
+  "request_send_failed": "친구 요청 전송에 실패했습니다.",
+  "request_cancel": "요청 취소",
+  "request_canceled": "친구 요청을 취소했습니다.",
+  "request_cancel_failed": "친구 요청 취소에 실패했습니다.",
+  "accept": "수락",
+  "decline": "거절",
+  "accepted": "친구 요청을 수락했습니다.",
+  "declined": "친구 요청을 거절했습니다.",
+  "accept_failed": "친구 요청 수락에 실패했습니다.",
+  "decline_failed": "친구 요청 거절에 실패했습니다.",
+  "remove_friend": "친구 삭제",
+  "remove_friend_confirm": "이 친구를 삭제할까요?",
+  "remove_friend_done": "친구가 삭제되었습니다.",
+  "remove_friend_failed": "친구 삭제에 실패했습니다.",
+  "blocked": "차단됨",
+  "block": "차단",
+  "unblock": "차단 해제",
+  "block_done": "차단되었습니다.",
+  "unblock_done": "차단이 해제되었습니다.",
+  "search_placeholder": "닉네임, 아이디, 친구 코드 검색",
+  "code_placeholder": "친구 코드 입력",
+  "already_friends": "이미 친구입니다.",
+  "already_requested": "이미 친구 요청을 보냈습니다.",
+  "self_not_allowed": "자기 자신에게는 친구 요청을 보낼 수 없습니다.",
+  "hidden": "숨김",
+  "favorite": "즐겨찾기",
+  "memo": "메모",
+  "alias": "별칭",
+  "group": {
+    "title": "그룹",
+    "manageTitle": "친구 그룹",
+    "createTitle": "새 그룹",
+    "createDesc": "그룹 이름을 입력하세요.",
+    "createPlaceholder": "예: 회사 동료, 동네 친구, 스터디",
+    "createAction": "생성",
+    "createFail": "생성 실패",
+    "editTitle": "그룹 이름 수정",
+    "editDesc": "새 이름을 입력하세요.",
+    "editPlaceholder": "그룹 이름",
+    "saveAction": "저장",
+    "renameFail": "수정 실패",
+    "nameRequired": "그룹 이름을 입력하세요.",
+    "deleteTitle": "그룹 삭제",
+    "deleteMessage": "\"{{name}}\" 그룹을 삭제할까요?",
+    "emptyTitle": "그룹 없음",
+    "emptyDesc": "새 그룹을 만들어보세요.",
+    "memberEmpty": "그룹 멤버가 없습니다.",
+    "addTitle": "친구 추가",
+    "addSuccess": "추가되었습니다.",
+    "addFail": "추가 실패",
+    "addEmpty": "추가할 친구가 없습니다.",
+    "removeSuccess": "제외되었습니다.",
+    "removeFail": "제외 실패",
+    "memberCount": "{{count}}명"
+  },
+  "userFallback": "사용자",
+  "list": {
+    "favoriteFriendsCount": "즐겨찾기 {{count}}",
+    "friendsCount": "친구 {{count}}"
+  },
+  "tabs": {
+    "friends": "친구",
+    "groups": "그룹"
+  },
+  "search": {
+    "placeholder": "검색어 입력",
+    "friendPlaceholder": "친구 이름, ID 검색",
+    "groupPlaceholder": "그룹, 참가자 검색",
+    "namePlaceholder": "이름 검색",
+    "friendPickerPlaceholder": "친구 검색",
+    "contactsPlaceholder": "이름 또는 번호 검색",
+    "waitTitle": "입력 대기",
+    "waitCaption": "정보 입력 후 검색하세요.",
+    "emptyTitle": "결과 없음",
+    "emptyCaption": "일치하는 사용자가 없습니다.",
+    "contactEmptyTitle": "연락처 없음",
+    "contactEmptyCaption": "조건에 맞는 연락처가 없습니다.",
+    "groupNamePlaceholder": "그룹 검색"
+  },
+  "action": {
+    "favoriteAdd": "즐겨찾기",
+    "favoriteRemove": "해제",
+    "manageFriend": "친구 관리",
+    "manageGroup": "그룹 관리",
+    "contact": "연락하기",
+    "create": "생성",
+    "save": "저장",
+    "add": "추가",
+    "remove": "제외",
+    "select": "선택",
+    "search": "검색",
+    "processing": "처리 중",
+    "saving": "저장 중"
+  },
+  "alert": {
+    "notice": "안내",
+    "fail": "실패",
+    "loadFail": "불러오기 실패",
+    "deleteFail": "삭제 실패",
+    "profileRouteMissing": "프로필 화면을 찾을 수 없습니다.",
+    "chatRouteMissing": "채팅 화면을 찾을 수 없습니다.",
+    "phoneMissing": "전화번호가 없습니다.",
+    "phoneOpenFail": "전화 앱을 열 수 없습니다.",
+    "removeFriendTitle": "친구 삭제",
+    "removeFriendMessage": "{{name}}님을 삭제할까요?",
+    "blockTitle": "차단",
+    "blockMessage": "{{name}}님을 차단할까요?",
+    "blockFail": "차단 실패",
+    "friendEditRouteMissing": "친구 관리 화면을 찾을 수 없습니다."
+  },
+  "add": {
+    "title": "친구 추가",
+    "loginRequired": "로그인이 필요합니다.",
+    "contactSearch": "연락처 찾기",
+    "userFallback": "사용자 {{id}}",
+    "noName": "이름 없음",
+    "myProfile": "내 프로필",
+    "notSet": "미설정",
+    "friendCodeLabel": "친구코드",
+    "qrOfflineHint": "QR 코드로 바로 연결할 수 있습니다.",
+    "shareLink": "링크 공유",
+    "scanQr": "QR 스캔",
+    "qrTitle": "내 연결 코드",
+    "qrDesc": "상대방이 스캔하면\n바로 연결됩니다.",
+    "scanGuide": "상대방의 QR을 스캔하세요.",
+    "contactsTitle": "연락처로 찾기",
+    "contactsDesc": "주소록에서 선택해 검색합니다.",
+    "mode": {
+      "coonnIdTitle": "CO·ONN ID",
+      "coonnIdHint": "상대방의 공개 ID를 입력하세요.",
+      "coonnIdPlaceholder": "ID 입력",
+      "friendCodeTitle": "친구코드",
+      "friendCodeHint": "친구코드를 입력하세요.",
+      "friendCodePlaceholder": "친구코드 입력",
+      "phoneTitle": "연락처",
+      "phoneHint": "휴대폰 번호로 찾습니다.",
+      "phonePlaceholder": "번호 입력"
+    },
+    "result": {
+      "noPublicId": "공개 ID 없음",
+      "friendCodeVerified": "친구코드 확인됨",
+      "friendCodeMatched": "친구코드 일치",
+      "contact": "연락처 · {{phone}}",
+      "added": "추가됨",
+      "limited": "제한됨",
+      "add": "추가"
+    },
+    "share": {
+      "myId": "내 ID",
+      "friendCode": "친구코드",
+      "title": "CO·ONN 링크 공유",
+      "message": "[CO·ONN] 저와 연결해 보세요.{{idText}}{{codeText}}\n\n아래 링크로 친구 추가 화면을 열 수 있습니다.\n{{url}}"
+    },
+    "toast": {
+      "added": "친구로 추가했습니다."
+    },
+    "alert": {
+      "permissionRequired": "권한 필요",
+      "cameraPermissionRequired": "카메라 권한이 필요합니다.",
+      "contactsPermissionRequired": "연락처 권한이 필요합니다.",
+      "contactsLoadFail": "연락처 불러오기 실패",
+      "searchFail": "검색 실패",
+      "addFail": "추가 실패"
+    },
+    "error": {
+      "invalidUser": "유효하지 않은 사용자입니다.",
+      "selfQr": "내 QR입니다.",
+      "userNotFound": "사용자를 찾을 수 없습니다.",
+      "invalidQr": "유효하지 않은 코드입니다.",
+      "minLength": "{{count}}자 이상 입력하세요."
+    },
+    "findTitle": "새 친구 찾기",
+    "card": {
+      "idTitle": "ID로 찾기",
+      "idDesc": "CO·ONN ID 검색",
+      "codeTitle": "코드로 찾기",
+      "codeDesc": "친구코드 검색",
+      "contactsTitle": "연락처",
+      "contactsDesc": "주소록 기반"
+    },
+    "digitalCardTitle": "내 명함"
+  },
+  "communication": {
+    "noPhone": "전화번호 없음",
+    "phoneCall": "일반 통화",
+    "voiceCall": "보이스톡",
+    "comingSoon": "준비 중"
+  },
+  "edit": {
+    "title": "친구 설정",
+    "unknownUser": "알 수 없음",
+    "none": "없음",
+    "field": {
+      "name": "이름"
+    },
+    "placeholder": {
+      "alias": "별칭 입력",
+      "memo": "메모 입력"
+    },
+    "helper": {
+      "friendName": "친구 이름 · {{name}}",
+      "privateMemo": "나에게만 표시됩니다."
+    },
+    "section": {
+      "groups": "그룹",
+      "security": "보안"
+    },
+    "state": {
+      "on": "켜짐",
+      "off": "꺼짐",
+      "hidden": "숨김",
+      "visible": "표시 중",
+      "blocked": "차단됨",
+      "unblocked": "차단 안 됨"
+    },
+    "toast": {
+      "saved": "저장되었습니다."
+    },
+    "alert": {
+      "loadFail": "불러오기 실패",
+      "saveFail": "저장 실패",
+      "removeFail": "삭제 실패",
+      "userLoadFail": "사용자를 불러올 수 없습니다.",
+      "blockedByPeer": "상대가 나를 차단했습니다."
+    },
+    "remove": {
+      "title": "친구 삭제",
+      "message": "{{name}}님을 삭제할까요?"
+    },
+    "unsaved": {
+      "title": "변경사항",
+      "message": "변경된 내용이 있습니다.",
+      "discard": "저장 안 함"
+    },
+    "groups": {
+      "title": "그룹 관리",
+      "subtitle": "포함할 그룹을 선택하세요.",
+      "selectedCount": "선택 {{count}}",
+      "inGroup": "현재 포함됨",
+      "addHint": "탭해서 추가",
+      "emptySearch": "다른 이름으로 검색해 보세요."
+    }
+  }
+}

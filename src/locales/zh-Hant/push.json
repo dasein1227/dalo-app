@@ -1,0 +1,48 @@
+{
+  "channel": {
+    "social_name": "社交",
+    "social_description": "好友與社交通知",
+    "chat_name": "聊天",
+    "chat_description": "聊天訊息與對話通知"
+  },
+  "summary": {
+    "social_title": "CO·ONN",
+    "social_body": "新的社交通知",
+    "chat_title": "CO·ONN",
+    "chat_body": "新的聊天通知"
+  },
+  "actions": {
+    "read": "已讀",
+    "reply": "回覆"
+  },
+  "common": {
+    "someone": "有人",
+    "new_notification": "新通知",
+    "new_notification_body": "你有一則新通知。",
+    "new_message": "新訊息"
+  },
+  "friend": {
+    "request_received_title": "好友請求",
+    "request_received_subtitle": "{{actor}}",
+    "request_received_body": "{{actor}} 傳送了好友請求"
+  },
+  "chat": {
+    "dm_title": "{{sender}}",
+    "dm_subtitle": "",
+    "dm_body_text": "{{message}}",
+    "dm_body_image": "傳送了一張照片",
+    "dm_body_video": "傳送了一段影片",
+    "dm_body_audio": "傳送了一則語音訊息",
+    "dm_body_file": "傳送了一個檔案",
+    "dm_body_map": "分享了位置",
+    "group_title": "{{room}}",
+    "group_subtitle": "{{sender}}",
+    "group_body_text": "{{sender}}: {{message}}",
+    "group_body_image": "{{sender}} 傳送了一張照片",
+    "group_body_video": "{{sender}} 傳送了一段影片",
+    "group_body_audio": "{{sender}} 傳送了一則語音訊息",
+    "group_body_file": "{{sender}} 傳送了一個檔案",
+    "group_body_map": "{{sender}} 分享了位置",
+    "reply_placeholder": "輸入回覆…"
+  }
+}

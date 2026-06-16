@@ -1,0 +1,1293 @@
+{
+  "title": "Chat",
+  "send": "Kirim",
+  "attach": "File",
+  "gallery": "Galeri",
+  "invite": "Undang",
+  "manage": "Kelola",
+  "members": "Anggota",
+  "placeholder": "Tulis pesan…",
+  "date": {
+    "today": "Hari ini",
+    "yesterday": "Kemarin",
+    "separatorLabel": "{{weekday}}, {{day}} {{month}} {{year}}",
+    "floatingLabel": "{{day}} {{month}} {{year}} · {{weekday}}"
+  },
+  "all": "Semua",
+  "and_others_n": "+ N",
+  "others_suffix": "lainnya",
+  "anonymous": "Anonim",
+  "message": "Pesan",
+  "message_search": "Cari pesan",
+  "message_send": "Kirim pesan",
+  "message_send_failed": "Pesan gagal dikirim",
+  "message_delete_failed": "Pesan tidak dapat dihapus.",
+  "message_deleted": "Pesan dihapus.",
+  "new_message_one": "1 pesan baru",
+  "new_messages_count": "{{count}} pesan baru",
+  "chat_with_me": "Chat dengan diri sendiri",
+  "self_badge": "Saya",
+  "chat_room_title": "Ruang chat",
+  "one_to_one_chat": "Chat 1:1",
+  "group_chat_title": "Chat grup",
+  "open_chat_title": "Open chat",
+  "beacon_chat_title": "Chat beacon",
+  "room_not_found": "Info ruang tidak tersedia.",
+  "chat_room_not_found": "Ruang chat tidak ditemukan.",
+  "conversation_partner": "Lawan bicara",
+  "audio_send_failed": "Audio gagal dikirim",
+  "video": "Video",
+  "photo": "Foto",
+  "file_label": "File",
+  "open_file": "Buka file",
+  "play_video": "Putar video",
+  "voice_message": "Pesan suara",
+  "share_location": "Bagikan lokasi",
+  "map_location_shared_title": "Lokasi dibagikan",
+  "map_tap_to_open": "Ketuk untuk membuka peta.",
+  "cannot_open_map": "Peta tidak dapat dibuka.",
+  "no_coordinate_info": "Tidak ada koordinat",
+  "send_failed": "Gagal mengirim",
+  "share": "Bagikan",
+  "share_failed": "Gagal berbagi",
+  "delete_failed": "Gagal menghapus",
+  "upload_failed": "Gagal mengunggah",
+  "selection_mode": "Mode pilih",
+  "selection_mode_hint": "Ketuk pesan yang ingin dihapus.",
+  "selection_clear": "Hapus pilihan",
+  "delete_dialog_title": "Hapus pesan",
+  "delete_dialog_desc": "Pilih cara menghapus.",
+  "delete_for_everyone": "Hapus untuk semua",
+  "delete_hide_for_everyone": "Sembunyikan",
+  "delete_for_me": "Hapus untuk saya",
+  "delete_for_me_hint": "Pesan terpilih hanya dapat dihapus untuk Anda.",
+  "reply": "Balas",
+  "reply_to_me": "Balas pesan saya",
+  "reply_to_user": "Balas ke {{nickname}}",
+  "msg_deleted_by_user": "{{nickname}} menghapus pesan.",
+  "notice": "Pengumuman",
+  "notice_coming_soon": "Segera hadir.",
+  "korean_label": "Bahasa Korea",
+  "auto_translate_paid_only": "Terjemah",
+  "translation_paid_only": "Terjemahan hanya untuk anggota berbayar.",
+  "premium_only": "Khusus Premium",
+  "premium_only_feature_hint": "Tersedia dengan Premium.",
+  "tone_neutral": "Netral",
+  "tone_casual": "Santai",
+  "tone_formal": "Formal",
+  "tone_business": "Bisnis",
+  "tone_playful": "Ringan",
+  "tone_change_premium_only": "Premium",
+  "tone_premium_only_hint": "Premium",
+  "login_required": "Login diperlukan.",
+  "no_permission_send_rls": "Anda tidak memiliki izin untuk mengirim pesan. (RLS)\n",
+  "rls_help_chat_members": "→ Periksa apakah Anda ada di chat_members dan tinjau kebijakan chat_messages.",
+  "search_placeholder": "Masukkan chat cari.",
+  "search_result_count": "{{count}} hasil",
+  "show_original": "Lihat asli",
+  "show_translation": "Lihat terjemahan",
+  "translating": "Menerjemahkan…",
+  "input": {
+    "placeholder": "Kirim pesan",
+    "placeholderLong": "Masukkan chat."
+  },
+  "hold_to_unlock": "Tahan untuk membuka input",
+  "error": {
+    "loginRequired": "Login diperlukan.",
+    "roomNotFound": "Ruang chat tidak ditemukan.",
+    "createRoomTitle": "Chat Buat Ruang tidak dapat diproses.",
+    "createRoomMessage": "Coba lagi nanti."
+  },
+  "sheet": {
+    "moreActions": "Tindakan lainnya",
+    "media": "Foto/Video",
+    "file": "File",
+    "location": "Bagikan lokasi",
+    "inviteFriend": "Teman",
+    "inviteLink": "Tautan undangan",
+    "translate": "Terjemahkan"
+  },
+  "translate": {
+    "title": "Terjemahkan",
+    "current_lang_prefix": "Saat ini: {{code}}",
+    "tone_label": "Nada",
+    "toneNeutral": "Netral",
+    "toneNeutralDesc": "Terjemahan alami standar",
+    "toneCasual": "Santai",
+    "toneCasualDesc": "Terjemah Nada",
+    "toneFormal": "Formal",
+    "toneFormalDesc": "Sopan dan hormat",
+    "toneBusiness": "Bisnis",
+    "toneBusinessDesc": "Terjemah Nada Bisnis",
+    "tonePlayful": "Ringan",
+    "tonePlayfulDesc": "Terjemah Nada"
+  },
+  "unknown": "Tidak diketahui",
+  "voice": "Suara",
+  "list": {
+    "tab": {
+      "chat": "Chat",
+      "open": "Buka",
+      "beacon": "Daftar Tab Beacon",
+      "business": "Bisnis"
+    },
+    "empty": {
+      "chatTitle": "Tidak ada chat",
+      "chatSub": "Mulai percakapan dengan teman.",
+      "openTitle": "Tidak ada open chat",
+      "openSub": "Chat Daftar Open",
+      "beaconTitle": "Belum bergabung dengan beacon",
+      "beaconSub": "Chat Daftar Beacon",
+      "businessTitle": "Tidak ada chat bisnis",
+      "businessSub": "Chat Daftar Bisnis"
+    },
+    "leaveConfirmTitle": "Keluar dari chat?",
+    "leaveConfirmMessage": "Chat ini akan hilang dari daftar Anda.",
+    "leaveConfirmAction": "Keluar"
+  },
+  "menu": {
+    "title": "Menu chat",
+    "joinedDate": "Bergabung {{date}}",
+    "media": "Foto/Video",
+    "mediaEmpty": "Media terbaru akan muncul di sini.",
+    "noticeSchedule": "Pengumuman & jadwal",
+    "me": "Saya"
+  },
+  "membersScreen": {
+    "title": "Anggota",
+    "loading": "Memuat…",
+    "empty": "Tidak ada anggota",
+    "owner": "Host",
+    "participant": "Peserta",
+    "remove": "Hapus",
+    "removeTitle": "Hapus",
+    "removeMessage": "Hapus {{name}}?",
+    "loadFail": "Anggota Muat Gagal tidak dapat diproses.",
+    "noName": "Tanpa nama"
+  },
+  "inviteScreen": {
+    "title": "Undang teman",
+    "roomMissingTitle": "Ruang",
+    "roomMissingMessage": "Masukkan ruang.",
+    "tryAgain": "Coba lagi nanti.",
+    "loadFailTitle": "Daftar teman tidak dapat dimuat.",
+    "selectFriend": "Pilih teman.",
+    "selectForAdd": "Pilih teman untuk ditambahkan.",
+    "selectForNewGroup": "Pilih baru grup.",
+    "addSuccessTitle": "Tambah Berhasil",
+    "addSuccessMessage": "{{count}} orang ditambahkan.",
+    "addFailTitle": "Tambah Gagal tidak dapat diproses.",
+    "createFailTitle": "Chat grup tidak dapat dibuat.",
+    "friendRowAdd": "Tambah ke grup ini",
+    "friendRowNewGroup": "Masukkan ke grup baru",
+    "groupAddTitle": "Grup Tambah",
+    "newGroupTitle": "Chat grup baru",
+    "groupAddDesc": "Grup Tambah",
+    "newGroupDesc": "Buat grup baru dengan teman terpilih.",
+    "loading": "Memuat teman",
+    "emptyTitle": "Tidak ada teman untuk diundang",
+    "emptyDesc": "Chat",
+    "addCount": "Tambah {{count}}",
+    "makeGroupCount": "Buat grup dengan {{count}}",
+    "noName": "Tanpa nama",
+    "groupFallbackTitle": "Chat grup",
+    "groupTitleWithOthers": "{{names}} + {{count}}"
+  },
+  "roomEdit": {
+    "title": "Chat Ruang Edit",
+    "nameLabel": "Ruang Edit Nama",
+    "hidePhoto": "Sembunyikan foto",
+    "hidePhotoDesc": "Edit Sembunyikan Foto",
+    "helperLine1": "Foto dan nama yang Anda atur hanya terlihat oleh Anda.",
+    "helperLine2": "Tidak memengaruhi orang lain.",
+    "alertTitle": "Pengumuman",
+    "unhideBeforeChange": "Matikan Sembunyikan foto sebelum mengubahnya.",
+    "saveFail": "Gagal menyimpan"
+  },
+  "roomData": {
+    "title": "Kelola data",
+    "ratioTitle": "Data per jenis",
+    "noMedia": "Tidak ada media tersimpan",
+    "savedCount": "{{value}} tersimpan",
+    "deleteAllWithSize": "Hapus semua media ({{size}})",
+    "photoData": "Data foto",
+    "videoData": "Data video",
+    "audioData": "Data suara",
+    "fileData": "Data file",
+    "storageCenter": "Penyimpanan CO·ONN",
+    "loadFail": "Info data tidak dapat dimuat.",
+    "actionFail": "Tindakan tidak dapat diselesaikan.",
+    "clear": {
+      "photoTitle": "Hapus data foto",
+      "photoMessage": "Data Bersihkan Foto",
+      "photoSuccess": "Data foto dihapus.",
+      "videoTitle": "Hapus data video",
+      "videoMessage": "Data Bersihkan Video",
+      "videoSuccess": "Data video dihapus.",
+      "audioTitle": "Hapus data suara",
+      "audioMessage": "Data Bersihkan Audio",
+      "audioSuccess": "Data suara dihapus.",
+      "fileTitle": "Hapus data file",
+      "fileMessage": "Data Bersihkan File",
+      "fileSuccess": "Data file dihapus.",
+      "allTitle": "Hapus semua media",
+      "allMessage": "Data Bersihkan Semua",
+      "allSuccess": "Data media dihapus."
+    }
+  },
+  "collection": {
+    "title": "Koleksi",
+    "count": "{{count}}",
+    "total": "Total {{value}}",
+    "tabs": {
+      "links": "Tautan",
+      "schedules": "Jadwal",
+      "bookmarks": "Bookmark"
+    },
+    "empty": {
+      "media": "Tidak ada foto atau video",
+      "files": "Tidak ada file",
+      "links": "Tidak ada tautan",
+      "notices": "Tidak ada pengumuman",
+      "schedules": "Tidak ada jadwal",
+      "bookmarks": "Tidak ada bookmark"
+    },
+    "noDate": "Tanpa tanggal",
+    "tapToView": "Ketuk untuk melihat",
+    "bookmarkMissingMessage": "Pesan ini tidak ditemukan di perangkat ini.",
+    "scheduleEmptyBody": "Tidak ada detail jadwal.",
+    "secureRecovery": {
+      "completedBody": "Kunci keamanan lama telah diimpor.",
+      "rejectedBody": "Permintaan kunci keamanan lama ditolak."
+    },
+    "scheduleStatus": {
+      "cancelled": "Dibatalkan",
+      "completed": "Selesai",
+      "joined": "Ikut",
+      "joinedOngoing": "Ikut"
+    },
+    "section": {
+      "latestNotice": "Pengumuman terbaru",
+      "previousNotice": "Pengumuman sebelumnya",
+      "activeSchedules": "Aktif / terbuka",
+      "closedSchedules": "Selesai / dibatalkan"
+    }
+  },
+  "settings": {
+    "title": "Pengaturan ruang chat",
+    "memberCount": "{{count}} anggota",
+    "startedAt": "Dimulai {{date}}",
+    "inputLock": "Kunci input",
+    "theme": {
+      "title": "Tema ruang chat",
+      "default": "Default",
+      "byRoomType": "Berdasarkan jenis ruang"
+    },
+    "themePreview": {
+      "other": "Baik",
+      "mine": "Baik"
+    },
+    "translation": {
+      "title": "Chat Pengaturan Terjemahan"
+    },
+    "sound": {
+      "title": "Suara notifikasi",
+      "default": "Default",
+      "clear": "Pengaturan Bersihkan",
+      "calm": "Pengaturan",
+      "short": "Chat Pengaturan",
+      "soft": "Pengaturan",
+      "quiet": "Pengaturan",
+      "deep": "Pengaturan",
+      "light": "Terang",
+      "mute": "Bisukan"
+    },
+    "data": {
+      "section": "Data",
+      "manage": "Kelola data"
+    },
+    "export": {
+      "title": "Ekspor chat",
+      "message": "Chat Pengaturan",
+      "saveFile": "Simpan file",
+      "share": "Bagikan",
+      "saveSuccess": "Disimpan sebagai file.",
+      "shareSuccess": "Lembar berbagi dibuka.",
+      "saveCancelled": "Penyimpanan dibatalkan.",
+      "fail": "Ekspor gagal.",
+      "deletedMessage": "[Pesan dihapus]",
+      "secureExcluded": "[Pesan aman - dikecualikan]",
+      "imageLabel": "[Gambar]",
+      "videoLabel": "[Video]",
+      "audioLabel": "[Suara]",
+      "fileLabel": "[File]",
+      "unknownSender": "Tidak diketahui",
+      "meSender": "Saya",
+      "userSender": "Pengguna",
+      "fileTitle": "Ekspor Chat CO·ONN",
+      "roomLine": "Ruang: {{roomTitle}}",
+      "exportedAtLine": "Diekspor: {{exportedAt}}",
+      "noteLocal": "Lokal",
+      "noteText": "Pengaturan",
+      "noteSecure": "※ Isi pesan aman dan data kunci tidak diekspor.",
+      "noteGallery": "Galeri",
+      "attachmentLine": "- Lampiran: {{type}}{{fileNamePart}}{{mimePart}}",
+      "shareDialogTitle": "Bagikan chat"
+    },
+    "leave": {
+      "title": "Keluar dari ruang chat",
+      "action": "Batal",
+      "rejectInvite": "Tolak undangan dan keluar",
+      "reportAndLeave": "Laporkan dan keluar",
+      "groupMessage": "Anda dapat keluar dari ruang atau menolak undangan.",
+      "reportMessage": "Anda dapat keluar atau melaporkan ruang ini.",
+      "defaultMessage": "Keluar dari ruang chat ini? Ruang akan hilang dari daftar chat.",
+      "fail": "Tidak dapat keluar dari ruang chat.",
+      "selfBlocked": "Saya"
+    },
+    "secure": {
+      "section": "Kunci keamanan",
+      "me": "Saya",
+      "peer": "Lawan bicara",
+      "authCancelled": "Autentikasi dibatalkan.",
+      "decline": "Tolak",
+      "newKey": "Buat kunci keamanan baru",
+      "newKeyDesc": "Aman Baru Kunci",
+      "newKeyConfirmTitle": "Buat kunci keamanan baru?",
+      "newKeyConfirmMessage": "Aman Baru Kunci",
+      "create": "Buat",
+      "newKeySuccessTitle": "Kunci keamanan baru dibuat",
+      "newKeySuccessMessage": "Pesan berikutnya akan dienkripsi dengan kunci epoch {{epoch}}.",
+      "newKeyFailTitle": "Baru Kunci Gagal gagal.",
+      "newKeyFail": "Baru Kunci Gagal tidak dapat diproses.",
+      "historyRequest": "Aman Permintaan",
+      "historyRequestDesc": "Aman Permintaan",
+      "historyRequestConfirmTitle": "Aman Permintaan?",
+      "historyRequestConfirmMessage": "Aman Permintaan",
+      "request": "Minta",
+      "historyRequestSuccessTitle": "Permintaan dikirim",
+      "historyRequestSuccessMessage": "Permintaan dikirim ke {{count}} orang.",
+      "historyRequestEmpty": "Tidak ada aman permintaan.",
+      "historyRequestFailTitle": "Permintaan gagal",
+      "historyRequestFail": "Permintaan Gagal tidak dapat diproses.",
+      "claimApproved": "Impor kunci disetujui",
+      "claimApprovedDesc": "Aman",
+      "claimSuccessTitle": "Aman Berhasil",
+      "claimSuccessMessage": "Disimpan {{imported}} · dilewati {{skipped}}{{conflictText}}",
+      "claimFailTitle": "Impor gagal",
+      "claimFail": "Aman Gagal tidak dapat diproses.",
+      "incomingRequestTitle": "Permintaan kunci lama dari {{name}}",
+      "shareApprovedDesc": "Aman Bagikan",
+      "historyShareConfirmTitle": "Aman Bagikan?",
+      "historyShareConfirmMessage": "Bagikan kunci lama dengan {{name}}?",
+      "historyShareSuccessTitle": "Dibagikan",
+      "historyShareSuccessMessage": "Dibagikan dengan {{name}}.",
+      "historyShareFailTitle": "Gagal berbagi",
+      "historyShareFail": "Bagikan Gagal tidak dapat diproses.",
+      "historyRejectConfirmTitle": "Tolak permintaan?",
+      "historyRejectConfirmMessage": "Tolak permintaan dari {{name}}?",
+      "rejectSuccessTitle": "Aman Berhasil",
+      "rejectSuccessMessage": "Permintaan dari {{name}} ditolak.",
+      "rejectFailTitle": "Aman Gagal gagal.",
+      "rejectFail": "Aman Gagal tidak dapat diproses.",
+      "backupSection": "Cadangan kunci keamanan",
+      "backup": "Pengaturan Aman Cadangan",
+      "backupSummary": "Dicadangkan · {{rooms}} ruang · {{keys}} kunci",
+      "noBackup": "Tidak ada cadangan",
+      "backupConfirmTitle": "Cadangkan kunci keamanan?",
+      "backupCreateMessage": "Aman Cadangan Buat",
+      "backupReplaceMessage": "Aman Cadangan",
+      "backupAction": "Cadangkan",
+      "backupFailTitle": "Cadangan gagal",
+      "backupCreateFail": "Cadangan kunci keamanan tidak dapat dibuat.",
+      "restore": "Pengaturan Aman Pulihkan",
+      "restoreDesc": "Pengaturan Aman Pulihkan",
+      "restoreMessage": "Masukkan pengaturan aman pulihkan.",
+      "restoreAction": "Pulihkan",
+      "restoreCodeRequired": "Masukkan kode pemulihan.",
+      "restoreSuccessTitle": "Aman Pulihkan Berhasil",
+      "restoreSuccessMessage": "Diimpor {{imported}} · dilewati {{skipped}}{{conflictText}}",
+      "restoreFail": "Cadangan kunci keamanan tidak dapat dipulihkan.",
+      "conflictText": " · konflik {{conflicts}}\nKunci lokal yang ada tetap digunakan.",
+      "conflictShort": " · konflik {{conflicts}}",
+      "recoveryCodeTitle": "Kode pemulihan kunci keamanan",
+      "recoveryCodeMessage": "Aman Kode",
+      "copyRecoveryCode": "Salin kode pemulihan",
+      "codeStored": "Kode pemulihan disimpan.",
+      "codeCopied": "Kode pemulihan disalin.",
+      "codeCopyFail": "Tidak dapat menyalin.",
+      "codeConfirmRequired": "Aman Kode Wajib",
+      "deleteServerBackup": "Hapus cadangan server",
+      "deleteServerBackupDesc": "Hapus Cadangan",
+      "backupDeleteConfirmTitle": "Hapus cadangan kunci keamanan?",
+      "backupDeleteConfirmMessage": "Aman Cadangan Hapus",
+      "backupDeleteSuccessTitle": "Cadangan dihapus",
+      "backupDeleteSuccessMessage": "Cadangan Hapus Berhasil",
+      "backupDeleteFailTitle": "Cadangan Hapus Gagal gagal.",
+      "backupDeleteFail": "Cadangan kunci keamanan tidak dapat dihapus."
+    },
+    "openProfileEditAccessibility": "Open Profil Edit"
+  },
+  "me": "Saya",
+  "noticePromote": {
+    "unsupported": "Pengumuman Naikkan tidak dapat diproses.",
+    "ownerOnly": "Naikkan Pemilik",
+    "noPermission": "Naikkan Tidak Izin",
+    "secureBlocked": "Naikkan Aman",
+    "systemBlocked": "Naikkan",
+    "deletedBlocked": "Naikkan",
+    "missingMessage": "Pengumuman Naikkan tidak dapat diproses."
+  },
+  "secure": {
+    "promptAuth": "Autentikasi untuk mengirim pesan aman.",
+    "on": "Mode aman aktif",
+    "off": "Mode aman nonaktif",
+    "readyFail": "Aman Gagal gagal.",
+    "sendReadyFail": "Gagal gagal.",
+    "mediaUnsupported": "Aman Media",
+    "fileUnsupported": "Aman File",
+    "content": {
+      "image": "🔐 Gambar terenkripsi",
+      "video": "🔐 Video terenkripsi",
+      "audio": "🔐 Suara terenkripsi",
+      "location": "🔐 Lokasi terenkripsi"
+    },
+    "enabled": "Mode aman aktif",
+    "disabled": "Mode aman nonaktif",
+    "lockedLabel": "🔐 Pesan terenkripsi",
+    "prompt": {
+      "keyUse": "Kunci",
+      "deviceRegister": "Daftar",
+      "backupCreate": "Autentikasi untuk mencadangkan kunci keamanan.",
+      "backupRestore": "Autentikasi untuk memulihkan kunci keamanan.",
+      "newRoomKey": "Autentikasi untuk membuat kunci keamanan baru.",
+      "historyRequest": "Permintaan",
+      "historyShare": "Bagikan",
+      "historyReject": "Autentikasi untuk menolak permintaan kunci lama.",
+      "historyClaim": "Autentikasi untuk mengambil kunci lama yang disetujui.",
+      "decrypt": "Aman"
+    },
+    "error": {
+      "loginRequired": "Login diperlukan.",
+      "backupEmpty": "Tidak ada kunci untuk dicadangkan. Coba lagi setelah memakai pesan aman.",
+      "backupMissing": "Tidak ada cadangan kunci keamanan.",
+      "backupWrongAccount": "Cadangan Akun",
+      "requesterDeviceMissing": "Perangkat aman aktif peminta tidak ditemukan.",
+      "noHistoryKeyToShare": "Tidak ada kunci bagikan.",
+      "parcelCreateFailed": "Buat Gagal tidak dapat diproses."
+    }
+  },
+  "jump": {
+    "newMessage": "Chat Baru",
+    "newMessageAccessibility": "Chat Baru",
+    "latestAccessibility": "Chat Terbaru"
+  },
+  "permission": {
+    "cameraTitle": "Chat Izin Kamera diperlukan.",
+    "cameraMessage": "Chat Izin Kamera diperlukan.",
+    "contactsTitle": "Chat Izin diperlukan.",
+    "contactsMessage": "Chat Izin diperlukan."
+  },
+  "filePick": {
+    "failTitle": "File Gagal gagal.",
+    "failMessage": "File Gagal tidak dapat diproses."
+  },
+  "newChat": {
+    "title": "Chat baru",
+    "create": "Buat",
+    "start": "Mulai",
+    "noName": "Tanpa nama",
+    "selectPartnerRequired": "Pilih lawan chat.",
+    "openTitleRequired": "Masukkan nama open chat.",
+    "modeNormal": "Normal",
+    "modeOpen": "Buka",
+    "openSectionTitle": "Baru Chat Open",
+    "openNamePlaceholder": "Nama open chat",
+    "openHelper": "Chat Open",
+    "partnerSectionTitle": "Pilih baru chat.",
+    "groupTitlePlaceholder": "Nama chat grup",
+    "searchNamePlaceholder": "Cari nama",
+    "emptyFriends": "Tidak ada teman",
+    "userFallback": "Pengguna",
+    "privateChatTitle": "Chat pribadi",
+    "groupChatTitle": "Chat grup",
+    "openChatTitle": "Open chat",
+    "coverPhoto": "Foto sampul",
+    "selectPhoto": "Pilih foto",
+    "openDescriptionPlaceholder": "Deskripsi ruang",
+    "openTagsPlaceholder": "mis. lingkungan, kopi, lari",
+    "searchVisible": "Chat Cari Terlihat",
+    "searchVisibleDesc": "Orang dapat menemukan ruang ini lewat nama, deskripsi, dan tag.",
+    "groupModeTitle": "Chat grup",
+    "groupModeAutoDesc": "Grup",
+    "groupModeSingleDesc": "Grup"
+  },
+  "menuModal": {
+    "markRead": "Tandai dibaca",
+    "roomInfo": "Menu Ruang Info",
+    "pin": "Chat Menu",
+    "unpin": "Lepas sematan",
+    "mute": "Bisukan",
+    "unmute": "Chat Menu",
+    "leave": "Batal",
+    "selfRoomTitle": "Menu Saya Ruang"
+  },
+  "roomCard": {
+    "pending": "Menunggu",
+    "emptyMessage": "Tidak ada pesan",
+    "messageFallback": "Pesan",
+    "am": "AM",
+    "pm": "PM",
+    "date": "{{day}}/{{month}}",
+    "preview": {
+      "image": "[Foto]",
+      "video": "[Video]",
+      "audio": "[Suara]",
+      "file": "[File]",
+      "map": "[Lokasi]",
+      "notice": "[Notifikasi]"
+    }
+  },
+  "searchModal": {
+    "rooms": "Chat Cari",
+    "messages": "Pesan",
+    "placeholder": "Cari",
+    "emptyTitle": "Cari",
+    "emptyDesc": "Chat Cari",
+    "noResultTitle": "Tidak ada hasil",
+    "noResultDesc": "Coba kata kunci lain.",
+    "roomPrefix": "Ruang chat",
+    "visibleName": "Nama tampilan",
+    "messageSender": "Pengirim",
+    "filterNormal": "Normal",
+    "filterOpen": "Buka",
+    "filterBeacon": "Cari Filter Beacon",
+    "filterBusiness": "Bisnis",
+    "dateAll": "Semua",
+    "dateToday": "Hari ini",
+    "date7d": "Chat Cari",
+    "date30d": "Chat Cari",
+    "tabChat": "Chat",
+    "tabParticipant": "Anggota",
+    "tabOpen": "Open chat",
+    "participants": "Anggota",
+    "openRooms": "Open chat",
+    "participantEmptyTitle": "Chat Cari Peserta",
+    "participantEmptyDesc": "Chat Cari Peserta",
+    "participantNoResultTitle": "Tidak ada anggota",
+    "participantNoResultDesc": "Peserta Tidak Hasil",
+    "openEmptyTitle": "Chat Cari Open",
+    "openEmptyDesc": "Cari berdasarkan nama ruang, deskripsi, atau tag.",
+    "openNoResultTitle": "Tidak ada open chat",
+    "openNoResultDesc": "Coba kata kunci lain.",
+    "typeFilter": "Jenis",
+    "dateFilter": "Tanggal",
+    "openJoined": "Ikut",
+    "openPublic": "Open chat",
+    "participatingRoom": "Ruang yang diikuti"
+  },
+  "location": {
+    "fallbackTitle": "Lokasi",
+    "selectMapApp": "Pilih pilih peta.",
+    "openMapHint": "Ketuk peta untuk petunjuk arah"
+  },
+  "translationPanel": {
+    "title": "Chat Terjemahan",
+    "subtitle": "Hanya berlaku untuk ruang ini.",
+    "autoTranslate": {
+      "title": "Terjemah",
+      "desc": "Terjemah"
+    },
+    "showTranslatedOnly": {
+      "title": "Terjemahan saja",
+      "desc": "Tampilkan Terjemahan"
+    },
+    "tier": {
+      "title": "Paket",
+      "desc": "Pilih kualitas terjemahan.",
+      "upgrade": "Upgrade",
+      "options": {
+        "free": {
+          "label": "Basic",
+          "desc": "Terjemahan dasar"
+        },
+        "mid": {
+          "label": "Standard",
+          "desc": "Terjemahan chat alami"
+        },
+        "high": {
+          "label": "Premium",
+          "desc": "Memahami konteks dan nada"
+        }
+      }
+    },
+    "tone": {
+      "title": "Nada",
+      "desc": "Terjemahan Nada",
+      "disabled": "Tersedia dengan Premium.",
+      "options": {
+        "business": {
+          "label": "Bisnis",
+          "desc": "Nada Bisnis"
+        },
+        "polite": {
+          "label": "Sopan",
+          "desc": "Nada"
+        },
+        "casual": {
+          "label": "Santai",
+          "desc": "Nada"
+        },
+        "neutral": {
+          "label": "Netral",
+          "desc": "Nada"
+        },
+        "creative": {
+          "label": "Kreatif",
+          "desc": "Nada"
+        }
+      }
+    },
+    "sendLang": {
+      "title": "Bahasa kirim",
+      "desc": "Otomatis mengikuti bahasa penerima.",
+      "auto": "Otomatis",
+      "autoDesc": "Dipilih otomatis sesuai bahasa lawan bicara.",
+      "autoPeerDesc": "Saat ini berdasarkan lawan bicara: {{label}} ({{code}})",
+      "peerBase": "Lawan bicara",
+      "peerDefault": "Default lawan bicara"
+    },
+    "receiveLang": {
+      "title": "Bahasa terima",
+      "desc": "Tampilkan pesan diterima dalam bahasa ini."
+    },
+    "status": {
+      "off": "Mati",
+      "on": "Terjemahan Aktif",
+      "auto": "Otomatis",
+      "receive": "Terima",
+      "send": "Kirim",
+      "translatedOnly": "Terjemahan saja"
+    },
+    "language": {
+      "EN": "Inggris",
+      "ES": "Spanyol",
+      "FR": "Prancis",
+      "DE": "Jerman",
+      "IT": "Italia",
+      "PT": "Portugis",
+      "NL": "Belanda",
+      "PL": "Polandia",
+      "RU": "Rusia",
+      "JA": "Jepang",
+      "KO": "Korea",
+      "ZH": "Tionghoa",
+      "TR": "Turki",
+      "SV": "Swedia",
+      "ID": "Indonesia",
+      "TH": "Thailand",
+      "UK": "Ukraina",
+      "RO": "Rumania",
+      "CS": "Ceko",
+      "DA": "Denmark",
+      "EL": "Yunani",
+      "FI": "Finlandia",
+      "HU": "Hungaria",
+      "SK": "Slovakia",
+      "SL": "Slovenia",
+      "BG": "Bulgaria",
+      "ET": "Estonia",
+      "LT": "Lituania",
+      "LV": "Latvia",
+      "AR": "Arab",
+      "ZH_HANS": "Tionghoa Sederhana",
+      "ZH_HANT": "Tionghoa Tradisional",
+      "VI": "Vietnam",
+      "HI": "Hindi",
+      "HE": "Ibrani"
+    }
+  },
+  "header": {
+    "searchPlaceholder": "Chat Cari",
+    "advanced": "Lanjutan",
+    "sender": "Pengirim",
+    "date": "Tanggal"
+  },
+  "attachment": {
+    "photo": "Foto",
+    "camera": "Kamera",
+    "call": "Panggilan",
+    "pay": "Bayar",
+    "map": "Peta",
+    "music": "Musik",
+    "file": "File",
+    "cloud": "Cloud",
+    "contact": "Kontak",
+    "recentPhotos": "Terbaru",
+    "send": "Kirim",
+    "photoPermissionRequired": "Akses foto diperlukan.",
+    "openSettings": "Open Pengaturan",
+    "callUnavailable": "Panggilan Tidak tersedia tidak dapat diproses.",
+    "phoneMissing": "Nomor telepon belum terdaftar.",
+    "phoneOpenFail": "Panggilan telepon tidak dapat dimulai.",
+    "voiceCallUnavailable": "Suara Panggilan Tidak tersedia segera hadir.",
+    "contactEmpty": "Tidak ada info kontak untuk dibagikan.",
+    "contactShareTitle": "Kontak",
+    "contactName": "Nama",
+    "contactPhone": "Telepon",
+    "contactShareFail": "Kontak tidak dapat dibagikan.",
+    "voiceMessage": "Suara",
+    "capture": "Tangkap layar",
+    "schedule": "Jadwal"
+  },
+  "accessibility": {
+    "attachmentClose": "Tutup lampiran",
+    "attachmentOpen": "Buka lampiran",
+    "messageInput": "Input pesan",
+    "sendMessage": "Kirim pesan",
+    "voiceMessage": "Pesan suara"
+  },
+  "replyPreview": {
+    "peer": "Lawan bicara",
+    "replyTo": "Balas ke {{name}}",
+    "cancel": "Balas Batal"
+  },
+  "mediaKind": {
+    "image": "Foto",
+    "video": "Video",
+    "audio": "Pesan suara",
+    "file": "File",
+    "map": "Lokasi",
+    "notice": "Pengumuman",
+    "text": "Chat Media"
+  },
+  "deleteModal": {
+    "title": "Hapus",
+    "mine": "Hapus untuk saya",
+    "all": "Hapus untuk semua",
+    "moment": "Chat Hapus",
+    "sectionTitle": "Chat Hapus",
+    "selectTime": "Pilih hapus pilih waktu.",
+    "readBased": "Hapus",
+    "readAfterWithDelay": "Setelah dibaca +{{delay}}",
+    "afterDelete": "Hapus setelah {{delay}}",
+    "unit": {
+      "hour": "j",
+      "minute": "m",
+      "second": "Hapus"
+    },
+    "cancelTitle": "Chat Hapus Batal?",
+    "cancelDesc": "Chat Hapus Batal disimpan.",
+    "keepEditing": "Hapus",
+    "discard": "Chat Hapus"
+  },
+  "messageAction": {
+    "copy": "Salin",
+    "selectCopy": "Pilih chat pilih salin.",
+    "reply": "Balas",
+    "share": "Bagikan",
+    "toMe": "Chat",
+    "notice": "Pengumuman",
+    "highlight": "Bookmark",
+    "capture": "Tangkap layar",
+    "delete": "Hapus",
+    "cancelMoment": "Batalkan pengaturan hapus",
+    "viewOriginalTranslation": "Asli / Terjemahan",
+    "translateOther": "Terjemahkan ke bahasa lain",
+    "reactors": "Chat",
+    "shareToMe": "Bagikan",
+    "unhighlight": "Chat"
+  },
+  "moment": {
+    "title": "Chat",
+    "cancel": "Batalkan pengaturan hapus",
+    "expiredMessage": "Pesan kedaluwarsa"
+  },
+  "noticeBanner": {
+    "open": "Pengumuman Open",
+    "close": "Tutup pengumuman"
+  },
+  "newMessagePill": {
+    "label": "{{count}} pesan baru",
+    "accessibility": "Lihat {{count}} pesan baru"
+  },
+  "search": {
+    "sender": "Pengirim",
+    "senderFilter": "Filter pengirim",
+    "dateFilter": "Filter tanggal",
+    "prevResult": "Hasil sebelumnya",
+    "nextResult": "Hasil berikutnya",
+    "close": "Tutup pencarian",
+    "clearSender": "Hapus filter pengirim",
+    "placeholder": "Cari",
+    "inputAccessibility": "Input pencarian",
+    "clearKeyword": "Cari Bersihkan",
+    "bookmarkFilter": "Filter bookmark"
+  },
+  "datePicker": {
+    "title": "Pilih chat tanggal pemilih.",
+    "clear": "Tanggal Pemilih Bersihkan",
+    "prevMonth": "Bulan sebelumnya",
+    "nextMonth": "Bulan berikutnya",
+    "monthTitle": "{{month}} {{year}}",
+    "weekday": {
+      "sun": "Min",
+      "mon": "Sen",
+      "tue": "Sel",
+      "wed": "Rab",
+      "thu": "Kam",
+      "fri": "Jum",
+      "sat": "Sab"
+    },
+    "dayAccessibility": "Tanggal {{day}}",
+    "selected": "Dipilih",
+    "none": "Tidak ada"
+  },
+  "selection": {
+    "title": "Hapus",
+    "selectAll": "Pilih semua",
+    "deleteCount": "Hapus {{count}}"
+  },
+  "noticeModel": {
+    "fallback": "Periksa pesan.",
+    "scheduleTitle": "Jadwal",
+    "media": {
+      "image": "Foto",
+      "video": "Video",
+      "audio": "Pesan suara",
+      "file": "File",
+      "map": "Lokasi"
+    },
+    "secureRecovery": {
+      "requestCreated": {
+        "title": "Permintaan",
+        "body": "Permintaan"
+      },
+      "approved": {
+        "title": "Aman",
+        "body": "Aman"
+      },
+      "completed": {
+        "title": "Aman Selesai",
+        "body": "Aman Selesai"
+      },
+      "rejected": {
+        "title": "Aman",
+        "body": "Aman"
+      }
+    },
+    "scheduleTitleWithPrefix": "[Jadwal] Jadwal",
+    "weekday": {
+      "sun": "Min",
+      "mon": "Sen",
+      "tue": "Sel",
+      "wed": "Rab",
+      "thu": "Kam",
+      "fri": "Jum",
+      "sat": "Sab"
+    }
+  },
+  "messageItem": {
+    "noticeFallback": "Chat Pengumuman",
+    "secureLinkFallback": "Tautan",
+    "mapAddressFallback": "Info lokasi",
+    "secure": {
+      "genericTitle": "Aman",
+      "genericBody": "Aman diperbarui.",
+      "fileFallback": "File aman"
+    },
+    "tombstone": {
+      "deleted": "Pesan dihapus.",
+      "expired": "Pesan kedaluwarsa."
+    },
+    "longMessage": {
+      "viewAll": "Lihat semua"
+    },
+    "action": {
+      "confirm": "OK"
+    }
+  },
+  "linkPreview": {
+    "link": "Tautan",
+    "web": "Web",
+    "searchTitle": "Cari {{query}}",
+    "searchTitleWithProvider": "Cari {{query}} · {{provider}}",
+    "searchResult": "Hasil pencarian {{query}}",
+    "searchResultWithProvider": "Hasil pencarian {{query}} · {{provider}}",
+    "provider": {
+      "naver": "Naver",
+      "google": "Google",
+      "daum": "Daum"
+    }
+  },
+  "messageMeta": {
+    "deleteSuffix": "Hapus",
+    "cancelMoment": "Batal"
+  },
+  "messageBody": {
+    "link": "Tautan",
+    "secureMessage": "Chat Aman",
+    "file": "File",
+    "tapToOpen": "Ketuk untuk membuka",
+    "locationInfo": "Info lokasi",
+    "secureFile": "File aman"
+  },
+  "replyBlock": {
+    "peer": "Lawan bicara",
+    "replyTo": "Balas ke {{name}}"
+  },
+  "voiceRecorder": {
+    "totalDuration": "Total {{duration}}"
+  },
+  "actions": {
+    "momentCancelFailTitle": "Batal Gagal tidak dapat diproses.",
+    "tryAgain": "Coba lagi nanti.",
+    "deleteFailTitle": "Gagal menghapus",
+    "missingServerMessage": "Tindakan tidak dapat diproses.",
+    "deleteNetworkFail": "Hapus Gagal tidak dapat diproses.",
+    "momentSetFailTitle": "Gagal gagal.",
+    "momentSetNetworkFail": "Gagal tidak dapat diproses.",
+    "uploadFailTitle": "Gagal mengunggah",
+    "imageUploadFail": "Gambar Unggah Gagal tidak dapat diproses.",
+    "errorTitle": "Error",
+    "mediaSendFail": "Media Gagal",
+    "voiceUploadFail": "Suara Unggah Gagal gagal.",
+    "fileUploadFail": "File Unggah Gagal gagal."
+  },
+  "bridge": {
+    "messageNotFound": "Pesan tersebut tidak ditemukan secara lokal.",
+    "editedImageSent": "Gambar",
+    "editedImageSendFail": "Gambar Gagal tidak dapat diproses."
+  },
+  "capture": {
+    "title": "Pilih chat tangkapan.",
+    "desc": "Pilih rentang pesan",
+    "exit": "Keluar tangkapan",
+    "clear": "Chat Tangkapan Bersihkan",
+    "share": "Bagikan",
+    "save": "Chat Tangkapan Simpan",
+    "shareCapture": "Bagikan tangkapan",
+    "saveCapture": "Simpan tangkapan",
+    "anonymousOn": "Tangkapan Anonim Aktif",
+    "anonymousOff": "Tangkapan Anonim Mati",
+    "anonymousUser": "Pengguna {{index}}",
+    "error": {
+      "secureBlocked": "Chat aman tidak dapat ditangkap layar.",
+      "messageNotFound": "Pesan tidak ditemukan.",
+      "areaNotFound": "Area tangkapan tidak ditemukan.",
+      "selectedAreaNotFound": "Area terpilih tidak ditemukan.",
+      "areaCalcFailed": "Area tidak dapat dihitung.",
+      "outOfView": "Rentang terpilih berada di luar layar.",
+      "imageCreateFailed": "Gambar tangkapan tidak dapat dibuat.",
+      "emptySelection": "Tidak ada pesan dipilih.",
+      "permissionRequired": "Tangkapan Izin Wajib diperlukan.",
+      "saveFailed": "Tangkapan Simpan Gagal tidak dapat diproses.",
+      "shareUnavailable": "Berbagi tidak tersedia.",
+      "shareFailed": "Tidak dapat berbagi."
+    },
+    "success": {
+      "saved": "Tangkapan Berhasil disimpan.",
+      "savedPartial": "Berhasil",
+      "savedVisibleOnly": "Terlihat"
+    },
+    "anonymousInitial": "Tangkapan Anonim"
+  },
+  "schedule": {
+    "common": {
+      "title": "Jadwal",
+      "fallbackTitle": "Tanpa judul",
+      "roomFallback": "Ruang chat",
+      "participantFallback": "Peserta",
+      "confirm": "OK",
+      "cancel": "Chat Jadwal Batal",
+      "close": "Tutup",
+      "delete": "Hapus",
+      "done": "Selesai",
+      "save": "Chat Jadwal Simpan",
+      "saving": "Menyimpan",
+      "select": "Pilih",
+      "weekdays": {
+        "sun": "Min",
+        "mon": "Sen",
+        "tue": "Sel",
+        "wed": "Rab",
+        "thu": "Kam",
+        "fri": "Jum",
+        "sat": "Sab"
+      },
+      "period": {
+        "am": "AM",
+        "pm": "PM"
+      },
+      "date": "{{day}}/{{month}} ({{weekday}})",
+      "compactDate": "{{day}}/{{month}} {{weekday}}",
+      "timeWithPeriod": "{{period}} {{hour}}:{{minute}}",
+      "participantCount": "{{count}} peserta",
+      "participantCountShort": "{{count}} ikut",
+      "participantCountCompact": "{{count}} ikut",
+      "openDetail": "Lihat detail {{title}}"
+    },
+    "reminder": {
+      "off": "Mati",
+      "before30m": "30 menit sebelumnya",
+      "before1h": "1 jam sebelumnya",
+      "before3h": "3 jam sebelumnya",
+      "before1d": "1 hari sebelumnya",
+      "afterJoin": "Tersedia setelah ikut"
+    },
+    "api": {
+      "messageTitle": "Jadwal · {{title}}",
+      "calendarDefaultTitle": "Jadwal CO·ONN",
+      "calendarPlace": "Tempat: {{place}}",
+      "calendarAddress": "Alamat: {{address}}",
+      "calendarNoteFooter": "Jadwal CO·ONN",
+      "notificationChannel": "Jadwal",
+      "reminderTimeBody": "Jadwal dimulai pukul {{time}}.",
+      "reminderSoonBody": "Segera segera hadir.",
+      "reminderTitle": "Jadwal"
+    },
+    "detail": {
+      "notFound": "Jadwal tidak ditemukan.",
+      "cancelled": "Jadwal dibatalkan",
+      "completed": "Jadwal selesai",
+      "directions": "Petunjuk arah",
+      "notification": "Notifikasi",
+      "appPush": "Push aplikasi",
+      "calendar": "Kalender",
+      "syncCalendar": "Sinkronkan ke kalender saya",
+      "synced": "Tersinkron",
+      "notSynced": "Belum tersinkron",
+      "join": "Ikut",
+      "leave": "Jadwal Detail",
+      "noticeBadge": "Pengumuman",
+      "noParticipants": "Belum ada peserta.",
+      "moveToChat": "Chat",
+      "menu": {
+        "edit": "Edit jadwal",
+        "cancel": "Detail Menu Batal",
+        "complete": "Selesai"
+      },
+      "alert": {
+        "processFailTitle": "Detail Gagal tidak dapat diproses.",
+        "joinChangeFail": "Gagal tidak dapat diproses.",
+        "participantSettingTitle": "Detail Peserta Pengaturan",
+        "promoteNotice": "Detail Naikkan Pengumuman",
+        "removeNotice": "Detail Hapus Pengumuman",
+        "promoteNoticeMessage": "Tandai {{name}} sebagai peserta sorotan?",
+        "removeNoticeMessage": "Hapus sorotan untuk {{name}}?",
+        "settingFailTitle": "Pengaturan gagal",
+        "participantSettingFail": "Pengaturan peserta tidak dapat diubah.",
+        "reminderFailTitle": "Detail Gagal gagal.",
+        "calendarReminderFailTitle": "Pengingat kalender gagal",
+        "calendarSyncFailTitle": "Sinkronisasi kalender gagal",
+        "calendarDeleteFailTitle": "Penghapusan kalender gagal",
+        "cancelTitle": "Batalkan jadwal",
+        "cancelMessage": "Batalkan jadwal ini?\nPeserta akan melihatnya sebagai dibatalkan.",
+        "cancelAction": "Batalkan jadwal",
+        "cancelFailTitle": "Detail Batal Gagal gagal.",
+        "cancelFail": "Jadwal tidak dapat dibatalkan.",
+        "completeTitle": "Selesaikan jadwal",
+        "completeMessage": "Tandai jadwal ini selesai?\nJadwal selesai muncul di bawah.",
+        "completeFailTitle": "Gagal menyelesaikan",
+        "completeFail": "Jadwal tidak dapat diselesaikan.",
+        "calendarRemoveTitle": "Detail Hapus",
+        "calendarRemoveMessage": "Detail Hapus?"
+      },
+      "error": {
+        "calendarPermissionDenied": "Izin kalender diperlukan.",
+        "calendarNotFound": "Tidak ada jadwal.",
+        "invalidScheduleTime": "Jadwal Waktu tidak dapat diproses.",
+        "calendarApiUnavailable": "Kalender tidak tersedia di perangkat ini.",
+        "calendarDefault": "Tindakan kalender tidak dapat diselesaikan.",
+        "notificationPermissionDenied": "Izin notifikasi diperlukan.",
+        "reminderTimePast": "Waktu",
+        "reminderDefault": "Pengingat tidak dapat diatur."
+      }
+    },
+    "editor": {
+      "createTitle": "Buat jadwal",
+      "editTitle": "Edit jadwal",
+      "titlePlaceholder": "Judul",
+      "allDay": "Sepanjang hari",
+      "startDate": "Tanggal mulai",
+      "endDate": "Tanggal selesai",
+      "place": "Tempat",
+      "map": "Peta",
+      "placeNamePlaceholder": "Nama tempat",
+      "memoPlaceholder": "Masukkan memo",
+      "cancelledLocked": "Jadwal yang dibatalkan tidak dapat diedit.",
+      "locationPickerTitle": "Pilih editor lokasi pemilih.",
+      "locationPickerHelper": "Lokasi Pemilih",
+      "validation": {
+        "titleRequired": "Masukkan judul.",
+        "startInvalid": "Mulai",
+        "endInvalid": "Selesai",
+        "endBeforeStart": "Waktu selesai lebih awal dari waktu mulai.",
+        "roomMissing": "Info ruang chat tidak ditemukan."
+      }
+    },
+    "listScreen": {
+      "loadFail": "Jadwal tidak dapat dimuat.",
+      "roomMissing": "Info ruang chat tidak ditemukan.",
+      "createAccessibility": "Buat jadwal",
+      "retry": "Coba lagi",
+      "activeCount": "{{count}} Daftar Aktif Jumlah",
+      "summary": "Jadwal Daftar Ringkasan",
+      "emptyTitle": "Belum ada jadwal",
+      "emptyDesc": "Buat jadwal untuk dibagikan.",
+      "beaconUnavailableTitle": "Daftar Beacon Tidak tersedia",
+      "beaconUnavailableDesc": "Daftar Beacon Tidak tersedia",
+      "create": "Buat jadwal",
+      "joined": "Ikut",
+      "notJoined": "Belum ikut",
+      "cancelled": "Dibatalkan",
+      "completed": "Selesai",
+      "past": "Jadwal Daftar"
+    },
+    "messageCard": {
+      "cancelled": "Dibatalkan",
+      "completed": "Selesai"
+    }
+  },
+  "openProfile": {
+    "common": {
+      "confirm": "OK",
+      "cancel": "Open Profil Batal",
+      "save": "Open Profil Simpan",
+      "delete": "Hapus",
+      "default": "Default",
+      "user": "Pengguna",
+      "openChat": "Open chat",
+      "business": "Bisnis",
+      "openTalk": "Open chat",
+      "fallbackName": "Open Profil Nama",
+      "statusEmpty": "Tidak ada status",
+      "selectPhoto": "Pilih profil pilih foto.",
+      "photoApplied": "Foto diterapkan.",
+      "saved": "Disimpan.",
+      "deleted": "Dihapus.",
+      "tryAgain": "Coba lagi nanti.",
+      "notice": "Pengumuman",
+      "actionFailed": "Tidak dapat diproses.",
+      "saveFailed": "Profil Simpan Gagal tidak dapat diproses.",
+      "profileSaveFailed": "Profil tidak dapat disimpan."
+    },
+    "list": {
+      "title": "Open Profil Daftar",
+      "loadFailed": "Open profile tidak dapat dimuat.",
+      "nicknameRequired": "Masukkan nama panggilan.",
+      "createSuccess": "Open profile dibuat.",
+      "createFailed": "Gagal membuat",
+      "saveFailed": "Gagal menyimpan",
+      "deleteFailed": "Gagal menghapus",
+      "deleteTitle": "Hapus open profile?",
+      "deleteDescInUse": "Profil yang sudah dipakai di open chat tetap ada.",
+      "deleteDescDefault": "Profil yang dihapus tidak dapat digunakan lagi.",
+      "editAccessibility": "Edit open profile",
+      "usedRoomsCount": "Dipakai di {{count}} open chat",
+      "usedRoomsEmpty": "Tidak ada daftar.",
+      "emptyTitle": "Tidak ada open profil daftar.",
+      "emptyDesc": "Open Profil Daftar"
+    },
+    "viewer": {
+      "action": {
+        "transferOwner": "Alihkan host",
+        "promoteManager": "Viewer Naikkan Manajer",
+        "demoteManager": "Viewer Turunkan Manajer",
+        "kick": "Keluarkan",
+        "block": "Blokir",
+        "unblock": "Buka blokir",
+        "release": "Lepas",
+        "delegate": "Profil Viewer",
+        "appoint": "Tunjuk",
+        "changePhoto": "Ganti foto",
+        "showPhoto": "Viewer Tampilkan Foto"
+      },
+      "confirm": {
+        "blockMessage": "Profil Viewer Blokir?",
+        "unblockMessage": "Tampilkan lagi pesan pengguna ini?",
+        "transferOwnerMessage": "Alihkan host ke {{name}}?",
+        "promoteManagerMessage": "Jadikan {{name}} manajer?",
+        "demoteManagerMessage": "Cabut peran manajer dari {{name}}?",
+        "kickMessage": "Keluarkan {{name}}? Pengguna yang dikeluarkan tidak dapat masuk lagi."
+      },
+      "accessibility": {
+        "save": "Profil Viewer Simpan"
+      },
+      "placeholder": {
+        "status": "Status"
+      }
+    },
+    "edit": {
+      "loadFailed": "Info open chat tidak dapat dimuat.",
+      "titleRequired": "Masukkan nama ruang.",
+      "saveFailed": "Tidak dapat menyimpan. Coba lagi nanti.",
+      "categoryFallback": "Open chat",
+      "titlePlaceholder": "Nama open chat",
+      "changePhoto": "Ganti foto",
+      "descriptionPlaceholder": "Open Profil Edit",
+      "tagsPlaceholder": "Masukkan profil edit.",
+      "publicTitle": "Publik",
+      "publicDesc": "Orang dapat menemukan ruang ini lewat nama, deskripsi, dan tag.",
+      "selectCover": "Pilih edit pilih."
+    },
+    "gate": {
+      "loadFailed": "Info tidak dapat dimuat.",
+      "joinFailed": "Tidak dapat masuk dengan open profile. Coba lagi nanti.",
+      "enterChat": "Masukkan chat.",
+      "startConsult": "Mulai",
+      "selectProfileEnter": "Pilih pilih profil.",
+      "joinOpenChat": "Gabung open chat",
+      "openNow": "Buka",
+      "closed": "Tutup",
+      "participants": "{{count}} peserta",
+      "participantsWithMax": "{{count}}/{{max}} peserta",
+      "createdAt": "Dibuat {{date}}",
+      "host": "Host",
+      "introEmpty": "Tidak ada profil intro."
+    }
+  },
+  "userFallback": "Pengguna",
+  "room": {
+    "deletedReadonly": "Ruang",
+    "leftReadonly": "Anda telah keluar dari ruang chat ini.",
+    "kickedTitle": "Anda dikeluarkan.",
+    "kickedMessage": "Anda tidak dapat lagi menggunakan ruang chat ini."
+  },
+  "toast": {
+    "selectCopySecureBlocked": "Salin Aman",
+    "selectCopyUnsupported": "Pilih Salin",
+    "shareToSelfSuccess": "Saya Berhasil",
+    "shareSecureBlocked": "Pesan aman tidak dapat dibagikan.",
+    "shareUnsupported": "Pesan ini tidak dapat dibagikan.",
+    "shareSelfRoomUnavailable": "Saya Ruang Tidak tersedia tidak dapat diproses.",
+    "shareFailed": "Tidak dapat berbagi.",
+    "noticeNoPermission": "Pengumuman Tidak Izin",
+    "copied": "Disalin."
+  },
+  "longMessage": {
+    "message": "Pesan",
+    "translation": "Terjemahan",
+    "original": "Chat Asli"
+  },
+  "selectCopy": {
+    "titleFallback": "Pesan",
+    "translated": "Terjemahan",
+    "original": "Pilih Salin Asli",
+    "hint": "Pilih Salin",
+    "copied": "Pilih Salin",
+    "copyAll": "Salin Salin Semua",
+    "empty": "Tidak ada teks untuk dipilih"
+  },
+  "system": {
+    "notice": "Pembaruan chat",
+    "memberJoined": "{{name}} bergabung.",
+    "memberLeft": "{{name}} keluar.",
+    "memberKicked": "{{name}} dikeluarkan.",
+    "managerPromoted": "{{name}} kini menjadi pengelola.",
+    "managerDemoted": "{{name}} bukan lagi pengelola.",
+    "ownerTransferred": "{{name}} kini menjadi host.",
+    "roomDeleted": "Ruang ini telah dihapus."
+  },
+  "cancel": "Batal"
+}

@@ -1,4 +1,3 @@
-// src/screens/business/Feed.tsx
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
@@ -24,23 +23,26 @@ import Mapbox, {
   SymbolLayer,
   Images,
 } from '@rnmapbox/maps';
-import * as Location from 'expo-location';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Settings,
-  Bell,
+  Info,
   SlidersHorizontal,
   RefreshCw,
   List,
   Crosshair,
-  Plus,
   Store,
+  ChevronRight,
 } from 'lucide-react-native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { supabase } from '@/lib/supabase';
-import { useNotifBadge } from '@/hooks/useNotifBadge';
 import useNetworkGuard from '@/hooks/useNetworkGuard';
+
+import { useLocationContext } from '@/context/LocationContext';
+import { useAppTheme } from '@/theme/useAppTheme';
+import { useTranslation } from 'react-i18next';
+import { createBusinessFeedTheme } from './Feed.theme';
 
 import BusinessSearchModal, { type BusinessSortKey } from './modals/BusinessSearchModal';
 
@@ -49,6 +51,7 @@ import AnimatedRe, {
   useAnimatedStyle,
   withSpring,
   runOnJS,
+  interpolateColor,
 } from 'react-native-reanimated';
 
 type Region = {
@@ -61,12 +64,20 @@ type Region = {
 const { height: SCREEN_H } = Dimensions.get('window');
 const AnimatedPressable = AnimatedRe.createAnimatedComponent(Pressable);
 
-const SEOUL: Region = {
-  latitude: 37.5665,
-  longitude: 126.978,
-  latitudeDelta: 0.04,
-  longitudeDelta: 0.04,
-};
+type HeaderActionIcon = React.ComponentType<{
+  size?: number;
+  color?: string;
+  strokeWidth?: number;
+}>;
+
+const HEADER_ACTION_ICON_SIZE = 18;
+const HEADER_ACTION_ICON_STROKE = 1.9;
+const FLOATING_ICON_SIZE = 18;
+const FLOATING_ICON_STROKE = 1.9;
+const SMALL_FLOATING_ICON_SIZE = 16;
+const SMALL_FLOATING_ICON_STROKE = 1.9;
+const BUSINESS_FAB_ICON_SIZE = 22;
+const BUSINESS_FAB_ICON_STROKE = 2.15;
 
 const toRad = (d: number) => (d * Math.PI) / 180;
 const haversine = (lat1: number, lng1: number, lat2: number, lng2: number) => {
@@ -75,9 +86,7 @@ const haversine = (lat1: number, lng1: number, lat2: number, lng2: number) => {
   const dLng = toRad(lng2 - lng1);
   const a =
     Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLng / 2) ** 2;
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(a));
 };
 
@@ -87,11 +96,7 @@ const toNum = (v: any) => {
   return Number.isFinite(n) ? n : NaN;
 };
 
-const regionForRadiusMeters = (
-  center: { latitude: number; longitude: number },
-  meters: number,
-) => {
-  // ✅ 100m 같은 근접 줌이 “minDelta” 때문에 막히지 않게 낮춤
+const regionForRadiusMeters = (center: { latitude: number; longitude: number }, meters: number) => {
   const minDelta = 0.0009;
   const latDelta = Math.max(minDelta, (meters / 111_000) * 2);
   const cosLat = Math.max(0.2, Math.cos((center.latitude * Math.PI) / 180));
@@ -127,11 +132,6 @@ const regionToZoom = (r: Region) => {
   return clamp(Math.log2(360 / lonDelta), 0, 22);
 };
 
-/**
- * ✅ 카테고리(표시/필터용)
- * - pub/bar/club 은 drink로 묶음
- * - etc 는 store로 묶음
- */
 type BusinessCategory = 'restaurant' | 'cafe' | 'bakery' | 'market' | 'store' | 'drink';
 type BusinessCategoryFilter = BusinessCategory | 'all';
 
@@ -170,21 +170,17 @@ type BaseBusiness = BusinessRow & {
 
 type BusinessDraw = BaseBusiness & {
   distance_m: number;
+  _center_distance_m?: number;
 };
 
-const CATEGORY_OPTIONS: {
-  id: BusinessCategoryFilter;
-  label: string;
-  emoji: string;
-}[] = [
-  { id: 'all', label: '전체', emoji: '🌐' },
-  // ✅ 요청 순서: 술/펍, 음식점, 카페, 상점, 마켓, 베이커리
-  { id: 'drink', label: '술/펍', emoji: '🍺' },
-  { id: 'restaurant', label: '음식점', emoji: '🍽️' },
-  { id: 'cafe', label: '카페', emoji: '☕' },
-  { id: 'store', label: '상점', emoji: '🏪' },
-  { id: 'market', label: '마켓', emoji: '🛒' },
-  { id: 'bakery', label: '베이커리', emoji: '🥐' },
+const CATEGORY_OPTIONS: { id: BusinessCategoryFilter; labelKey: string; emoji: string }[] = [
+  { id: 'all', labelKey: 'business:category.all', emoji: '🌐' },
+  { id: 'drink', labelKey: 'business:category.drink', emoji: '🍺' },
+  { id: 'restaurant', labelKey: 'business:category.restaurant', emoji: '🍽️' },
+  { id: 'cafe', labelKey: 'business:category.cafe', emoji: '☕' },
+  { id: 'store', labelKey: 'business:category.store', emoji: '🏪' },
+  { id: 'market', labelKey: 'business:category.market', emoji: '🛒' },
+  { id: 'bakery', labelKey: 'business:category.bakery', emoji: '🥐' },
 ];
 
 const CATEGORY_ICON_REQUIRE: Record<
@@ -214,12 +210,10 @@ function categoryEmoji(cat: BusinessCategory | null | undefined) {
   const found = CATEGORY_OPTIONS.find((c) => c.id === (cat ?? 'store'));
   return found?.emoji ?? '🏪';
 }
-
-function categoryLabel(cat: BusinessCategory | null | undefined) {
+function categoryLabel(cat: BusinessCategory | null | undefined, t: any) {
   const found = CATEGORY_OPTIONS.find((c) => c.id === (cat ?? 'store'));
-  return found?.label ?? '상점';
+  return found ? t(found.labelKey) : t('business:category.store');
 }
-
 function categoryIconKey(cat: BusinessCategory | null | undefined) {
   const c = (cat ?? 'store') as BusinessCategory;
   if (c === 'restaurant') return 'cat_restaurant';
@@ -230,26 +224,25 @@ function categoryIconKey(cat: BusinessCategory | null | undefined) {
   return 'cat_store';
 }
 
-/**
- * ✅ 거리 범위: 50m ~ 2km
- * ✅ “가게는 안 바뀐다” 정책:
- * - 지도 이동 시 자동 재조회 없음
- * - 최초 진입 1회 로딩 (기본 반경: 2km)
- * - 강제 새로고침 또는 일정 시간(기본 12h) 경과 시에만 백그라운드 갱신
- */
-const RADIUS_MIN = 50;
-const RADIUS_MAX = 2000;
-const RADIUS_DEFAULT = 2000;
+const FILTER_RADIUS_MIN = 50;
+const NEIGHBORHOOD_RADIUS_MAX = 10_000;
+const DEFAULT_NEIGHBORHOOD_RADIUS_M = 300;
 
-const INITIAL_VIEW_METERS = 300; // ✅ 최초 진입 카메라(데이터 반경 2km와 분리)
+const INITIAL_CAMERA_METERS = 500;
 const STALE_REFRESH_MS = 12 * 60 * 60 * 1000;
 const SELECT_FOCUS_METERS = 100;
+
+const RESULT_LIMIT = 200;
 
 const BusinessFeedScreen: React.FC = () => {
   const navigation = useNavigation<any>();
   const rootNav = getRootNavigation(navigation);
-  const { count: unreadCount } = useNotifBadge();
   const insets = useSafeAreaInsets();
+  const appTheme = useAppTheme();
+  const C = useMemo(() => createBusinessFeedTheme(appTheme), [appTheme.mode]);
+  const { t } = useTranslation();
+
+  const { myLocation, loading: locationLoading, refreshLocation } = useLocationContext();
 
   useNetworkGuard();
 
@@ -257,7 +250,7 @@ const BusinessFeedScreen: React.FC = () => {
     try {
       (navigation as any).setOptions?.({
         statusBarColor: 'transparent',
-        statusBarStyle: 'dark',
+        statusBarStyle: C.navigationStatusBarStyle,
         statusBarTranslucent: true,
       });
     } catch {}
@@ -266,9 +259,9 @@ const BusinessFeedScreen: React.FC = () => {
     try {
       RNStatusBar.setTranslucent(true);
       RNStatusBar.setBackgroundColor('transparent', true);
-      RNStatusBar.setBarStyle('dark-content', true);
+      RNStatusBar.setBarStyle(C.statusBarStyle, true);
     } catch {}
-  }, [navigation]);
+  }, [navigation, C.navigationStatusBarStyle, C.statusBarStyle]);
 
   useFocusEffect(
     useCallback(() => {
@@ -297,22 +290,26 @@ const BusinessFeedScreen: React.FC = () => {
   const cameraRef = useRef<any>(null);
   const bizSourceRef = useRef<any>(null);
 
-  const initialRegionRef = useRef<Region>(SEOUL);
-  const currentCenterRef = useRef<{ latitude: number; longitude: number }>(SEOUL);
+  const initialRegionRef = useRef<Region | null>(null);
+  const mapCenterRef = useRef<{ latitude: number; longitude: number } | null>(null);
+  const myLocationRef = useRef<{ latitude: number; longitude: number } | null>(null);
 
-  // ✅ “서버에서 받은(혹은 fallback) 기준 데이터”를 보관하고, 필터/정렬은 클라이언트에서만 적용
   const [baseBusinesses, setBaseBusinesses] = useState<BaseBusiness[]>([]);
   const [businesses, setBusinesses] = useState<BusinessDraw[]>([]);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!myLocation);
+
   const [refreshing, setRefreshing] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const markerPressAtRef = useRef(0);
 
   const [showFilter, setShowFilter] = useState(false);
 
-  const [radiusMeters, _setRadiusMeters] = useState(RADIUS_DEFAULT);
+  const [neighborhoodRadiusM, setNeighborhoodRadiusM] = useState<number>(DEFAULT_NEIGHBORHOOD_RADIUS_M);
+  const [radiusMeters, _setRadiusMeters] = useState<number>(DEFAULT_NEIGHBORHOOD_RADIUS_M);
+
   const [selectedCategory, setSelectedCategory] = useState<BusinessCategoryFilter>('all');
   const [onlyWithEvent, setOnlyWithEvent] = useState(false);
   const [hideAdult, setHideAdult] = useState(false);
@@ -320,12 +317,8 @@ const BusinessFeedScreen: React.FC = () => {
   const [searchText, setSearchText] = useState('');
 
   const [sortKey, setSortKey] = useState<BusinessSortKey>('distance');
-  const [openNow, setOpenNow] = useState(false);
+  const [openNow, setOpenNow] = useState(true);
 
-  const [myBusinessId, setMyBusinessId] = useState<string | null>(null);
-  const [myBusinessLoading, setMyBusinessLoading] = useState(false);
-
-  // ✅ 캐시/갱신 정책
   const cacheRef = useRef<{
     fetchedAt: number;
     center: { latitude: number; longitude: number };
@@ -336,23 +329,15 @@ const BusinessFeedScreen: React.FC = () => {
   const tabH = useSafeTabBarHeight();
   const fabsBottom = Math.max(24, tabH + 10);
 
-  const listBtnBottom = 12;
+  const listBtnBottom = Math.max(C.bottomControlOffset, tabH + C.bottomControlOffset);
   const radiusHintBottom = Math.max(90, tabH + 90);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const showRadiusHint = useCallback(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 180,
-      useNativeDriver: true,
-    }).start(() =>
+    Animated.timing(fadeAnim, { toValue: 1, duration: 180, useNativeDriver: true }).start(() =>
       setTimeout(() => {
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 420,
-          useNativeDriver: true,
-        }).start();
+        Animated.timing(fadeAnim, { toValue: 0, duration: 420, useNativeDriver: true }).start();
       }, 900),
     );
   }, [fadeAnim]);
@@ -370,10 +355,13 @@ const BusinessFeedScreen: React.FC = () => {
   const sheetY = useSharedValue(SCREEN_H_VAL - SNAP[0]);
   const sheetHeights = useMemo(() => SNAP.map((h) => SCREEN_H_VAL - h), [SNAP, SCREEN_H_VAL]);
   const sheetIdxRef = useRef<0 | 1 | 2>(0);
+  const [sheetIndex, setSheetIndex] = useState<0 | 1 | 2>(0);
 
   const snapTo = useCallback(
     (idx: 0 | 1 | 2) => {
       sheetIdxRef.current = idx;
+      setSheetIndex(idx);
+      if (idx === 0) setSelectedId(null);
       sheetY.value = withSpring(sheetHeights[sheetIdxRef.current], {
         damping: 16,
         stiffness: 180,
@@ -388,10 +376,7 @@ const BusinessFeedScreen: React.FC = () => {
       onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dy) > 4,
       onPanResponderMove: (_, g) => {
         const base = sheetHeights[sheetIdxRef.current];
-        const next = Math.min(
-          SCREEN_H_VAL - SNAP[0],
-          Math.max(SCREEN_H_VAL - SNAP[2], base + g.dy),
-        );
+        const next = Math.min(SCREEN_H_VAL - SNAP[0], Math.max(SCREEN_H_VAL - SNAP[2], base + g.dy));
         sheetY.value = next;
       },
       onPanResponderRelease: () => {
@@ -406,6 +391,37 @@ const BusinessFeedScreen: React.FC = () => {
   const sheetAnim = useAnimatedStyle(() => ({ transform: [{ translateY: sheetY.value }] }));
   const sheetMin = SCREEN_H_VAL - SNAP[2];
   const sheetMax = SCREEN_H_VAL - SNAP[0];
+  const listButtonExpandedBg = C.listButtonBg;
+  const listButtonCollapsedBg = C.listButtonCollapsedBg;
+  const listButtonLabel = t('business:actions.list');
+
+  const listButtonExpandedWidth = useMemo(() => {
+    const estimatedTextWidth = Array.from(listButtonLabel).reduce((sum, char) => {
+      const code = char.codePointAt(0) ?? 0;
+      const isWide =
+        (code >= 0x1100 && code <= 0x11ff) ||
+        (code >= 0x2e80 && code <= 0xa4cf) ||
+        (code >= 0xac00 && code <= 0xd7af) ||
+        (code >= 0xf900 && code <= 0xfaff) ||
+        (code >= 0xff00 && code <= 0xffef);
+
+      return sum + (isWide ? 14 : 8);
+    }, 0);
+
+    return Math.min(164, Math.max(82, FLOATING_ICON_SIZE + 6 + 24 + estimatedTextWidth));
+  }, [listButtonLabel]);
+
+  const listButtonLabelWidth = Math.max(
+    0,
+    listButtonExpandedWidth - FLOATING_ICON_SIZE - 6 - 24,
+  );
+
+  const floatingShadowOpacity = C.floatingShadowOpacity;
+  const floatingShadowRadius = C.floatingShadowRadius;
+  const floatingShadowOffsetY = C.floatingShadowOffsetY;
+  const floatingElevation = C.floatingElevation;
+  const listButtonCollapsedShadowOpacity = C.listButtonCollapsedShadowOpacity;
+  const listButtonCollapsedElevation = C.listButtonCollapsedElevation;
 
   const fabAnim = useAnimatedStyle(() => {
     const p = Math.max(0, Math.min(1, (sheetY.value - sheetMax) / (sheetMin - sheetMax)));
@@ -425,14 +441,15 @@ const BusinessFeedScreen: React.FC = () => {
   const listBtnContainerAnim = useAnimatedStyle(() => {
     const p = Math.max(0, Math.min(1, (sheetY.value - sheetMax) / (sheetMin - sheetMax)));
     const t = Math.max(0, Math.min(1, p / 0.12));
-    const width = 132 - (132 - 44) * t;
+    const width = listButtonExpandedWidth - (listButtonExpandedWidth - 44) * t;
     const radius = 20 + (22 - 20) * t;
-    const opacity = 1 - (1 - 0.55) * t;
     return {
       width,
+      zIndex: 40,
       borderRadius: radius,
-      opacity,
-      backgroundColor: 'rgba(255,255,255,0.9)',
+      backgroundColor: interpolateColor(t, [0, 1], [listButtonExpandedBg, listButtonCollapsedBg]),
+      shadowOpacity: floatingShadowOpacity + (listButtonCollapsedShadowOpacity - floatingShadowOpacity) * t,
+      elevation: Math.max(40, floatingElevation + (listButtonCollapsedElevation - floatingElevation) * t),
       justifyContent: 'center',
       alignItems: 'center',
       overflow: 'hidden',
@@ -449,7 +466,7 @@ const BusinessFeedScreen: React.FC = () => {
   const listBtnLabelAnim = useAnimatedStyle(() => {
     const p = Math.max(0, Math.min(1, (sheetY.value - sheetMax) / (sheetMin - sheetMax)));
     const t = Math.max(0, Math.min(1, p / 0.12));
-    const w = 80 * (1 - t);
+    const w = listButtonLabelWidth * (1 - t);
     const ml = 6 * (1 - t);
     const op = 1 - t;
     return { width: w, marginLeft: ml, opacity: op };
@@ -479,28 +496,71 @@ const BusinessFeedScreen: React.FC = () => {
     } catch {}
   }, []);
 
-  // ✅ radius setter (50m~2km 강제)
-  const setRadiusMeters = useCallback((next: number) => {
-    _setRadiusMeters(clamp(Math.round(next), RADIUS_MIN, RADIUS_MAX));
+  const setCameraCenterOnly = useCallback((center: { latitude: number; longitude: number }, duration = 420) => {
+    try {
+      (cameraRef.current as any)?.setCamera?.({
+        centerCoordinate: [center.longitude, center.latitude],
+        animationDuration: duration,
+        animationMode: 'easeTo',
+      });
+    } catch {}
   }, []);
 
-  // -----------------------------
-  // ✅ client-side filter/sort apply
-  // -----------------------------
+  const radiusMaxForFilter = useMemo(() => {
+    const mx = clamp(
+      Math.round(neighborhoodRadiusM || DEFAULT_NEIGHBORHOOD_RADIUS_M),
+      FILTER_RADIUS_MIN,
+      NEIGHBORHOOD_RADIUS_MAX,
+    );
+    return mx;
+  }, [neighborhoodRadiusM]);
+
+  const setRadiusMeters = useCallback(
+    (next: number) => {
+      _setRadiusMeters(clamp(Math.round(next), FILTER_RADIUS_MIN, radiusMaxForFilter));
+    },
+    [radiusMaxForFilter],
+  );
+
+  const fetchNeighborhoodRadiusM = useCallback(async (): Promise<number> => {
+    try {
+      const { data: auth } = await supabase.auth.getUser();
+      const userId = auth?.user?.id;
+      if (!userId) return DEFAULT_NEIGHBORHOOD_RADIUS_M;
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('neighborhood_radius_m')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (error) return DEFAULT_NEIGHBORHOOD_RADIUS_M;
+
+      const v = toNum((data as any)?.neighborhood_radius_m);
+      if (!Number.isFinite(v) || v <= 0) return DEFAULT_NEIGHBORHOOD_RADIUS_M;
+
+      return clamp(Math.round(v), FILTER_RADIUS_MIN, NEIGHBORHOOD_RADIUS_MAX);
+    } catch {
+      return DEFAULT_NEIGHBORHOOD_RADIUS_M;
+    }
+  }, []);
+
   const applyClientFilters = useCallback(() => {
-    const { latitude, longitude } = currentCenterRef.current;
+    if (!myLocationRef.current || !mapCenterRef.current) return;
+
+    const me = myLocationRef.current;
+    const center = mapCenterRef.current;
 
     const rows: BusinessDraw[] = (baseBusinesses ?? [])
       .map((b) => {
-        const dist = haversine(latitude, longitude, b._lat, b._lng);
-        return { ...b, distance_m: dist };
+        const distFromMe = haversine(me.latitude, me.longitude, b._lat, b._lng);
+        const distFromCenter = haversine(center.latitude, center.longitude, b._lat, b._lng);
+        return { ...b, distance_m: distFromMe, _center_distance_m: distFromCenter };
       })
       .filter((b) => {
-        const inRadius = b.distance_m <= radiusMeters;
+        const inRadius = (b._center_distance_m ?? b.distance_m) <= radiusMeters;
 
-        const catOk =
-          selectedCategory === 'all' ? true : (b.category || 'store') === selectedCategory;
-
+        const catOk = selectedCategory === 'all' ? true : (b.category || 'store') === selectedCategory;
         const eventOk = onlyWithEvent ? !!b.has_active_event : true;
         const adultOk = hideAdult ? !b.is_adult : true;
         const openOk = openNow ? !!b.is_open_now : true;
@@ -525,22 +585,22 @@ const BusinessFeedScreen: React.FC = () => {
         if (as !== bs) return bs - as;
         if (aEvent !== bEvent) return bEvent - aEvent;
         return a.distance_m - b.distance_m;
-      });
+      })
+      .slice(0, RESULT_LIMIT);
 
     setBusinesses(rows);
   }, [baseBusinesses, radiusMeters, selectedCategory, onlyWithEvent, hideAdult, openNow, sortKey]);
 
-  // -----------------------------
-  // ✅ server fetch (최초 1회 / 강제 새로고침 / (query 있을 때만) AI)
-  // -----------------------------
-  const fetchBusinessesFromServer = useCallback(async (opts?: { silent?: boolean }) => {
-    const silent = !!opts?.silent;
+  const fetchBusinessesFromServer = useCallback(
+    async (opts?: { silent?: boolean; queryOverride?: string }) => {
+      const silent = !!opts?.silent;
+      const qOverride = opts?.queryOverride;
 
-    const fallbackFetch = async () => {
-      const resp = await supabase
-        .from('businesses')
-        .select(
-          `
+      const fallbackFetch = async () => {
+        const resp = await supabase
+          .from('businesses')
+          .select(
+            `
           id,
           name,
           category,
@@ -556,219 +616,215 @@ const BusinessFeedScreen: React.FC = () => {
           hero_image_url,
           logo_image_url
         `,
-        )
-        .eq('is_active', true)
-        .limit(1000);
+          )
+          .eq('is_active', true)
+          .limit(RESULT_LIMIT);
 
-      if (resp.error) throw resp.error;
-      return (resp.data ?? []) as any[];
-    };
+        if (resp.error) throw resp.error;
+        return (resp.data ?? []) as any[];
+      };
 
-    const normalizeBaseRows = (rawRows: any[]) => {
-      return (rawRows ?? [])
-        .map((b: any): BaseBusiness | null => {
-          const id = (b?.id ?? b?.business_id) as string | undefined;
+      const normalizeBaseRows = (rawRows: any[]) => {
+        return (rawRows ?? [])
+          .map((b: any): BaseBusiness | null => {
+            const id = (b?.id ?? b?.business_id) as string | undefined;
 
-          const dLat = toNum(b?.lat);
-          const dLng = toNum(b?.lng);
+            const dLat = toNum(b?.lat);
+            const dLng = toNum(b?.lng);
 
-          if (!id) return null;
-          if (!Number.isFinite(dLat) || !Number.isFinite(dLng)) return null;
+            if (!id) return null;
+            if (!Number.isFinite(dLat) || !Number.isFinite(dLng)) return null;
 
-          const ratingNum =
-            b?.rating == null
-              ? null
-              : typeof b.rating === 'number'
-              ? b.rating
-              : Number.isFinite(Number(b.rating))
-              ? Number(b.rating)
-              : null;
+            const ratingNum =
+              b?.rating == null
+                ? null
+                : typeof b.rating === 'number'
+                ? b.rating
+                : Number.isFinite(Number(b.rating))
+                ? Number(b.rating)
+                : null;
 
-          const reviewCountNum =
-            b?.review_count == null
-              ? null
-              : typeof b.review_count === 'number'
-              ? b.review_count
-              : Number.isFinite(Number(b.review_count))
-              ? Number(b.review_count)
-              : null;
+            const reviewCountNum =
+              b?.review_count == null
+                ? null
+                : typeof b.review_count === 'number'
+                ? b.review_count
+                : Number.isFinite(Number(b.review_count))
+                ? Number(b.review_count)
+                : null;
 
-          const scoreNum =
-            b?.score == null
-              ? 0
-              : typeof b.score === 'number'
-              ? b.score
-              : Number.isFinite(Number(b.score))
-              ? Number(b.score)
-              : 0;
+            const scoreNum =
+              b?.score == null
+                ? 0
+                : typeof b.score === 'number'
+                ? b.score
+                : Number.isFinite(Number(b.score))
+                ? Number(b.score)
+                : 0;
 
-          const catNorm = normalizeCategory(b?.category);
+            const catNorm = normalizeCategory(b?.category);
 
-          return {
-            id: String(id),
-            name: b?.name ?? '',
-            category: catNorm,
+            return {
+              id: String(id),
+              name: b?.name ?? '',
+              category: catNorm,
 
-            lat: dLat,
-            lng: dLng,
-            address: b?.address ?? null,
-            is_adult: b?.is_adult ?? null,
-            has_active_event: b?.has_active_event ?? null,
+              lat: dLat,
+              lng: dLng,
+              address: b?.address ?? null,
+              is_adult: b?.is_adult ?? null,
+              has_active_event: b?.has_active_event ?? null,
 
-            is_open: b?.is_open ?? null,
-            is_open_now: b?.is_open_now ?? null,
+              is_open: b?.is_open ?? null,
+              is_open_now: b?.is_open_now ?? null,
 
-            rating: ratingNum,
-            review_count: reviewCountNum,
+              rating: ratingNum,
+              review_count: reviewCountNum,
 
-            logo_image_url: b?.logo_image_url ?? null,
-            hero_image_url: b?.hero_image_url ?? null,
-            main_image_url: b?.main_image_url ?? null,
+              logo_image_url: b?.logo_image_url ?? null,
+              hero_image_url: b?.hero_image_url ?? null,
+              main_image_url: b?.main_image_url ?? null,
 
-            score: scoreNum,
-            explain: b?.explain ?? null,
-            ai_category_top3: b?.ai_category_top3 ?? null,
-            profile_updated_at: b?.profile_updated_at ?? null,
+              score: scoreNum,
+              explain: b?.explain ?? null,
+              ai_category_top3: b?.ai_category_top3 ?? null,
+              profile_updated_at: b?.profile_updated_at ?? null,
 
-            _lat: dLat,
-            _lng: dLng,
-          };
-        })
-        .filter((b): b is BaseBusiness => b !== null);
-    };
+              _lat: dLat,
+              _lng: dLng,
+            };
+          })
+          .filter((b): b is BaseBusiness => b !== null);
+      };
 
-    try {
-      setErr(null);
-      if (!silent) setRefreshing(true);
+      try {
+        setErr(null);
+        if (!silent) setRefreshing(true);
 
-      const t = String(searchText ?? '').trim();
-      const queryKey = t ? `q:${t}` : 'q:';
+        const t = String(qOverride != null ? qOverride : searchText ?? '').trim();
+        const queryKey = t ? `q:${t}` : 'q:';
 
-      let rawRows: any[] = [];
+        let rawRows: any[] = [];
 
-      if (!t) {
-        // ✅ 검색어가 없으면 fallback 기준 데이터만 (정책: 가게는 안 바뀐다)
-        rawRows = await fallbackFetch();
-      } else {
-        // ✅ 검색어가 있을 때만 AI RPC
-        let signals: any[] = [];
-        let categoryTop3: string[] = [];
+        if (!t) {
+          rawRows = await fallbackFetch();
+        } else {
+          let signals: any[] = [];
+          let categoryTop3: string[] = [];
 
-        const { data: interp, error: interpErr } = await supabase.rpc('search_interpret_local_v1', {
-          p_query: t,
-          p_lang: null,
-        });
-
-        if (!interpErr && interp) {
-          const s = (interp as any)?.signals;
-          const c = (interp as any)?.category_top3;
-          if (Array.isArray(s)) signals = s;
-          if (Array.isArray(c)) categoryTop3 = c.filter((x: any) => typeof x === 'string');
-        }
-
-        try {
-          const { data: ranked, error: rankedErr } = await supabase.rpc('search_businesses_v1', {
-            p_signals: signals,
-            p_category_top3: categoryTop3,
-            p_limit: 200,
-            p_offset: 0,
-            p_min_profile_updated_at: null,
+          const { data: interp, error: interpErr } = await supabase.rpc('search_interpret_local_v1', {
+            p_query: t,
+            p_lang: null,
           });
 
-          if (rankedErr) throw rankedErr;
-          rawRows = (ranked ?? []) as any[];
+          if (!interpErr && interp) {
+            const s = (interp as any)?.signals;
+            const c = (interp as any)?.category_top3;
+            if (Array.isArray(s)) signals = s;
+            if (Array.isArray(c)) categoryTop3 = c.filter((x: any) => typeof x === 'string');
+          }
 
-          if (!Array.isArray(rawRows) || rawRows.length === 0) {
+          if (selectedCategory !== 'all') {
+            const forced = String(selectedCategory);
+            if (!categoryTop3.includes(forced)) categoryTop3 = [forced, ...categoryTop3].slice(0, 3);
+          }
+
+          try {
+            const { data: ranked, error: rankedErr } = await supabase.rpc('search_businesses_v1', {
+              p_signals: signals,
+              p_category_top3: categoryTop3,
+              p_limit: RESULT_LIMIT,
+              p_offset: 0,
+              p_min_profile_updated_at: null,
+            });
+
+            if (rankedErr) throw rankedErr;
+            rawRows = (ranked ?? []) as any[];
+
+            if (!Array.isArray(rawRows) || rawRows.length === 0) {
+              rawRows = await fallbackFetch();
+            }
+          } catch {
             rawRows = await fallbackFetch();
           }
-        } catch {
-          rawRows = await fallbackFetch();
         }
-      }
 
-      const base = normalizeBaseRows(rawRows);
-      setBaseBusinesses(base);
+        const base = normalizeBaseRows(rawRows);
+        setBaseBusinesses(base);
 
-      cacheRef.current = {
-        fetchedAt: Date.now(),
-        center: { ...currentCenterRef.current },
-        radius: RADIUS_MAX,
-        queryKey,
-      };
-    } catch (e: any) {
-      setErr(e?.message || '주변 비즈니스를 불러오지 못했습니다.');
-    } finally {
-      setRefreshing(false);
-    }
-  }, [searchText]);
-
-  // -----------------------------
-  // ✅ init location + 최초 1회 로딩
-  // -----------------------------
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') throw new Error('위치 권한이 필요합니다.');
-
-        const last = await Location.getLastKnownPositionAsync({});
-        const loc =
-          last ??
-          (await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.Balanced,
-          }));
-
-        const center = { latitude: loc.coords.latitude, longitude: loc.coords.longitude };
-        currentCenterRef.current = center;
-
-        // ✅ 초기 카메라(100m)
-        initialRegionRef.current = regionForRadiusMeters(center, INITIAL_VIEW_METERS);
-
-        if (mounted) setLoading(false);
-
-        setTimeout(() => {setCameraByRegion(initialRegionRef.current, 600);}, 100);
-
-        // ✅ 최초 1회 서버 로딩
-        await fetchBusinessesFromServer({ silent: true });
+        if (myLocationRef.current) {
+          cacheRef.current = {
+            fetchedAt: Date.now(),
+            center: { ...myLocationRef.current },
+            radius: radiusMaxForFilter,
+            queryKey,
+          };
+        }
       } catch (e: any) {
-        if (mounted) {
-          setErr(e?.message || '현재 위치를 가져오지 못했습니다.');
-          setLoading(false);
-        }
+        setErr(e?.message || t('business:feed.loadFail'));
+      } finally {
+        setRefreshing(false);
       }
-    })();
+    },
+    [searchText, selectedCategory, radiusMaxForFilter],
+  );
 
-    return () => {
-      mounted = false;
-    };
-  }, [fetchBusinessesFromServer, setCameraByRegion]);
+  const skipFirstRadiusEffectRef = useRef(true);
 
-  // ✅ baseBusinesses 또는 필터가 바뀌면: 서버 재조회 없이 화면만 갱신
+  useEffect(() => {
+    if (myLocation) {
+      const center = { latitude: myLocation.lat, longitude: myLocation.lng };
+      myLocationRef.current = center;
+      mapCenterRef.current = center;
+
+      if (!initialRegionRef.current) {
+        initialRegionRef.current = regionForRadiusMeters(center, INITIAL_CAMERA_METERS);
+      }
+
+      if (loading) setLoading(false);
+
+      try {
+        setTimeout(() => {
+          if (initialRegionRef.current) setCameraByRegion(initialRegionRef.current, 0);
+        }, 0);
+      } catch {}
+
+      void (async () => {
+        try {
+          const profRadius = await fetchNeighborhoodRadiusM();
+          setNeighborhoodRadiusM(profRadius);
+          skipFirstRadiusEffectRef.current = true;
+          _setRadiusMeters(profRadius);
+          await fetchBusinessesFromServer({ silent: true });
+        } catch {}
+      })();
+    } else if (!locationLoading) {
+      refreshLocation();
+      setLoading(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myLocation, locationLoading]);
+
   useEffect(() => {
     applyClientFilters();
   }, [applyClientFilters]);
 
-  // ✅ 반경 변경 시: 카메라만 조정 + 화면만 갱신 (서버 X)
-  //    (중요) 초기 진입에서 “radius=2km 카메라”가 100m 초기 카메라를 덮어쓰지 않도록 첫 실행 스킵
-  const skipFirstRadiusEffectRef = useRef(true);
-useEffect(() => {
-  // 1. 초기 로딩(loading) 중이거나 첫 실행 스킵이 활성화된 경우 실행하지 않음
-  if (loading || skipFirstRadiusEffectRef.current) {
-    skipFirstRadiusEffectRef.current = false;
-    return;
-  }
+  useEffect(() => {
+    if (loading || !mapCenterRef.current) return;
 
-  // 2. 사용자가 설정창에서 '적용'을 누르거나 반경을 바꿨을 때만 카메라 이동
-  const center = currentCenterRef.current;
-  const next = regionForRadiusMeters(center, radiusMeters);
-  
-  setCameraByRegion(next, 280);
-  showRadiusHint();
-  applyClientFilters();
-}, [radiusMeters, loading]);
+    if (skipFirstRadiusEffectRef.current) {
+      skipFirstRadiusEffectRef.current = false;
+      return;
+    }
 
-  // ✅ 지도 드래그/이동 멈춤: 중심만 업데이트 (서버 X, 메시지 X)
+    const center = mapCenterRef.current;
+    const next = regionForRadiusMeters(center, radiusMeters);
+
+    setCameraByRegion(next, 280);
+    showRadiusHint();
+    applyClientFilters();
+  }, [radiusMeters, loading, applyClientFilters, setCameraByRegion, showRadiusHint]);
+
   const handleMapIdle = useCallback(
     (e: any) => {
       const coords =
@@ -781,7 +837,7 @@ useEffect(() => {
         const lng = toNum(coords[0]);
         const lat = toNum(coords[1]);
         if (Number.isFinite(lat) && Number.isFinite(lng)) {
-          currentCenterRef.current = { latitude: lat, longitude: lng };
+          mapCenterRef.current = { latitude: lat, longitude: lng };
           applyClientFilters();
         }
       }
@@ -789,23 +845,30 @@ useEffect(() => {
     [applyClientFilters],
   );
 
-  // -----------------------------
-  // ✅ 6~24시간 정책: 화면 포커스 시 stale이면 백그라운드 갱신
-  // -----------------------------
+  useFocusEffect(
+    useCallback(() => {
+      let alive = true;
+      (async () => {
+        const r = await fetchNeighborhoodRadiusM();
+        if (!alive) return;
+        setNeighborhoodRadiusM(r);
+        _setRadiusMeters((curr) => clamp(curr, FILTER_RADIUS_MIN, r));
+      })();
+      return () => {
+        alive = false;
+      };
+    }, [fetchNeighborhoodRadiusM]),
+  );
+
   const maybeBackgroundRefresh = useCallback(async () => {
     const cache = cacheRef.current;
-    if (!cache) return;
+    if (!cache || !myLocationRef.current) return;
 
     const age = Date.now() - cache.fetchedAt;
     if (age < STALE_REFRESH_MS) return;
 
-    const nowC = currentCenterRef.current;
-    const moved = haversine(
-      cache.center.latitude,
-      cache.center.longitude,
-      nowC.latitude,
-      nowC.longitude,
-    );
+    const nowMe = myLocationRef.current;
+    const moved = haversine(cache.center.latitude, cache.center.longitude, nowMe.latitude, nowMe.longitude);
     if (moved > cache.radius) return;
 
     await fetchBusinessesFromServer({ silent: true });
@@ -817,84 +880,25 @@ useEffect(() => {
     }, [maybeBackgroundRefresh]),
   );
 
-  // -----------------------------
-  // ✅ myBusiness
-  // -----------------------------
-  const fetchMyBusiness = useCallback(async () => {
-    try {
-      setMyBusinessLoading(true);
-      const {
-        data: { user },
-        error: userErr,
-      } = await supabase.auth.getUser();
-
-      if (userErr || !user) {
-        setMyBusinessId(null);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from('businesses')
-        .select('id')
-        .eq('owner_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1);
-
-      if (error) {
-        setMyBusinessId(null);
-        return;
-      }
-
-      if (data && data.length > 0) setMyBusinessId(data[0].id);
-      else setMyBusinessId(null);
-    } catch {
-      setMyBusinessId(null);
-    } finally {
-      setMyBusinessLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchMyBusiness();
-  }, [fetchMyBusiness]);
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchMyBusiness();
-    }, [fetchMyBusiness]),
-  );
-
-  // ✅ 강제 새로고침: 항상 서버 호출
   const refreshNow = useCallback(async () => {
     await fetchBusinessesFromServer();
-    await fetchMyBusiness();
-  }, [fetchBusinessesFromServer, fetchMyBusiness]);
+  }, [fetchBusinessesFromServer]);
 
-  // ✅ 현재위치 이동: 정책상 서버 재조회는 안 하고(원하면 사용자가 새로고침), 화면만 재계산
   const recenterToMe = useCallback(async () => {
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') throw new Error('위치 권한이 필요합니다.');
-
-      const last = await Location.getLastKnownPositionAsync({});
-      const loc =
-        last ??
-        (await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-        }));
-
-      const center = { latitude: loc.coords.latitude, longitude: loc.coords.longitude };
-      currentCenterRef.current = center;
-
-      // ✅ 현재 위치 버튼은 “현재 반경 기준”으로 이동 (사용자 의도: 주변 보기)
-      const next = regionForRadiusMeters(center, radiusMeters);
-      setCameraByRegion(next, 420);
-
-      applyClientFilters();
+      if (myLocation) {
+        const center = { latitude: myLocation.lat, longitude: myLocation.lng };
+        myLocationRef.current = center;
+        mapCenterRef.current = center;
+        setCameraCenterOnly(center, 420);
+        applyClientFilters();
+      } else {
+        refreshLocation();
+      }
     } catch (e: any) {
-      setErr(e?.message || '현재 위치로 이동 실패');
+      setErr(e?.message || t('business:feed.recenterFail'));
     }
-  }, [radiusMeters, setCameraByRegion, applyClientFilters]);
+  }, [setCameraCenterOnly, applyClientFilters, myLocation, refreshLocation]);
 
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -911,13 +915,11 @@ useEffect(() => {
     const selected = item.id === selectedId;
 
     const emoji = categoryEmoji(item.category || null);
-    const label = categoryLabel(item.category || null);
+    const label = t(`business:category.${normalizeCategory(item.category || null)}`, { defaultValue: categoryLabel(item.category || null, t) });
     const distanceStr = displayMeters(Math.round(item.distance_m));
 
     const ratingText =
-      item.rating && item.review_count
-        ? `★ ${item.rating.toFixed(1)} · 리뷰 ${item.review_count}`
-        : '리뷰 없음';
+      item.rating && item.review_count ? `★ ${item.rating.toFixed(1)} · ${t('business:feed.reviewCount', { count: item.review_count })}` : t('business:common.reviewNone');
 
     const thumbUri =
       (item.logo_image_url && String(item.logo_image_url)) ||
@@ -929,82 +931,79 @@ useEffect(() => {
     const iconRequire = CATEGORY_ICON_REQUIRE[iconKey as keyof typeof CATEGORY_ICON_REQUIRE];
 
     return (
-      <View style={[styles.card, selected && styles.cardSelected]}>
-        <Pressable
-          onPress={() => {
-            setSelectedId(item.id);
-
-            // ✅ 리스트에서 가게 선택 시 “2km로 바뀌는 현상” 방지:
-            //    선택 포커스는 별도 meters(100m)로 고정
-            setCameraByRegion(
-              regionForRadiusMeters({ latitude: item._lat, longitude: item._lng }, SELECT_FOCUS_METERS),
-              280,
-            );
-
-            snapTo(1);
-          }}
-          style={{ flexDirection: 'row' }}
-        >
-          <View style={styles.cardThumbWrap}>
+      <Pressable
+        onPress={() => {
+          setSelectedId(item.id);
+          navigation.navigate('BusinessDetail', { businessId: item.id });
+        }}
+        style={({ pressed }) => [
+          styles.card,
+          {
+            backgroundColor: C.cardBg,
+            borderColor: selected ? C.cardBorderSelected : C.cardBorder,
+          },
+          pressed && { backgroundColor: C.cardPressedBg },
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel={t('business:actions.openDetail', { name: item.name })}
+      >
+        <View style={styles.cardBodyRow}>
+          <View style={[styles.cardThumbWrap, { backgroundColor: C.thumbBg }]}>
             {thumbUri ? (
               <Image source={{ uri: thumbUri }} style={styles.cardThumb} />
             ) : (
-              <View style={styles.cardThumbPlaceholder}>
+              <View style={[styles.cardThumbPlaceholder, { backgroundColor: C.thumbBg }]}>
                 <Image source={iconRequire} style={styles.cardThumbIcon} resizeMode="contain" />
               </View>
             )}
           </View>
 
-          <View style={{ flex: 1 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-              <Text style={styles.cardTitle} numberOfLines={1}>
+          <View style={styles.cardContent}>
+            <View style={styles.cardTitleRow}>
+              <Text style={[styles.cardTitle, { color: C.text }]} numberOfLines={1}>
                 {item.name}
               </Text>
               {item.is_adult && (
-                <View style={styles.badgeAdult}>
-                  <Text style={styles.badgeAdultTxt}>19+</Text>
+                <View style={[styles.badgeAdult, { backgroundColor: C.badgeDangerBg, borderColor: C.badgeDangerBorder }]}>
+                  <Text style={[styles.badgeAdultTxt, { color: C.badgeDangerText }]}>19+</Text>
                 </View>
               )}
               {item.has_active_event && (
-                <View style={styles.badgeEvent}>
-                  <Text style={styles.badgeEventTxt}>이벤트</Text>
+                <View style={[styles.badgeEvent, { backgroundColor: C.badgeEventBg, borderColor: C.badgeEventBorder }]}>
+                  <Text style={[styles.badgeEventTxt, { color: C.badgeEventText }]}>{t('business:feed.event')}</Text>
                 </View>
               )}
               {item.is_open_now && (
-                <View style={styles.badgeOpenNow}>
-                  <Text style={styles.badgeOpenNowTxt}>영업중</Text>
+                <View style={[styles.badgeOpenNow, { backgroundColor: C.badgeOpenBg, borderColor: C.badgeOpenBorder }]}>
+                  <Text style={[styles.badgeOpenNowTxt, { color: C.badgeOpenText }]}>{t('business:feed.openNow')}</Text>
                 </View>
               )}
             </View>
 
-            <Text style={styles.cardMeta} numberOfLines={1}>
+            <Text style={[styles.cardMeta, { color: C.sub }]} numberOfLines={1}>
               {emoji} {label} · {distanceStr}
             </Text>
 
-            <Text style={[styles.cardMeta, { marginTop: 4 }]}>{ratingText}</Text>
+            <Text style={[styles.cardMeta, { color: C.sub, marginTop: 4 }]}>{ratingText}</Text>
 
             {item.address && (
-              <Text style={styles.cardAddress} numberOfLines={1}>
+              <Text style={[styles.cardAddress, { color: C.muted }]} numberOfLines={1}>
                 {item.address}
               </Text>
             )}
           </View>
-        </Pressable>
 
-        <Pressable
-          onPress={() => navigation.navigate('BusinessDetail', { businessId: item.id })}
-          style={styles.selectBtn}
-        >
-          <Text style={styles.selectBtnTxt}>자세히</Text>
-        </Pressable>
-      </View>
+          <View style={styles.cardChevronBox} pointerEvents="none">
+            <ChevronRight size={18} strokeWidth={1.9} color={C.cardChevron} />
+          </View>
+        </View>
+      </Pressable>
     );
   };
 
   const handleFabPress = useCallback(() => {
-    if (myBusinessId) rootNav.navigate('BusinessDetail', { businessId: myBusinessId });
-    else rootNav.navigate('BusinessCreate');
-  }, [myBusinessId, rootNav]);
+    rootNav.navigate('MyBusinessList');
+  }, [rootNav]);
 
   const HEADER_TOP_PAD = Math.max(insets.top, 0) + 4;
 
@@ -1021,10 +1020,7 @@ useEffect(() => {
           iconKey: categoryIconKey(b.category || null),
           selected: selectedIdStr && selectedIdStr === String(b.id) ? 1 : 0,
         },
-        geometry: {
-          type: 'Point',
-          coordinates: [b._lng, b._lat],
-        },
+        geometry: { type: 'Point', coordinates: [b._lng, b._lat] },
       })),
     } as any;
   }, [businesses, selectedIdStr]);
@@ -1039,14 +1035,8 @@ useEffect(() => {
         {
           type: 'Feature',
           id: `sel_${selected.id}`,
-          properties: {
-            id: String(selected.id),
-            iconKey: categoryIconKey(selected.category || null),
-          },
-          geometry: {
-            type: 'Point',
-            coordinates: [selected._lng, selected._lat],
-          },
+          properties: { id: String(selected.id), iconKey: categoryIconKey(selected.category || null) },
+          geometry: { type: 'Point', coordinates: [selected._lng, selected._lat] },
         },
       ],
     } as any;
@@ -1054,6 +1044,8 @@ useEffect(() => {
 
   const onPressBusinesses = useCallback(
     async (e: any) => {
+      markerPressAtRef.current = Date.now();
+
       const f = e?.features?.[0];
       if (!f) return;
 
@@ -1061,6 +1053,7 @@ useEffect(() => {
       const coords = f?.geometry?.coordinates;
 
       if (isCluster && Array.isArray(coords) && coords.length >= 2) {
+        setSelectedId(null);
         const clusterId = f?.properties?.cluster_id;
         let zoom: number | null = null;
 
@@ -1090,69 +1083,122 @@ useEffect(() => {
     [snapTo],
   );
 
-  return (
-    <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
-      <RNStatusBar backgroundColor="transparent" translucent={true} barStyle="dark-content" />
+  const handleMapPress = useCallback(() => {
+    if (Date.now() - markerPressAtRef.current < 220) return;
+    if (selectedId !== null) setSelectedId(null);
+    if (sheetIdxRef.current !== 0) snapTo(0);
+  }, [selectedId, snapTo]);
 
-      <View style={[styles.headerContainer, { paddingTop: HEADER_TOP_PAD }]}>
+  const defaultCameraSettings = useMemo(() => {
+    if (!myLocation) return null;
+    const center = { latitude: myLocation.lat, longitude: myLocation.lng };
+    const r = initialRegionRef.current ?? regionForRadiusMeters(center, INITIAL_CAMERA_METERS);
+    return {
+      centerCoordinate: [r.longitude, r.latitude],
+      zoomLevel: regionToZoom(r),
+    } as any;
+  }, [myLocation]);
+
+  const renderHeaderActionButton = useCallback(
+    (
+      Icon: HeaderActionIcon,
+      onPress: () => void,
+      options?: { active?: boolean; badgeCount?: number },
+    ) => {
+      const active = !!options?.active;
+      const badgeCount = Number(options?.badgeCount ?? 0);
+      const iconColor = active ? C.headerActionActiveIcon : C.headerActionIcon;
+
+      return (
+        <Pressable
+          hitSlop={8}
+          onPress={onPress}
+          style={({ pressed }) => [
+            styles.headerActionButton,
+            {
+              backgroundColor: pressed
+                ? C.headerActionPressedBackground
+                : active
+                  ? C.headerActionActiveBackground
+                  : C.headerActionBackground,
+              borderColor: active ? C.headerActionActiveBorder : C.headerActionBorder,
+              borderWidth: C.hairline,
+            },
+            pressed ? { opacity: C.pressedOpacity } : null,
+          ]}
+        >
+          <Icon
+            size={HEADER_ACTION_ICON_SIZE}
+            color={iconColor}
+            strokeWidth={HEADER_ACTION_ICON_STROKE}
+          />
+          {badgeCount > 0 ? (
+            <View
+              pointerEvents="none"
+              style={[
+                styles.badgeDot,
+                {
+                  backgroundColor: C.headerBadgeBg,
+                  borderColor: C.headerBadgeBorder,
+                },
+              ]}
+            >
+              <Text style={[styles.badgeTxt, { color: C.headerBadgeText }]}>
+                {badgeCount > 99 ? '99+' : badgeCount}
+              </Text>
+            </View>
+          ) : null}
+        </Pressable>
+      );
+    },
+    [C],
+  );
+
+  return (
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: C.bg }]} edges={C.mapEdges as any}>
+      <RNStatusBar backgroundColor="transparent" translucent={true} barStyle={C.statusBarStyle} />
+
+      <View
+        style={[
+          styles.headerContainer,
+          {
+            backgroundColor: C.headerBg,
+            borderBottomColor: C.headerBorder,
+            paddingTop: HEADER_TOP_PAD,
+          },
+        ]}
+      >
         <View style={styles.headerRow}>
           <View style={styles.headerLeft}>
-            <Text style={styles.headerTitle}>가게</Text>
+            <Text style={[styles.headerTitle, { color: C.headerTitle }]}>{t('business:feed.title')}</Text>
           </View>
 
           <View style={styles.headerIconsRow}>
-            <Pressable style={styles.headerIconButton} onPress={() => setShowFilter(true)}>
-              <SlidersHorizontal size={20} color="#111827" />
-            </Pressable>
-
-            <Pressable style={styles.headerIconButton} onPress={() => rootNav.navigate('Alerts')}>
-              <Bell size={20} color="#111827" />
-              {unreadCount > 0 && (
-                <View style={styles.badgeDot}>
-                  <Text style={styles.badgeTxt}>
-                    {unreadCount > 99 ? '99+' : String(unreadCount)}
-                  </Text>
-                </View>
-              )}
-            </Pressable>
-
-            <Pressable
-              style={styles.headerIconButton}
-              onPress={() => rootNav.navigate('SettingsHome')}
-            >
-              <Settings size={20} color="#111827" />
-            </Pressable>
+            {renderHeaderActionButton(SlidersHorizontal, () => setShowFilter(true))}
+            {renderHeaderActionButton(Info, () => rootNav.navigate('BusinessEvents'))}
+            {renderHeaderActionButton(Settings, () => rootNav.navigate('SettingsHome'))}
           </View>
         </View>
       </View>
 
       <View style={{ flex: 1 }}>
-        {loading ? (
+        {(!myLocation || !defaultCameraSettings) ? (
           <View style={styles.center}>
-            <ActivityIndicator />
-            <Text style={styles.loadTxt}>지도를 불러오는 중…</Text>
+            <ActivityIndicator color={C.text} />
+            <Text style={[styles.loadTxt, { color: C.sub }]}>{t('business:feed.loadMap')}</Text>
           </View>
         ) : (
           <MapView
             style={{ flex: 1 }}
-            styleURL={Mapbox.StyleURL.Street}
+            styleURL={C.isDark ? Mapbox.StyleURL.Dark : Mapbox.StyleURL.Street}
             onMapIdle={handleMapIdle as any}
+            onPress={handleMapPress as any}
             logoEnabled={false}
             attributionEnabled={false}
             compassEnabled
           >
-            <Camera
-              ref={cameraRef}
-              defaultSettings={
-                {
-                  centerCoordinate: [
-                    initialRegionRef.current.longitude,
-                    initialRegionRef.current.latitude,
-                  ],
-                  zoomLevel: regionToZoom(initialRegionRef.current),
-                } as any
-              }
-            />
+            <Camera ref={cameraRef} defaultSettings={defaultCameraSettings} />
+
             <UserLocation visible={true} />
 
             <Images
@@ -1179,11 +1225,11 @@ useEffect(() => {
                 id="biz-clusters"
                 filter={['has', 'point_count']}
                 style={{
-                  circleColor: '#111827',
+                  circleColor: C.mapClusterBg,
                   circleOpacity: 0.85,
                   circleRadius: 18,
                   circleStrokeWidth: 1.5,
-                  circleStrokeColor: '#ffffff',
+                  circleStrokeColor: C.mapClusterStroke,
                 }}
               />
               <SymbolLayer
@@ -1192,7 +1238,7 @@ useEffect(() => {
                 style={{
                   textField: ['get', 'point_count_abbreviated'],
                   textSize: 12,
-                  textColor: '#ffffff',
+                  textColor: C.mapClusterText,
                   textAllowOverlap: true,
                   textIgnorePlacement: true,
                 }}
@@ -1214,20 +1260,16 @@ useEffect(() => {
             <ShapeSource id="selected-business" shape={selectedFeatureCollection}>
               <CircleLayer
                 id="sel-halo"
-                style={{
-                  circleColor: 'rgba(17,24,39,0.18)',
-                  circleOpacity: 0.95,
-                  circleRadius: 14,
-                }}
+                style={{ circleColor: C.mapSelectedHalo, circleOpacity: 0.95, circleRadius: 14 }}
               />
               <CircleLayer
                 id="sel-ring"
                 style={{
-                  circleColor: '#ffffff',
+                  circleColor: C.mapSelectedInner,
                   circleOpacity: 0.98,
                   circleRadius: 9,
                   circleStrokeWidth: 2,
-                  circleStrokeColor: '#111827',
+                  circleStrokeColor: C.mapSelectedStroke,
                 }}
               />
               <SymbolLayer
@@ -1245,24 +1287,28 @@ useEffect(() => {
           </MapView>
         )}
 
-        <AnimatedRe.View style={[styles.sideControls, sideAnim]}>
-          <Pressable style={styles.sideBtn} onPress={recenterToMe}>
-            <Crosshair size={18} color="#111827" />
+        <AnimatedRe.View pointerEvents={sheetIndex === 0 ? 'auto' : 'none'} style={[styles.sideControls, sideAnim]}>
+          <Pressable
+            style={[styles.sideBtn, { backgroundColor: C.controlBg, borderColor: C.controlBorder, shadowColor: C.floatingShadowColor, shadowOpacity: C.floatingShadowOpacity, shadowRadius: C.floatingShadowRadius, shadowOffset: { width: 0, height: C.floatingShadowOffsetY }, elevation: C.floatingElevation }]}
+            onPress={recenterToMe}
+          >
+            <Crosshair size={FLOATING_ICON_SIZE} color={C.controlIcon} strokeWidth={FLOATING_ICON_STROKE} />
           </Pressable>
-          <Pressable style={styles.sideBtn} onPress={refreshNow} disabled={refreshing}>
-            {refreshing ? <ActivityIndicator /> : <RefreshCw size={18} color="#111827" />}
+          <Pressable
+            style={[styles.sideBtn, { backgroundColor: C.controlBg, borderColor: C.controlBorder, shadowColor: C.floatingShadowColor, shadowOpacity: C.floatingShadowOpacity, shadowRadius: C.floatingShadowRadius, shadowOffset: { width: 0, height: C.floatingShadowOffsetY }, elevation: C.floatingElevation }]}
+            onPress={refreshNow}
+            disabled={refreshing}
+          >
+            {refreshing ? <ActivityIndicator color={C.controlIcon} /> : <RefreshCw size={FLOATING_ICON_SIZE} color={C.controlIcon} strokeWidth={FLOATING_ICON_STROKE} />}
           </Pressable>
         </AnimatedRe.View>
 
-        <AnimatedRe.View style={[styles.fabWrap, { bottom: fabsBottom }, fabAnim]}>
-          <Pressable style={[styles.fab, styles.primaryFab]} onPress={handleFabPress}>
-            {myBusinessLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : myBusinessId ? (
-              <Store size={22} color="#fff" strokeWidth={2.5} />
-            ) : (
-              <Plus size={22} color="#fff" strokeWidth={3} />
-            )}
+        <AnimatedRe.View pointerEvents={sheetIndex === 0 ? 'auto' : 'none'} style={[styles.fabWrap, { bottom: fabsBottom }, fabAnim]}>
+          <Pressable
+            style={[styles.fab, { backgroundColor: C.primaryBtnBg, borderColor: C.primaryBtnBorder, shadowColor: C.floatingShadowColor, shadowOpacity: C.floatingShadowOpacity, shadowRadius: C.floatingShadowRadius, shadowOffset: { width: 0, height: C.floatingShadowOffsetY }, elevation: C.floatingElevation }]}
+            onPress={handleFabPress}
+          >
+            <Store size={BUSINESS_FAB_ICON_SIZE} color={C.iconOnPrimary} strokeWidth={BUSINESS_FAB_ICON_STROKE} />
           </Pressable>
         </AnimatedRe.View>
 
@@ -1273,36 +1319,37 @@ useEffect(() => {
               position: 'absolute',
               left: 16,
               bottom: listBtnBottom,
-              zIndex: 10,
-              elevation: 6,
+              zIndex: 40,
+              borderColor: C.listButtonBorder,
+              shadowColor: C.floatingShadowColor,
+              shadowOpacity: C.floatingShadowOpacity,
+              shadowRadius: C.floatingShadowRadius,
+              shadowOffset: { width: 0, height: C.floatingShadowOffsetY },
+              elevation: Math.max(40, C.floatingElevation),
             },
             listBtnContainerAnim,
           ]}
           accessible
           accessibilityRole="button"
-          accessibilityLabel="리스트"
-          accessibilityHint="탭하면 주변 비즈니스 목록 크기를 순환합니다."
+          accessibilityLabel={t('business:actions.list')}
+          accessibilityHint={t('business:feed.listHint')}
         >
-          <AnimatedPressable
-            style={[styles.listBtnPressable, listBtnPressableAnim as any]}
-            onPress={onPressListBtn}
-            hitSlop={8}
-          >
-            <List size={18} color="#111827" />
+          <AnimatedPressable style={[styles.listBtnPressable, listBtnPressableAnim as any]} onPress={onPressListBtn} hitSlop={8}>
+            <List size={FLOATING_ICON_SIZE} color={C.listButtonText} strokeWidth={FLOATING_ICON_STROKE} />
             <AnimatedRe.View style={[listBtnLabelAnim]}>
-              <Text style={{ fontWeight: '700', color: '#111827' }} numberOfLines={1}>
-                리스트 보기
+              <Text style={{ fontSize: 14, lineHeight: 18, fontWeight: '600', color: C.listButtonText }} numberOfLines={1}>
+                {listButtonLabel}
               </Text>
             </AnimatedRe.View>
           </AnimatedPressable>
         </AnimatedRe.View>
 
-        <Animated.View style={[styles.radiusHint, { bottom: radiusHintBottom, opacity: fadeAnim }]}>
-          <Text style={styles.radiusHintTxt}>{displayMeters(radiusMeters)}</Text>
+        <Animated.View pointerEvents="none" style={[styles.radiusHint, { bottom: radiusHintBottom, opacity: fadeAnim }]}>
+          <Text style={[styles.radiusHintTxt, { backgroundColor: C.hintBg, color: C.hintText }]}>{displayMeters(radiusMeters)}</Text>
         </Animated.View>
 
-        <AnimatedRe.View style={[styles.sheet, sheetAnim]} {...panResponder.panHandlers}>
-          <View style={styles.sheetHandle} />
+        <AnimatedRe.View style={[styles.sheet, { backgroundColor: C.sheetBg, borderTopColor: C.sheetBorder, shadowColor: C.floatingShadowColor }, sheetAnim]} {...panResponder.panHandlers}>
+          <View style={[styles.sheetHandle, { backgroundColor: C.sheetHandle }]} />
 
           <AnimatedRe.View style={[styles.sheetHeaderRow, headerAppearAnim]}>
             <View style={{ flex: 1 }}>
@@ -1320,35 +1367,37 @@ useEffect(() => {
                         setSelectedCategory(item.id as any);
                         applyClientFilters();
                       }}
-                      style={[styles.categoryChip, active && styles.categoryChipActive]}
+                      style={[
+                        styles.categoryChip,
+                        { backgroundColor: C.categoryBg, borderColor: C.categoryBorder },
+                        active && { backgroundColor: C.categoryActiveBg, borderColor: C.categoryActiveBorder },
+                      ]}
                     >
                       <Text style={styles.categoryEmoji}>{item.emoji}</Text>
-                      <Text style={[styles.categoryLabel, active && styles.categoryLabelActive]}>
-                        {item.label}
-                      </Text>
+                      <Text style={[styles.categoryLabel, { color: C.categoryText }, active && { color: C.categoryActiveText, fontWeight: '600' }]}>{t(`business:category.${item.id}`, { defaultValue: t(item.labelKey) })}</Text>
                     </Pressable>
                   );
                 }}
               />
             </View>
 
-            <Pressable style={styles.sheetIconBtn} onPress={refreshNow} disabled={refreshing}>
-              {refreshing ? <ActivityIndicator /> : <RefreshCw size={16} color="#111827" />}
+            <Pressable style={[styles.sheetIconBtn, { backgroundColor: C.sheetIconBg, borderColor: C.sheetIconBorder }]} onPress={refreshNow} disabled={refreshing}>
+              {refreshing ? <ActivityIndicator color={C.sheetIcon} /> : <RefreshCw size={SMALL_FLOATING_ICON_SIZE} strokeWidth={SMALL_FLOATING_ICON_STROKE} color={C.sheetIcon} />}
             </Pressable>
-            <Pressable style={styles.sheetIconBtn} onPress={recenterToMe}>
-              <Crosshair size={16} color="#111827" />
+            <Pressable style={[styles.sheetIconBtn, { backgroundColor: C.sheetIconBg, borderColor: C.sheetIconBorder }]} onPress={recenterToMe}>
+              <Crosshair size={SMALL_FLOATING_ICON_SIZE} strokeWidth={SMALL_FLOATING_ICON_STROKE} color={C.sheetIcon} />
             </Pressable>
           </AnimatedRe.View>
 
           <FlatList
             data={businesses}
             keyExtractor={(it) => String(it.id)}
-            renderItem={renderItem}
-            contentContainerStyle={{ paddingBottom: tabH + 16, paddingRight: 12 }}
+            renderItem={({ item }) => renderItem({ item })}
+            contentContainerStyle={{ paddingBottom: tabH + 16 }}
             ListEmptyComponent={
-              <View style={{ padding: 16, paddingRight: 72 }}>
-                <Text style={{ color: '#6b7280' }}>
-                  이 반경에 표시할 비즈니스가 없습니다. 반경/필터를 조절하거나 새로고침을 눌러보세요.
+              <View style={{ padding: 16 }}>
+                <Text style={{ color: C.sub }}>
+                  {t('business:feed.empty')}
                 </Text>
               </View>
             }
@@ -1362,6 +1411,9 @@ useEffect(() => {
         topOffset={Math.max(insets.top, 0) + 54 + 12}
         radiusMeters={radiusMeters}
         setRadiusMeters={setRadiusMeters}
+        radiusMin={FILTER_RADIUS_MIN}
+        radiusMax={radiusMaxForFilter}
+        radiusStep={100}
         onlyWithEvent={onlyWithEvent}
         setOnlyWithEvent={setOnlyWithEvent}
         hideAdult={hideAdult}
@@ -1373,17 +1425,18 @@ useEffect(() => {
         openNow={openNow}
         setOpenNow={setOpenNow}
         onReset={() => {
-          setRadiusMeters(RADIUS_DEFAULT);
+          setRadiusMeters(neighborhoodRadiusM);
           setOnlyWithEvent(false);
           setHideAdult(false);
           setSearchText('');
           setSortKey('distance');
-          setOpenNow(false);
+          setOpenNow(true);
           applyClientFilters();
         }}
-        onApply={async () => {
-          if (String(searchText ?? '').trim().length > 0) {
-            await fetchBusinessesFromServer();
+        onApply={async (q) => {
+          const trimmed = String(q ?? '').trim();
+          if (trimmed.length > 0) {
+            await fetchBusinessesFromServer({ queryOverride: trimmed });
           } else {
             applyClientFilters();
           }
@@ -1391,8 +1444,8 @@ useEffect(() => {
       />
 
       {err && (
-        <View style={[styles.toast, { top: Math.max(insets.top, 0) + 8 }]}>
-          <Text style={styles.toastTxt}>{err}</Text>
+        <View style={[styles.toast, { top: Math.max(insets.top, 0) + 8, backgroundColor: C.toastBg, borderColor: C.toastBorder }]}>
+          <Text style={[styles.toastTxt, { color: C.toastText }]}>{err}</Text>
         </View>
       )}
     </SafeAreaView>
@@ -1402,47 +1455,46 @@ useEffect(() => {
 export default BusinessFeedScreen;
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
+  safeArea: { flex: 1, backgroundColor: '#ffffff' },
 
   headerContainer: {
     backgroundColor: '#ffffff',
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#E5E7EB',
-    paddingBottom: 4,
+    paddingBottom: 0,
   },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    height: 54,
+  headerRow: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'space-between', 
+    paddingHorizontal: 16, 
+    height: 52,
   },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  headerLeft: { 
+    flexDirection: 'row', 
+    alignItems: 'center' 
   },
   headerTitle: {
     fontSize: 22,
-    fontWeight: '800',
-    color: '#111827',
+    fontWeight: '700',
   },
-  headerIconsRow: {
-    flexDirection: 'row',
+  headerIconsRow: { 
+    flexDirection: 'row', 
     alignItems: 'center',
+    gap: 6,
   },
-  headerIconButton: {
-    paddingHorizontal: 6,
-    paddingVertical: 4,
-    marginLeft: 6,
+  headerActionButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   badgeDot: {
     position: 'absolute',
-    right: 2,
-    top: 2,
+    right: 4, 
+    top: 4,
     minWidth: 16,
     height: 16,
     paddingHorizontal: 3,
@@ -1453,21 +1505,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#fff',
   },
-  badgeTxt: {
-    color: '#fff',
-    fontSize: 10,
-    fontWeight: '800',
-  },
+  badgeTxt: { color: '#fff', fontSize: 10, fontWeight: '800' },
 
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loadTxt: {
-    marginTop: 6,
-    color: '#6b7280',
-  },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  loadTxt: { marginTop: 6, color: '#6b7280' },
 
   sideControls: {
     position: 'absolute',
@@ -1483,7 +1524,7 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 22,
     backgroundColor: '#fff',
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     borderColor: '#e5e7eb',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1493,11 +1534,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
 
-  fabWrap: {
-    position: 'absolute',
-    right: 16,
-    zIndex: 3,
-  },
+  fabWrap: { position: 'absolute', right: 16, zIndex: 3 },
   fab: {
     width: 56,
     height: 56,
@@ -1512,42 +1549,13 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 5,
   },
-  primaryFab: {
-    backgroundColor: '#111827',
-    borderColor: '#111827',
-  },
+  primaryFab: { backgroundColor: '#111827', borderColor: '#111827' },
 
-  listBtnContainer: {
-    height: 40,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 6,
-  },
-  listBtnPressable: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
+  listBtnContainer: { height: 40, borderWidth: StyleSheet.hairlineWidth, borderColor: '#e5e7eb', shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 4, zIndex: 40, elevation: 40 },
+  listBtnPressable: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 10 },
 
-  radiusHint: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  radiusHintTxt: {
-    backgroundColor: 'rgba(17,24,39,0.7)',
-    color: '#fff',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-    fontSize: 14,
-    fontWeight: '700',
-  },
+  radiusHint: { position: 'absolute', left: 0, right: 0, alignItems: 'center' },
+  radiusHintTxt: { backgroundColor: 'rgba(17,24,39,0.7)', color: '#fff', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, fontSize: 14, fontWeight: '700' },
 
   sheet: {
     position: 'absolute',
@@ -1555,188 +1563,92 @@ const styles = StyleSheet.create({
     right: 0,
     height: SCREEN_H,
     backgroundColor: '#fff',
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    borderTopWidth: StyleSheet.hairlineWidth,
     shadowColor: '#000',
     shadowOpacity: 0.14,
     shadowRadius: 8,
-    elevation: 8,
+    zIndex: 30,
+    elevation: 30,
     paddingTop: 6,
   },
-  sheetHandle: {
-    width: 44,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: '#e5e7eb',
-    alignSelf: 'center',
-    marginVertical: 8,
-  },
-  sheetHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    marginBottom: 6,
-  },
+  sheetHandle: { width: 44, height: 5, borderRadius: 3, backgroundColor: '#e5e7eb', alignSelf: 'center', marginVertical: 8 },
+  sheetHeaderRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, marginBottom: 6 },
 
-  sheetIconBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    backgroundColor: '#ffffff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 8,
-  },
+  sheetIconBtn: { width: 36, height: 36, borderRadius: 18, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center', marginLeft: 8 },
 
-  categoryRow: {
-    paddingVertical: 4,
-    paddingRight: 8,
-  },
-  categoryChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    backgroundColor: '#ffffff',
-    marginRight: 8,
-  },
-  categoryChipActive: {
-    borderColor: '#111827',
-    backgroundColor: '#111827',
-  },
-  categoryEmoji: {
-    fontSize: 16,
-    marginRight: 4,
-  },
-  categoryLabel: {
-    fontSize: 13,
-    color: '#6b7280',
-  },
-  categoryLabelActive: {
-    fontSize: 13,
-    color: '#ffffff',
-    fontWeight: '600',
-  },
+  categoryRow: { paddingVertical: 4, paddingRight: 8 },
+  categoryChip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999, borderWidth: StyleSheet.hairlineWidth, marginRight: 8 },
+  categoryChipActive: {},
+  categoryEmoji: { fontSize: 16, marginRight: 4 },
+  categoryLabel: { fontSize: 13 },
+  categoryLabelActive: { fontSize: 13, fontWeight: '600' },
 
-  card: {
-    marginHorizontal: 12,
-    marginBottom: 10,
-    padding: 12,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    backgroundColor: '#fff',
-  },
-  cardSelected: {
-    borderColor: '#111827',
-  },
-  cardThumbWrap: {
-    width: 64,
-    height: 64,
-    borderRadius: 12,
-    overflow: 'hidden',
-    marginRight: 10,
-    backgroundColor: '#f3f4f6',
-  },
-  cardThumb: {
-    width: '100%',
-    height: '100%',
-  },
-  cardThumbIcon: {
-    width: 18,
-    height: 18,
-    resizeMode: 'contain',
-  },
-  cardThumbPlaceholder: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  card: { marginHorizontal: 12, marginBottom: 10, padding: 12, borderRadius: 20, borderWidth: StyleSheet.hairlineWidth },
+  cardSelected: {},
+  cardPressed: {},
+  cardBodyRow: { flexDirection: 'row', alignItems: 'center' },
+  cardContent: { flex: 1, minWidth: 0, paddingRight: 8 },
+  cardTitleRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
+  cardChevronBox: { width: 28, alignItems: 'flex-end', justifyContent: 'center', marginLeft: 6 },
+  cardThumbWrap: { width: 64, height: 64, borderRadius: 18, overflow: 'hidden', marginRight: 10 },
+  cardThumb: { width: '100%', height: '100%' },
+  cardThumbIcon: { width: 18, height: 18, resizeMode: 'contain' },
+  cardThumbPlaceholder: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 
-  cardTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#111827',
-    marginRight: 4,
-  },
-  cardMeta: {
-    fontSize: 12,
-    color: '#6b7280',
-  },
-  cardAddress: {
-    fontSize: 11,
-    color: '#9ca3af',
-    marginTop: 2,
-  },
+  cardTitle: { fontSize: 15, fontWeight: '700', marginRight: 4 },
+  cardMeta: { fontSize: 12 },
+  cardAddress: { fontSize: 11, marginTop: 2 },
 
   badgeAdult: {
-    marginLeft: 4,
-    paddingHorizontal: 5,
-    paddingVertical: 2,
-    borderRadius: 4,
-    backgroundColor: '#EF4444',
+    marginLeft: 5,
+    minWidth: 30,
+    height: 18,
+    paddingHorizontal: 6,
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#FCA5A5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FEF2F2',
   },
   badgeAdultTxt: {
     fontSize: 10,
+    lineHeight: 12,
     fontWeight: '800',
-    color: '#fff',
+    color: '#DC2626',
+    letterSpacing: -0.1,
   },
 
   badgeEvent: {
-    marginLeft: 4,
+    marginLeft: 5,
+    height: 18,
     paddingHorizontal: 6,
-    paddingVertical: 2,
     borderRadius: 999,
-    backgroundColor: '#F97316',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#FDBA74',
+    backgroundColor: '#FFF7ED',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  badgeEventTxt: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#fff',
-  },
+  badgeEventTxt: { fontSize: 10, lineHeight: 12, fontWeight: '700', color: '#EA580C' },
   badgeOpenNow: {
-    marginLeft: 6,
+    marginLeft: 5,
+    height: 18,
     paddingHorizontal: 6,
-    paddingVertical: 2,
     borderRadius: 999,
-    backgroundColor: '#10B981',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#A7F3D0',
+    backgroundColor: '#ECFDF5',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  badgeOpenNowTxt: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#fff',
-  },
-  selectBtn: {
-    alignSelf: 'flex-end',
-    marginTop: 10,
-    backgroundColor: '#111827',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
-  },
-  selectBtnTxt: {
-    color: '#fff',
-    fontWeight: '800',
-  },
+  badgeOpenNowTxt: { fontSize: 10, lineHeight: 12, fontWeight: '700', color: '#059669' },
 
-  toast: {
-    position: 'absolute',
-    left: 12,
-    right: 12,
-    backgroundColor: '#fef3c7',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#fde68a',
-    padding: 10,
-  },
-  toastTxt: {
-    color: '#92400e',
-    textAlign: 'center',
-    fontSize: 13,
-  },
+  selectBtn: { alignSelf: 'flex-end', marginTop: 10, backgroundColor: '#111827', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10 },
+  selectBtnTxt: { color: '#fff', fontWeight: '800' },
+
+  toast: { position: 'absolute', left: 12, right: 12, borderRadius: 12, borderWidth: StyleSheet.hairlineWidth, padding: 10, zIndex: 100 },
+  toastTxt: { textAlign: 'center', fontSize: 13, fontWeight: '600' },
 });

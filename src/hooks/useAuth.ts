@@ -1,6 +1,6 @@
-// src/hooks/useAuth.ts
+﻿// src/hooks/useAuth.ts
 import { useEffect } from 'react';
-import { supabase } from '../api/supabase';
+import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '../stores/authStore';
 
 export function useAuthBootstrap() {
@@ -14,3 +14,4 @@ export function useAuthBootstrap() {
     return () => sub.subscription.unsubscribe();
   }, [setSession]);
 }
+

@@ -1,6 +1,7 @@
 // src/navigation/MapStack.tsx
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useAppTheme } from "@/theme/useAppTheme";
 
 // 화면들
 import MapMain from "@/screens/map/Main";
@@ -19,11 +20,20 @@ export type MapStackParamList = {
 const Stack = createNativeStackNavigator<MapStackParamList>();
 
 export default function MapStack() {
+  const { colors } = useAppTheme();
+
+  const stackContentStyle = React.useMemo(
+    () => ({ backgroundColor: colors.background }),
+    [colors.background],
+  );
+
   return (
     <Stack.Navigator
       initialRouteName="MapMain"
       screenOptions={{
         headerShown: false,
+        freezeOnBlur: false,
+        contentStyle: stackContentStyle,
         // 우리 전역 정책: StatusBar/header는 각 화면이 직접 처리
       }}
     >

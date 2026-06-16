@@ -1,0 +1,10 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "COONN",
+    "NSPhotoLibraryUsageDescription": "يُستخدم الوصول إلى الصور لاختيار صور الملف الشخصي والمنشورات والدردشة.",
+    "NSPhotoLibraryAddUsageDescription": "يُستخدم الوصول إلى مكتبة الصور لحفظ الصور والوسائط على جهازك.",
+    "NSLocationWhenInUseUsageDescription": "يُستخدم الموقع للمنشورات القريبة والمنارات والميزات المعتمدة على المسافة.",
+    "NSCameraUsageDescription": "تُستخدم الكاميرا لالتقاط صور الملف الشخصي والمنشورات والدردشة.",
+    "NSMicrophoneUsageDescription": "يُستخدم الميكروفون عند تسجيل الفيديو."
+  }
+}

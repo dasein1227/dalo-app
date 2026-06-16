@@ -1,0 +1,1293 @@
+{
+  "title": "चैट",
+  "send": "भेजें",
+  "attach": "फ़ाइल",
+  "gallery": "गैलरी",
+  "invite": "आमंत्रित करें",
+  "manage": "प्रबंधित करें",
+  "members": "सदस्य",
+  "placeholder": "संदेश लिखें…",
+  "date": {
+    "today": "आज",
+    "yesterday": "कल",
+    "separatorLabel": "{{day}} {{month}} {{year}}, {{weekday}}",
+    "floatingLabel": "{{day}} {{month}} {{year}}, {{weekday}}"
+  },
+  "all": "सभी",
+  "and_others_n": "+ N",
+  "others_suffix": "अन्य",
+  "anonymous": "अनाम",
+  "message": "संदेश",
+  "message_search": "संदेश खोजें",
+  "message_send": "संदेश भेजें",
+  "message_send_failed": "संदेश नहीं भेजा गया",
+  "message_delete_failed": "संदेश हटाया नहीं जा सका।",
+  "message_deleted": "संदेश हटाया गया।",
+  "new_message_one": "1 नया संदेश",
+  "new_messages_count": "{{count}} नए संदेश",
+  "chat_with_me": "मेरे साथ चैट",
+  "self_badge": "मैं",
+  "chat_room_title": "चैट रूम",
+  "one_to_one_chat": "1:1 चैट",
+  "group_chat_title": "समूह चैट",
+  "open_chat_title": "ओपन चैट",
+  "beacon_chat_title": "बीकन चैट",
+  "room_not_found": "रूम जानकारी उपलब्ध नहीं।",
+  "chat_room_not_found": "चैट रूम नहीं मिला।",
+  "conversation_partner": "बातचीत साथी",
+  "audio_send_failed": "ऑडियो नहीं भेजा गया",
+  "video": "वीडियो",
+  "photo": "फ़ोटो",
+  "file_label": "फ़ाइल",
+  "open_file": "फ़ाइल खोलें",
+  "play_video": "वीडियो चलाएँ",
+  "voice_message": "वॉइस संदेश",
+  "share_location": "स्थान साझा करें",
+  "map_location_shared_title": "स्थान साझा किया गया",
+  "map_tap_to_open": "मानचित्र खोलने के लिए टैप करें।",
+  "cannot_open_map": "मानचित्र नहीं खुला।",
+  "no_coordinate_info": "निर्देशांक नहीं",
+  "send_failed": "भेजना विफल",
+  "share": "साझा करें",
+  "share_failed": "साझा करना विफल",
+  "delete_failed": "हटाना विफल",
+  "upload_failed": "अपलोड विफल",
+  "selection_mode": "चयन मोड",
+  "selection_mode_hint": "हटाने के लिए संदेश चुनें।",
+  "selection_clear": "चयन हटाएँ",
+  "delete_dialog_title": "संदेश हटाएँ",
+  "delete_dialog_desc": "हटाने का तरीका चुनें।",
+  "delete_for_everyone": "सभी के लिए हटाएँ",
+  "delete_hide_for_everyone": "सभी से छिपाएँ",
+  "delete_for_me": "मेरे लिए हटाएँ",
+  "delete_for_me_hint": "चयनित संदेश केवल आपके लिए हट सकते हैं।",
+  "reply": "जवाब",
+  "reply_to_me": "मेरे संदेश का जवाब",
+  "reply_to_user": "{{nickname}} को जवाब",
+  "msg_deleted_by_user": "{{nickname}} ने संदेश हटाया।",
+  "notice": "सूचना",
+  "notice_coming_soon": "जल्द आ रहा है।",
+  "korean_label": "कोरियाई",
+  "auto_translate_paid_only": "स्वचालित अनुवाद Standard या Premium में उपलब्ध है।",
+  "translation_paid_only": "अनुवाद केवल भुगतान सदस्यों के लिए है।",
+  "premium_only": "केवल Premium",
+  "premium_only_feature_hint": "Premium में उपलब्ध।",
+  "tone_neutral": "तटस्थ",
+  "tone_casual": "कैज़ुअल",
+  "tone_formal": "औपचारिक",
+  "tone_business": "बिज़नेस",
+  "tone_playful": "चंचल",
+  "tone_change_premium_only": "टोन सेटिंग Premium में उपलब्ध है।",
+  "tone_premium_only_hint": "Premium अनुवाद में उपलब्ध।",
+  "login_required": "लॉगिन आवश्यक है।",
+  "no_permission_send_rls": "आपको संदेश भेजने की अनुमति नहीं है। (RLS)\n",
+  "rls_help_chat_members": "→ chat_members में अपनी सदस्यता और chat_messages नीतियाँ जाँचें।",
+  "search_placeholder": "खोज शब्द लिखें",
+  "search_result_count": "{{count}} परिणाम",
+  "show_original": "मूल दिखाएँ",
+  "show_translation": "अनुवाद दिखाएँ",
+  "translating": "अनुवाद हो रहा है…",
+  "input": {
+    "placeholder": "संदेश भेजें",
+    "placeholderLong": "संदेश लिखें…"
+  },
+  "hold_to_unlock": "इनपुट अनलॉक करने के लिए दबाए रखें",
+  "error": {
+    "loginRequired": "लॉगिन आवश्यक है।",
+    "roomNotFound": "चैट रूम नहीं मिला।",
+    "createRoomTitle": "चैट रूम नहीं खुला।",
+    "createRoomMessage": "बाद में फिर प्रयास करें।"
+  },
+  "sheet": {
+    "moreActions": "अधिक क्रियाएँ",
+    "media": "फ़ोटो/वीडियो",
+    "file": "फ़ाइल",
+    "location": "स्थान साझा करें",
+    "inviteFriend": "मित्र को आमंत्रित करें",
+    "inviteLink": "आमंत्रण लिंक",
+    "translate": "अनुवाद"
+  },
+  "translate": {
+    "title": "अनुवाद",
+    "current_lang_prefix": "वर्तमान: {{code}}",
+    "tone_label": "टोन",
+    "toneNeutral": "तटस्थ",
+    "toneNeutralDesc": "स्वाभाविक डिफ़ॉल्ट अनुवाद",
+    "toneCasual": "कैज़ुअल",
+    "toneCasualDesc": "दोस्ताना चैट के लिए",
+    "toneFormal": "औपचारिक",
+    "toneFormalDesc": "विनम्र और सम्मानजनक",
+    "toneBusiness": "बिज़नेस",
+    "toneBusinessDesc": "काम, ईमेल और रिपोर्ट के लिए",
+    "tonePlayful": "चंचल",
+    "tonePlayfulDesc": "हल्के मज़ाक और मीम के लिए"
+  },
+  "unknown": "अज्ञात",
+  "voice": "वॉइस",
+  "list": {
+    "tab": {
+      "chat": "चैट",
+      "open": "खोलें",
+      "beacon": "बीकन",
+      "business": "बिज़नेस"
+    },
+    "empty": {
+      "chatTitle": "कोई चैट नहीं",
+      "chatSub": "किसी मित्र से बातचीत शुरू करें।",
+      "openTitle": "कोई ओपन चैट नहीं",
+      "openSub": "अपनी पसंद के विषय खोजें।",
+      "beaconTitle": "कोई शामिल बीकन नहीं",
+      "beaconSub": "आसपास के बीकन देखें।",
+      "businessTitle": "कोई बिज़नेस चैट नहीं",
+      "businessSub": "परामर्श इतिहास यहाँ दिखेगा।"
+    },
+    "leaveConfirmTitle": "चैट छोड़ें?",
+    "leaveConfirmMessage": "यह चैट आपकी सूची से हट जाएगी.",
+    "leaveConfirmAction": "छोड़ें"
+  },
+  "menu": {
+    "title": "चैट मेनू",
+    "joinedDate": "{{date}} को शामिल हुए",
+    "media": "फ़ोटो/वीडियो",
+    "mediaEmpty": "हाल का मीडिया यहाँ दिखेगा।",
+    "noticeSchedule": "सूचनाएँ और शेड्यूल",
+    "me": "मैं"
+  },
+  "membersScreen": {
+    "title": "सदस्य",
+    "loading": "लोड हो रहा है…",
+    "empty": "कोई सदस्य नहीं",
+    "owner": "होस्ट",
+    "participant": "प्रतिभागी",
+    "remove": "हटाएँ",
+    "removeTitle": "हटाएँ",
+    "removeMessage": "{{name}} को हटाएँ?",
+    "loadFail": "लोड नहीं हो सका",
+    "noName": "नाम नहीं"
+  },
+  "inviteScreen": {
+    "title": "मित्र आमंत्रित करें",
+    "roomMissingTitle": "रूम जानकारी नहीं है",
+    "roomMissingMessage": "फिर से प्रवेश कर प्रयास करें।",
+    "tryAgain": "बाद में फिर प्रयास करें।",
+    "loadFailTitle": "मित्र सूची लोड नहीं हुई।",
+    "selectFriend": "मित्र चुनें।",
+    "selectForAdd": "जोड़ने के लिए मित्र चुनें।",
+    "selectForNewGroup": "साथ जुड़ने वाले मित्र चुनें।",
+    "addSuccessTitle": "मित्र जोड़े गए।",
+    "addSuccessMessage": "{{count}} जोड़े गए।",
+    "addFailTitle": "मित्र नहीं जोड़े जा सके।",
+    "createFailTitle": "समूह चैट नहीं बन सकी।",
+    "friendRowAdd": "इस समूह में जोड़ें",
+    "friendRowNewGroup": "नए समूह में शामिल करें",
+    "groupAddTitle": "समूह में मित्र जोड़ें",
+    "newGroupTitle": "नई समूह चैट",
+    "groupAddDesc": "चयनित मित्रों को इस समूह में जोड़ें।",
+    "newGroupDesc": "चयनित मित्रों के साथ नया समूह बनाएँ।",
+    "loading": "मित्र लोड हो रहे हैं",
+    "emptyTitle": "आमंत्रित करने के लिए कोई मित्र नहीं",
+    "emptyDesc": "जो मित्र पहले से रूम में हैं, वे शामिल नहीं हैं।",
+    "addCount": "{{count}} जोड़ें",
+    "makeGroupCount": "{{count}} के साथ समूह बनाएँ",
+    "noName": "नाम नहीं",
+    "groupFallbackTitle": "समूह चैट",
+    "groupTitleWithOthers": "{{names}} + {{count}}"
+  },
+  "roomEdit": {
+    "title": "चैट रूम जानकारी",
+    "nameLabel": "चैट रूम नाम",
+    "hidePhoto": "फ़ोटो छिपाएँ",
+    "hidePhotoDesc": "सूची में डिफ़ॉल्ट चित्र दिखाएँ।",
+    "helperLine1": "आपका सेट किया फ़ोटो और नाम केवल आपको दिखता है।",
+    "helperLine2": "इससे दूसरे व्यक्ति पर असर नहीं पड़ता।",
+    "alertTitle": "सूचना",
+    "unhideBeforeChange": "बदलने से पहले फ़ोटो छिपाएँ बंद करें।",
+    "saveFail": "सहेजना विफल"
+  },
+  "roomData": {
+    "title": "डेटा प्रबंधन",
+    "ratioTitle": "प्रकार के अनुसार डेटा",
+    "noMedia": "कोई सहेजा मीडिया नहीं",
+    "savedCount": "{{value}} सहेजा गया",
+    "deleteAllWithSize": "सभी मीडिया हटाएँ ({{size}})",
+    "photoData": "फ़ोटो डेटा",
+    "videoData": "वीडियो डेटा",
+    "audioData": "वॉइस डेटा",
+    "fileData": "फ़ाइल डेटा",
+    "storageCenter": "CO·ONN स्टोरेज",
+    "loadFail": "डेटा जानकारी लोड नहीं हुई।",
+    "actionFail": "कार्य पूरा नहीं हुआ।",
+    "clear": {
+      "photoTitle": "फ़ोटो डेटा हटाएँ",
+      "photoMessage": "डेटा साफ़ करें फ़ोटो",
+      "photoSuccess": "फ़ोटो डेटा हटाया गया।",
+      "videoTitle": "वीडियो डेटा हटाएँ",
+      "videoMessage": "डेटा साफ़ करें वीडियो",
+      "videoSuccess": "वीडियो डेटा हटाया गया।",
+      "audioTitle": "वॉइस डेटा हटाएँ",
+      "audioMessage": "डेटा साफ़ करें ऑडियो",
+      "audioSuccess": "वॉइस डेटा हटाया गया।",
+      "fileTitle": "फ़ाइल डेटा हटाएँ",
+      "fileMessage": "डेटा साफ़ करें फ़ाइल",
+      "fileSuccess": "फ़ाइल डेटा हटाया गया।",
+      "allTitle": "सभी मीडिया हटाएँ",
+      "allMessage": "डेटा साफ़ करें सभी",
+      "allSuccess": "मीडिया डेटा हटाया गया।"
+    }
+  },
+  "collection": {
+    "title": "संग्रह",
+    "count": "{{count}}",
+    "total": "कुल {{value}}",
+    "tabs": {
+      "links": "लिंक",
+      "schedules": "शेड्यूल",
+      "bookmarks": "बुकमार्क"
+    },
+    "empty": {
+      "media": "कोई फ़ोटो या वीडियो नहीं",
+      "files": "कोई फ़ाइल नहीं",
+      "links": "कोई लिंक नहीं",
+      "notices": "कोई सूचना नहीं",
+      "schedules": "कोई शेड्यूल नहीं",
+      "bookmarks": "कोई बुकमार्क नहीं"
+    },
+    "noDate": "तारीख नहीं",
+    "tapToView": "देखने के लिए टैप करें",
+    "bookmarkMissingMessage": "यह संदेश इस डिवाइस पर नहीं मिला।",
+    "scheduleEmptyBody": "शेड्यूल विवरण नहीं।",
+    "secureRecovery": {
+      "completedBody": "पुरानी सुरक्षा कुंजियाँ आयात हो गईं।",
+      "rejectedBody": "पुरानी सुरक्षा कुंजी अनुरोध अस्वीकार हुआ।"
+    },
+    "scheduleStatus": {
+      "cancelled": "रद्द",
+      "completed": "पूर्ण",
+      "joined": "शामिल",
+      "joinedOngoing": "शामिल"
+    },
+    "section": {
+      "latestNotice": "नई सूचना",
+      "previousNotice": "पुरानी सूचनाएँ",
+      "activeSchedules": "सक्रिय / खुले",
+      "closedSchedules": "पूर्ण / रद्द"
+    }
+  },
+  "settings": {
+    "title": "चैट सेटिंग्स",
+    "memberCount": "{{count}} सदस्य",
+    "startedAt": "शुरू {{date}}",
+    "inputLock": "सेटिंग्स",
+    "theme": {
+      "title": "चैट सेटिंग्स",
+      "default": "डिफ़ॉल्ट",
+      "byRoomType": "रूम"
+    },
+    "themePreview": {
+      "other": "ठीक है",
+      "mine": "समझ गया"
+    },
+    "translation": {
+      "title": "चैट सेटिंग्स अनुवाद"
+    },
+    "sound": {
+      "title": "चैट सेटिंग्स",
+      "default": "डिफ़ॉल्ट",
+      "clear": "सेटिंग्स साफ़ करें",
+      "calm": "सेटिंग्स",
+      "short": "चैट सेटिंग्स",
+      "soft": "सेटिंग्स",
+      "quiet": "सेटिंग्स",
+      "deep": "सेटिंग्स",
+      "light": "लाइट",
+      "mute": "सेटिंग्स"
+    },
+    "data": {
+      "section": "डेटा",
+      "manage": "सेटिंग्स डेटा"
+    },
+    "export": {
+      "title": "चैट सेटिंग्स",
+      "message": "इस डिवाइस पर सहेजी गई चैट को टेक्स्ट फ़ाइल के रूप में निर्यात करें।",
+      "saveFile": "सहेजें फ़ाइल",
+      "share": "साझा करें",
+      "saveSuccess": "सहेजें पूर्ण",
+      "shareSuccess": "साझा पूर्ण",
+      "saveCancelled": "सहेजें रद्द",
+      "fail": "सेटिंग्स विफल पूरा नहीं हुआ।",
+      "deletedMessage": "सेटिंग्स",
+      "secureExcluded": "सुरक्षित",
+      "imageLabel": "सेटिंग्स छवि",
+      "videoLabel": "सेटिंग्स वीडियो",
+      "audioLabel": "सेटिंग्स ऑडियो",
+      "fileLabel": "सेटिंग्स फ़ाइल",
+      "unknownSender": "अज्ञात",
+      "meSender": "मैं",
+      "userSender": "उपयोगकर्ता भेजने वाला",
+      "fileTitle": "सेटिंग्स फ़ाइल",
+      "roomLine": "चैट रूम: {{roomTitle}}",
+      "exportedAtLine": "निर्यात समय: {{exportedAt}}",
+      "noteLocal": "※ यह फ़ाइल इस डिवाइस पर सहेजी गई चैट पर आधारित है।",
+      "noteText": "※ मेरे संदेश मूल पाठ से, और दूसरे संदेश वर्तमान दिख रहे पाठ से निर्यात होंगे।",
+      "noteSecure": "※ सुरक्षित संदेशों की सामग्री और कुंजी डेटा निर्यात नहीं होंगे।",
+      "noteGallery": "※ गैलरी में सहेजी फ़ाइलें ऐप कैश से अलग प्रबंधित होती हैं।",
+      "attachmentLine": "- अटैचमेंट: {{type}}{{fileNamePart}}{{mimePart}}",
+      "shareDialogTitle": "साझा"
+    },
+    "leave": {
+      "title": "चैट सेटिंग्स",
+      "action": "चैट सेटिंग्स",
+      "rejectInvite": "आमंत्रण अस्वीकार कर बाहर जाएँ",
+      "reportAndLeave": "रिपोर्ट कर बाहर जाएँ",
+      "groupMessage": "आप रूम छोड़ सकते हैं या आमंत्रण अस्वीकार कर सकते हैं।",
+      "reportMessage": "आप इस रूम को छोड़ या रिपोर्ट कर सकते हैं।",
+      "defaultMessage": "क्या इस चैट रूम से बाहर जाना है? यह चैट सूची से हट जाएगा।",
+      "fail": "सेटिंग्स विफल पूरा नहीं हुआ।",
+      "selfBlocked": "मेरे साथ चैट से बाहर नहीं जा सकते।"
+    },
+    "secure": {
+      "section": "चैट सेटिंग्स सुरक्षित",
+      "me": "मैं",
+      "peer": "सेटिंग्स सुरक्षित दूसरा व्यक्ति",
+      "authCancelled": "सुरक्षित रद्द",
+      "decline": "सेटिंग्स सुरक्षित",
+      "newKey": "सुरक्षित नया कुंजी",
+      "newKeyDesc": "आगे उपयोग के लिए नई कुंजी बनाएँ।",
+      "newKeyConfirmTitle": "नया कुंजी पुष्टि करें?",
+      "newKeyConfirmMessage": "आगे से नई कुंजी उपयोग होगी। पुरानी कुंजियाँ रखी जाएँगी।",
+      "create": "सेटिंग्स सुरक्षित बनाएँ",
+      "newKeySuccessTitle": "नया कुंजी पूर्ण",
+      "newKeySuccessMessage": "अब सुरक्षा कुंजी epoch {{epoch}} से एन्क्रिप्ट किया जाएगा।",
+      "newKeyFailTitle": "नया कुंजी विफल विफल।",
+      "newKeyFail": "नया कुंजी विफल पूरा नहीं हुआ।",
+      "historyRequest": "सुरक्षित अनुरोध",
+      "historyRequestDesc": "सुरक्षित अनुरोध",
+      "historyRequestConfirmTitle": "अनुरोध पुष्टि करें?",
+      "historyRequestConfirmMessage": "चैट साथियों से पुराने संदेशों की कुंजियाँ अनुरोध करें।",
+      "request": "सेटिंग्स सुरक्षित अनुरोध",
+      "historyRequestSuccessTitle": "अनुरोध पूर्ण",
+      "historyRequestSuccessMessage": "{{count}} लोगों को अनुरोध भेजा गया।",
+      "historyRequestEmpty": "कोई सुरक्षित अनुरोध नहीं।",
+      "historyRequestFailTitle": "अनुरोध विफल विफल।",
+      "historyRequestFail": "अनुरोध विफल पूरा नहीं हुआ।",
+      "claimApproved": "सुरक्षित",
+      "claimApprovedDesc": "सुरक्षित",
+      "claimSuccessTitle": "सुरक्षित पूर्ण",
+      "claimSuccessMessage": "{{imported}} सहेजे · {{skipped}} पहले से मौजूद{{conflictText}}",
+      "claimFailTitle": "सुरक्षित विफल विफल।",
+      "claimFail": "सुरक्षित विफल पूरा नहीं हुआ।",
+      "incomingRequestTitle": "{{name}} का पुरानी सुरक्षा कुंजी अनुरोध",
+      "shareApprovedDesc": "सुरक्षित साझा",
+      "historyShareConfirmTitle": "साझा पुष्टि करें?",
+      "historyShareConfirmMessage": "{{name}} के साथ पुरानी सुरक्षा कुंजियाँ साझा करें।",
+      "historyShareSuccessTitle": "साझा पूर्ण",
+      "historyShareSuccessMessage": "{{name}} के साथ साझा किया गया।",
+      "historyShareFailTitle": "साझा करना विफल",
+      "historyShareFail": "साझा विफल पूरा नहीं हुआ।",
+      "historyRejectConfirmTitle": "पुष्टि करें?",
+      "historyRejectConfirmMessage": "{{name}} का अनुरोध अस्वीकार करें।",
+      "rejectSuccessTitle": "सुरक्षित पूर्ण",
+      "rejectSuccessMessage": "{{name}} का अनुरोध अस्वीकार किया गया।",
+      "rejectFailTitle": "सुरक्षित विफल विफल।",
+      "rejectFail": "सुरक्षित विफल पूरा नहीं हुआ।",
+      "backupSection": "सेटिंग्स सुरक्षित बैकअप",
+      "backup": "सेटिंग्स सुरक्षित बैकअप",
+      "backupSummary": "सुरक्षित बैकअप सारांश {{rooms}} {{keys}}",
+      "noBackup": "सुरक्षित नहीं बैकअप",
+      "backupConfirmTitle": "सुरक्षित बैकअप पुष्टि करें?",
+      "backupCreateMessage": "सर्वर पर केवल एन्क्रिप्टेड बैकअप सहेजा जाएगा। रिकवरी कोड एक बार दिखेगा।",
+      "backupReplaceMessage": "नया बैकअप बनाने पर पुराना बैकअप बदल जाएगा। नया रिकवरी कोड सहेजें।",
+      "backupAction": "सेटिंग्स सुरक्षित बैकअप",
+      "backupFailTitle": "सुरक्षित बैकअप विफल विफल।",
+      "backupCreateFail": "बैकअप बनाएँ विफल पूरा नहीं हुआ।",
+      "restore": "सेटिंग्स सुरक्षित पुनर्स्थापित",
+      "restoreDesc": "रिकवरी कोड से पुरानी कुंजियाँ आयात करें।",
+      "restoreMessage": "बैकअप बनाते समय मिला रिकवरी कोड दर्ज करें।",
+      "restoreAction": "सेटिंग्स सुरक्षित पुनर्स्थापित",
+      "restoreCodeRequired": "पुनर्स्थापित कोड आवश्यक",
+      "restoreSuccessTitle": "सुरक्षित पुनर्स्थापित पूर्ण",
+      "restoreSuccessMessage": "{{imported}} आयात · {{skipped}} पहले से मौजूद{{conflictText}}",
+      "restoreFail": "सुरक्षित पुनर्स्थापित विफल पूरा नहीं हुआ।",
+      "conflictText": " · {{conflicts}} टकराव\nटकराव वाली कुंजियों में मौजूदा स्थानीय कुंजी रखी गई।",
+      "conflictShort": " · {{conflicts}} टकराव",
+      "recoveryCodeTitle": "सुरक्षित कोड",
+      "recoveryCodeMessage": "यह रिकवरी कोड फिर नहीं दिखेगा। इसे सुरक्षित रखें।",
+      "copyRecoveryCode": "कॉपी कोड",
+      "codeStored": "सुरक्षित कोड सहेजा गया।",
+      "codeCopied": "सुरक्षित कोड",
+      "codeCopyFail": "कोड कॉपी विफल पूरा नहीं हुआ।",
+      "codeConfirmRequired": "रिकवरी कोड कॉपी करें या सहेजने की पुष्टि करें।",
+      "deleteServerBackup": "हटाएँ बैकअप",
+      "deleteServerBackupDesc": "केवल सर्वर का एन्क्रिप्टेड बैकअप हटाता है।",
+      "backupDeleteConfirmTitle": "बैकअप हटाएँ पुष्टि करें?",
+      "backupDeleteConfirmMessage": "सर्वर का एन्क्रिप्टेड बैकअप हटेगा। इस डिवाइस की सुरक्षा कुंजियाँ रहेंगी।",
+      "backupDeleteSuccessTitle": "बैकअप हटाएँ पूर्ण हटाया गया।",
+      "backupDeleteSuccessMessage": "सर्वर बैकअप हटाया गया। इस डिवाइस की सुरक्षा कुंजियाँ रहेंगी।",
+      "backupDeleteFailTitle": "बैकअप हटाएँ विफल विफल।",
+      "backupDeleteFail": "बैकअप हटाएँ विफल पूरा नहीं हुआ।"
+    },
+    "openProfileEditAccessibility": "ओपन प्रोफ़ाइल संपादित करें"
+  },
+  "me": "मैं",
+  "noticePromote": {
+    "unsupported": "सूचना प्रमोट पूरा नहीं हुआ।",
+    "ownerOnly": "केवल होस्ट सूचना प्रमोट कर सकता है।",
+    "noPermission": "आपके पास सूचना की अनुमति नहीं है।",
+    "secureBlocked": "प्रमोट सुरक्षित",
+    "systemBlocked": "प्रमोट",
+    "deletedBlocked": "प्रमोट",
+    "missingMessage": "सूचना प्रमोट पूरा नहीं हुआ।"
+  },
+  "secure": {
+    "promptAuth": "सुरक्षित संदेश भेजने के लिए प्रमाणित करें।",
+    "on": "चैट सुरक्षित चालू",
+    "off": "चैट सुरक्षित बंद",
+    "readyFail": "सुरक्षित विफल विफल।",
+    "sendReadyFail": "विफल विफल।",
+    "mediaUnsupported": "सुरक्षित मोड में अभी समर्थित नहीं।",
+    "fileUnsupported": "सुरक्षित मोड में फ़ाइल भेजना समर्थित नहीं।",
+    "content": {
+      "image": "सुरक्षित सामग्री छवि",
+      "video": "सुरक्षित सामग्री वीडियो",
+      "audio": "सुरक्षित सामग्री ऑडियो",
+      "location": "सुरक्षित सामग्री स्थान"
+    },
+    "enabled": "चैट सुरक्षित",
+    "disabled": "चैट सुरक्षित",
+    "lockedLabel": "चैट सुरक्षित",
+    "prompt": {
+      "keyUse": "सुरक्षित संदेश कुंजियों के उपयोग के लिए प्रमाणित करें।",
+      "deviceRegister": "पंजीकरण",
+      "backupCreate": "सुरक्षा कुंजियों का बैकअप लेने के लिए प्रमाणित करें।",
+      "backupRestore": "बैकअप पुनर्स्थापित",
+      "newRoomKey": "नई सुरक्षा कुंजी बनाने के लिए प्रमाणित करें।",
+      "historyRequest": "अनुरोध",
+      "historyShare": "साझा",
+      "historyReject": "पुरानी कुंजी अनुरोध अस्वीकार करने के लिए प्रमाणित करें।",
+      "historyClaim": "स्वीकृत पुरानी कुंजियाँ आयात करने के लिए प्रमाणित करें।",
+      "decrypt": "सुरक्षित"
+    },
+    "error": {
+      "loginRequired": "लॉगिन आवश्यक है।",
+      "backupEmpty": "कोई चैट सुरक्षित बैकअप नहीं।",
+      "backupMissing": "कोई सुरक्षित बैकअप नहीं।",
+      "backupWrongAccount": "यह सुरक्षा कुंजी बैकअप इस खाते का नहीं है।",
+      "requesterDeviceMissing": "अनुरोधकर्ता का सक्रिय सुरक्षित डिवाइस नहीं मिला।",
+      "noHistoryKeyToShare": "कोई कुंजी साझा नहीं।",
+      "parcelCreateFailed": "बनाएँ विफल पूरा नहीं हुआ।"
+    }
+  },
+  "jump": {
+    "newMessage": "चैट नया",
+    "newMessageAccessibility": "चैट नया",
+    "latestAccessibility": "चैट नवीनतम"
+  },
+  "permission": {
+    "cameraTitle": "अनुमति आवश्यक",
+    "cameraMessage": "चैट अनुमति कैमरा आवश्यक है।",
+    "contactsTitle": "अनुमति आवश्यक",
+    "contactsMessage": "चैट अनुमति आवश्यक है।"
+  },
+  "filePick": {
+    "failTitle": "फ़ाइल विफल विफल।",
+    "failMessage": "फ़ाइल विफल पूरा नहीं हुआ।"
+  },
+  "newChat": {
+    "title": "चैट नया चैट",
+    "create": "नया चैट बनाएँ",
+    "start": "शुरू",
+    "noName": "नाम नहीं",
+    "selectPartnerRequired": "चुनें आवश्यक",
+    "openTitleRequired": "चैट ओपन आवश्यक",
+    "modeNormal": "सामान्य",
+    "modeOpen": "खोलें",
+    "openSectionTitle": "नया चैट ओपन",
+    "openNamePlaceholder": "चैट ओपन नाम",
+    "openHelper": "मित्र चुने बिना सार्वजनिक चैट रूम बनाएँ।",
+    "partnerSectionTitle": "नया चैट",
+    "groupTitlePlaceholder": "नया चैट समूह",
+    "searchNamePlaceholder": "चैट खोज नाम",
+    "emptyFriends": "नया चैट मित्र",
+    "userFallback": "नया चैट उपयोगकर्ता",
+    "privateChatTitle": "चैट निजी चैट",
+    "groupChatTitle": "समूह चैट",
+    "openChatTitle": "ओपन चैट",
+    "coverPhoto": "चैट फ़ोटो",
+    "selectPhoto": "फ़ोटो चुनें",
+    "openDescriptionPlaceholder": "नया चैट ओपन",
+    "openTagsPlaceholder": "चैट ओपन",
+    "searchVisible": "चैट खोज दिखाई दे",
+    "searchVisibleDesc": "चैट खोज दिखाई दे",
+    "groupModeTitle": "समूह चैट",
+    "groupModeAutoDesc": "2 या अधिक लोग चुनने पर समूह बनेगा।",
+    "groupModeSingleDesc": "एक व्यक्ति चुनकर भी समूह बनाया जा सकता है।"
+  },
+  "menuModal": {
+    "markRead": "मेनू",
+    "roomInfo": "चैट रूम जानकारी",
+    "pin": "चैट मेनू",
+    "unpin": "चैट मेनू",
+    "mute": "चैट मेनू",
+    "unmute": "चैट मेनू",
+    "leave": "चैट मेनू",
+    "selfRoomTitle": "मेनू मैं रूम"
+  },
+  "roomCard": {
+    "pending": "रूम कार्ड लंबित",
+    "emptyMessage": "चैट रूम कार्ड",
+    "messageFallback": "संदेश",
+    "am": "AM",
+    "pm": "PM",
+    "date": "{{month}}/{{day}}",
+    "preview": {
+      "image": "[फ़ोटो]",
+      "video": "[वीडियो]",
+      "audio": "[आवाज़]",
+      "file": "[फ़ाइल]",
+      "map": "[स्थान]",
+      "notice": "[सूचना]"
+    }
+  },
+  "searchModal": {
+    "rooms": "चैट खोज",
+    "messages": "संदेश",
+    "placeholder": "खोजें",
+    "emptyTitle": "खोजें",
+    "emptyDesc": "चैट खोज",
+    "noResultTitle": "खोज नहीं परिणाम",
+    "noResultDesc": "खोज नहीं परिणाम",
+    "roomPrefix": "चैट रूम",
+    "visibleName": "खोज दिखाई दे नाम",
+    "messageSender": "चैट खोज भेजने वाला",
+    "filterNormal": "सामान्य",
+    "filterOpen": "खोलें",
+    "filterBeacon": "बीकन",
+    "filterBusiness": "बिज़नेस",
+    "dateAll": "सभी",
+    "dateToday": "आज",
+    "date7d": "चैट खोज",
+    "date30d": "चैट खोज",
+    "tabChat": "चैट",
+    "tabParticipant": "सदस्य",
+    "tabOpen": "खोज टैब ओपन",
+    "participants": "सदस्य",
+    "openRooms": "खोज ओपन",
+    "participantEmptyTitle": "चैट खोज प्रतिभागी",
+    "participantEmptyDesc": "अपने चैट रूम के दिखने वाले नामों से खोजें।",
+    "participantNoResultTitle": "कोई सदस्य नहीं",
+    "participantNoResultDesc": "प्रतिभागी नहीं परिणाम",
+    "openEmptyTitle": "चैट खोज ओपन",
+    "openEmptyDesc": "रूम नाम, विवरण या टैग से खोजें।",
+    "openNoResultTitle": "कोई ओपन चैट नहीं",
+    "openNoResultDesc": "ओपन नहीं परिणाम",
+    "typeFilter": "खोज फ़िल्टर",
+    "dateFilter": "खोज तारीख फ़िल्टर",
+    "openJoined": "शामिल",
+    "openPublic": "ओपन चैट",
+    "participatingRoom": "खोज रूम"
+  },
+  "location": {
+    "fallbackTitle": "स्थान",
+    "selectMapApp": "चुनें मानचित्र",
+    "openMapHint": "ओपन मानचित्र"
+  },
+  "translationPanel": {
+    "title": "चैट अनुवाद",
+    "subtitle": "अनुवाद उपशीर्षक",
+    "autoTranslate": {
+      "title": "अनुवाद",
+      "desc": "प्राप्त संदेश चुनी भाषा में दिखाएँ।"
+    },
+    "showTranslatedOnly": {
+      "title": "दिखाएँ अनुवादित",
+      "desc": "दिखाएँ अनुवादित"
+    },
+    "tier": {
+      "title": "अनुवाद",
+      "desc": "अनुवाद",
+      "upgrade": "अपग्रेड",
+      "options": {
+        "free": {
+          "label": "Basic",
+          "desc": "मूल अनुवाद"
+        },
+        "mid": {
+          "label": "Standard",
+          "desc": "स्वाभाविक चैट अनुवाद"
+        },
+        "high": {
+          "label": "Premium",
+          "desc": "संदर्भ और टोन सहित"
+        }
+      }
+    },
+    "tone": {
+      "title": "टोन",
+      "desc": "अनुवाद टोन",
+      "disabled": "Premium में उपलब्ध।",
+      "options": {
+        "business": {
+          "label": "बिज़नेस",
+          "desc": "टोन बिज़नेस"
+        },
+        "polite": {
+          "label": "टोन",
+          "desc": "टोन"
+        },
+        "casual": {
+          "label": "कैज़ुअल",
+          "desc": "टोन"
+        },
+        "neutral": {
+          "label": "तटस्थ",
+          "desc": "टोन"
+        },
+        "creative": {
+          "label": "टोन",
+          "desc": "टोन"
+        }
+      }
+    },
+    "sendLang": {
+      "title": "भेजने की भाषा",
+      "desc": "ऑटो प्राप्तकर्ता की प्राप्त भाषा का अनुसरण करता है।",
+      "auto": "ऑटो",
+      "autoDesc": "दूसरे व्यक्ति की भाषा से अपने-आप मेल खाता है।",
+      "autoPeerDesc": "वर्तमान दूसरे व्यक्ति के आधार पर: {{label}} ({{code}})",
+      "peerBase": "दूसरा व्यक्ति",
+      "peerDefault": "दूसरा व्यक्ति डिफ़ॉल्ट"
+    },
+    "receiveLang": {
+      "title": "प्राप्त भाषा",
+      "desc": "प्राप्त संदेश इस भाषा में दिखाएँ।"
+    },
+    "status": {
+      "off": "अनुवाद बंद",
+      "on": "अनुवाद चालू",
+      "auto": "अनुवाद",
+      "receive": "अनुवाद",
+      "send": "भेजें",
+      "translatedOnly": "अनुवादित"
+    },
+    "language": {
+      "EN": "अंग्रेज़ी",
+      "ES": "स्पेनिश",
+      "FR": "फ़्रेंच",
+      "DE": "जर्मन",
+      "IT": "इतालवी",
+      "PT": "पुर्तगाली",
+      "NL": "डच",
+      "PL": "पोलिश",
+      "RU": "रूसी",
+      "JA": "जापानी",
+      "KO": "कोरियाई",
+      "ZH": "चीनी",
+      "TR": "तुर्की",
+      "SV": "स्वीडिश",
+      "ID": "इंडोनेशियाई",
+      "TH": "थाई",
+      "UK": "यूक्रेनी",
+      "RO": "रोमानियाई",
+      "CS": "चेक",
+      "DA": "डेनिश",
+      "EL": "यूनानी",
+      "FI": "फ़िनिश",
+      "HU": "हंगेरियन",
+      "SK": "स्लोवाक",
+      "SL": "स्लोवेनियाई",
+      "BG": "बुल्गारियाई",
+      "ET": "एस्टोनियाई",
+      "LT": "लिथुआनियाई",
+      "LV": "लातवियाई",
+      "AR": "अरबी",
+      "ZH_HANS": "चीनी (सरलीकृत)",
+      "ZH_HANT": "चीनी (पारंपरिक)",
+      "VI": "वियतनामी",
+      "HI": "हिन्दी",
+      "HE": "हिब्रू"
+    }
+  },
+  "header": {
+    "searchPlaceholder": "चैट खोज",
+    "advanced": "उन्नत",
+    "sender": "चैट भेजने वाला",
+    "date": "चैट तारीख"
+  },
+  "attachment": {
+    "photo": "फ़ोटो",
+    "camera": "चैट कैमरा",
+    "call": "कॉल",
+    "pay": "चैट भुगतान",
+    "map": "मानचित्र",
+    "music": "चैट संगीत",
+    "file": "फ़ाइल",
+    "cloud": "चैट क्लाउड",
+    "contact": "संपर्क",
+    "recentPhotos": "हाल का",
+    "send": "भेजें",
+    "photoPermissionRequired": "फ़ोटो पहुँच आवश्यक है।",
+    "openSettings": "ओपन सेटिंग्स",
+    "callUnavailable": "कॉल अनुपलब्ध पूरा नहीं हुआ।",
+    "phoneMissing": "कोई फ़ोन नहीं।",
+    "phoneOpenFail": "फ़ोन ओपन विफल पूरा नहीं हुआ।",
+    "voiceCallUnavailable": "वॉइस कॉल अनुपलब्ध जल्द उपलब्ध होगा।",
+    "contactEmpty": "कोई चैट संपर्क नहीं।",
+    "contactShareTitle": "संपर्क",
+    "contactName": "नाम",
+    "contactPhone": "फ़ोन",
+    "contactShareFail": "संपर्क साझा विफल पूरा नहीं हुआ।",
+    "voiceMessage": "वॉइस",
+    "capture": "चैट कैप्चर",
+    "schedule": "शेड्यूल"
+  },
+  "accessibility": {
+    "attachmentClose": "चैट",
+    "attachmentOpen": "चैट ओपन",
+    "messageInput": "चैट",
+    "sendMessage": "संदेश भेजें",
+    "voiceMessage": "वॉइस संदेश"
+  },
+  "replyPreview": {
+    "peer": "जवाब दूसरा व्यक्ति",
+    "replyTo": "{{name}} को जवाब",
+    "cancel": "जवाब रद्द"
+  },
+  "mediaKind": {
+    "image": "फ़ोटो",
+    "video": "वीडियो",
+    "audio": "वॉइस संदेश",
+    "file": "फ़ाइल",
+    "map": "स्थान",
+    "notice": "सूचना",
+    "text": "चैट मीडिया"
+  },
+  "deleteModal": {
+    "title": "हटाएँ",
+    "mine": "मेरे लिए हटाएँ",
+    "all": "सभी के लिए हटाएँ",
+    "moment": "चैट हटाएँ",
+    "sectionTitle": "चैट हटाएँ",
+    "selectTime": "हटाएँ चुनें समय",
+    "readBased": "हटाएँ",
+    "readAfterWithDelay": "पढ़े जाने के बाद +{{delay}}",
+    "afterDelete": "{{delay}} बाद हटाएँ",
+    "unit": {
+      "hour": "हटाएँ",
+      "minute": "हटाएँ",
+      "second": "हटाएँ"
+    },
+    "cancelTitle": "चैट हटाएँ रद्द करें?",
+    "cancelDesc": "चैट हटाएँ रद्द सहेजा गया।",
+    "keepEditing": "हटाएँ",
+    "discard": "रद्द"
+  },
+  "messageAction": {
+    "copy": "कॉपी",
+    "selectCopy": "चैट चुनें कॉपी",
+    "reply": "जवाब",
+    "share": "साझा करें",
+    "toMe": "चैट",
+    "notice": "सूचना",
+    "highlight": "चैट",
+    "capture": "चैट कैप्चर",
+    "delete": "हटाएँ",
+    "cancelMoment": "चैट रद्द",
+    "viewOriginalTranslation": "मूल अनुवाद",
+    "translateOther": "चैट अनुवाद",
+    "reactors": "चैट",
+    "shareToMe": "साझा",
+    "unhighlight": "चैट"
+  },
+  "moment": {
+    "title": "चैट",
+    "cancel": "चैट रद्द",
+    "expiredMessage": "चैट"
+  },
+  "noticeBanner": {
+    "open": "सूचना ओपन",
+    "close": "सूचना"
+  },
+  "newMessagePill": {
+    "label": "{{count}} नए संदेश",
+    "accessibility": "{{count}} नए संदेश देखें"
+  },
+  "search": {
+    "sender": "चैट खोज भेजने वाला",
+    "senderFilter": "खोज भेजने वाला फ़िल्टर",
+    "dateFilter": "खोज तारीख फ़िल्टर",
+    "prevResult": "खोज परिणाम",
+    "nextResult": "खोज परिणाम",
+    "close": "चैट खोज",
+    "clearSender": "खोज साफ़ करें भेजने वाला",
+    "placeholder": "खोजें",
+    "inputAccessibility": "चैट खोज",
+    "clearKeyword": "खोज साफ़ करें",
+    "bookmarkFilter": "खोज बुकमार्क फ़िल्टर"
+  },
+  "datePicker": {
+    "title": "चैट तारीख चयन",
+    "clear": "तारीख चयन साफ़ करें",
+    "prevMonth": "चयन",
+    "nextMonth": "चयन",
+    "monthTitle": "{{month}}/{{year}}",
+    "weekday": {
+      "sun": "रवि",
+      "mon": "सोम",
+      "tue": "मंगल",
+      "wed": "बुध",
+      "thu": "गुरु",
+      "fri": "शुक्र",
+      "sat": "शनि"
+    },
+    "dayAccessibility": "{{day}} तारीख",
+    "selected": "चयनित",
+    "none": "कोई नहीं"
+  },
+  "selection": {
+    "title": "हटाएँ",
+    "selectAll": "चुनें सभी",
+    "deleteCount": "{{count}} हटाएँ गिनती"
+  },
+  "noticeModel": {
+    "fallback": "चैट सूचना",
+    "scheduleTitle": "शेड्यूल",
+    "media": {
+      "image": "फ़ोटो",
+      "video": "वीडियो",
+      "audio": "वॉइस संदेश",
+      "file": "फ़ाइल",
+      "map": "स्थान"
+    },
+    "secureRecovery": {
+      "requestCreated": {
+        "title": "अनुरोध",
+        "body": "अनुरोध"
+      },
+      "approved": {
+        "title": "सुरक्षित",
+        "body": "स्वीकृत पुरानी कुंजियाँ आयात कर सकते हैं।"
+      },
+      "completed": {
+        "title": "सुरक्षित पूर्ण",
+        "body": "पुराने संदेश फिर खोले जा सकते हैं।"
+      },
+      "rejected": {
+        "title": "सुरक्षित",
+        "body": "इस अनुरोध से पुराने संदेश नहीं खुलेंगे।"
+      }
+    },
+    "scheduleTitleWithPrefix": "[शेड्यूल] शेड्यूल",
+    "weekday": {
+      "sun": "रवि",
+      "mon": "सोम",
+      "tue": "मंगल",
+      "wed": "बुध",
+      "thu": "गुरु",
+      "fri": "शुक्र",
+      "sat": "शनि"
+    }
+  },
+  "messageItem": {
+    "noticeFallback": "चैट सूचना",
+    "secureLinkFallback": "लिंक",
+    "mapAddressFallback": "मानचित्र पता",
+    "secure": {
+      "genericTitle": "सुरक्षित",
+      "genericBody": "सुरक्षित अपडेट हुआ।",
+      "fileFallback": "सुरक्षित फ़ाइल"
+    },
+    "tombstone": {
+      "deleted": "यह संदेश हटाया गया।",
+      "expired": "यह संदेश समाप्त हो गया।"
+    },
+    "longMessage": {
+      "viewAll": "सभी देखें"
+    },
+    "action": {
+      "confirm": "चैट पुष्टि"
+    }
+  },
+  "linkPreview": {
+    "link": "लिंक",
+    "web": "लिंक",
+    "searchTitle": "{{query}} खोजें",
+    "searchTitleWithProvider": "{{query}} · {{provider}} खोज",
+    "searchResult": "{{query}} खोज परिणाम",
+    "searchResultWithProvider": "{{query}} · {{provider}} खोज परिणाम",
+    "provider": {
+      "naver": "Naver",
+      "google": "Google",
+      "daum": "Daum"
+    }
+  },
+  "messageMeta": {
+    "deleteSuffix": "हटाएँ",
+    "cancelMoment": "रद्द"
+  },
+  "messageBody": {
+    "link": "लिंक",
+    "secureMessage": "चैट सुरक्षित",
+    "file": "फ़ाइल",
+    "tapToOpen": "ओपन",
+    "locationInfo": "चैट स्थान जानकारी",
+    "secureFile": "चैट सुरक्षित फ़ाइल"
+  },
+  "replyBlock": {
+    "peer": "जवाब ब्लॉक दूसरा व्यक्ति",
+    "replyTo": "{{name}} को जवाब"
+  },
+  "voiceRecorder": {
+    "totalDuration": "कुल {{duration}}"
+  },
+  "actions": {
+    "momentCancelFailTitle": "रद्द विफल पूरा नहीं हुआ।",
+    "tryAgain": "बाद में फिर प्रयास करें।",
+    "deleteFailTitle": "हटाना विफल",
+    "missingServerMessage": "कार्य पूरा नहीं हुआ।",
+    "deleteNetworkFail": "हटाएँ विफल पूरा नहीं हुआ।",
+    "momentSetFailTitle": "विफल विफल।",
+    "momentSetNetworkFail": "विफल पूरा नहीं हुआ।",
+    "uploadFailTitle": "अपलोड विफल",
+    "imageUploadFail": "छवि अपलोड विफल पूरा नहीं हुआ।",
+    "errorTitle": "त्रुटि",
+    "mediaSendFail": "मीडिया भेजते समय समस्या हुई।",
+    "voiceUploadFail": "वॉइस अपलोड विफल विफल।",
+    "fileUploadFail": "फ़ाइल अपलोड विफल विफल।"
+  },
+  "bridge": {
+    "messageNotFound": "यह संदेश स्थानीय रूप से नहीं मिला।",
+    "editedImageSent": "छवि",
+    "editedImageSendFail": "छवि विफल पूरा नहीं हुआ।"
+  },
+  "capture": {
+    "title": "चैट कैप्चर",
+    "desc": "चैट कैप्चर",
+    "exit": "चैट कैप्चर",
+    "clear": "चैट कैप्चर साफ़ करें",
+    "share": "साझा करें",
+    "save": "सहेजें",
+    "shareCapture": "कैप्चर साझा कैप्चर",
+    "saveCapture": "कैप्चर सहेजें कैप्चर",
+    "anonymousOn": "कैप्चर अनाम चालू",
+    "anonymousOff": "कैप्चर अनाम बंद",
+    "anonymousUser": "उपयोगकर्ता {{index}}",
+    "error": {
+      "secureBlocked": "कैप्चर सुरक्षित",
+      "messageNotFound": "कैप्चर",
+      "areaNotFound": "कैप्चर क्षेत्र नहीं मिला।",
+      "selectedAreaNotFound": "चयनित क्षेत्र नहीं मिला।",
+      "areaCalcFailed": "विफल पूरा नहीं हुआ।",
+      "outOfView": "चयनित सीमा स्क्रीन से बाहर है।",
+      "imageCreateFailed": "छवि बनाएँ विफल पूरा नहीं हुआ।",
+      "emptySelection": "कोई चैट कैप्चर नहीं।",
+      "permissionRequired": "कैप्चर अनुमति आवश्यक आवश्यक है।",
+      "saveFailed": "सहेजा नहीं गया।",
+      "shareUnavailable": "कैप्चर साझा अनुपलब्ध",
+      "shareFailed": "कैप्चर साझा विफल पूरा नहीं हुआ।"
+    },
+    "success": {
+      "saved": "कैप्चर पूर्ण सहेजा गया।",
+      "savedPartial": "पूर्ण",
+      "savedVisibleOnly": "दिखाई दे"
+    },
+    "anonymousInitial": "कैप्चर अनाम"
+  },
+  "schedule": {
+    "common": {
+      "title": "शेड्यूल",
+      "fallbackTitle": "चैट शेड्यूल",
+      "roomFallback": "चैट रूम",
+      "participantFallback": "प्रतिभागी",
+      "confirm": "चैट शेड्यूल पुष्टि",
+      "cancel": "रद्द",
+      "close": "बंद करें",
+      "delete": "हटाएँ",
+      "done": "पूर्ण",
+      "save": "सहेजें",
+      "saving": "चैट शेड्यूल",
+      "select": "चुनें",
+      "weekdays": {
+        "sun": "रवि",
+        "mon": "सोम",
+        "tue": "मंगल",
+        "wed": "बुध",
+        "thu": "गुरु",
+        "fri": "शुक्र",
+        "sat": "शनि"
+      },
+      "period": {
+        "am": "AM",
+        "pm": "PM"
+      },
+      "date": "{{month}}/{{day}} ({{weekday}})",
+      "compactDate": "{{month}}/{{day}} {{weekday}}",
+      "timeWithPeriod": "{{period}} {{hour}}:{{minute}}",
+      "participantCount": "{{count}} प्रतिभागी",
+      "participantCountShort": "{{count}} शामिल",
+      "participantCountCompact": "{{count}} शामिल",
+      "openDetail": "{{title}} विवरण देखें"
+    },
+    "reminder": {
+      "off": "शेड्यूल बंद",
+      "before30m": "शेड्यूल",
+      "before1h": "शेड्यूल",
+      "before3h": "शेड्यूल",
+      "before1d": "शेड्यूल",
+      "afterJoin": "शेड्यूल"
+    },
+    "api": {
+      "messageTitle": "शेड्यूल · {{title}}",
+      "calendarDefaultTitle": "डिफ़ॉल्ट",
+      "calendarPlace": "स्थान: {{place}}",
+      "calendarAddress": "पता: {{address}}",
+      "calendarNoteFooter": "शेड्यूल",
+      "notificationChannel": "शेड्यूल",
+      "reminderTimeBody": "आपका शेड्यूल {{time}} पर शुरू होगा।",
+      "reminderSoonBody": "जल्द",
+      "reminderTitle": "शेड्यूल"
+    },
+    "detail": {
+      "notFound": "विवरण",
+      "cancelled": "शेड्यूल विवरण रद्द",
+      "completed": "शेड्यूल विवरण पूर्ण",
+      "directions": "दिशा-निर्देश",
+      "notification": "शेड्यूल विवरण सूचना",
+      "appPush": "विवरण",
+      "calendar": "शेड्यूल विवरण",
+      "syncCalendar": "विवरण",
+      "synced": "शेड्यूल विवरण",
+      "notSynced": "विवरण",
+      "join": "शेड्यूल विवरण",
+      "leave": "रद्द",
+      "noticeBadge": "सूचना",
+      "noParticipants": "कोई विवरण नहीं प्रतिभागी नहीं।",
+      "moveToChat": "चैट",
+      "menu": {
+        "edit": "विवरण मेनू संपादित करें",
+        "cancel": "विवरण मेनू रद्द",
+        "complete": "विवरण मेनू पूर्ण"
+      },
+      "alert": {
+        "processFailTitle": "विवरण विफल पूरा नहीं हुआ।",
+        "joinChangeFail": "विफल पूरा नहीं हुआ।",
+        "participantSettingTitle": "विवरण प्रतिभागी सेटिंग",
+        "promoteNotice": "विवरण प्रमोट सूचना",
+        "removeNotice": "विवरण हटाएँ सूचना",
+        "promoteNoticeMessage": "{{name}} को हाइलाइट प्रतिभागी के रूप में दिखाएँ?",
+        "removeNoticeMessage": "{{name}} का हाइलाइट हटाएँ?",
+        "settingFailTitle": "विवरण सेटिंग विफल विफल।",
+        "participantSettingFail": "प्रतिभागी सेटिंग विफल पूरा नहीं हुआ।",
+        "reminderFailTitle": "विवरण विफल विफल।",
+        "calendarReminderFailTitle": "विफल विफल।",
+        "calendarSyncFailTitle": "विफल विफल।",
+        "calendarDeleteFailTitle": "हटाएँ विफल विफल।",
+        "cancelTitle": "शेड्यूल विवरण रद्द",
+        "cancelMessage": "शेड्यूल विवरण रद्द करें?",
+        "cancelAction": "शेड्यूल विवरण रद्द",
+        "cancelFailTitle": "विवरण रद्द विफल विफल।",
+        "cancelFail": "विवरण रद्द विफल पूरा नहीं हुआ।",
+        "completeTitle": "शेड्यूल विवरण पूर्ण",
+        "completeMessage": "शेड्यूल विवरण पूर्ण करें?",
+        "completeFailTitle": "विवरण पूर्ण विफल विफल।",
+        "completeFail": "विवरण पूर्ण विफल पूरा नहीं हुआ।",
+        "calendarRemoveTitle": "विवरण हटाएँ",
+        "calendarRemoveMessage": "डिवाइस कैलेंडर से सिंक किया गया शेड्यूल हटाएँ?"
+      },
+      "error": {
+        "calendarPermissionDenied": "अनुमति आवश्यक है।",
+        "calendarNotFound": "कोई शेड्यूल नहीं।",
+        "invalidScheduleTime": "शेड्यूल समय पूरा नहीं हुआ।",
+        "calendarApiUnavailable": "इस डिवाइस पर कैलेंडर उपलब्ध नहीं है।",
+        "calendarDefault": "विवरण डिफ़ॉल्ट पूरा नहीं हुआ।",
+        "notificationPermissionDenied": "सूचना अनुमति आवश्यक है।",
+        "reminderTimePast": "समय",
+        "reminderDefault": "विवरण डिफ़ॉल्ट पूरा नहीं हुआ।"
+      }
+    },
+    "editor": {
+      "createTitle": "शेड्यूल संपादक बनाएँ",
+      "editTitle": "शेड्यूल संपादक संपादित करें",
+      "titlePlaceholder": "चैट शेड्यूल संपादक",
+      "allDay": "संपादक सभी",
+      "startDate": "संपादक शुरू तारीख",
+      "endDate": "संपादक समाप्त तारीख",
+      "place": "स्थान",
+      "map": "मानचित्र",
+      "placeNamePlaceholder": "संपादक नाम",
+      "memoPlaceholder": "शेड्यूल संपादक",
+      "cancelledLocked": "संपादक रद्द",
+      "locationPickerTitle": "संपादक स्थान चयन",
+      "locationPickerHelper": "मानचित्र केंद्र को इच्छित स्थान पर ले जाकर चुनें।",
+      "validation": {
+        "titleRequired": "संपादक आवश्यक",
+        "startInvalid": "शुरू",
+        "endInvalid": "समाप्त",
+        "endBeforeStart": "समाप्त समय शुरू समय से पहले है।",
+        "roomMissing": "रूम"
+      }
+    },
+    "listScreen": {
+      "loadFail": "शेड्यूल लोड नहीं हुए।",
+      "roomMissing": "सूची रूम",
+      "createAccessibility": "शेड्यूल सूची बनाएँ",
+      "retry": "फिर प्रयास करें",
+      "activeCount": "{{count}} सूची सक्रिय गिनती",
+      "summary": "इस चैट रूम में साथ मिलकर प्रबंधित शेड्यूल।",
+      "emptyTitle": "चैट शेड्यूल सूची",
+      "emptyDesc": "चैट शेड्यूल सूची",
+      "beaconUnavailableTitle": "बीकन चैट में शेड्यूल उपलब्ध नहीं",
+      "beaconUnavailableDesc": "बीकन चैट में शेड्यूल प्रविष्टियाँ नहीं दिखतीं।",
+      "create": "शेड्यूल सूची बनाएँ",
+      "joined": "शामिल",
+      "notJoined": "शामिल नहीं",
+      "cancelled": "रद्द",
+      "completed": "पूर्ण",
+      "past": "शेड्यूल सूची"
+    },
+    "messageCard": {
+      "cancelled": "रद्द",
+      "completed": "पूर्ण"
+    }
+  },
+  "openProfile": {
+    "common": {
+      "confirm": "ओपन प्रोफ़ाइल पुष्टि",
+      "cancel": "रद्द",
+      "save": "सहेजें",
+      "delete": "हटाएँ",
+      "default": "डिफ़ॉल्ट",
+      "user": "ओपन प्रोफ़ाइल उपयोगकर्ता",
+      "openChat": "ओपन चैट",
+      "business": "बिज़नेस",
+      "openTalk": "ओपन चैट",
+      "fallbackName": "ओपन प्रोफ़ाइल नाम",
+      "statusEmpty": "कोई स्टेटस संदेश नहीं",
+      "selectPhoto": "प्रोफ़ाइल चुनें फ़ोटो",
+      "photoApplied": "फ़ोटो लागू हुई।",
+      "saved": "सहेजा गया।",
+      "deleted": "ओपन प्रोफ़ाइल",
+      "tryAgain": "बाद में फिर प्रयास करें।",
+      "notice": "सूचना",
+      "actionFailed": "ओपन प्रोफ़ाइल विफल पूरा नहीं हुआ।",
+      "saveFailed": "सहेजा नहीं गया।",
+      "profileSaveFailed": "प्रोफ़ाइल सहेजें विफल पूरा नहीं हुआ।"
+    },
+    "list": {
+      "title": "ओपन प्रोफ़ाइल सूची",
+      "loadFailed": "ओपन प्रोफ़ाइल लोड नहीं हुईं।",
+      "nicknameRequired": "निकनेम लिखें।",
+      "createSuccess": "ओपन प्रोफ़ाइल बनाई गई।",
+      "createFailed": "बनाना विफल",
+      "saveFailed": "सहेजना विफल",
+      "deleteFailed": "हटाना विफल",
+      "deleteTitle": "ओपन प्रोफ़ाइल हटाएँ?",
+      "deleteDescInUse": "ओपन चैट रूम में मौजूदा प्रोफ़ाइल बनी रहेगी।",
+      "deleteDescDefault": "हटाई गई प्रोफ़ाइल फिर उपयोग नहीं हो सकती।",
+      "editAccessibility": "ओपन प्रोफ़ाइल संपादित करें",
+      "usedRoomsCount": "{{count}} ओपन चैट में उपयोग हो रहा है",
+      "usedRoomsEmpty": "उपयोग में कोई ओपन चैट रूम नहीं।",
+      "emptyTitle": "कोई ओपन प्रोफ़ाइल सूची नहीं।",
+      "emptyDesc": "नया प्रोफ़ाइल बनाने के लिए ऊपर दाईं ओर + टैप करें।"
+    },
+    "viewer": {
+      "action": {
+        "transferOwner": "व्यूअर हस्तांतरण मालिक",
+        "promoteManager": "व्यूअर प्रमोट मैनेजर",
+        "demoteManager": "व्यूअर डिमोट मैनेजर",
+        "kick": "प्रोफ़ाइल व्यूअर बाहर करें",
+        "block": "प्रोफ़ाइल व्यूअर ब्लॉक",
+        "unblock": "प्रोफ़ाइल व्यूअर ब्लॉक हटाएँ",
+        "release": "प्रोफ़ाइल व्यूअर",
+        "delegate": "प्रोफ़ाइल व्यूअर",
+        "appoint": "प्रोफ़ाइल व्यूअर",
+        "changePhoto": "व्यूअर फ़ोटो",
+        "showPhoto": "व्यूअर दिखाएँ फ़ोटो"
+      },
+      "confirm": {
+        "blockMessage": "व्यूअर पुष्टि ब्लॉक करें?",
+        "unblockMessage": "व्यूअर पुष्टि ब्लॉक हटाएँ करें?",
+        "transferOwnerMessage": "होस्ट अधिकार {{name}} को दें?",
+        "promoteManagerMessage": "{{name}} को मैनेजर अधिकार दें?",
+        "demoteManagerMessage": "{{name}} के मैनेजर अधिकार हटाएँ?",
+        "kickMessage": "{{name}} को बाहर करें? बाहर किए गए उपयोगकर्ता फिर प्रवेश नहीं कर सकते।"
+      },
+      "accessibility": {
+        "save": "सहेजें"
+      },
+      "placeholder": {
+        "status": "स्टेटस संदेश"
+      }
+    },
+    "edit": {
+      "loadFailed": "संपादित करें लोड विफल पूरा नहीं हुआ।",
+      "titleRequired": "प्रोफ़ाइल संपादित करें आवश्यक",
+      "saveFailed": "संपादित करें सहेजें विफल पूरा नहीं हुआ।",
+      "categoryFallback": "ओपन चैट",
+      "titlePlaceholder": "ओपन प्रोफ़ाइल संपादित करें",
+      "changePhoto": "संपादित करें फ़ोटो",
+      "descriptionPlaceholder": "ओपन प्रोफ़ाइल संपादित करें",
+      "tagsPlaceholder": "टैग दर्ज करें  जैसे: पड़ोस, कॉफ़ी, रनिंग",
+      "publicTitle": "प्रोफ़ाइल संपादित करें सार्वजनिक",
+      "publicDesc": "प्रोफ़ाइल संपादित करें सार्वजनिक",
+      "selectCover": "संपादित करें चुनें"
+    },
+    "gate": {
+      "loadFailed": "जानकारी लोड नहीं हुई।",
+      "joinFailed": "विफल पूरा नहीं हुआ।",
+      "enterChat": "चैट",
+      "startConsult": "शुरू",
+      "selectProfileEnter": "चुनें प्रोफ़ाइल",
+      "joinOpenChat": "ओपन चैट",
+      "openNow": "खोलें",
+      "closed": "बंद",
+      "participants": "{{count}} प्रतिभागी",
+      "participantsWithMax": "{{count}}/{{max}} प्रतिभागी",
+      "createdAt": "बनाया गया {{date}}",
+      "host": "होस्ट",
+      "introEmpty": "कोई प्रोफ़ाइल परिचय नहीं।"
+    }
+  },
+  "userFallback": "चैट उपयोगकर्ता",
+  "room": {
+    "deletedReadonly": "यह रूम हटाया गया है। केवल चैट इतिहास देखा जा सकता है।",
+    "leftReadonly": "रूम",
+    "kickedTitle": "चैट रूम",
+    "kickedMessage": "अब आप इस चैट रूम का उपयोग नहीं कर सकते।"
+  },
+  "toast": {
+    "selectCopySecureBlocked": "सुरक्षित संदेश चयन कर कॉपी नहीं किए जा सकते।",
+    "selectCopyUnsupported": "यह संदेश चयन कर कॉपी नहीं किया जा सकता।",
+    "shareToSelfSuccess": "मैं पूर्ण",
+    "shareSecureBlocked": "साझा सुरक्षित",
+    "shareUnsupported": "टोस्ट साझा",
+    "shareSelfRoomUnavailable": "मैं रूम अनुपलब्ध पूरा नहीं हुआ।",
+    "shareFailed": "टोस्ट साझा विफल पूरा नहीं हुआ।",
+    "noticeNoPermission": "आपके पास सूचना पोस्ट करने की अनुमति नहीं है।",
+    "copied": "कॉपी हुआ।"
+  },
+  "longMessage": {
+    "message": "संदेश",
+    "translation": "चैट अनुवाद",
+    "original": "चैट मूल"
+  },
+  "selectCopy": {
+    "titleFallback": "संदेश",
+    "translated": "चुनें कॉपी अनुवादित",
+    "original": "चुनें कॉपी मूल",
+    "hint": "चुनें कॉपी",
+    "copied": "चुनें कॉपी",
+    "copyAll": "कॉपी कॉपी सभी",
+    "empty": "चैट चुनें कॉपी"
+  },
+  "system": {
+    "notice": "चैट अपडेट",
+    "memberJoined": "{{name}} शामिल हुए.",
+    "memberLeft": "{{name}} ने चैट छोड़ी.",
+    "memberKicked": "{{name}} को हटाया गया.",
+    "managerPromoted": "{{name}} अब मैनेजर हैं.",
+    "managerDemoted": "{{name}} अब मैनेजर नहीं हैं.",
+    "ownerTransferred": "{{name}} अब होस्ट हैं.",
+    "roomDeleted": "यह रूम हटा दिया गया है."
+  },
+  "cancel": "रद्द करें"
+}

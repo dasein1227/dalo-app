@@ -1,0 +1,409 @@
+{
+  "create_title": "إنشاء بيكون",
+  "edit_title": "تعديل بيكون",
+  "detail_title": "معلومات بيكون",
+  "members_title": "إدارة بيكون",
+  "my_rooms_title": "بيكوناتي",
+  "join": "انضمام",
+  "enter": "دخول",
+  "owner_tools": "أدوات المضيف",
+  "visibility": "نطاق الظهور",
+  "status_message": "رسالة الحالة",
+  "public_profile": "إظهار الملف الشخصي",
+  "current_members": "الأعضاء الحاليون",
+  "age_range": "الفئة العمرية",
+  "memo": "ملاحظة",
+  "time_left": "الوقت المتبقي",
+  "common": {
+    "beacon": "بيكون",
+    "noName": "بلا اسم",
+    "anonymous": "مستخدم مجهول",
+    "loading": "جارٍ التحميل…",
+    "done": "تم",
+    "confirm": "تأكيد",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "submit": "إرسال",
+    "approve": "موافقة",
+    "reject": "رفض",
+    "block": "حظر",
+    "kick": "إخراج",
+    "none": "لا يوجد",
+    "unlimited": "بلا حد"
+  },
+  "error": {
+    "invalidId": "معرّف غير صالح.",
+    "invalidAccess": "وصول غير صالح.",
+    "loginRequired": "يلزم تسجيل الدخول.",
+    "locationPermission": "يلزم إذن الموقع.",
+    "locationUnavailable": "تعذر التحقق من موقعك الحالي.",
+    "locationLoadFail": "تعذر تحميل الموقع.",
+    "notFound": "تعذر العثور على بيكون.",
+    "detailNotFound": "تعذر العثور على معلومات بيكون.",
+    "detailLoadFail": "تعذر تحميل معلومات بيكون.",
+    "operationFail": "تعذر إكمال العملية."
+  },
+  "time": {
+    "am": "ص",
+    "pm": "م",
+    "monthDay": "{{month}}/{{day}}",
+    "minute": "{{count}} د",
+    "hour": "{{count}} س",
+    "hourMinute": "{{hour}} س {{minute}} د",
+    "remainEnded": "منتهٍ",
+    "remainMinute": "باقٍ {{count}} د",
+    "remainHour": "باقٍ {{count}} س",
+    "remainHourMinute": "باقٍ {{hour}} س {{minute}} د",
+    "justNow": "الآن",
+    "agoMinute": "قبل {{count}} د",
+    "agoHour": "قبل {{count}} س",
+    "agoDay": "قبل {{count}} يوم"
+  },
+  "unit": {
+    "people": "أشخاص",
+    "age": "سنة",
+    "count": "عناصر",
+    "times": "مرات",
+    "peopleCount": "{{count}} شخص",
+    "ageCount": "{{count}} سنة",
+    "retryLeft": "باقٍ {{count}} مرة"
+  },
+  "tabs": {
+    "dm": "خاص",
+    "group": "مجموعة",
+    "open": "مفتوح",
+    "beacon": "بيكون"
+  },
+  "visibilityLabel": {
+    "public": "عام للجميع",
+    "friends": "للأصدقاء",
+    "labels": "للمجموعات",
+    "custom": "مخصص",
+    "publicCompact": "عام",
+    "friendsCompact": "أصدقاء",
+    "labelsCompact": "مجموعات",
+    "customCompact": "مخصص",
+    "publicExcludeFriends": "استثناء المعارف"
+  },
+  "visibilityDesc": {
+    "public": "يظهر للجمهور العام. الدخول الافتراضي بموافقة.",
+    "friends": "يظهر للأصدقاء فقط. الدخول الافتراضي حر.",
+    "labels": "يظهر للمجموعات المحددة فقط. الدخول الافتراضي حر.",
+    "custom": "حدد الأصدقاء والمجموعات يدويًا. الدخول الافتراضي حر."
+  },
+  "gender": {
+    "any": "أي جنس",
+    "male": "ذكر",
+    "female": "أنثى"
+  },
+  "myRooms": {
+    "headerTitle": "المحادثات",
+    "status": {
+      "pending": "بانتظار الموافقة",
+      "joined": "{{visibility}} · مشارك",
+      "owner": "{{visibility}} · باقٍ {{minutes}} د",
+      "host": "المضيف",
+      "waiting": "انتظار",
+      "member": "مشارك"
+    },
+    "title": {
+      "mine": "بيكوناتي",
+      "fallback": "بيكون"
+    },
+    "empty": {
+      "title": "لا توجد محادثات.",
+      "beaconDesc": "تظهر بيكوناتك وما انضممت إليه."
+    },
+    "error": {
+      "loadFail": "تعذر تحميل القائمة."
+    },
+    "alert": {
+      "routeCreate": "تحقق من شاشة إنشاء بيكون.",
+      "routeChatCreate": "إنشاء محادثة جديدة قيد التحضير.",
+      "routeBeaconSearch": "تحقق من شاشة بحث بيكون.",
+      "routeSearch": "تحقق من شاشة البحث."
+    }
+  },
+  "form": {
+    "titlePlaceholder": "هدف بيكون",
+    "descPlaceholder": "أدخل وصفًا أو قواعد",
+    "durationMin": "30 د",
+    "durationMax": "4 س",
+    "minuteSuffix": "دقيقة",
+    "locationSelectTitle": "موقع للأصدقاء",
+    "locationSelectHelper": "ضمن 200م من موقعك الحالي",
+    "locationPickFailTitle": "تعذر اختيار الموقع",
+    "selectedAddress": "العنوان المحدد",
+    "locationEmpty": "لا يوجد موقع محدد. افتح الخريطة.",
+    "locationShortPlaceholder": "موقع تقريبي",
+    "locationDetailPlaceholder": "موقع تفصيلي",
+    "conditionsTitle": "شروط الانضمام",
+    "genderTitle": "الجنس",
+    "quotaTitle": "السعة",
+    "quotaDesc": "0 يعني بلا حد. اضغط الرقم للإدخال يدويًا.",
+    "ageLimitTitle": "حد العمر",
+    "ageLimitDesc": "الافتراضي ±10 سنوات من عمرك.",
+    "ageNoLimit": "بلا حد",
+    "ageMin": "الحد الأدنى للعمر",
+    "ageMax": "الحد الأقصى للعمر",
+    "maleQuota": "ذكر",
+    "femaleQuota": "أنثى",
+    "mixQuota": "أي جنس",
+    "selectGroups": "المجموعات المرئية",
+    "selectFriends": "الأصدقاء المرئيون",
+    "friendSearch": "بحث الأصدقاء",
+    "emptyGroups": "لا توجد مجموعات.",
+    "emptyFriends": "لا يوجد أصدقاء.",
+    "protectionOff": "بلا حماية",
+    "protectionOffAlt": "بلا حماية",
+    "createButton": "إنشاء بيكون",
+    "saveButton": "حفظ",
+    "durationTitle": "مدة البقاء",
+    "durationDesc": "ينتهي تلقائيًا بعد الوقت المحدد.",
+    "locationProtectionTitle": "حماية الموقع",
+    "locationProtectionDesc": "يعرض موقعًا عشوائيًا داخل النطاق المحدد.",
+    "refreshLocation": "إعادة التحقق من الموقع"
+  },
+  "create": {
+    "validation": {
+      "titleRequired": "أدخل اسم اللقاء.",
+      "titleMax": "اسم اللقاء حتى 80 حرفًا.",
+      "duration": "المدة من 10 إلى 240 دقيقة.",
+      "ageRange": "تحقق من نطاق العمر.",
+      "locationRequired": "تحقق من موقعك الحالي.",
+      "labelsRequired": "اختر مجموعة.",
+      "customRequired": "اختر صديقًا أو مجموعة."
+    },
+    "alert": {
+      "labelLoadFailTitle": "فشل تحميل المجموعات",
+      "labelLoadFail": "تعذر تحميل قائمة المجموعات.",
+      "friendLoadFailTitle": "فشل تحميل الأصدقاء",
+      "friendLoadFail": "تعذر تحميل قائمة الأصدقاء.",
+      "createFailTitle": "فشل إنشاء بيكون",
+      "createFail": "حدث خطأ."
+    }
+  },
+  "edit": {
+    "validation": {
+      "titleRequired": "أدخل عنوان الغرفة.",
+      "titleMax": "عنوان الغرفة حتى 80 حرفًا.",
+      "duration": "المدة من 10 إلى 240 دقيقة.",
+      "ageRange": "تحقق من نطاق العمر.",
+      "labelsRequired": "اختر مجموعة.",
+      "customRequired": "اختر صديقًا أو مجموعة."
+    },
+    "toast": {
+      "moved": "تم الانتقال إلى موقعك الحالي.",
+      "moveFail": "تعذر نقل الموقع.",
+      "saved": "تم الحفظ.",
+      "saveFail": "حدث خطأ."
+    }
+  },
+  "detail": {
+    "action": {
+      "ended": "انتهى التجنيد",
+      "enter_chat": "دخول المحادثة",
+      "cancel_request": "إلغاء الطلب",
+      "join_direct": "انضمام",
+      "request_retry": "إعادة الطلب",
+      "request_join": "طلب الانضمام",
+      "forbidden": "الدخول مقيّد",
+      "full": "اكتملت السعة",
+      "closed": "غير متاح"
+    },
+    "badge": {
+      "pending": "بانتظار الموافقة",
+      "rejected": "مرفوض",
+      "approval": "بموافقة",
+      "free": "دخول حر"
+    },
+    "empty": {
+      "deleted": "هذا البيكون غير موجود.",
+      "back": "للخلف"
+    },
+    "fallbackTitle": "بيكون بلا اسم",
+    "info": {
+      "status": "الحالة",
+      "capacity": "السعة",
+      "audience": "الجمهور",
+      "retry": "فرص إعادة الطلب"
+    },
+    "location": {
+      "title": "موقع اللقاء",
+      "visible": "يظهر الموقع التفصيلي قبل الانضمام.",
+      "hidden": "يُشارك العنوان الدقيق في المحادثة بعد الانضمام.",
+      "openMap": "عرض على الخريطة ›"
+    },
+    "host": {
+      "settings": "إعدادات بيكون",
+      "settingsDesc": "تغيير العنوان والوصف ونطاق الظهور",
+      "members": "إدارة المشاركين",
+      "membersDesc": "عرض الأعضاء وإخراجهم",
+      "close": "إنهاء بيكون",
+      "closeDesc": "يغلق التجنيد وغرفة المحادثة."
+    },
+    "requests": {
+      "title": "بانتظار الانضمام",
+      "empty": "لا توجد طلبات معلقة.",
+      "messageTitle": "رسالة طلب الانضمام",
+      "messageDesc": "اكتب رسالة للمضيف. اختياري.",
+      "placeholder": "مثال: أنا قريب.",
+      "send": "إرسال الطلب",
+      "sending": "جارٍ الإرسال…",
+      "code": "الرمز {{code}}",
+      "temperature": "الحرارة {{temp}}°",
+      "rejectionCount": "رفض سابق {{count}} مرة"
+    },
+    "alert": {
+      "editRoute": "تحقق من شاشة التعديل.",
+      "membersRoute": "تحقق من شاشة إدارة الأعضاء.",
+      "loginTitle": "يلزم تسجيل الدخول",
+      "loginDesc": "يلزم تسجيل الدخول للانضمام.",
+      "chatNotFound": "تعذر العثور على معلومات المحادثة.",
+      "cancelTitle": "إلغاء الطلب",
+      "cancelDesc": "هل تريد إلغاء طلب الانضمام؟",
+      "keep": "إبقاء",
+      "cancelFailTitle": "فشل الإلغاء",
+      "cancelFail": "تعذر إلغاء الطلب.",
+      "fullTitle": "اكتملت السعة",
+      "fullDesc": "اكتملت السعة.",
+      "forbiddenTitle": "الانضمام مقيّد",
+      "forbiddenDesc": "لا يمكنك الانضمام إلى هذا البيكون.",
+      "endedTitle": "انتهى التجنيد",
+      "endedDesc": "هذا البيكون منتهٍ.",
+      "unavailableTitle": "تنبيه",
+      "unavailableDesc": "لا يمكن الانضمام الآن.",
+      "requestSentTitle": "تم إرسال الطلب",
+      "requestSentDesc": "انتظر موافقة المضيف.",
+      "requestFailTitle": "فشل الإرسال",
+      "requestFail": "تعذر إرسال الطلب.",
+      "approveFailTitle": "فشل القبول",
+      "approveFail": "فشلت موافقة المشارك.",
+      "rejectFailTitle": "فشل الرفض",
+      "rejectFail": "فشل رفض طلب الانضمام.",
+      "closeTitle": "إنهاء بيكون",
+      "closeDesc": "هل تريد إنهاء التجنيد والمحادثة معًا؟",
+      "closeAction": "انتهاء",
+      "closeDoneTitle": "تم الإنهاء",
+      "closeDoneDesc": "تم إنهاء بيكون.",
+      "closeFailTitle": "فشل الإنهاء",
+      "closeFail": "تعذر إنهاء بيكون."
+    }
+  },
+  "members": {
+    "role": {
+      "host": "المضيف",
+      "mod": "مشرف",
+      "member": "مشارك"
+    },
+    "tab": {
+      "members": "مشارك",
+      "requests": "طلبات {{count}}"
+    },
+    "meta": {
+      "joined": "انضم {{time}}",
+      "request": "طلب {{time}} · رفض سابق {{count}} مرة"
+    },
+    "hero": {
+      "titleFallback": "بيكون",
+      "approval": "بموافقة",
+      "free": "دخول حر"
+    },
+    "empty": {
+      "members": "لا يوجد مشاركون بعد.",
+      "requests": "لا توجد طلبات معلقة."
+    },
+    "alert": {
+      "loadFailTitle": "فشل التحميل",
+      "loadFail": "تعذر تحميل المعلومات.",
+      "kickTitle": "إخراج مشارك",
+      "kickDesc": "هل تريد إخراج {{name}}؟",
+      "kickAction": "إخراج",
+      "alreadyHandled": "تمت معالجته بالفعل أو لا يمكن إخراجه.",
+      "kickFailTitle": "فشل",
+      "kickFail": "تعذر إخراج المشارك.",
+      "blockTitle": "حظر مشارك",
+      "blockDesc": "هل تريد حظر {{name}} واستبعاده؟\nلن ترى المستخدم المحظور مرة أخرى.",
+      "blockFail": "تعذر حظر المشارك.",
+      "approveTitle": "قبول الانضمام",
+      "approveDesc": "هل تريد قبول انضمام {{name}}؟",
+      "approveFailTitle": "فشل القبول",
+      "approveFail": "تعذر القبول.",
+      "rejectTitle": "رفض الانضمام",
+      "rejectDesc": "هل تريد رفض طلب انضمام {{name}}؟",
+      "rejectFailTitle": "فشل الرفض",
+      "rejectFail": "تعذر الرفض."
+    }
+  },
+  "main": {
+    "loadingMap": "جارٍ تحميل الخريطة…",
+    "listButton": "قائمة",
+    "emptyRadius": "لا توجد بيكونات للعرض.",
+    "card": {
+      "noTitle": "بلا عنوان",
+      "meta": "المسافة {{distance}}م · النطاق {{radius}}م · {{entry}}",
+      "endsAfterMinute": "ينتهي بعد {{count}} د",
+      "endingSoon": "ينتهي قريبًا",
+      "always": "دائم"
+    },
+    "toast": {
+      "movedHere": "تم تحديث موقعك الحالي."
+    },
+    "error": {
+      "loadFail": "تعذر تحميل البيكونات القريبة.",
+      "locationUnavailable": "تعذر التحقق من الموقع.",
+      "noActiveBeacon": "لا يوجد بيكون نشط.",
+      "moveFail": "تعذر تحديث الموقع."
+    },
+    "accessibility": {
+      "detail": "عرض تفاصيل بيكون",
+      "create": "إنشاء بيكون جديد"
+    }
+  },
+  "search": {
+    "title": "بحث",
+    "placeholder": "ابحث عن لقاء",
+    "distance": "المسافة",
+    "target": "الجمهور",
+    "age": "العمر",
+    "quick": {
+      "friendsOnly": "أصدقاء فقط",
+      "public": "الظهور",
+      "tenMin": "10 د",
+      "twenties": "العشرينات"
+    },
+    "visibility": {
+      "title": "نطاق الظهور",
+      "any": "الكل",
+      "public": "عام",
+      "publicFiltered": "عام · باستثناء الأصدقاء",
+      "friends": "للأصدقاء",
+      "labels": "مجموعة",
+      "custom": "محدد"
+    },
+    "gender": {
+      "title": "الجنس",
+      "any": "الكل",
+      "male": "ذكر",
+      "female": "أنثى",
+      "other": "أخرى"
+    },
+    "distancePreset": {
+      "fiveMin": "5 د",
+      "tenMin": "10 د",
+      "twentyMin": "20 د",
+      "near": "قريب"
+    },
+    "agePreset": {
+      "all": "الكل",
+      "twenties": "العشرينات",
+      "thirties": "الثلاثينات",
+      "forties": "الأربعينات",
+      "fiftyPlus": "50+"
+    },
+    "action": {
+      "reset": "إعادة ضبط",
+      "apply": "تطبيق"
+    }
+  }
+}

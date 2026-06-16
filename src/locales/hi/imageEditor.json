@@ -1,0 +1,14 @@
+{
+  "title": "छवि संपादन",
+  "ratio_original": "मूल",
+  "ratio_free": "स्वतंत्र",
+  "rotate": "घुमाएँ",
+  "ratio": "अनुपात",
+  "invert": "चौड़ाई/ऊँचाई",
+  "orientation": "चौड़ाई/ऊँचाई",
+  "reset": "रीसेट",
+  "error_load_title": "त्रुटि",
+  "error_load_msg": "छवि लोड नहीं हो सकी।",
+  "error_save_title": "सहेजना विफल",
+  "error_save_msg": "कृपया थोड़ी देर बाद फिर प्रयास करें।"
+}

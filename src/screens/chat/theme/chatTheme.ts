@@ -1,100 +1,116 @@
 // src/screens/chat/theme/chatTheme.ts
-import { Platform, type ViewStyle } from 'react-native';
+import { Platform, StyleSheet, type ViewStyle } from 'react-native';
 
 export type ChatRoomType =
-  | 'self' // 나에게 (Sage)
-  | 'dm' // 1:1 대화 (Blue)
-  | 'group' // 그룹 (Teal)
-  | 'business_dm' // DM / 상담 (Navy)
-  | 'open' // 오픈 (Terracotta)
-  | 'beacon'; // 비콘 (Violet)
+  | 'self'
+  | 'dm'
+  | 'group'
+  | 'business_dm'
+  | 'open'
+  | 'beacon'
+  | 'coonn_light'
+  | 'coonn_dark';
 
 export type BubbleShadowTheme = {
-  color: string; // shadowColor
-  offsetY: number; // Y
-  blur: number; // Blur(=shadowRadius)
-  opacity: number; // shadowOpacity
-  elevation: number; // Android elevation (근사)
+  color: string;
+  offsetY: number;
+  blur: number;
+  opacity: number;
+  elevation: number;
+};
+
+export type BubbleHairlineTheme = {
+  width: number;
+  myColor: string;
+  opponentColor: string;
 };
 
 export type ChatTheme = {
   // screen surfaces
-  background: string; // 채팅방 배경
-  headerBg: string; // 헤더 배경
-  headerText: string; // 헤더 텍스트/아이콘
-  inputBg: string; // 입력바 배경
-  inputFieldBg: string; // 입력필드 박스 배경
+  background: string;
+  headerBg: string;
+  headerText: string;
+  inputBg: string;
+  inputFieldBg: string;
 
   // bubbles
-  opponentBubble: string; // 상대 말풍선
-  opponentText: string; // 상대 글자색
+  opponentBubble: string;
+  opponentText: string;
 
-  myBubble: string; // 나의 말풍선
-  myText: string; // 나의 글자색
+  myBubble: string;
+  myText: string;
 
   // separators / misc
-  dateTimeLine: string; // 날짜/시간/상태
+  dateTimeLine: string;
 
-  // ✅ 테마별 “라인 하이라이트” (검색 하이라이트/구분선 강조 등)
+  // highlight
   highlightLine: string;
+  searchMatchBg: string;
 
   // reply preview & original text
-  replyPreviewBg: string; // 리플창 배경
-  replyAccentLine: string; // 리플 강조선
-  originalText: string; // 원문 텍스트
+  replyPreviewBg: string;
+  replyAccentLine: string;
+  originalText: string;
 
   // input / actions
-  accessoryIcon: string; // 부가 기능 아이콘
-  voiceButton: string; // 음성 버튼(기본)
-  sendButtonActive: string; // 전송 버튼(활성)
+  accessoryIcon: string;
+  voiceButton: string;
+  sendButtonActive: string;
 
-  // 헤더 번역 버튼 ON 컬러
+  // translate
   translateOn: string;
 
-  // ✅ 버블 그림자(방 타입별)
+  // bubble shadow / outline
   bubbleShadow: BubbleShadowTheme;
+  bubbleHairline: BubbleHairlineTheme;
+
+  pickerAccent: string;
+  selectionCheckBg: string;
+  actionPressedBg: string;
+
+  tintColor: string;
+  text: string;
 };
 
-/**
- * ✅ TranslatePopover(번역 모달) 표 기반 테마
- */
 export type TranslateModalTheme = {
-  modalBg: string; // 모달 배경
-  baseText: string; // 기본 글자
+  modalBg: string;
+  cardBorder: string;
+  overlay: string;
+  dragBar: string;
 
-  translateOffBg: string; // 번역 OFF (비활성) 배경
-  translateOnBg: string; // 번역 ON (활성) 배경
-  translateOffText: string; // 번역 OFF 텍스트
-  translateOnText: string; // 번역 ON 텍스트
+  baseText: string;
+  subText: string;
+  mutedText: string;
 
-  highlightBg: string; // 활성 하이라이트
-  activeText: string; // 활성 글자
-  radio: string; // 라디오 버튼
-  upgradeBtn: string; // 업그레이드 버튼
-  closeBtn: string; // 닫기 버튼(배경)
+  translateOffBg: string;
+  translateOffBorder: string;
+  translateOnBg: string;
+  translateOffText: string;
+  translateOnText: string;
+
+  highlightBg: string;
+  sectionBorder: string;
+  rowPressedBg: string;
+
+  activeText: string;
+  radio: string;
+  upgradeBtn: string;
+  closeBtn: string;
+  closeText: string;
 };
 
-/**
- * ✅ VoiceRecorderModal(음성 모달) 표 기반 테마
- */
 export type VoiceRecorderModalTheme = {
   modalBg: string;
   baseText: string;
-  waveHighlight: string; // Red 고정
+  waveHighlight: string;
   playbackText: string;
-  centerButton: string; // Red 고정
+  centerButton: string;
   cancelText: string;
   sendActive: string;
 };
 
-/**
- * ✅ 그림자 스타일을 RN(ViewStyle)로 변환
- * - iOS: shadow* 사용
- * - Android: elevation(+shadowColor 보조) 사용
- */
 export function getBubbleShadowStyle(theme: ChatTheme): ViewStyle {
   const s = theme.bubbleShadow;
-
   if (Platform.OS === 'ios') {
     return {
       shadowColor: s.color,
@@ -103,18 +119,30 @@ export function getBubbleShadowStyle(theme: ChatTheme): ViewStyle {
       shadowRadius: s.blur,
     };
   }
-
-  // Android: elevation 기반(색상은 OS/버전에 따라 무시될 수 있으나 넣어둠)
   return {
     elevation: s.elevation,
     shadowColor: s.color,
   };
 }
 
+
+export function getBubbleHairlineStyle(theme: ChatTheme, isMe: boolean): ViewStyle {
+  const h = theme.bubbleHairline;
+  const color = isMe ? h.myColor : h.opponentColor;
+  if (!color || color === 'transparent' || h.width <= 0) {
+    return {
+      borderWidth: 0,
+      borderColor: 'transparent',
+    };
+  }
+
+  return {
+    borderWidth: h.width,
+    borderColor: color,
+  };
+}
+
 export const CHAT_THEMES: Record<ChatRoomType, ChatTheme> = {
-  /**
-   * 1. 나에게 (Sage)
-   */
   self: {
     background: '#F7F8F3',
     headerBg: '#EEF1EA',
@@ -129,8 +157,8 @@ export const CHAT_THEMES: Record<ChatRoomType, ChatTheme> = {
     myText: '#3A4D39',
 
     dateTimeLine: '#99A899',
-
-    highlightLine: 'rgba(253,242,179,0.6)',
+    highlightLine: 'rgba(74,107,71,0.115)',
+    searchMatchBg: 'rgba(74,107,71,0.18)',
 
     replyPreviewBg: '#E4E9E0',
     replyAccentLine: '#4A6B47',
@@ -141,14 +169,17 @@ export const CHAT_THEMES: Record<ChatRoomType, ChatTheme> = {
     sendButtonActive: '#3A5A35',
 
     translateOn: '#4A6B47',
+    bubbleShadow: { color: '#1E2F1A', offsetY: 1, blur: 4, opacity: 0.045, elevation: 1 },
+    bubbleHairline: { width: StyleSheet.hairlineWidth, myColor: 'transparent', opponentColor: 'rgba(58,77,57,0.075)' },
 
-    // ✅ Sage shadow: #1E2F1A / Y:2 Blur:8 Opacity:0.06
-    bubbleShadow: { color: '#1E2F1A', offsetY: 2, blur: 8, opacity: 0.06, elevation: 3 },
+    pickerAccent: '#2F4F2F', 
+    selectionCheckBg: '#4A6B47',
+    actionPressedBg: 'rgba(74, 107, 71, 0.12)',
+
+    tintColor: '#4A6B47', 
+    text: '#3A4D39',
   },
 
-  /**
-   * 2. 1:1 대화 (Blue)
-   */
   dm: {
     background: '#F0F2F5',
     headerBg: '#FFFFFF',
@@ -163,8 +194,8 @@ export const CHAT_THEMES: Record<ChatRoomType, ChatTheme> = {
     myText: '#FFFFFF',
 
     dateTimeLine: '#A4AAB3',
-
-    highlightLine: 'rgba(255,236,179,0.5)',
+    highlightLine: 'rgba(93,120,255,0.12)',
+    searchMatchBg: 'rgba(93,120,255,0.20)',
 
     replyPreviewBg: '#E8EAED',
     replyAccentLine: '#5D78FF',
@@ -175,14 +206,17 @@ export const CHAT_THEMES: Record<ChatRoomType, ChatTheme> = {
     sendButtonActive: '#5D78FF',
 
     translateOn: '#0055FF',
+    bubbleShadow: { color: '#0A1931', offsetY: 1, blur: 4, opacity: 0.045, elevation: 1 },
+    bubbleHairline: { width: StyleSheet.hairlineWidth, myColor: 'transparent', opponentColor: 'rgba(0,0,0,0.065)' },
 
-    // ✅ Blue shadow: #0A1931 / Y:3 Blur:10 Opacity:0.08
-    bubbleShadow: { color: '#0A1931', offsetY: 3, blur: 10, opacity: 0.03, elevation: 4 },
+    pickerAccent: '#0055FF', 
+    selectionCheckBg: '#5D78FF',
+    actionPressedBg: 'rgba(93, 120, 255, 0.10)',
+
+    tintColor: '#5D78FF',
+    text: '#1A1A1A',
   },
 
-  /**
-   * 3. 그룹 (Teal)
-   */
   group: {
     background: '#F1F2F6',
     headerBg: '#EBEDF0',
@@ -197,8 +231,8 @@ export const CHAT_THEMES: Record<ChatRoomType, ChatTheme> = {
     myText: '#FFFFFF',
 
     dateTimeLine: '#A8ADB3',
-
-    highlightLine: 'rgba(255,224,178,0.5)',
+    highlightLine: 'rgba(90,143,132,0.12)',
+    searchMatchBg: 'rgba(90,143,132,0.19)',
 
     replyPreviewBg: '#E1E4E8',
     replyAccentLine: '#5A8F84',
@@ -209,14 +243,17 @@ export const CHAT_THEMES: Record<ChatRoomType, ChatTheme> = {
     sendButtonActive: '#5A8F84',
 
     translateOn: '#2F3542',
+    bubbleShadow: { color: '#112D2A', offsetY: 1, blur: 4, opacity: 0.05, elevation: 1 },
+    bubbleHairline: { width: StyleSheet.hairlineWidth, myColor: 'transparent', opponentColor: 'rgba(47,53,66,0.07)' },
 
-    // ✅ Group shadow: #112D2A / Y:2 Blur:8 Opacity:0.07
-    bubbleShadow: { color: '#112D2A', offsetY: 2, blur: 8, opacity: 0.07, elevation: 3 },
+    pickerAccent: '#00695C', 
+    selectionCheckBg: '#5A8F84',
+    actionPressedBg: 'rgba(90, 143, 132, 0.12)',
+
+    tintColor: '#5A8F84',
+    text: '#2F3542',
   },
 
-  /**
-   * 4. DM / 상담 (Navy)
-   */
   business_dm: {
     background: '#FFFFFF',
     headerBg: '#F8F9FA',
@@ -231,8 +268,8 @@ export const CHAT_THEMES: Record<ChatRoomType, ChatTheme> = {
     myText: '#FFFFFF',
 
     dateTimeLine: '#C0C8D0',
-
-    highlightLine: 'rgba(255,241,118,0.4)',
+    highlightLine: 'rgba(44,62,80,0.09)',
+    searchMatchBg: 'rgba(44,62,80,0.16)',
 
     replyPreviewBg: '#F1F3F4',
     replyAccentLine: '#2C3E50',
@@ -243,14 +280,17 @@ export const CHAT_THEMES: Record<ChatRoomType, ChatTheme> = {
     sendButtonActive: '#2C3E50',
 
     translateOn: '#3498DB',
+    bubbleShadow: { color: '#000000', offsetY: 1, blur: 4, opacity: 0.05, elevation: 1 },
+    bubbleHairline: { width: StyleSheet.hairlineWidth, myColor: 'transparent', opponentColor: 'rgba(30,39,46,0.065)' },
 
-    // ✅ DM(Navy) shadow: #000000 / Y:4 Blur:12 Opacity:0.2
-    bubbleShadow: { color: '#000000', offsetY: 4, blur: 12, opacity: 0.2, elevation: 6 },
+    pickerAccent: '#1A2530', 
+    selectionCheckBg: '#2C3E50',
+    actionPressedBg: 'rgba(44, 62, 80, 0.08)',
+
+    tintColor: '#2C3E50',
+    text: '#1E272E',
   },
 
-  /**
-   * 5. 오픈 (Terracotta)
-   */
   open: {
     background: '#FAF7F2',
     headerBg: '#F5F1E8',
@@ -265,8 +305,8 @@ export const CHAT_THEMES: Record<ChatRoomType, ChatTheme> = {
     myText: '#FFFFFF',
 
     dateTimeLine: '#B8AEA4',
-
-    highlightLine: 'rgba(255,249,196,0.6)',
+    highlightLine: 'rgba(211,142,95,0.13)',
+    searchMatchBg: 'rgba(211,142,95,0.22)',
 
     replyPreviewBg: '#EFE9DC',
     replyAccentLine: '#D38E5F',
@@ -277,14 +317,17 @@ export const CHAT_THEMES: Record<ChatRoomType, ChatTheme> = {
     sendButtonActive: '#D38E5F',
 
     translateOn: '#B35D2D',
+    bubbleShadow: { color: '#3E1A1A', offsetY: 1, blur: 4, opacity: 0.05, elevation: 1 },
+    bubbleHairline: { width: StyleSheet.hairlineWidth, myColor: 'transparent', opponentColor: 'rgba(74,63,53,0.075)' },
 
-    // ✅ Open shadow: #3E1A1A / Y:2 Blur:9 Opacity:0.1
-    bubbleShadow: { color: '#3E1A1A', offsetY: 2, blur: 9, opacity: 0.1, elevation: 4 },
+    pickerAccent: '#A04000', 
+    selectionCheckBg: '#D38E5F',
+    actionPressedBg: 'rgba(211, 142, 95, 0.12)',
+
+    tintColor: '#D38E5F',
+    text: '#4A3F35',
   },
 
-  /**
-   * 6. 비콘 (Violet)
-   */
   beacon: {
     background: '#EAEAF2',
     headerBg: '#E0E0E8',
@@ -299,8 +342,8 @@ export const CHAT_THEMES: Record<ChatRoomType, ChatTheme> = {
     myText: '#FFFFFF',
 
     dateTimeLine: '#9E9EB3',
-
-    highlightLine: 'rgba(225,255,177,0.5)',
+    highlightLine: 'rgba(108,92,231,0.11)',
+    searchMatchBg: 'rgba(108,92,231,0.19)',
 
     replyPreviewBg: '#D6D6E0',
     replyAccentLine: '#6C5CE7',
@@ -311,111 +354,271 @@ export const CHAT_THEMES: Record<ChatRoomType, ChatTheme> = {
     sendButtonActive: '#6C5CE7',
 
     translateOn: '#F72585',
+    bubbleShadow: { color: '#241A3E', offsetY: 1, blur: 4, opacity: 0.055, elevation: 1 },
+    bubbleHairline: { width: StyleSheet.hairlineWidth, myColor: 'transparent', opponentColor: 'rgba(45,45,45,0.07)' },
 
-    // ✅ Beacon shadow: #241A3E / Y:4 Blur:14 Opacity:0.12
-    bubbleShadow: { color: '#241A3E', offsetY: 4, blur: 14, opacity: 0.12, elevation: 7 },
+    pickerAccent: '#5E35B1', 
+    selectionCheckBg: '#6C5CE7',
+    actionPressedBg: 'rgba(108, 92, 231, 0.10)',
+
+    tintColor: '#6C5CE7',
+    text: '#2D2D2D',
+  },
+
+  coonn_light: {
+    background: '#F8F9FA',
+    headerBg: '#FFFFFF',
+    headerText: '#121212',
+    inputBg: '#FFFFFF',
+    inputFieldBg: '#F1F3F5',
+
+    opponentBubble: '#FFFFFF',
+    opponentText: '#1A1A1A',
+
+    myBubble: '#0A0A0A',
+    myText: '#FFFFFF',
+
+    dateTimeLine: '#ADB5BD',
+    highlightLine: 'rgba(10,10,10,0.07)',
+    searchMatchBg: 'rgba(10,10,10,0.11)',
+
+    replyPreviewBg: '#F1F3F5',
+    replyAccentLine: '#0A0A0A',
+    originalText: '#1A1A1A',
+
+    accessoryIcon: '#868E96',
+    voiceButton: '#868E96',
+    sendButtonActive: '#0A0A0A',
+
+    translateOn: '#495057',
+    bubbleShadow: { color: '#000000', offsetY: 1, blur: 4, opacity: 0.045, elevation: 1 },
+    bubbleHairline: { width: StyleSheet.hairlineWidth, myColor: 'transparent', opponentColor: 'rgba(0,0,0,0.07)' },
+
+    pickerAccent: '#121212', 
+    selectionCheckBg: '#0A0A0A',
+    actionPressedBg: 'rgba(10, 10, 10, 0.05)',
+
+    tintColor: '#0A0A0A',
+    text: '#121212',
+  },
+
+  coonn_dark: {
+    background: '#000000',
+    headerBg: '#0A0A0A',
+    headerText: '#F8F9FA',
+    inputBg: '#0A0A0A',
+    inputFieldBg: '#1A1A1A',
+
+    opponentBubble: '#1C1C1E',
+    opponentText: '#EBEBF5',
+
+    myBubble: '#F2F2F7',
+    myText: '#000000',
+
+    dateTimeLine: '#636366',
+    highlightLine: 'rgba(242,242,247,0.12)',
+    searchMatchBg: 'rgba(242,242,247,0.18)',
+
+    replyPreviewBg: '#2C2C2E',
+    replyAccentLine: '#F2F2F7',
+    originalText: '#EBEBF5',
+
+    accessoryIcon: '#8E8E93',
+    voiceButton: '#8E8E93',
+    sendButtonActive: '#F2F2F7',
+
+    translateOn: '#AEAEB2',
+    bubbleShadow: { color: '#000000', offsetY: 1, blur: 5, opacity: 0.16, elevation: 0 },
+    bubbleHairline: { width: StyleSheet.hairlineWidth, myColor: 'transparent', opponentColor: 'rgba(255,255,255,0.12)' },
+
+    pickerAccent: '#FFFFFF', 
+    selectionCheckBg: '#F2F2F7',
+    actionPressedBg: 'rgba(242, 242, 247, 0.1)',
+
+    tintColor: '#F2F2F7',
+    text: '#F8F9FA',
   },
 };
 
-/**
- * ✅ 번역 모달 테마 (기존 그대로)
- */
 export const TRANSLATE_MODAL_THEMES: Record<ChatRoomType, TranslateModalTheme> = {
   self: {
     modalBg: '#F7F8F3',
-    baseText: '#3A4D39',
-
-    translateOffBg: '#B0B3B8',
+    cardBorder: 'rgba(58,77,57,0.12)',
+    overlay: 'rgba(15,23,42,0.48)',
+    dragBar: '#AAB6A5',
+    baseText: '#31422F',
+    subText: '#4F614D',
+    mutedText: '#6A7666',
+    translateOffBg: '#D8DED2',
+    translateOffBorder: '#AAB6A5',
     translateOnBg: '#4A6B47',
-    translateOffText: '#111827',
+    translateOffText: '#243224',
     translateOnText: '#FFFFFF',
-
     highlightBg: '#EEF1EA',
-    activeText: '#3A5A35',
+    sectionBorder: 'rgba(74,107,71,0.14)',
+    rowPressedBg: 'rgba(74,107,71,0.08)',
+    activeText: '#2E4A2C',
     radio: '#4A6B47',
-    upgradeBtn: '#FF8C00',
+    upgradeBtn: '#C96A00',
     closeBtn: '#1B3318',
+    closeText: '#FFFFFF',
   },
   dm: {
     modalBg: '#FFFFFF',
-    baseText: '#1A1A1A',
-
-    translateOffBg: '#B0B3B8',
+    cardBorder: 'rgba(17,24,39,0.08)',
+    overlay: 'rgba(15,23,42,0.48)',
+    dragBar: '#C5CFEC',
+    baseText: '#111827',
+    subText: '#475467',
+    mutedText: '#667085',
+    translateOffBg: '#E5EAF5',
+    translateOffBorder: '#C7D2FE',
     translateOnBg: '#5D78FF',
-    translateOffText: '#111827',
+    translateOffText: '#243147',
     translateOnText: '#FFFFFF',
-
-    highlightBg: '#E8EFFF',
-    activeText: '#0055FF',
+    highlightBg: '#EEF3FF',
+    sectionBorder: 'rgba(93,120,255,0.14)',
+    rowPressedBg: 'rgba(93,120,255,0.08)',
+    activeText: '#244BDB',
     radio: '#5D78FF',
-    upgradeBtn: '#FF8C00',
-    closeBtn: '#1A1A1A',
+    upgradeBtn: '#C96A00',
+    closeBtn: '#111827',
+    closeText: '#FFFFFF',
   },
   group: {
     modalBg: '#F1F2F6',
+    cardBorder: 'rgba(47,53,66,0.09)',
+    overlay: 'rgba(15,23,42,0.48)',
+    dragBar: '#B9C7C2',
     baseText: '#2F3542',
-
-    translateOffBg: '#A0A3A8',
+    subText: '#4E5968',
+    mutedText: '#697586',
+    translateOffBg: '#DCE5E2',
+    translateOffBorder: '#BCD0CB',
     translateOnBg: '#5A8F84',
-    translateOffText: '#111827',
+    translateOffText: '#20332F',
     translateOnText: '#FFFFFF',
-
-    highlightBg: '#E1EAE8',
+    highlightBg: '#E6EFED',
+    sectionBorder: 'rgba(90,143,132,0.14)',
+    rowPressedBg: 'rgba(90,143,132,0.08)',
     activeText: '#3D7A6E',
     radio: '#5A8F84',
-    upgradeBtn: '#FF8C00',
+    upgradeBtn: '#C96A00',
     closeBtn: '#1F4F46',
+    closeText: '#FFFFFF',
   },
   business_dm: {
     modalBg: '#FFFFFF',
-    baseText: '#1E272E',
-
-    translateOffBg: '#CFD4DA',
+    cardBorder: 'rgba(30,39,46,0.08)',
+    overlay: 'rgba(15,23,42,0.52)',
+    dragBar: '#CBD5DF',
+    baseText: '#18222B',
+    subText: '#475467',
+    mutedText: '#667085',
+    translateOffBg: '#E8EDF2',
+    translateOffBorder: '#CCD6E0',
     translateOnBg: '#2C3E50',
-    translateOffText: '#111827',
+    translateOffText: '#22313F',
     translateOnText: '#FFFFFF',
-
-    highlightBg: '#F1F2F6',
-    activeText: '#2C3E50',
+    highlightBg: '#F3F6F8',
+    sectionBorder: 'rgba(44,62,80,0.12)',
+    rowPressedBg: 'rgba(44,62,80,0.07)',
+    activeText: '#213548',
     radio: '#2C3E50',
-    upgradeBtn: '#FF8C00',
+    upgradeBtn: '#C96A00',
     closeBtn: '#0E1419',
+    closeText: '#FFFFFF',
   },
   open: {
     modalBg: '#FAF7F2',
-    baseText: '#4A3F35',
-
-    translateOffBg: '#CBB7A8',
+    cardBorder: 'rgba(74,63,53,0.10)',
+    overlay: 'rgba(15,23,42,0.48)',
+    dragBar: '#D9C6B4',
+    baseText: '#44372D',
+    subText: '#6B5A4C',
+    mutedText: '#87786B',
+    translateOffBg: '#F0E3D8',
+    translateOffBorder: '#DEC6B3',
     translateOnBg: '#D38E5F',
-    translateOffText: '#111827',
+    translateOffText: '#5C3C22',
     translateOnText: '#FFFFFF',
-
     highlightBg: '#F9F1EB',
-    activeText: '#C36A2D',
+    sectionBorder: 'rgba(211,142,95,0.14)',
+    rowPressedBg: 'rgba(211,142,95,0.08)',
+    activeText: '#B9642C',
     radio: '#D38E5F',
-    upgradeBtn: '#FF8C00',
+    upgradeBtn: '#C96A00',
     closeBtn: '#8F4A1F',
+    closeText: '#FFFFFF',
   },
   beacon: {
     modalBg: '#EAEAF2',
-    baseText: '#2D2D2D',
-
-    translateOffBg: '#A8A8BC',
+    cardBorder: 'rgba(45,45,45,0.08)',
+    overlay: 'rgba(15,23,42,0.52)',
+    dragBar: '#C8C5E9',
+    baseText: '#25253A',
+    subText: '#55556F',
+    mutedText: '#6D6D88',
+    translateOffBg: '#E1DFF8',
+    translateOffBorder: '#CAC4F4',
     translateOnBg: '#6C5CE7',
-    translateOffText: '#111827',
+    translateOffText: '#312E81',
     translateOnText: '#FFFFFF',
-
     highlightBg: '#F0EFFF',
+    sectionBorder: 'rgba(108,92,231,0.14)',
+    rowPressedBg: 'rgba(108,92,231,0.08)',
     activeText: '#5241D1',
     radio: '#6C5CE7',
-    upgradeBtn: '#FF8C00',
+    upgradeBtn: '#C96A00',
     closeBtn: '#3B2BB3',
+    closeText: '#FFFFFF',
+  },
+  coonn_light: {
+    modalBg: '#FFFFFF',
+    cardBorder: 'rgba(0,0,0,0.08)',
+    overlay: 'rgba(0,0,0,0.6)',
+    dragBar: '#E9ECEF',
+    baseText: '#121212',
+    subText: '#495057',
+    mutedText: '#868E96',
+    translateOffBg: '#F8F9FA',
+    translateOffBorder: '#DEE2E6',
+    translateOnBg: '#0A0A0A',
+    translateOffText: '#212529',
+    translateOnText: '#FFFFFF',
+    highlightBg: '#F1F3F5',
+    sectionBorder: 'rgba(0,0,0,0.06)',
+    rowPressedBg: 'rgba(0,0,0,0.03)',
+    activeText: '#0A0A0A',
+    radio: '#0A0A0A',
+    upgradeBtn: '#C96A00',
+    closeBtn: '#121212',
+    closeText: '#FFFFFF',
+  },
+  coonn_dark: {
+    modalBg: '#121212',
+    cardBorder: 'rgba(255,255,255,0.1)',
+    overlay: 'rgba(0,0,0,0.8)',
+    dragBar: '#3A3A3C',
+    baseText: '#F8F9FA',
+    subText: '#AEAEB2',
+    mutedText: '#636366',
+    translateOffBg: '#1C1C1E',
+    translateOffBorder: '#3A3A3C',
+    translateOnBg: '#F2F2F7',
+    translateOffText: '#EBEBF5',
+    translateOnText: '#000000',
+    highlightBg: '#1C1C1E',
+    sectionBorder: 'rgba(255,255,255,0.08)',
+    rowPressedBg: 'rgba(255,255,255,0.05)',
+    activeText: '#FFFFFF',
+    radio: '#F2F2F7',
+    upgradeBtn: '#E67E22',
+    closeBtn: '#F2F2F7',
+    closeText: '#000000',
   },
 };
 
-/**
- * ✅ 음성 모달 테마 (기존 그대로)
- */
 export const VOICE_RECORDER_MODAL_THEMES: Record<ChatRoomType, VoiceRecorderModalTheme> = {
   self: {
     modalBg: '#FFFFFF',
@@ -471,11 +674,26 @@ export const VOICE_RECORDER_MODAL_THEMES: Record<ChatRoomType, VoiceRecorderModa
     cancelText: '#66667A',
     sendActive: '#5241D1',
   },
+  coonn_light: {
+    modalBg: '#FFFFFF',
+    baseText: '#121212',
+    waveHighlight: '#FF3B30',
+    playbackText: '#0A0A0A',
+    centerButton: '#0A0A0A',
+    cancelText: '#868E96',
+    sendActive: '#000000',
+  },
+  coonn_dark: {
+    modalBg: '#121212',
+    baseText: '#F8F9FA',
+    waveHighlight: '#FF453A',
+    playbackText: '#AEAEB2',
+    centerButton: '#2C2C2E',
+    cancelText: '#8E8E93',
+    sendActive: '#3A3A3C',
+  },
 };
 
-/**
- * room 객체의 실제 타입값을 ChatRoomType으로 해석
- */
 export function resolveRoomType(room: any): ChatRoomType {
   const t = (room?.type ?? room?.room_type ?? room?.kind ?? room?.category ?? '').toString();
 
@@ -485,13 +703,12 @@ export function resolveRoomType(room: any): ChatRoomType {
   if (t === 'business' || t === 'business_dm' || t === 'consult' || t === 'counsel') return 'business_dm';
   if (t === 'open' || t === 'public') return 'open';
   if (t === 'beacon' || t === 'nearby') return 'beacon';
+  if (t === 'coonn_light') return 'coonn_light';
+  if (t === 'coonn_dark') return 'coonn_dark';
 
   return 'dm';
 }
 
-/**
- * ✅ 핵심: string(roomType)도 무조건 정규화해서 ChatRoomType으로 변환
- */
 function normalizeRoomType(roomOrType: any): ChatRoomType {
   if (typeof roomOrType === 'string') {
     if (roomOrType in CHAT_THEMES) return roomOrType as ChatRoomType;
@@ -515,6 +732,7 @@ export function getVoiceRecorderModalTheme(roomOrType: any): VoiceRecorderModalT
   return VOICE_RECORDER_MODAL_THEMES[rt] ?? VOICE_RECORDER_MODAL_THEMES.dm;
 }
 
+// 텍스트 대비 계산용 유틸 (검정/흰색 자동 리턴)
 export function getReadableOnColor(bgHex: string): '#FFFFFF' | '#0F172A' {
   const h = bgHex.replace('#', '');
   if (h.length !== 6) return '#FFFFFF';

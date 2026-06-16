@@ -1,0 +1,16 @@
+{
+  "common": "خطأ",
+  "auth": {
+    "loginRequired": "تسجيل الدخول مطلوب."
+  },
+  "unknown": "حدث خطأ.",
+  "network": "تحقق من اتصال الشبكة.",
+  "invalid_credentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+  "oauth_cancelled": "تم إلغاء تسجيل الدخول.",
+  "provider_config": "تحقق من إعدادات مزوّد المصادقة.",
+  "redirect_config": "تحقق من إعدادات Redirect URL.",
+  "session_check_failed": "تعذّر التحقق من الجلسة.",
+  "sms_required": "أدخل رمز التحقق.",
+  "phone_format": "أدخل رقم الهاتف بالصيغة الدولية (+8210…).",
+  "email_format": "صيغة البريد الإلكتروني غير صحيحة."
+}

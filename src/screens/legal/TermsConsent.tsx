@@ -1,656 +1,931 @@
 // src/screens/legal/TermsConsent.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  View,
-  Text,
-  Pressable,
-  Alert,
-  ScrollView,
-  StyleSheet,
+  ActivityIndicator,
   Platform,
+  Pressable,
+  ScrollView,
+  StatusBar as RNStatusBar,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '@/navigation/types';
-import { supabase } from '@/lib/supabase';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { LinearGradient } from 'expo-linear-gradient';
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Check, ChevronLeft, ChevronRight } from 'lucide-react-native';
 
-type Nav = NativeStackNavigationProp<RootStackParamList>;
+import SafeScreen from '@/components/layout/SafeScreen';
+import { GlobalHeader, HeaderIconButton } from '@/components/GlobalHeader';
+import CoonnAlert, { type CoonnAlertVariant } from '@/components/CoonnAlert';
+import { useAppTheme } from '@/theme/useAppTheme';
+import { resetSupabaseAuthStorage, supabase } from '@/lib/supabase';
+import { createTermsConsentTheme } from './TermsConsent.theme';
 
-// ✅ i18n 언어(ko / ko-KR / en-US / zh-Hans 등) → 앱 2자리 코드(KO/EN/JA/...)
-function i18nToLangCode(i18nLang?: string | null) {
-  const raw = String(i18nLang ?? '').trim();
-  const base = raw.split('-')[0]?.toLowerCase().trim() ?? '';
+type PolicyType = 'terms' | 'privacy' | 'marketing';
 
-  const map: Record<string, string> = {
-    ko: 'KO',
-    en: 'EN',
-    es: 'ES',
-    fr: 'FR',
-    de: 'DE',
-    it: 'IT',
-    pt: 'PT',
-    nl: 'NL',
-    pl: 'PL',
-    ru: 'RU',
-    ja: 'JA',
-    zh: 'ZH',
-    tr: 'TR',
-    sv: 'SV',
-    id: 'ID',
-    th: 'TH',
-    uk: 'UK',
-    ro: 'RO',
-    cs: 'CS',
-    da: 'DA',
-    el: 'EL',
-    fi: 'FI',
-    hu: 'HU',
-    sk: 'SK',
-    sl: 'SL',
-    bg: 'BG',
-    et: 'ET',
-    lt: 'LT',
-    lv: 'LV',
-    ar: 'AR',
-  };
+type PolicyDocument = {
+  id: string;
+  type: PolicyType;
+  locale: string;
+  title: string;
+  version: string;
+  summary: string | null;
+  effective_date: string;
+};
 
-  return map[base] ?? 'KO';
+type PolicyMap = Record<PolicyType, PolicyDocument | null>;
+
+type AlertState = {
+  visible: boolean;
+  title: string;
+  message?: string;
+  variant: CoonnAlertVariant;
+  singleButton: boolean;
+  confirmText: string;
+  cancelText: string;
+  onConfirm?: () => void | Promise<void>;
+};
+
+const EMPTY_ALERT: AlertState = {
+  visible: false,
+  title: '',
+  message: undefined,
+  variant: 'default',
+  singleButton: true,
+  confirmText: '확인',
+  cancelText: '취소',
+  onConfirm: undefined,
+};
+
+const POLICY_TYPES: PolicyType[] = ['terms', 'privacy', 'marketing'];
+
+const EMPTY_POLICIES: PolicyMap = {
+  terms: null,
+  privacy: null,
+  marketing: null,
+};
+
+function normalizePolicyLocale(locale?: string | null) {
+  const raw = String(locale || 'ko').trim().toLowerCase().replace('_', '-');
+  if (raw.startsWith('ko')) return 'ko';
+  if (raw.startsWith('en')) return 'en';
+  if (raw.startsWith('ja')) return 'ja';
+  if (raw.startsWith('zh')) return 'zh';
+  if (raw.startsWith('es')) return 'es';
+  if (raw.startsWith('pt')) return 'pt';
+  if (raw.startsWith('fr')) return 'fr';
+  if (raw.startsWith('de')) return 'de';
+  if (raw.startsWith('id')) return 'id';
+  if (raw.startsWith('hi')) return 'hi';
+  if (raw.startsWith('ru')) return 'ru';
+  if (raw.startsWith('ar')) return 'ar';
+  if (raw.startsWith('vi')) return 'vi';
+  if (raw.startsWith('tr')) return 'tr';
+  if (raw.startsWith('th')) return 'th';
+  if (raw.startsWith('it')) return 'it';
+  return raw.split('-')[0] || 'ko';
+}
+
+function i18nToProfileLang(i18nLang?: string | null) {
+  const base = normalizePolicyLocale(i18nLang);
+  if (base === 'ko') return 'KO';
+  if (base === 'en') return 'EN';
+  if (base === 'ja') return 'JA';
+  if (base === 'zh') return 'ZH';
+  if (base === 'es') return 'ES';
+  if (base === 'pt') return 'PT';
+  if (base === 'fr') return 'FR';
+  if (base === 'de') return 'DE';
+  if (base === 'id') return 'ID';
+  if (base === 'hi') return 'HI';
+  if (base === 'ru') return 'RU';
+  if (base === 'ar') return 'AR';
+  if (base === 'vi') return 'VI';
+  if (base === 'tr') return 'TR';
+  if (base === 'th') return 'TH';
+  if (base === 'it') return 'IT';
+  return 'KO';
+}
+
+function pickPolicyForType(
+  rows: PolicyDocument[],
+  type: PolicyType,
+  appLocale: string,
+): PolicyDocument | null {
+  const candidates = rows.filter((row) => row.type === type);
+  if (candidates.length === 0) return null;
+
+  return (
+    candidates.find((row) => normalizePolicyLocale(row.locale) === appLocale) ||
+    candidates.find((row) => normalizePolicyLocale(row.locale) === 'en') ||
+    candidates.find((row) => normalizePolicyLocale(row.locale) === 'ko') ||
+    candidates[0] ||
+    null
+  );
+}
+
+function formatDate(dateString?: string | null, locale = 'ko') {
+  if (!dateString) return '';
+
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return dateString;
+
+  if (locale !== 'ko') {
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+    return `${date.getFullYear()}-${month}-${day}`;
+  }
+
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+}
+
+function getLatestEffectiveDate(policies: PolicyMap) {
+  const dates = POLICY_TYPES
+    .map((type) => policies[type]?.effective_date)
+    .filter(Boolean)
+    .map((value) => new Date(String(value)).getTime())
+    .filter((value) => Number.isFinite(value));
+
+  if (dates.length === 0) return null;
+  return new Date(Math.max(...dates)).toISOString();
 }
 
 export default function TermsConsent() {
-  const navigation = useNavigation<Nav>();
-  const { t, i18n } = useTranslation();
+  const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
+  const { t, i18n } = useTranslation(['legal', 'common']);
 
-  // 개별 동의 상태
-  const [agreeAll, setAgreeAll] = useState(false);
+  const appTheme = useAppTheme();
+  const colors = useMemo(() => createTermsConsentTheme(appTheme), [appTheme]);
+  const alertTheme = appTheme.isDark ? 'coonn_dark' : 'coonn_light';
+
+  const appLocale = useMemo(
+    () => normalizePolicyLocale((i18n as any)?.resolvedLanguage || (i18n as any)?.language || 'ko'),
+    [i18n],
+  );
+
+  const [loading, setLoading] = useState(true);
+  const [policies, setPolicies] = useState<PolicyMap>(EMPTY_POLICIES);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
-  const [agreeMarketing, setAgreeMarketing] = useState(false); // 선택
-
+  const [agreeMarketing, setAgreeMarketing] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [alertState, setAlertState] = useState<AlertState>(EMPTY_ALERT);
 
-  // 전체 동의 ↔ 개별 항목 동기화
-  useEffect(() => {
-    const allOn = agreeTerms && agreePrivacy && agreeMarketing;
-    if (agreeAll !== allOn) {
-      setAgreeAll(allOn);
+  const requiredReady = Boolean(policies.terms?.id && policies.privacy?.id);
+  const agreeAll = agreeTerms && agreePrivacy && agreeMarketing;
+  const canSubmit = agreeTerms && agreePrivacy && requiredReady && !busy;
+  const latestEffectiveAt = getLatestEffectiveDate(policies);
+
+  const closeAlert = useCallback(() => {
+    setAlertState((prev) => ({ ...prev, visible: false, onConfirm: undefined }));
+  }, []);
+
+  const showAlert = useCallback((title: string, message?: string, variant: CoonnAlertVariant = 'default') => {
+    setAlertState({
+      visible: true,
+      title,
+      message,
+      variant,
+      singleButton: true,
+      confirmText: t('common:ok', { defaultValue: '확인' }),
+      cancelText: t('common:cancel', { defaultValue: '취소' }),
+      onConfirm: closeAlert,
+    });
+  }, [closeAlert, t]);
+
+  const showConfirmAlert = useCallback((params: {
+    title: string;
+    message?: string;
+    confirmText?: string;
+    cancelText?: string;
+    variant?: CoonnAlertVariant;
+    onConfirm: () => void | Promise<void>;
+  }) => {
+    setAlertState({
+      visible: true,
+      title: params.title,
+      message: params.message,
+      variant: params.variant ?? 'default',
+      singleButton: false,
+      confirmText: params.confirmText ?? t('common:ok', { defaultValue: '확인' }),
+      cancelText: params.cancelText ?? t('common:cancel', { defaultValue: '취소' }),
+      onConfirm: params.onConfirm,
+    });
+  }, [t]);
+
+  const handleAlertConfirm = useCallback(async () => {
+    const action = alertState.onConfirm;
+    closeAlert();
+    await action?.();
+  }, [alertState.onConfirm, closeAlert]);
+
+  useFocusEffect(
+    useCallback(() => {
+      RNStatusBar.setBarStyle('dark-content');
+      if (Platform.OS === 'android') {
+        RNStatusBar.setTranslucent(false);
+        RNStatusBar.setBackgroundColor(colors.headerBg);
+      }
+    }, [colors.headerBg]),
+  );
+
+  const loadPolicies = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase
+        .from('policies')
+        .select('id, type, locale, title, version, summary, effective_date')
+        .in('type', POLICY_TYPES)
+        .eq('is_active', true)
+        .order('effective_date', { ascending: false })
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const rows = ((data || []) as PolicyDocument[]).filter((row) =>
+        POLICY_TYPES.includes(row.type),
+      );
+
+      setPolicies({
+        terms: pickPolicyForType(rows, 'terms', appLocale),
+        privacy: pickPolicyForType(rows, 'privacy', appLocale),
+        marketing: pickPolicyForType(rows, 'marketing', appLocale),
+      });
+    } catch (error) {
+      console.warn('[TermsConsent] load policies failed:', error);
+      setPolicies(EMPTY_POLICIES);
+      showAlert(
+        t('legal:consent.loadFailTitle', { defaultValue: '약관 불러오기 실패' }),
+        t('legal:consent.loadFailMessage', { defaultValue: '약관 정보를 불러오지 못했습니다.' }),
+        'danger',
+      );
+    } finally {
+      setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [agreeTerms, agreePrivacy, agreeMarketing]);
+  }, [appLocale, showAlert, t]);
 
-  const toggleAll = () => {
+  useEffect(() => {
+    void loadPolicies();
+  }, [loadPolicies]);
+
+  const resetToLogin = useCallback(async () => {
+    try {
+      await supabase.auth.signOut();
+      await resetSupabaseAuthStorage();
+    } catch (error) {
+      console.warn('[TermsConsent] decline cleanup failed:', error);
+    } finally {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    }
+  }, [navigation]);
+
+  const handleDecline = useCallback(() => {
+    if (busy) return;
+
+    showConfirmAlert({
+      title: t('legal:consent.declineTitle', { defaultValue: '서비스 이용 불가' }),
+      message: t('legal:consent.declineMessage', { defaultValue: '필수 약관에 동의해야 CO·ONN을 이용할 수 있습니다.' }),
+      confirmText: t('legal:consent.declineConfirm', { defaultValue: '나가기' }),
+      cancelText: t('legal:consent.declineCancel', { defaultValue: '돌아가기' }),
+      variant: 'danger',
+      onConfirm: resetToLogin,
+    });
+  }, [busy, resetToLogin, showConfirmAlert, t]);
+
+  const handleClose = useCallback(() => {
+    handleDecline();
+  }, [handleDecline]);
+
+  const openPolicyViewer = useCallback(
+    (type: PolicyType) => {
+      navigation.navigate('PolicyViewer', { type });
+    },
+    [navigation],
+  );
+
+  const toggleAll = useCallback(() => {
     const next = !agreeAll;
-    setAgreeAll(next);
     setAgreeTerms(next);
     setAgreePrivacy(next);
     setAgreeMarketing(next);
-  };
+  }, [agreeAll]);
 
-  const canSubmit = agreeTerms && agreePrivacy && !busy;
-
-  const handleClose = () => {
-    if (navigation.canGoBack()) {
-      navigation.goBack();
-    } else {
-      // 온보딩 중 바로 들어온 경우 로그인 화면로 복귀
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Login' as any }],
-      });
-    }
-  };
-
-  const handleAgree = async () => {
-    if (!canSubmit) return;
-    setBusy(true);
-    try {
-      const { data: userData } = await supabase.auth.getUser();
-      const uid = userData?.user?.id;
-      if (!uid) {
-        Alert.alert(
-          t('common.error', '오류'),
-          t('legal.error_no_user', '로그인 정보가 없습니다.'),
-        );
-        return;
-      }
-
-      const now = new Date().toISOString();
-
-      // ✅ 1) 먼저 update만 시도 (기존 row 있으면 preferred_lang 건드리지 않음)
-      const { data: updatedRows, error: updateErr } = await supabase
+  const persistProfileTermsAccepted = useCallback(
+    async (userId: string, acceptedAt: string) => {
+      const { data: updatedRows, error: updateError } = await supabase
         .from('profiles')
         .update({
           terms_accepted: true,
-          terms_accepted_at: now,
-          // marketing_opt_in: agreeMarketing, // 나중에 컬럼 생기면 사용
+          terms_accepted_at: acceptedAt,
         })
-        .eq('user_id', uid)
+        .eq('user_id', userId)
         .select('user_id');
 
-      if (updateErr) {
-        console.warn('terms update error:', updateErr);
-        Alert.alert(
-          t('common.error', '오류'),
-          t('legal.error_save', '동의 저장 중 문제가 발생했습니다.'),
+      if (updateError) throw updateError;
+
+      if (updatedRows && updatedRows.length > 0) return;
+
+      const resolved = (i18n as any)?.resolvedLanguage || (i18n as any)?.language || 'ko';
+      const preferredLangDefault = i18nToProfileLang(resolved);
+
+      const { error: insertError } = await supabase
+        .from('profiles')
+        .insert({
+          user_id: userId,
+          preferred_lang: preferredLangDefault,
+          terms_accepted: true,
+          terms_accepted_at: acceptedAt,
+        });
+
+      if (insertError) throw insertError;
+    },
+    [i18n],
+  );
+
+  const persistPolicyConsents = useCallback(
+    async (userId: string, acceptedAt: string) => {
+      const selectedPolicies = [
+        policies.terms,
+        policies.privacy,
+        agreeMarketing ? policies.marketing : null,
+      ].filter(Boolean) as PolicyDocument[];
+
+      const rows = selectedPolicies.map((policy) => ({
+        user_id: userId,
+        policy_id: policy.id,
+        policy_type: policy.type,
+        locale: policy.locale,
+        version: policy.version,
+        accepted: true,
+        accepted_at: acceptedAt,
+        consent_source: 'app',
+        device_locale: appLocale,
+        metadata: {
+          screen: 'TermsConsent',
+          required: policy.type === 'terms' || policy.type === 'privacy',
+        },
+      }));
+
+      if (rows.length === 0) return;
+
+      const { error } = await supabase
+        .from('user_policy_consents')
+        .upsert(rows, { onConflict: 'user_id,policy_id' });
+
+      if (error) throw error;
+    },
+    [agreeMarketing, appLocale, policies.marketing, policies.privacy, policies.terms],
+  );
+
+  const handleAgree = useCallback(async () => {
+    if (busy) return;
+
+    if (!requiredReady) {
+      showAlert(
+        t('legal:consent.requiredDocsMissingTitle', { defaultValue: '약관 확인 필요' }),
+        t('legal:consent.requiredDocsMissingMessage', { defaultValue: '필수 약관 정보를 불러온 뒤 다시 시도해 주세요.' }),
+        'danger',
+      );
+      return;
+    }
+
+    if (!agreeTerms || !agreePrivacy) {
+      showAlert(
+        t('legal:consent.requiredAgreeTitle', { defaultValue: '필수 동의 필요' }),
+        t('legal:consent.requiredAgreeMessage', { defaultValue: '필수 항목에 동의해 주세요.' }),
+      );
+      return;
+    }
+
+    setBusy(true);
+
+    try {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+
+      const userId = userData?.user?.id;
+      if (!userId) {
+        showAlert(
+          t('common:error', { defaultValue: '오류' }),
+          t('legal:consent.noUser', { defaultValue: '로그인 정보가 없습니다.' }),
+          'danger',
         );
         return;
       }
 
-      // ✅ 2) update된 row가 없으면(프로필이 없으면) insert로 생성
-      if (!updatedRows || updatedRows.length === 0) {
-        const resolved =
-          (i18n as any)?.resolvedLanguage ||
-          (i18n as any)?.language ||
-          'ko';
+      const acceptedAt = new Date().toISOString();
 
-        const preferredLangDefault = i18nToLangCode(resolved);
-
-        const { error: insertErr } = await supabase
-          .from('profiles')
-          .insert({
-            user_id: uid,
-            preferred_lang: preferredLangDefault, // ✅ NOT NULL 방어 (i18n 기반)
-            terms_accepted: true,
-            terms_accepted_at: now,
-            // marketing_opt_in: agreeMarketing, // 나중에 컬럼 생기면 사용
-          });
-
-        if (insertErr) {
-          console.warn('terms insert error:', insertErr);
-          Alert.alert(
-            t('common.error', '오류'),
-            t('legal.error_save', '동의 저장 중 문제가 발생했습니다.'),
-          );
-          return;
-        }
-      }
+      await persistPolicyConsents(userId, acceptedAt);
+      await persistProfileTermsAccepted(userId, acceptedAt);
 
       navigation.reset({
         index: 0,
         routes: [{ name: 'MainTabs' }],
       });
+    } catch (error) {
+      console.warn('[TermsConsent] save failed:', error);
+      showAlert(
+        t('legal:consent.saveFailTitle', { defaultValue: '저장 실패' }),
+        t('legal:consent.saveFailMessage', { defaultValue: '동의 정보를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.' }),
+        'danger',
+      );
     } finally {
       setBusy(false);
     }
+  }, [agreePrivacy, agreeTerms, busy, navigation, persistPolicyConsents, persistProfileTermsAccepted, requiredReady, showAlert, t]);
+
+  const renderPolicyRow = ({
+    type,
+    required,
+    checked,
+    onToggle,
+    title,
+    desc,
+  }: {
+    type: PolicyType;
+    required: boolean;
+    checked: boolean;
+    onToggle: () => void;
+    title: string;
+    desc: string;
+  }) => {
+    const policy = policies[type];
+
+    return (
+      <View style={[styles.policyRow, { borderBottomColor: colors.divider }]}> 
+        <Pressable
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked }}
+          onPress={onToggle}
+          hitSlop={12}
+          style={styles.checkPressable}
+        >
+          <View
+            style={[
+              styles.checkbox,
+              {
+                borderColor: checked ? colors.controlSelected : colors.controlBorder,
+                backgroundColor: checked ? colors.controlSelected : colors.controlBg,
+              },
+            ]}
+          >
+            {checked ? <Check size={13} color={colors.controlSelectedText} strokeWidth={2.6} /> : null}
+          </View>
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => openPolicyViewer(type)}
+          style={({ pressed }) => [
+            styles.policyContent,
+            { backgroundColor: pressed ? colors.rowPressed : 'transparent' },
+          ]}
+        >
+          <View style={styles.policyTextCol}>
+            <View style={styles.policyTitleRow}>
+              <Text style={[styles.policyTitle, { color: colors.textPrimary }]} numberOfLines={1}>
+                {policy?.title || title}
+              </Text>
+              <View
+                style={[
+                  styles.policyKindBadge,
+                  {
+                    borderColor: required ? colors.requiredBorder : colors.optionalBorder,
+                    backgroundColor: required ? colors.requiredBg : colors.optionalBg,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.policyKindBadgeText,
+                    { color: required ? colors.requiredBadgeText : colors.optionalBadgeText },
+                  ]}
+                >
+                  {required
+                    ? t('legal:consent.required', { defaultValue: '필수' })
+                    : t('legal:consent.optional', { defaultValue: '선택' })}
+                </Text>
+              </View>
+            </View>
+            <Text style={[styles.policyDesc, { color: colors.textSecondary }]} numberOfLines={1}>
+              {desc}
+            </Text>
+          </View>
+          <ChevronRight size={17} color={colors.textTertiary} strokeWidth={2} />
+        </Pressable>
+      </View>
+    );
   };
 
-  const ctaLabel = busy
-    ? t('legal.processing', '처리 중...')
-    : t('legal.consent_cta', '동의하고 계속하기');
-
   return (
-    <View style={styles.root}>
-      {/* 로그인과 톤을 맞춘 그라데이션 */}
-      <LinearGradient
-        colors={['#833ab4', '#fd1d1d', '#fcb045']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={StyleSheet.absoluteFill}
-      />
-      {/* 채도 살짝 눌러주는 오버레이 */}
-      <View style={styles.overlay} />
-      <StatusBar style="light" />
-
-      <SafeAreaView style={styles.safe}>
-        {/* 상단: Close만 (Apple 느낌으로 최소화) */}
-        <View style={styles.topRow}>
-          <Pressable
-            onPress={handleClose}
-            hitSlop={12}
-          >
-            <Text style={styles.backTxt}>
-              {t('common.close', '닫기')}
+    <SafeScreen
+      backgroundColor={colors.background}
+      includeTopInset={false}
+      includeBottomInset
+      contentStyle={{ paddingLeft: insets.left, paddingRight: insets.right }}
+    >
+      <GlobalHeader
+        style={{ backgroundColor: colors.headerBg, borderBottomColor: colors.headerBorder }}
+        titleComponent={
+          <View style={styles.headerTitleRow}>
+            <HeaderIconButton onPress={handleClose}>
+              <ChevronLeft size={22} color={colors.headerIcon} strokeWidth={2.1} />
+            </HeaderIconButton>
+            <Text style={[styles.headerTitle, { color: colors.headerText }]}> 
+              {t('legal:consent.headerTitle', { defaultValue: '서비스 약관' })}
             </Text>
-          </Pressable>
-          <View />
+          </View>
+        }
+      />
+
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: Math.max(122, insets.bottom + 112) },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.heroSection}>
+          <Text style={[styles.eyebrow, { color: colors.textTertiary }]}> 
+            {t('legal:consent.eyebrow', { defaultValue: 'CO·ONN' })}
+          </Text>
+          <Text style={[styles.heroTitle, { color: colors.textPrimary }]}> 
+            {t('legal:consent.title', { defaultValue: '약관 확인' })}
+          </Text>
+          <Text style={[styles.heroDesc, { color: colors.textSecondary }]}> 
+            {t('legal:consent.description', { defaultValue: '필수 항목만 동의하면 바로 시작할 수 있습니다.' })}
+          </Text>
+          {latestEffectiveAt ? (
+            <Text style={[styles.heroMeta, { color: colors.textTertiary }]}> 
+              {t('legal:consent.effectiveDate', { defaultValue: '시행일' })} {formatDate(latestEffectiveAt, appLocale)}
+            </Text>
+          ) : null}
         </View>
 
-        {/* 중앙 플로팅 카드 */}
-        <View style={styles.cardWrap}>
-          <View style={styles.card}>
-            {/* 상단 요약 */}
-            <Text style={styles.summaryTitle}>
-              {t(
-                'legal.consent_summary_title',
-                'CO·ONN 이용을 위한 필수 동의',
-              )}
+        {loading ? (
+          <View style={[styles.loadingCard, { backgroundColor: colors.surface, borderColor: colors.border }]}> 
+            <ActivityIndicator color={colors.textPrimary} />
+            <Text style={[styles.loadingText, { color: colors.textSecondary }]}> 
+              {t('legal:consent.loading', { defaultValue: '불러오는 중…' })}
             </Text>
-            <Text style={styles.summaryText}>
-              {t(
-                'legal.consent_summary_body',
-                '서비스 이용약관 및 개인정보 처리방침에 동의해 주시면 CO·ONN의 위치 기반 소셜 기능을 이용하실 수 있습니다.',
-              )}
-            </Text>
-            <Text style={styles.summaryMeta}>
-              {t(
-                'legal.last_updated',
-                '최종 업데이트: 2025. 11. 01',
-              )}
-            </Text>
+          </View>
+        ) : (
+          <View style={[styles.consentCard, { backgroundColor: colors.surface, borderColor: colors.border }]}> 
+            {!requiredReady ? (
+              <View style={[styles.warningRow, { borderBottomColor: colors.divider }]}> 
+                <Text style={[styles.warningText, { color: colors.warningText }]}> 
+                  {t('legal:consent.requiredDocsMissingInline', { defaultValue: '필수 약관 문서가 준비되지 않았습니다.' })}
+                </Text>
+              </View>
+            ) : null}
 
-            {/* 전체 동의 */}
             <Pressable
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: agreeAll }}
               onPress={toggleAll}
-              style={styles.allAgreeRow}
+              style={({ pressed }) => [
+                styles.allRow,
+                {
+                  backgroundColor: pressed ? colors.rowPressed : 'transparent',
+                  borderBottomColor: colors.divider,
+                },
+              ]}
             >
               <View
                 style={[
-                  styles.checkboxOuterBig,
-                  agreeAll && styles.checkboxOuterBigOn,
+                  styles.checkbox,
+                  {
+                    borderColor: agreeAll ? colors.controlSelected : colors.controlBorder,
+                    backgroundColor: agreeAll ? colors.controlSelected : colors.controlBg,
+                  },
                 ]}
               >
-                {agreeAll && <View style={styles.checkboxInnerBig} />}
+                {agreeAll ? <Check size={13} color={colors.controlSelectedText} strokeWidth={2.6} /> : null}
               </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.allAgreeLabel}>
-                  {t('legal.consent_all', '전체 동의')}
+              <View style={styles.allTextCol}>
+                <Text style={[styles.allTitle, { color: colors.textPrimary }]}> 
+                  {t('legal:consent.allAgree', { defaultValue: '전체 동의' })}
                 </Text>
-                <Text style={styles.allAgreeSub}>
-                  {t(
-                    'legal.consent_all_desc',
-                    '필수 및 선택 항목에 모두 동의합니다. 각 항목은 아래에서 개별로 변경할 수 있습니다.',
-                  )}
+                <Text style={[styles.allDesc, { color: colors.textSecondary }]}> 
+                  {t('legal:consent.allAgreeDesc', { defaultValue: '필수와 선택 항목을 모두 동의합니다.' })}
                 </Text>
               </View>
             </Pressable>
 
-            {/* 항목 리스트 */}
-            <ScrollView
-              style={styles.listScroll}
-              contentContainerStyle={styles.listContent}
-              showsVerticalScrollIndicator={false}
-            >
-              {/* (필수) 서비스 이용약관 */}
-              <Pressable
-                style={styles.itemRow}
-                onPress={() => setAgreeTerms((v) => !v)}
-              >
-                <View style={styles.itemCheckCol}>
-                  <View
-                    style={[
-                      styles.checkboxSm,
-                      agreeTerms && styles.checkboxSmOn,
-                    ]}
-                  >
-                    {agreeTerms && (
-                      <View style={styles.checkboxSmInner} />
-                    )}
-                  </View>
-                </View>
-                <View style={styles.itemTextCol}>
-                  <View style={styles.itemTitleRow}>
-                    <Text style={styles.badgeRequired}>필수</Text>
-                    <Text style={styles.itemTitle}>
-                      {t('legal.terms_tab', '서비스 이용약관')}
-                    </Text>
-                  </View>
-                  <Text style={styles.itemDesc}>
-                    {t(
-                      'legal.terms_desc',
-                      '서비스 이용 조건, 계정, 이용 제한, 책임 범위 등에 대한 내용을 포함합니다.',
-                    )}
-                  </Text>
-                </View>
-                <Pressable
-                  onPress={() => navigation.navigate('TermsPrivacy')}
-                  hitSlop={8}
-                >
-                  <Text style={styles.linkText}>
-                    {t('legal.view_detail', '보기')}
-                  </Text>
-                </Pressable>
-              </Pressable>
+            {renderPolicyRow({
+              type: 'terms',
+              required: true,
+              checked: agreeTerms,
+              onToggle: () => setAgreeTerms((prev) => !prev),
+              title: t('legal:consent.termsTitle', { defaultValue: 'CO·ONN 이용약관' }),
+              desc: t('legal:consent.termsDesc', { defaultValue: '서비스 이용 기준' }),
+            })}
 
-              {/* (필수) 개인정보 처리방침 */}
-              <Pressable
-                style={styles.itemRow}
-                onPress={() => setAgreePrivacy((v) => !v)}
-              >
-                <View style={styles.itemCheckCol}>
-                  <View
-                    style={[
-                      styles.checkboxSm,
-                      agreePrivacy && styles.checkboxSmOn,
-                    ]}
-                  >
-                    {agreePrivacy && (
-                      <View style={styles.checkboxSmInner} />
-                    )}
-                  </View>
-                </View>
-                <View style={styles.itemTextCol}>
-                  <View style={styles.itemTitleRow}>
-                    <Text style={styles.badgeRequired}>필수</Text>
-                    <Text style={styles.itemTitle}>
-                      {t('legal.privacy_tab', '개인정보 처리방침')}
-                    </Text>
-                  </View>
-                  <Text style={styles.itemDesc}>
-                    {t(
-                      'legal.privacy_desc',
-                      '수집하는 정보, 이용 목적, 보관 기간, 제3자 제공 및 파기 절차를 설명합니다.',
-                    )}
-                  </Text>
-                </View>
-                <Pressable
-                  onPress={() => navigation.navigate('TermsPrivacy')}
-                  hitSlop={8}
-                >
-                  <Text style={styles.linkText}>
-                    {t('legal.view_detail', '보기')}
-                  </Text>
-                </Pressable>
-              </Pressable>
+            {renderPolicyRow({
+              type: 'privacy',
+              required: true,
+              checked: agreePrivacy,
+              onToggle: () => setAgreePrivacy((prev) => !prev),
+              title: t('legal:consent.privacyTitle', { defaultValue: '개인정보 처리방침' }),
+              desc: t('legal:consent.privacyDesc', { defaultValue: '개인정보 처리 기준' }),
+            })}
 
-              {/* (선택) 마케팅 알림 */}
-              <Pressable
-                style={styles.itemRow}
-                onPress={() => setAgreeMarketing((v) => !v)}
-              >
-                <View style={styles.itemCheckCol}>
-                  <View
-                    style={[
-                      styles.checkboxSm,
-                      agreeMarketing && styles.checkboxSmOn,
-                    ]}
-                  >
-                    {agreeMarketing && (
-                      <View style={styles.checkboxSmInner} />
-                    )}
-                  </View>
-                </View>
-                <View style={styles.itemTextCol}>
-                  <View style={styles.itemTitleRow}>
-                    <Text style={styles.badgeOptional}>선택</Text>
-                    <Text style={styles.itemTitle}>
-                      {t('legal.marketing_title', '혜택·이벤트 알림 수신')}
-                    </Text>
-                  </View>
-                  <Text style={styles.itemDesc}>
-                    {t(
-                      'legal.marketing_desc',
-                      '신규 기능, 이벤트, 할인 및 제휴 소식을 받아보실 수 있습니다. 동의하지 않아도 서비스 이용에는 제한이 없습니다.',
-                    )}
-                  </Text>
-                </View>
-                <View style={{ width: 32 }} />
-              </Pressable>
-            </ScrollView>
-
-            {/* CTA */}
-            {canSubmit ? (
-              <Pressable
-                onPress={handleAgree}
-                style={styles.submitBtnWrap}
-              >
-                <LinearGradient
-                  colors={['#111827', '#4b5563']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.submitBtnGrad}
-                >
-                  <Text style={styles.submitBtnText}>
-                    {ctaLabel}
-                  </Text>
-                </LinearGradient>
-              </Pressable>
-            ) : (
-              <View
-                style={[
-                  styles.submitBtnWrap,
-                  styles.submitBtnDisabled,
-                ]}
-              >
-                <Text style={styles.submitBtnDisabledText}>
-                  {ctaLabel}
-                </Text>
-              </View>
-            )}
-
-            <Text style={styles.footerNote}>
-              {t(
-                'legal.consent_footer',
-                '추후 설정 > 약관 및 개인정보 메뉴에서 언제든지 동의 내용을 다시 확인하고 변경하실 수 있습니다.',
-              )}
-            </Text>
+            <View style={styles.lastRowWrapper}>
+              {renderPolicyRow({
+                type: 'marketing',
+                required: false,
+                checked: agreeMarketing,
+                onToggle: () => setAgreeMarketing((prev) => !prev),
+                title: t('legal:consent.marketingTitle', { defaultValue: '마케팅 수신' }),
+                desc: t('legal:consent.marketingDesc', { defaultValue: '혜택과 소식' }),
+              })}
+            </View>
           </View>
-        </View>
-      </SafeAreaView>
-    </View>
+        )}
+      </ScrollView>
+
+      <View
+        style={[
+          styles.bottomBar,
+          {
+            paddingBottom: Math.max(12, insets.bottom + 8),
+            backgroundColor: colors.background,
+            borderTopColor: colors.headerBorder,
+          },
+        ]}
+      >
+        <Pressable
+          accessibilityRole="button"
+          disabled={busy}
+          onPress={handleDecline}
+          style={({ pressed }) => [
+            styles.bottomButton,
+            styles.rejectButton,
+            {
+              borderColor: colors.borderStrong,
+              backgroundColor: pressed ? colors.rowPressed : colors.surface,
+              opacity: busy ? 0.45 : 1,
+            },
+          ]}
+        >
+          <Text style={[styles.rejectText, { color: colors.textSecondary }]}> 
+            {t('legal:consent.declineButton', { defaultValue: '거부' })}
+          </Text>
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
+          disabled={!canSubmit}
+          onPress={handleAgree}
+          style={({ pressed }) => [
+            styles.bottomButton,
+            styles.agreeButton,
+            {
+              backgroundColor: canSubmit ? colors.primaryBg : colors.primaryBgDisabled,
+              opacity: pressed && canSubmit ? colors.pressedOpacity : 1,
+            },
+          ]}
+        >
+          {busy ? <ActivityIndicator color={colors.primaryText} /> : null}
+          <Text style={[styles.agreeText, { color: canSubmit ? colors.primaryText : colors.primaryTextDisabled }]}> 
+            {busy
+              ? t('legal:consent.processing', { defaultValue: '처리 중…' })
+              : t('legal:consent.agreeButton', { defaultValue: '동의' })}
+          </Text>
+        </Pressable>
+      </View>
+
+      <CoonnAlert
+        visible={alertState.visible}
+        theme={alertTheme}
+        variant={alertState.variant}
+        title={alertState.title}
+        message={alertState.message}
+        confirmText={alertState.confirmText}
+        cancelText={alertState.cancelText}
+        singleButton={alertState.singleButton}
+        dismissOnBackdrop={alertState.singleButton}
+        dismissOnBackButton={alertState.singleButton}
+        onConfirm={handleAlertConfirm}
+        onCancel={closeAlert}
+      />
+    </SafeScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.16)',
-  },
-  safe: {
-    flex: 1,
-    alignItems: 'center',
-  },
-
-  topRow: {
-    width: '100%',
-    paddingHorizontal: 18,
-    paddingTop: 4,
-    paddingBottom: 4,
+  headerTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
-  backTxt: {
-    color: '#f9fafb',
-    fontSize: 13,
-    fontWeight: '500',
+  headerTitle: {
+    fontSize: 21,
+    lineHeight: 27,
+    fontWeight: '700',
+    letterSpacing: -0.35,
+    marginLeft: 4,
   },
-
-  cardWrap: {
+  scroll: {
     flex: 1,
-    width: '100%',
-    paddingHorizontal: 18,
-    paddingBottom: Platform.OS === 'ios' ? 20 : 16,
-    justifyContent: 'center',
   },
-  card: {
-    width: '100%',
-    maxHeight: 560,
-    backgroundColor: '#ffffff',
-    borderRadius: 18,
-    paddingHorizontal: 18,
-    paddingTop: 14,
-    paddingBottom: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(148,163,253,0.06)',
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 6,
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingTop: 18,
   },
-
-  summaryTitle: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#0f172a',
-    marginBottom: 4,
+  heroSection: {
+    paddingBottom: 18,
   },
-  summaryText: {
+  eyebrow: {
     fontSize: 12,
-    color: '#475569',
-    lineHeight: 18,
-    marginBottom: 4,
+    lineHeight: 17,
+    fontWeight: '600',
+    letterSpacing: 0.4,
+    marginBottom: 9,
   },
-  summaryMeta: {
-    fontSize: 10,
-    color: '#9ca3af',
+  heroTitle: {
+    fontSize: 24,
+    lineHeight: 31,
+    fontWeight: '700',
+    letterSpacing: -0.55,
     marginBottom: 8,
   },
-
-  allAgreeRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingVertical: 9,
-    paddingHorizontal: 11,
-    marginBottom: 10,
-    backgroundColor: '#0f172a',
-    borderRadius: 10,
-  },
-  checkboxOuterBig: {
-    width: 20,
-    height: 20,
-    borderRadius: 6,
-    borderWidth: 1.6,
-    borderColor: '#9ca3af',
-    marginRight: 9,
-    marginTop: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#0f172a',
-  },
-  checkboxOuterBigOn: {
-    borderColor: '#ffffff',
-  },
-  checkboxInnerBig: {
-    width: 10,
-    height: 10,
-    borderRadius: 3,
-    backgroundColor: '#ffffff',
-  },
-  allAgreeLabel: {
+  heroDesc: {
     fontSize: 14,
-    fontWeight: '700',
-    color: '#ffffff',
-    marginBottom: 2,
+    lineHeight: 21,
+    fontWeight: '500',
+    letterSpacing: -0.18,
   },
-  allAgreeSub: {
-    fontSize: 11,
-    color: '#e5e7eb',
-  },
-
-  listScroll: {
-    flexGrow: 0,
-    marginTop: 2,
-    marginBottom: 6,
-  },
-  listContent: {
-    paddingBottom: 2,
-  },
-
-  itemRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingVertical: 7,
-  },
-  itemCheckCol: {
-    paddingTop: 2,
-    marginRight: 4,
-  },
-  itemTextCol: {
-    flex: 1,
-    paddingRight: 6,
-  },
-  itemTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 2,
-  },
-  checkboxSm: {
-    width: 16,
-    height: 16,
-    borderRadius: 5,
-    borderWidth: 1.2,
-    borderColor: '#cbd5e1',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-  },
-  checkboxSmOn: {
-    borderColor: '#111827',
-  },
-  checkboxSmInner: {
-    width: 8,
-    height: 8,
-    borderRadius: 2.5,
-    backgroundColor: '#111827',
-  },
-  badgeRequired: {
-    fontSize: 9,
-    fontWeight: '700',
-    color: '#b91c1c',
-    paddingHorizontal: 5,
-    paddingVertical: 1.5,
-    borderRadius: 6,
-    backgroundColor: '#fee2e2',
-    marginRight: 6,
-  },
-  badgeOptional: {
-    fontSize: 9,
-    fontWeight: '700',
-    color: '#0369a1',
-    paddingHorizontal: 5,
-    paddingVertical: 1.5,
-    borderRadius: 6,
-    backgroundColor: '#e0f2fe',
-    marginRight: 6,
-  },
-  itemTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  itemDesc: {
-    fontSize: 11,
-    color: '#6b7280',
+  heroMeta: {
+    marginTop: 10,
+    fontSize: 12,
     lineHeight: 17,
-    marginTop: 1,
+    fontWeight: '500',
+    letterSpacing: -0.08,
   },
-  linkText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#111827',
-    paddingTop: 2,
+  loadingCard: {
+    minHeight: 118,
+    borderRadius: 24,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
   },
-
-  submitBtnWrap: {
-    marginTop: 4,
-    borderRadius: 10,
+  loadingText: {
+    fontSize: 13,
+    lineHeight: 19,
+    fontWeight: '500',
+  },
+  consentCard: {
+    borderRadius: 24,
+    borderWidth: StyleSheet.hairlineWidth,
     overflow: 'hidden',
   },
-  submitBtnGrad: {
-    paddingVertical: 11,
+  warningRow: {
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  warningText: {
+    fontSize: 13,
+    lineHeight: 19,
+    fontWeight: '500',
+  },
+  allRow: {
+    minHeight: 74,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 18,
+    paddingVertical: 15,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  checkbox: {
+    width: 23,
+    height: 23,
+    borderRadius: 8,
+    borderWidth: 1.1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  submitBtnText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#ffffff',
+  allTextCol: {
+    flex: 1,
+    marginLeft: 13,
   },
-  submitBtnDisabled: {
-    backgroundColor: '#e5e7eb',
-    paddingVertical: 11,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  submitBtnDisabledText: {
-    fontSize: 14,
+  allTitle: {
+    fontSize: 16,
+    lineHeight: 22,
     fontWeight: '600',
-    color: '#9ca3af',
+    letterSpacing: -0.25,
   },
-
-  footerNote: {
-    marginTop: 4,
-    fontSize: 9,
-    color: '#9ca3af',
-    textAlign: 'center',
+  allDesc: {
+    marginTop: 2,
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: '500',
+    letterSpacing: -0.1,
+  },
+  policyRow: {
+    minHeight: 68,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  lastRowWrapper: {
+    marginBottom: -StyleSheet.hairlineWidth,
+  },
+  checkPressable: {
+    width: 58,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  policyContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: 15,
+    paddingVertical: 12,
+    borderRadius: 0,
+  },
+  policyTextCol: {
+    flex: 1,
+    minWidth: 0,
+    paddingRight: 20,
+  },
+  policyTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 3,
+    gap: 8,
+  },
+  policyTitle: {
+    flex: 1,
+    minWidth: 0,
+    fontSize: 15,
+    lineHeight: 20,
+    fontWeight: '600',
+    letterSpacing: -0.2,
+  },
+  policyKindBadge: {
+    height: 21,
+    minWidth: 37,
+    paddingHorizontal: 9,
+    borderRadius: 11,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  policyKindBadgeText: {
+    fontSize: 10.5,
+    lineHeight: 13,
+    fontWeight: '600',
+    letterSpacing: -0.1,
+  },
+  policyDesc: {
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: '500',
+    letterSpacing: -0.08,
+  },
+  bottomBar: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    flexDirection: 'row',
+    gap: 10,
+  },
+  bottomButton: {
+    flex: 1,
+    height: 48,
+    borderRadius: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  rejectButton: {
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  agreeButton: {},
+  rejectText: {
+    fontSize: 14,
+    lineHeight: 19,
+    fontWeight: '600',
+    letterSpacing: -0.12,
+  },
+  agreeText: {
+    fontSize: 14,
+    lineHeight: 19,
+    fontWeight: '600',
+    letterSpacing: -0.12,
+    marginLeft: 4,
   },
 });

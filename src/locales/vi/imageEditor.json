@@ -1,0 +1,14 @@
+{
+  "title": "Chỉnh sửa ảnh",
+  "ratio_original": "Gốc",
+  "ratio_free": "Tự do",
+  "rotate": "Xoay",
+  "ratio": "Tỷ lệ",
+  "invert": "Ngang/dọc",
+  "orientation": "Ngang/dọc",
+  "reset": "Đặt lại",
+  "error_load_title": "Lỗi",
+  "error_load_msg": "Không thể tải ảnh.",
+  "error_save_title": "Lưu thất bại",
+  "error_save_msg": "Vui lòng thử lại sau."
+}

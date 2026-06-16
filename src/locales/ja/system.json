@@ -1,0 +1,27 @@
+{
+  "splash_loading": "起動準備中…",
+  "offline": "オフラインです。ネットワークを確認してください。",
+  "not_found": "ページが見つかりません。",
+  "notFound": {
+    "header": "ページなし",
+    "title": "ページが見つかりません",
+    "desc": "リクエストされた画面を見つけられません。パスや情報を確認してください。",
+    "retry": "再試行",
+    "home": "ホームへ移動",
+    "homeShort": "ホームへ",
+    "previous": "戻る",
+    "quick": {
+      "friends": "友だち",
+      "settings": "設定"
+    }
+  },
+  "offlineScreen": {
+    "header": "オフライン",
+    "title": "オフラインです",
+    "desc": "ネットワーク接続を確認してください。\nWi-Fiまたはモバイルデータがオフになっている可能性があります。",
+    "retry": "再試行",
+    "check": "接続を確認",
+    "openSettings": "設定を開く",
+    "home": "ホームへ"
+  }
+}

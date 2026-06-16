@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import {
@@ -12,9 +13,9 @@ import {
   StatusBar,
   Pressable,
   KeyboardAvoidingView,
+  Keyboard,
   Platform,
   ActivityIndicator,
-  Alert,
   Image,
   Linking,
   Share,
@@ -39,15 +40,18 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
-import Constants from 'expo-constants';
 import MapboxGL from '@rnmapbox/maps';
 
 import {
-  styles,
   HEADER_HEIGHT,
   TABBAR_HEIGHT,
 } from './components/bizStyles';
-import { TabButton } from './components/TabButton';
+import { useAppTheme } from '@/theme/useAppTheme';
+import { useTranslation } from 'react-i18next';
+import {
+  createBusinessCreateStyles,
+  createBusinessCreateTheme,
+} from './Create.theme';
 
 import { HomeTab } from './components/HomeTab';
 import { MenuTab } from './components/MenuTab';
@@ -59,6 +63,10 @@ import PlaceholderTab from './components/PlaceholderTab';
 
 import { supabase } from '@/lib/supabase';
 import { useBusinessAiBriefing } from '@/hooks/useBusinessAiBriefing';
+import CoonnAlert, { type CoonnAlertVariant } from '@/components/CoonnAlert';
+import CoonnFloatingToast from '@/components/feedback/CoonnFloatingToast';
+import { useCoonnFloatingToast } from '@/components/feedback/useCoonnFloatingToast';
+import type { CoonnFloatingToastTone } from '@/components/feedback/CoonnFloatingToast.theme';
 
 import type {
   BusinessRow,
@@ -82,28 +90,31 @@ type TimeFieldKey =
   | 'breakStart'
   | 'breakEnd';
 
-// Google Places / Details 타입
-type GPlacePrediction = {
-  description: string;
-  place_id: string;
+type PickAndUploadFeedback = {
+  onPermissionDenied?: () => void;
+  onUploadError?: (message: string) => void;
 };
 
-type GPlaceAutocompleteResponse = {
-  status: string;
-  predictions?: GPlacePrediction[];
+type BusinessCoonnAlertState = {
+  visible: boolean;
+  title: string;
+  message?: string;
+  confirmText: string;
+  cancelText: string;
+  variant: CoonnAlertVariant;
+  singleButton: boolean;
+  onConfirm?: () => void | Promise<void>;
 };
 
-type GPlaceDetailsResponse = {
-  status: string;
-  result?: {
-    formatted_address?: string;
-    geometry?: {
-      location?: {
-        lat: number;
-        lng: number;
-      };
-    };
-  };
+const EMPTY_BUSINESS_ALERT: BusinessCoonnAlertState = {
+  visible: false,
+  title: '',
+  message: undefined,
+  confirmText: '',
+  cancelText: '',
+  variant: 'default',
+  singleButton: true,
+  onConfirm: undefined,
 };
 
 // ✅ 카테고리 선택용 기본 옵션
@@ -163,22 +174,137 @@ const CATEGORY_ID_TO_MAJOR: Record<BusinessCategory, string> = {
   etc: '기타',
 };
 
+type BusinessMenuCurrency =
+  | 'KRW'
+  | 'USD'
+  | 'AUD'
+  | 'CAD'
+  | 'NZD'
+  | 'EUR'
+  | 'GBP'
+  | 'JPY'
+  | 'CNY'
+  | 'HKD'
+  | 'TWD'
+  | 'SGD'
+  | 'THB'
+  | 'VND'
+  | 'PHP'
+  | 'IDR'
+  | 'MYR'
+  | 'INR'
+  | 'AED'
+  | 'SAR'
+  | 'TRY'
+  | 'RUB'
+  | 'BRL'
+  | 'MXN'
+  | 'CHF';
 
-// app.json / app.config.js 의 extra.googlePlacesApiKey 사용
-const GOOGLE_PLACES_API_KEY =
-  (
-    (Constants as any)?.expoConfig?.extra?.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY ??
-    (Constants as any)?.manifest?.extra?.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY ??
-    (Constants as any)?.expoConfig?.extra?.googlePlacesApiKey ??
-    (Constants as any)?.manifest?.extra?.googlePlacesApiKey ??
-    ''
-  ) as string;
+const DEFAULT_MENU_CURRENCY: BusinessMenuCurrency = 'KRW';
+
+const MENU_CURRENCY_OPTIONS: Array<{
+  code: BusinessMenuCurrency;
+  label: string;
+}> = [
+  { code: 'KRW', label: '₩ KRW' },
+  { code: 'USD', label: '$ USD' },
+  { code: 'AUD', label: 'A$ AUD' },
+  { code: 'CAD', label: 'C$ CAD' },
+  { code: 'NZD', label: 'NZ$ NZD' },
+  { code: 'EUR', label: '€ EUR' },
+  { code: 'GBP', label: '£ GBP' },
+  { code: 'JPY', label: '¥ JPY' },
+  { code: 'CNY', label: '¥ CNY' },
+  { code: 'HKD', label: 'HK$ HKD' },
+  { code: 'TWD', label: 'NT$ TWD' },
+  { code: 'SGD', label: 'S$ SGD' },
+  { code: 'THB', label: '฿ THB' },
+  { code: 'VND', label: '₫ VND' },
+  { code: 'PHP', label: '₱ PHP' },
+  { code: 'IDR', label: 'Rp IDR' },
+  { code: 'MYR', label: 'RM MYR' },
+  { code: 'INR', label: '₹ INR' },
+  { code: 'AED', label: 'د.إ AED' },
+  { code: 'SAR', label: '﷼ SAR' },
+  { code: 'TRY', label: '₺ TRY' },
+  { code: 'RUB', label: '₽ RUB' },
+  { code: 'BRL', label: 'R$ BRL' },
+  { code: 'MXN', label: 'MX$ MXN' },
+  { code: 'CHF', label: 'CHF' },
+];
+
+const MENU_CURRENCY_SYMBOLS: Record<BusinessMenuCurrency, string> = {
+  KRW: '원',
+  USD: '$',
+  AUD: 'A$',
+  CAD: 'C$',
+  NZD: 'NZ$',
+  EUR: '€',
+  GBP: '£',
+  JPY: '¥',
+  CNY: '¥',
+  HKD: 'HK$',
+  TWD: 'NT$',
+  SGD: 'S$',
+  THB: '฿',
+  VND: '₫',
+  PHP: '₱',
+  IDR: 'Rp',
+  MYR: 'RM',
+  INR: '₹',
+  AED: 'د.إ',
+  SAR: '﷼',
+  TRY: '₺',
+  RUB: '₽',
+  BRL: 'R$',
+  MXN: 'MX$',
+  CHF: 'CHF',
+};
+
+function normalizeMenuCurrency(value?: unknown): BusinessMenuCurrency {
+  const code = String(value || '').toUpperCase();
+  return MENU_CURRENCY_OPTIONS.some((option) => option.code === code)
+    ? (code as BusinessMenuCurrency)
+    : DEFAULT_MENU_CURRENCY;
+}
+
+function formatMenuPrice(
+  price?: number | null,
+  currencyValue?: unknown,
+): string | null {
+  if (typeof price !== 'number' || !Number.isFinite(price)) return null;
+
+  const currency = normalizeMenuCurrency(currencyValue);
+  const amount = price.toLocaleString();
+  const symbol = MENU_CURRENCY_SYMBOLS[currency] ?? currency;
+
+  if (currency === 'KRW') return `${amount}${symbol}`;
+  return `${symbol}${amount}`;
+}
+
+const BUSINESS_IMAGE_PROPS = { resizeMethod: 'resize' as const, fadeDuration: 0 } as const;
+
+const BUSINESS_CREATE_SELECT = 'id, owner_id, name, description, one_line_intro, phone, address, detail_address, default_currency, is_open, profile_json, lat, lng, open_time, close_time, last_order_time, has_break_time, break_start_time, break_end_time, is_open_now, category, category_major, category_minor, is_adult, minsaeng_coupon, local_giftcard, facilities, parking_available, parking_info, seating_info, payment_methods, website_url, instagram_url, kakao_channel, hero_image_url, logo_image_url, ai_briefing, ai_briefing_updated_at, ai_category_top3' as const;
+
+const BUSINESS_PHOTO_SELECT = 'id, business_id, image_url, caption, created_at';
+const BUSINESS_EVENT_SELECT = 'id, business_id, title, body, image_url, starts_at, created_at';
+const BUSINESS_NOTICE_SELECT = 'id, business_id, title, body, image_url, created_at';
+const BUSINESS_MENU_SELECT = 'id, business_id, name, category, sort_order, created_at';
+const BUSINESS_MENU_ITEM_SELECT =
+  'id, business_id, menu_id, name, description, price, price_currency, is_signature, image_url, sort_order, created_at';
+
+const wait = (ms: number) =>
+  new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
 
 // 공통 이미지 업로드 유틸
 async function uploadBusinessImage(
   localUri: string,
   businessId: string,
   folder: string,
+  t?: any,
 ): Promise<string> {
   const fileRes = await fetch(localUri);
   const blob = await fileRes.blob();
@@ -194,7 +320,7 @@ async function uploadBusinessImage(
 
   if (error || !data) {
     console.error('❌ Edge Function Error:', error, data);
-    throw new Error('서버에서 업로드 URL을 받아오지 못했습니다.');
+    throw new Error(t ? t('business:create.uploadUrlFail') : '');
   }
 
   const payload = {
@@ -204,7 +330,7 @@ async function uploadBusinessImage(
 
   if (!payload.uploadUrl || !payload.publicUrl) {
     console.error('❌ Invalid upload payload:', data);
-    throw new Error('업로드 정보를 확인할 수 없습니다.');
+    throw new Error(t ? t('business:create.uploadInfoFail') : '');
   }
 
   const uploadRes = await fetch(payload.uploadUrl, {
@@ -218,7 +344,7 @@ async function uploadBusinessImage(
   if (!uploadRes.ok) {
     const txt = await uploadRes.text();
     console.error('❌ R2 Upload Failed:', uploadRes.status, txt);
-    throw new Error('이미지 업로드에 실패했습니다.');
+    throw new Error(t ? t('business:create.imageUploadFail') : '');
   }
 
   return payload.publicUrl;
@@ -228,16 +354,18 @@ async function uploadBusinessImage(
 async function pickAndUpload(
   businessId: string,
   folder: string,
+  feedback?: PickAndUploadFeedback,
+  t?: any,
 ): Promise<string | null> {
   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
   if (status !== 'granted') {
-    Alert.alert('권한 필요', '갤러리 접근 권한을 허용해 주세요.');
+    feedback?.onPermissionDenied?.();
     return null;
   }
 
   const result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    quality: 0.9,
+    quality: 0.68,
   });
 
   if (result.canceled) return null;
@@ -245,11 +373,11 @@ async function pickAndUpload(
   const uri = result.assets[0].uri;
 
   try {
-    const url = await uploadBusinessImage(uri, businessId, folder);
+    const url = await uploadBusinessImage(uri, businessId, folder, t);
     return url;
   } catch (e: any) {
     console.error('❌ Upload error:', e);
-    Alert.alert('업로드 오류', e.message ?? '이미지 업로드 실패');
+    feedback?.onUploadError?.(e?.message || (t ? t('business:create.imageUploadFail') : ''));
     return null;
   }
 }
@@ -262,6 +390,102 @@ const BusinessCreateScreen: React.FC = () => {
 
   const insets = useSafeAreaInsets();
   const isIOS = Platform.OS === 'ios';
+  const scrollRef = useRef<ScrollView>(null);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const appTheme = useAppTheme();
+  const ui = useMemo(() => createBusinessCreateTheme(appTheme), [appTheme]);
+  const styles = useMemo(() => createBusinessCreateStyles(ui), [ui]);
+  const { t } = useTranslation();
+  const { toast, showToast, hideToast } = useCoonnFloatingToast();
+  const allMenuCategory = t('business:menu.all');
+  const [businessAlert, setBusinessAlert] =
+    useState<BusinessCoonnAlertState>(EMPTY_BUSINESS_ALERT);
+
+  useEffect(() => {
+    if (isIOS) return undefined;
+
+    const showSub = Keyboard.addListener('keyboardDidShow', (event) => {
+      const nextHeight = Number(event?.endCoordinates?.height ?? 0);
+      setKeyboardHeight(Number.isFinite(nextHeight) ? Math.max(0, nextHeight) : 0);
+    });
+    const hideSub = Keyboard.addListener('keyboardDidHide', () => setKeyboardHeight(0));
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, [isIOS]);
+
+  const androidKeyboardInset = isIOS
+    ? 0
+    : Math.max(0, keyboardHeight - Math.max(insets.bottom, 0));
+  const scrollBottomPadding = Math.max(insets.bottom, 0) + 16 + androidKeyboardInset;
+
+  const alertThemeName = useMemo<'coonn_light' | 'coonn_dark'>(
+    () => ((appTheme as any)?.isDark ? 'coonn_dark' : 'coonn_light'),
+    [appTheme],
+  );
+
+  const showBusinessToast = useCallback(
+    (message: string, tone: CoonnFloatingToastTone = 'default', showMark = false) => {
+      const trimmed = String(message || '').trim();
+      if (!trimmed) return;
+      showToast({ message: trimmed, tone, showMark });
+    },
+    [showToast],
+  );
+
+  const closeBusinessAlert = useCallback(() => {
+    setBusinessAlert((prev) => ({
+      ...prev,
+      visible: false,
+      onConfirm: undefined,
+    }));
+  }, []);
+
+  const showBusinessAlert = useCallback(
+    (params: {
+      title: string;
+      message?: string;
+      confirmText?: string;
+      cancelText?: string;
+      variant?: CoonnAlertVariant;
+      singleButton?: boolean;
+      onConfirm?: () => void | Promise<void>;
+    }) => {
+      setBusinessAlert({
+        visible: true,
+        title: params.title,
+        message: params.message,
+        confirmText: params.confirmText ?? t('business:common.confirm'),
+        cancelText: params.cancelText ?? t('business:common.cancel'),
+        variant: params.variant ?? 'default',
+        singleButton: params.singleButton ?? true,
+        onConfirm: params.onConfirm,
+      });
+    },
+    [],
+  );
+
+  const handleBusinessAlertConfirm = useCallback(async () => {
+    const action = businessAlert.onConfirm;
+    closeBusinessAlert();
+    await action?.();
+  }, [businessAlert.onConfirm, closeBusinessAlert]);
+
+  const imageUploadFeedback = useMemo<PickAndUploadFeedback>(
+    () => ({
+      onPermissionDenied: () =>
+        showBusinessAlert({
+          title: t('business:register.permissionTitle'),
+          message: t('business:create.galleryPermission'),
+          confirmText: t('business:common.confirm'),
+          singleButton: true,
+        }),
+      onUploadError: (message) => showBusinessToast(message, 'danger'),
+    }),
+    [showBusinessAlert, showBusinessToast, t],
+  );
 
   const [activeTab, setActiveTab] = useState<TabKey>('home');
 
@@ -285,6 +509,12 @@ const BusinessCreateScreen: React.FC = () => {
   const [localGiftcard, setLocalGiftcard] =
     useState<boolean | null>(null);
   const [hasLocalGiftcardColumn, setHasLocalGiftcardColumn] =
+    useState<boolean>(false);
+
+  // 업체 기본 통화 — 메뉴 가격에 공통 적용
+  const [businessCurrency, setBusinessCurrency] =
+    useState<BusinessMenuCurrency>(DEFAULT_MENU_CURRENCY);
+  const [hasDefaultCurrencyColumn, setHasDefaultCurrencyColumn] =
     useState<boolean>(false);
 
   // 위도/경도
@@ -333,7 +563,7 @@ const BusinessCreateScreen: React.FC = () => {
   const [menuItemsByMenuId, setMenuItemsByMenuId] =
     useState<MenuItemsByMenuId>({});
   const [activeMenuCategory, setActiveMenuCategory] =
-    useState<string>('전체');
+    useState<string>(allMenuCategory);
   const [newMenuTitle, setNewMenuTitle] = useState('');
   const [newMenuCategory, setNewMenuCategory] = useState('');
   const [creatingMenu, setCreatingMenu] = useState(false);
@@ -415,16 +645,6 @@ const BusinessCreateScreen: React.FC = () => {
   const [timePickerValue, setTimePickerValue] = useState<
     Date | undefined
   >(undefined);
-
-  // 주소 검색 모달 상태
-  const [addressSearchVisible, setAddressSearchVisible] =
-    useState(false);
-  const [addressQuery, setAddressQuery] = useState('');
-  const [addressResults, setAddressResults] = useState<
-    GPlacePrediction[]
-  >([]);
-  const [addressSearching, setAddressSearching] =
-    useState(false);
 
   // 지도 위치 선택 모달 상태
   const [mapPickerVisible, setMapPickerVisible] =
@@ -560,40 +780,40 @@ const BusinessCreateScreen: React.FC = () => {
     menus.forEach((m) => {
       if (m.category) set.add(m.category);
     });
-    return ['전체', ...Array.from(set)];
-  }, [menus]);
+    return [allMenuCategory, ...Array.from(set)];
+  }, [menus, allMenuCategory]);
 
   const filteredMenus = useMemo(() => {
-    if (activeMenuCategory === '전체') return menus;
+    if (activeMenuCategory === allMenuCategory) return menus;
     return menus.filter(
       (m) => (m.category || '') === activeMenuCategory,
     );
-  }, [menus, activeMenuCategory]);
+  }, [menus, activeMenuCategory, allMenuCategory]);
 
   const visitorFeedCountLabel = useMemo(() => {
     if (visitorFeedCount == null || visitorFeedCount === 0)
-      return '방문자 피드 아직 없습니다.';
-    return `방문자 피드 ${visitorFeedCount}개가 등록되어 있습니다.`;
-  }, [visitorFeedCount]);
+      return t('business:create.visitorFeed');
+    return `${t('business:create.visitorFeed')} ${visitorFeedCount}`;
+  }, [visitorFeedCount, t]);
 
   const couponLabel = useMemo(() => {
     if (minsaengCoupon === true || localGiftcard === true) {
       if (minsaengCoupon === true && localGiftcard === true) {
-        return '민생회복 소비쿠폰 / 지역사랑상품권 사용 가능 매장입니다.';
+        return t('business:create.couponBoth');
       }
       if (minsaengCoupon === true) {
-        return '민생회복 소비쿠폰 사용 가능 매장입니다.';
+        return t('business:create.couponMinsaeng');
       }
       if (localGiftcard === true) {
-        return '지역사랑상품권 사용 가능 매장입니다.';
+        return t('business:create.couponLocal');
       }
     }
 
     if (minsaengCoupon === false && localGiftcard === false) {
-      return '민생회복 소비쿠폰 / 지역사랑상품권 사용이 불가능한 매장입니다.';
+      return t('business:create.couponNone');
     }
 
-    return '민생회복 소비쿠폰 / 지역사랑상품권 사용 정보가 아직 등록되지 않았습니다.';
+    return t('business:create.couponUnknown');
   }, [minsaengCoupon, localGiftcard]);
 
   // ✅ 현재 major에 따른 세부 카테고리 목록
@@ -601,73 +821,6 @@ const BusinessCreateScreen: React.FC = () => {
     () => CATEGORY_MINOR_OPTIONS[categoryMajor] ?? [],
     [categoryMajor],
   );
-
-  // Google Places API Key 확인
-  const ensurePlacesKey = useCallback(() => {
-    if (!GOOGLE_PLACES_API_KEY) {
-      Alert.alert(
-        '설정 필요',
-        '구글 주소 검색을 사용하려면 app.json (또는 app.config.js)의 expo.extra.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY 를 설정해 주세요.',
-      );
-      return false;
-    }
-    return true;
-  }, []);
-
-  // Google Places 자동완성
-  const searchPlaces = useCallback(
-    async (q: string) => {
-      if (!ensurePlacesKey()) return;
-      const trimmed = q.trim();
-      if (!trimmed) {
-        setAddressResults([]);
-        return;
-      }
-
-      try {
-        setAddressSearching(true);
-
-        const url =
-          'https://maps.googleapis.com/maps/api/place/autocomplete/json' +
-          `?input=${encodeURIComponent(trimmed)}` +
-          `&language=ko` +
-          `&types=geocode` +
-          `&key=${GOOGLE_PLACES_API_KEY}`;
-
-        const res = await fetch(url);
-        const json: GPlaceAutocompleteResponse = await res.json();
-
-        if (json.status !== 'OK') {
-          console.warn('Places autocomplete status:', json.status);
-          setAddressResults([]);
-          return;
-        }
-
-        setAddressResults(json.predictions ?? []);
-      } catch (e) {
-        console.error(e);
-        Alert.alert('오류', '주소 검색 중 문제가 발생했습니다.');
-      } finally {
-        setAddressSearching(false);
-      }
-    },
-    [ensurePlacesKey],
-  );
-
-  // 주소 검색 text 변경 → 디바운스
-  useEffect(() => {
-    if (!addressSearchVisible) return;
-    const trimmed = addressQuery.trim();
-    if (!trimmed) {
-      setAddressResults([]);
-      return;
-    }
-    const timer = setTimeout(() => {
-      searchPlaces(trimmed);
-    }, 400);
-
-    return () => clearTimeout(timer);
-  }, [addressQuery, addressSearchVisible, searchPlaces]);
 
   const mapCenter = useMemo(() => {
     const lat = mapSelectedCoord?.lat ?? geoLat ?? 37.5665; // 서울
@@ -705,13 +858,13 @@ const BusinessCreateScreen: React.FC = () => {
     if (!aiBriefingError) return;
     if (lastAiErrorRef.current === aiBriefingError) return;
     lastAiErrorRef.current = aiBriefingError;
-    Alert.alert('오류', aiBriefingError);
+    showBusinessToast(aiBriefingError, 'danger');
   }, [aiBriefingError]);
 
 
   const handleGenerateAiBriefing = useCallback(async () => {
     if (!business?.id) {
-      Alert.alert('안내', '가게 정보를 먼저 저장한 뒤 AI 브리핑을 생성할 수 있습니다.');
+      showBusinessToast(t('business:create.aiSaveFirst'), 'warning');
       return;
     }
     if (isAiGenerating) return;
@@ -723,56 +876,6 @@ const BusinessCreateScreen: React.FC = () => {
 
 
 
-// 자동완성 결과 선택
-  const handleSelectAddressPrediction = useCallback(
-    async (prediction: GPlacePrediction) => {
-      if (!ensurePlacesKey()) return;
-
-      try {
-        setAddressSearching(true);
-
-        const url =
-          'https://maps.googleapis.com/maps/api/place/details/json' +
-          `?place_id=${encodeURIComponent(prediction.place_id)}` +
-          `&language=ko` +
-          `&key=${GOOGLE_PLACES_API_KEY}`;
-
-        const res = await fetch(url);
-        const json: GPlaceDetailsResponse = await res.json();
-
-        if (json.status !== 'OK') {
-          console.warn('Place details status:', json.status);
-          setAddress(prediction.description);
-          setAddressSearchVisible(false);
-          return;
-        }
-
-        const detail = json.result;
-        const formatted =
-          detail?.formatted_address ?? prediction.description;
-        setAddress(formatted);
-
-        const loc = detail?.geometry?.location;
-        if (
-          loc &&
-          typeof loc.lat === 'number' &&
-          typeof loc.lng === 'number'
-        ) {
-          setGeoLat(loc.lat);
-          setGeoLng(loc.lng);
-        }
-
-        setAddressSearchVisible(false);
-      } catch (e) {
-        console.error(e);
-        Alert.alert('오류', '주소 정보를 불러오지 못했습니다.');
-      } finally {
-        setAddressSearching(false);
-      }
-    },
-    [ensurePlacesKey],
-  );
-
   // 데이터 로딩
   const loadBusinessAndRelated = useCallback(async () => {
     try {
@@ -781,11 +884,11 @@ const BusinessCreateScreen: React.FC = () => {
 
       if (!businessId) {
         const { data: userData } = await supabase.auth.getUser();
-        if (!userData?.user) throw new Error('로그인이 필요합니다.');
+        if (!userData?.user) throw new Error(t('business:register.loginRequired'));
 
         const { data: biz } = await supabase
           .from('businesses')
-          .select('*')
+          .select(BUSINESS_CREATE_SELECT)
           .eq('owner_id', userData.user.id)
           .maybeSingle();
 
@@ -806,7 +909,7 @@ const BusinessCreateScreen: React.FC = () => {
       } else {
         const { data: biz } = await supabase
           .from('businesses')
-          .select('*')
+          .select(BUSINESS_CREATE_SELECT)
           .eq('id', businessId)
           .maybeSingle();
         setBusiness(biz as BusinessRow);
@@ -827,28 +930,28 @@ const BusinessCreateScreen: React.FC = () => {
           ] = await Promise.all([
             supabase
               .from('business_photos')
-              .select('*')
+              .select(BUSINESS_PHOTO_SELECT)
               .eq('business_id', businessId)
               .order('created_at', { ascending: false }),
             supabase
               .from('business_events')
-              .select('*')
+              .select(BUSINESS_EVENT_SELECT)
               .eq('business_id', businessId)
-              .order('start_at', { ascending: false }),
+              .order('starts_at', { ascending: false }),
             supabase
               .from('business_notices')
-              .select('*')
+              .select(BUSINESS_NOTICE_SELECT)
               .eq('business_id', businessId)
               .order('created_at', { ascending: false }),
             supabase
               .from('business_menus')
-              .select('*')
+              .select(BUSINESS_MENU_SELECT)
               .eq('business_id', businessId)
               .order('sort_order', { ascending: true })
               .order('created_at', { ascending: true }),
             supabase
               .from('business_menu_items')
-              .select('*')
+              .select(BUSINESS_MENU_ITEM_SELECT)
               .eq('business_id', businessId)
               .order('sort_order', { ascending: true })
               .order('created_at', { ascending: true }),
@@ -877,7 +980,12 @@ const BusinessCreateScreen: React.FC = () => {
       return;
     } catch (err: any) {
       console.error(err);
-      Alert.alert('오류', err?.message ?? '정보를 불러오지 못했습니다.');
+      showBusinessAlert({
+        title: t('business:common.error'),
+        message: err?.message ?? t('business:create.loadFail'),
+        confirmText: t('business:common.confirm'),
+        singleButton: true,
+      });
     } finally {
       setLoading(false);
     }
@@ -970,6 +1078,17 @@ const BusinessCreateScreen: React.FC = () => {
       setLocalGiftcard((p) => p ?? null);
     }
 
+    // 업체 기본 통화 컬럼 여부
+    if ('default_currency' in anyBiz) {
+      setHasDefaultCurrencyColumn(true);
+      setBusinessCurrency(normalizeMenuCurrency(anyBiz.default_currency));
+    } else {
+      setHasDefaultCurrencyColumn(false);
+      setBusinessCurrency((p) =>
+        normalizeMenuCurrency(anyBiz.business_currency ?? anyBiz.currency ?? p),
+      );
+    }
+
     // 위도/경도 컬럼 여부
     const hasCoord = 'lat' in anyBiz && 'lng' in anyBiz;
     setHasLatLngColumns(hasCoord);
@@ -993,7 +1112,7 @@ const BusinessCreateScreen: React.FC = () => {
   // Info 저장
   const handleSaveInfo = useCallback(async () => {
     if (!business?.id) {
-      Alert.alert('안내', '먼저 비즈니스가 생성되어야 합니다.');
+      showBusinessToast(t('business:create.businessRequired'), 'warning');
       return;
     }
 
@@ -1005,7 +1124,7 @@ const BusinessCreateScreen: React.FC = () => {
         CATEGORY_MAJOR_TO_ID[categoryMajor] ?? null;
 
       if (!categoryId) {
-        Alert.alert('카테고리', '카테고리를 선택해 주세요.');
+        showBusinessToast(t('business:category.selectRequired'), 'warning');
         return;
       }
 
@@ -1066,6 +1185,10 @@ const BusinessCreateScreen: React.FC = () => {
         payload.local_giftcard = localGiftcard;
       }
 
+      if (hasDefaultCurrencyColumn) {
+        payload.default_currency = businessCurrency;
+      }
+
       if (hasLatLngColumns) {
         payload.lat = geoLat;
         payload.lng = geoLng;
@@ -1079,16 +1202,16 @@ const BusinessCreateScreen: React.FC = () => {
         .from('businesses')
         .update(payload)
         .eq('id', business.id)
-        .select('*')
+        .select(BUSINESS_CREATE_SELECT)
         .single();
 
       if (error) throw error;
 
       setBusiness(data as BusinessRow);
-      Alert.alert('저장 완료', '회사 정보가 저장되었습니다.');
+      showBusinessToast(t('business:create.companySaved'), 'success', true);
     } catch (err: any) {
       console.error(err);
-      Alert.alert('오류', err.message ?? '저장에 실패했습니다.');
+      showBusinessToast(err.message ?? t('business:create.saveFail'), 'danger');
     } finally {
       setSavingInfo(false);
     }
@@ -1121,6 +1244,8 @@ const BusinessCreateScreen: React.FC = () => {
     isOpenNow,
     hasLocalGiftcardColumn,
     localGiftcard,
+    hasDefaultCurrencyColumn,
+    businessCurrency,
     hasLatLngColumns,
     geoLat,
     geoLng,
@@ -1131,18 +1256,8 @@ const BusinessCreateScreen: React.FC = () => {
     isAdultOnly,
   ]);
 
-  // 주소 검색 버튼
+  // 주소 검색 버튼: Google Places 모달 대신 Mapbox 지도 선택 모달을 연다.
   const handleSearchAddress = useCallback(() => {
-    if (!ensurePlacesKey()) return;
-
-    const q = (address || name).trim();
-    setAddressQuery(q);
-    setAddressResults([]);
-    setAddressSearchVisible(true);
-  }, [ensurePlacesKey, address, name]);
-
-  // 지도 버튼
-  const handleOpenMap = useCallback(() => {
     const baseLat = geoLat ?? 37.5665; // 서울
     const baseLng = geoLng ?? 126.978;
 
@@ -1183,7 +1298,7 @@ const handleMapPress = useCallback((e: any) => {
 
   const handleSelectCategoryMinor = useCallback(() => {
     if (!categoryMajor) {
-      Alert.alert('카테고리', '먼저 주요 카테고리를 선택해 주세요.');
+      showBusinessToast(t('business:category.majorFirst'), 'warning');
       return;
     }
     setCategoryMinorModalVisible(true);
@@ -1216,95 +1331,36 @@ const handleMapPress = useCallback((e: any) => {
     const { main, subs, total } = heroSet;
 
     return (
-      <View style={{ width: '100%', backgroundColor: '#FFFFFF' }}>
-        <View style={{ width: '100%', flexDirection: 'row' }}>
-          {/* 메인 정사각형 */}
-          <View style={{ width: '50%', paddingRight: 1 }}>
-            <View
-              style={{
-                width: '100%',
-                aspectRatio: 1,
-                backgroundColor: '#EEE',
-              }}
-            >
+      <View style={styles.heroContainer}>
+        <View style={styles.heroGrid}>
+          <View style={styles.heroMainCell}>
+            <View style={styles.heroTile}>
               {main ? (
-                <Image
-                  source={{ uri: main }}
-                  style={{ width: '100%', height: '100%' }}
-                  resizeMode="cover"
-                />
+                <Image {...BUSINESS_IMAGE_PROPS} source={{ uri: main }} style={styles.heroImage} resizeMode="cover" />
               ) : (
-                <View
-                  style={{ flex: 1, backgroundColor: '#E5E7EB' }}
-                />
+                <View style={styles.heroPlaceholder} />
               )}
             </View>
           </View>
 
-          {/* 서브 4개 정사각형 */}
-          <View
-            style={{
-              width: '50%',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-            }}
-          >
+          <View style={styles.heroSubGrid}>
             {[0, 1, 2, 3].map((i) => {
               const uri = subs[i] ?? null;
               const isLast = i === 3;
               const showBadge = isLast && total > 5;
 
               return (
-                <View
-                  key={`sub-${i}`}
-                  style={{
-                    width: '50%',
-                    paddingLeft: 1,
-                    paddingTop: i < 2 ? 0 : 2,
-                  }}
-                >
-                  <View
-                    style={{
-                      width: '100%',
-                      aspectRatio: 1,
-                      backgroundColor: '#E5E7EB',
-                    }}
-                  >
+                <View key={`sub-${i}`} style={styles.heroSubCell}>
+                  <View style={styles.heroTile}>
                     {uri ? (
-                      <Image
-                        source={{ uri }}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                        }}
-                        resizeMode="cover"
-                      />
+                      <Image {...BUSINESS_IMAGE_PROPS} source={{ uri }} style={styles.heroImage} resizeMode="cover" />
                     ) : (
-                      <View
-                        style={{
-                          flex: 1,
-                          backgroundColor: '#E5E7EB',
-                        }}
-                      />
+                      <View style={styles.heroPlaceholder} />
                     )}
 
                     {showBadge && (
-                      <View
-                        style={{
-                          position: 'absolute',
-                          right: 6,
-                          bottom: 6,
-                          backgroundColor: 'rgba(0,0,0,0.6)',
-                          paddingHorizontal: 6,
-                          paddingVertical: 2,
-                          borderRadius: 8,
-                        }}
-                      >
-                        <Text
-                          style={{ color: '#fff', fontSize: 12 }}
-                        >
-                          +{total - 5}
-                        </Text>
+                      <View style={styles.heroMoreBadge}>
+                        <Text style={styles.heroMoreText}>+{total - 5}</Text>
                       </View>
                     )}
                   </View>
@@ -1321,7 +1377,7 @@ const handleMapPress = useCallback((e: any) => {
   const handleCall = useCallback(async () => {
     const value = (phone || business?.phone || '').trim();
     if (!value) {
-      Alert.alert('안내', '등록된 전화번호가 없습니다.');
+      showBusinessToast(t('business:create.phoneMissing'), 'warning');
       return;
     }
     const cleaned = value.replace(/[^0-9+]/g, '');
@@ -1329,7 +1385,7 @@ const handleMapPress = useCallback((e: any) => {
 
     const supported = await Linking.canOpenURL(url);
     if (!supported) {
-      Alert.alert('오류', '이 기기에서 전화를 걸 수 없습니다.');
+      showBusinessToast(t('business:create.phoneUnsupported'), 'danger');
       return;
     }
     Linking.openURL(url);
@@ -1338,7 +1394,7 @@ const handleMapPress = useCallback((e: any) => {
   const handleDirections = useCallback(async () => {
     const addr = (address || business?.address || '').trim();
     if (!addr) {
-      Alert.alert('안내', '등록된 주소가 없습니다.');
+      showBusinessToast(t('business:create.addressMissing'), 'warning');
       return;
     }
 
@@ -1358,7 +1414,7 @@ const handleMapPress = useCallback((e: any) => {
   }, [address, business]);
 
   const handleShare = useCallback(async () => {
-    const title = (business?.name ?? name) || '가게 이름';
+    const title = (business?.name ?? name) || t('business:common.storeName');
     const addr = address || business?.address;
 
     let message = title;
@@ -1376,10 +1432,10 @@ const handleMapPress = useCallback((e: any) => {
   // 사진
   const handleAddPhotoImage = useCallback(async () => {
     if (!business?.id) {
-      Alert.alert('안내', '먼저 비즈니스가 생성되어야 합니다.');
+      showBusinessToast(t('business:create.businessRequired'), 'warning');
       return;
     }
-    const url = await pickAndUpload(business.id, 'photos');
+    const url = await pickAndUpload(business.id, 'photos', imageUploadFeedback, t);
     if (url) setNewPhotoImageUrl(url);
   }, [business]);
 
@@ -1392,38 +1448,39 @@ const handleMapPress = useCallback((e: any) => {
   const handleDeletePhoto = useCallback(
     (photoId: string) => {
       if (!business?.id) return;
-      Alert.alert('삭제', '이 사진을 삭제하시겠어요?', [
-        { text: '취소', style: 'cancel' },
-        {
-          text: '삭제',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const { error } = await supabase
-                .from('business_photos')
-                .delete()
-                .eq('id', photoId)
-                .eq('business_id', business.id);
+      showBusinessAlert({
+        title: t('business:common.delete'),
+        message: t('business:create.photoDeleteConfirm'),
+        confirmText: t('business:common.delete'),
+        cancelText: t('business:common.cancel'),
+        variant: 'danger',
+        singleButton: false,
+        onConfirm: async () => {
+          try {
+            const { error } = await supabase
+              .from('business_photos')
+              .delete()
+              .eq('id', photoId)
+              .eq('business_id', business.id);
 
-              if (error) throw error;
+            if (error) throw error;
 
-              setPhotos((prev) =>
-                prev.filter((p) => p.id !== photoId),
-              );
-              if (editingPhotoId === photoId) {
-                setEditingPhotoId(null);
-                setNewPhotoImageUrl(null);
-                setNewPhotoCaption('');
-              }
-            } catch (e) {
-              console.error(e);
-              Alert.alert('오류', '사진을 삭제하지 못했습니다.');
+            setPhotos((prev) =>
+              prev.filter((p) => p.id !== photoId),
+            );
+            if (editingPhotoId === photoId) {
+              setEditingPhotoId(null);
+              setNewPhotoImageUrl(null);
+              setNewPhotoCaption('');
             }
-          },
+          } catch (e) {
+            console.error(e);
+            showBusinessToast(t('business:create.photoDeleteFail'), 'danger');
+          }
         },
-      ]);
+      });
     },
-    [business, editingPhotoId],
+    [business, editingPhotoId, showBusinessAlert, showBusinessToast, t],
   );
 
   const handleSubmitPhoto = useCallback(async () => {
@@ -1433,10 +1490,7 @@ const handleMapPress = useCallback((e: any) => {
     const hasText = !!newPhotoCaption.trim();
 
     if (!hasImage && !hasText) {
-      Alert.alert(
-        '안내',
-        '사진이나 글 중 하나는 입력해 주세요.',
-      );
+      showBusinessToast(t('business:create.contentRequired'), 'warning');
       return;
     }
 
@@ -1455,7 +1509,7 @@ const handleMapPress = useCallback((e: any) => {
           .update(payload)
           .eq('id', editingPhotoId)
           .eq('business_id', business.id)
-          .select('*')
+          .select(BUSINESS_PHOTO_SELECT)
           .single();
 
         if (error) throw error;
@@ -1464,18 +1518,18 @@ const handleMapPress = useCallback((e: any) => {
         setPhotos((prev) =>
           prev.map((p) => (p.id === updated.id ? updated : p)),
         );
-        Alert.alert('수정 완료', '가게 사진이 수정되었습니다.');
+        showBusinessToast(t('business:create.photoEditDone'), 'success', true);
       } else {
         const { data, error } = await supabase
           .from('business_photos')
           .insert(payload)
-          .select('*')
+          .select(BUSINESS_PHOTO_SELECT)
           .single();
 
         if (error) throw error;
 
         setPhotos((prev) => [data as BusinessPhoto, ...prev]);
-        Alert.alert('등록 완료', '가게 사진이 등록되었습니다.');
+        showBusinessToast(t('business:create.photoCreateDone'), 'success', true);
       }
 
       setNewPhotoImageUrl(null);
@@ -1483,7 +1537,7 @@ const handleMapPress = useCallback((e: any) => {
       setEditingPhotoId(null);
     } catch (e) {
       console.error(e);
-      Alert.alert('오류', '가게 사진을 저장하지 못했습니다.');
+      showBusinessToast(t('business:create.photoSaveFail'), 'danger');
     } finally {
       setPostingPhoto(false);
     }
@@ -1499,28 +1553,28 @@ const handleMapPress = useCallback((e: any) => {
     (photo: BusinessPhoto) => {
       const url = photo.image_url ?? null;
       if (!url) {
-        Alert.alert(
-          '안내',
-          '이미지가 있는 사진만 대표사진으로 설정할 수 있습니다.',
-        );
+        showBusinessToast(t('business:manager.heroImageRequired'), 'warning');
         return;
       }
       setHeroImageUrl(url);
-      Alert.alert(
-        '대표 사진',
-        '이 사진을 대표 사진으로 설정했습니다.\n상단 "저장"을 눌러야 최종 반영됩니다.',
-      );
+      showBusinessToast(t('business:create.heroSelected'), 'success', true);
     },
     [],
   );
 
+  const handleCancelPhotoForm = useCallback(() => {
+    setEditingPhotoId(null);
+    setNewPhotoImageUrl(null);
+    setNewPhotoCaption('');
+  }, []);
+
   // 이벤트
   const handleAddEventImage = useCallback(async () => {
     if (!business?.id) {
-      Alert.alert('안내', '먼저 비즈니스를 생성되어야 합니다.');
+      showBusinessToast(t('business:create.businessRequired'), 'warning');
       return;
     }
-    const url = await pickAndUpload(business.id, 'events');
+    const url = await pickAndUpload(business.id, 'events', imageUploadFeedback, t);
     if (url) setNewEventImageUrl(url);
   }, [business]);
 
@@ -1534,39 +1588,40 @@ const handleMapPress = useCallback((e: any) => {
   const handleDeleteEvent = useCallback(
     (eventId: string) => {
       if (!business?.id) return;
-      Alert.alert('삭제', '이 이벤트를 삭제하시겠어요?', [
-        { text: '취소', style: 'cancel' },
-        {
-          text: '삭제',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const { error } = await supabase
-                .from('business_events')
-                .delete()
-                .eq('id', eventId)
-                .eq('business_id', business.id);
+      showBusinessAlert({
+        title: t('business:common.delete'),
+        message: t('business:create.eventDeleteConfirm'),
+        confirmText: t('business:common.delete'),
+        cancelText: t('business:common.cancel'),
+        variant: 'danger',
+        singleButton: false,
+        onConfirm: async () => {
+          try {
+            const { error } = await supabase
+              .from('business_events')
+              .delete()
+              .eq('id', eventId)
+              .eq('business_id', business.id);
 
-              if (error) throw error;
+            if (error) throw error;
 
-              setEvents((prev) =>
-                prev.filter((e) => e.id !== eventId),
-              );
-              if (editingEventId === eventId) {
-                setEditingEventId(null);
-                setNewEventTitle('');
-                setNewEventBody('');
-                setNewEventImageUrl(null);
-              }
-            } catch (e) {
-              console.error(e);
-              Alert.alert('오류', '이벤트를 삭제하지 못했습니다.');
+            setEvents((prev) =>
+              prev.filter((e) => e.id !== eventId),
+            );
+            if (editingEventId === eventId) {
+              setEditingEventId(null);
+              setNewEventTitle('');
+              setNewEventBody('');
+              setNewEventImageUrl(null);
             }
-          },
+          } catch (e) {
+            console.error(e);
+            showBusinessToast(t('business:create.eventDeleteFail'), 'danger');
+          }
         },
-      ]);
+      });
     },
-    [business, editingEventId],
+    [business, editingEventId, showBusinessAlert, showBusinessToast, t],
   );
 
   const handleSubmitEvent = useCallback(async () => {
@@ -1577,10 +1632,7 @@ const handleMapPress = useCallback((e: any) => {
       !!newEventTitle.trim() || !!newEventBody.trim();
 
     if (!hasImage && !hasText) {
-      Alert.alert(
-        '안내',
-        '사진이나 글 중 하나는 입력해 주세요.',
-      );
+      showBusinessToast(t('business:create.contentRequired'), 'warning');
       return;
     }
 
@@ -1600,7 +1652,7 @@ const handleMapPress = useCallback((e: any) => {
           .update(payload)
           .eq('id', editingEventId)
           .eq('business_id', business.id)
-          .select('*')
+          .select(BUSINESS_EVENT_SELECT)
           .single();
 
         if (error) throw error;
@@ -1609,18 +1661,18 @@ const handleMapPress = useCallback((e: any) => {
         setEvents((prev) =>
           prev.map((e) => (e.id === updated.id ? updated : e)),
         );
-        Alert.alert('수정 완료', '이벤트가 수정되었습니다.');
+        showBusinessToast(t('business:create.eventEditDone'), 'success', true);
       } else {
         const { data, error } = await supabase
           .from('business_events')
           .insert(payload)
-          .select('*')
+          .select(BUSINESS_EVENT_SELECT)
           .single();
 
         if (error) throw error;
 
         setEvents((prev) => [data as BusinessEvent, ...prev]);
-        Alert.alert('등록 완료', '이벤트가 등록되었습니다.');
+        showBusinessToast(t('business:create.eventCreateDone'), 'success', true);
       }
 
       setNewEventTitle('');
@@ -1629,7 +1681,7 @@ const handleMapPress = useCallback((e: any) => {
       setEditingEventId(null);
     } catch (e) {
       console.error(e);
-      Alert.alert('오류', '이벤트를 저장하지 못했습니다.');
+      showBusinessToast(t('business:create.eventSaveFail'), 'danger');
     } finally {
       setPostingEvent(false);
     }
@@ -1644,10 +1696,10 @@ const handleMapPress = useCallback((e: any) => {
   // 공지
   const handleAddNoticeImage = useCallback(async () => {
     if (!business?.id) {
-      Alert.alert('안내', '먼저 비즈니스를 생성되어야 합니다.');
+      showBusinessToast(t('business:create.businessRequired'), 'warning');
       return;
     }
-    const url = await pickAndUpload(business.id, 'notices');
+    const url = await pickAndUpload(business.id, 'notices', imageUploadFeedback, t);
     if (url) setNewNoticeImageUrl(url);
   }, [business]);
 
@@ -1661,39 +1713,40 @@ const handleMapPress = useCallback((e: any) => {
   const handleDeleteNotice = useCallback(
     (noticeId: string) => {
       if (!business?.id) return;
-      Alert.alert('삭제', '이 공지를 삭제하시겠어요?', [
-        { text: '취소', style: 'cancel' },
-        {
-          text: '삭제',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const { error } = await supabase
-                .from('business_notices')
-                .delete()
-                .eq('id', noticeId)
-                .eq('business_id', business.id);
+      showBusinessAlert({
+        title: t('business:common.delete'),
+        message: t('business:create.noticeDeleteConfirm'),
+        confirmText: t('business:common.delete'),
+        cancelText: t('business:common.cancel'),
+        variant: 'danger',
+        singleButton: false,
+        onConfirm: async () => {
+          try {
+            const { error } = await supabase
+              .from('business_notices')
+              .delete()
+              .eq('id', noticeId)
+              .eq('business_id', business.id);
 
-              if (error) throw error;
+            if (error) throw error;
 
-              setNotices((prev) =>
-                prev.filter((n) => n.id !== noticeId),
-              );
-              if (editingNoticeId === noticeId) {
-                setEditingNoticeId(null);
-                setNewNoticeTitle('');
-                setNewNoticeBody('');
-                setNewNoticeImageUrl(null);
-              }
-            } catch (e) {
-              console.error(e);
-              Alert.alert('오류', '공지를 삭제하지 못했습니다.');
+            setNotices((prev) =>
+              prev.filter((n) => n.id !== noticeId),
+            );
+            if (editingNoticeId === noticeId) {
+              setEditingNoticeId(null);
+              setNewNoticeTitle('');
+              setNewNoticeBody('');
+              setNewNoticeImageUrl(null);
             }
-          },
+          } catch (e) {
+            console.error(e);
+            showBusinessToast(t('business:create.noticeDeleteFail'), 'danger');
+          }
         },
-      ]);
+      });
     },
-    [business, editingNoticeId],
+    [business, editingNoticeId, showBusinessAlert, showBusinessToast, t],
   );
 
   const handleSubmitNotice = useCallback(async () => {
@@ -1704,10 +1757,7 @@ const handleMapPress = useCallback((e: any) => {
       !!newNoticeTitle.trim() || !!newNoticeBody.trim();
 
     if (!hasImage && !hasText) {
-      Alert.alert(
-        '안내',
-        '사진이나 글 중 하나는 입력해 주세요.',
-      );
+      showBusinessToast(t('business:create.contentRequired'), 'warning');
       return;
     }
 
@@ -1727,7 +1777,7 @@ const handleMapPress = useCallback((e: any) => {
           .update(payload)
           .eq('id', editingNoticeId)
           .eq('business_id', business.id)
-          .select('*')
+          .select(BUSINESS_NOTICE_SELECT)
           .single();
 
         if (error) throw error;
@@ -1736,12 +1786,12 @@ const handleMapPress = useCallback((e: any) => {
         setNotices((prev) =>
           prev.map((n) => (n.id === updated.id ? updated : n)),
         );
-        Alert.alert('수정 완료', '공지가 수정되었습니다.');
+        showBusinessToast(t('business:create.noticeEditDone'), 'success', true);
       } else {
         const { data, error } = await supabase
           .from('business_notices')
           .insert(payload)
-          .select('*')
+          .select(BUSINESS_NOTICE_SELECT)
           .single();
 
         if (error) throw error;
@@ -1750,7 +1800,7 @@ const handleMapPress = useCallback((e: any) => {
           data as BusinessNotice,
           ...prev,
         ]);
-        Alert.alert('등록 완료', '공지가 등록되었습니다.');
+        showBusinessToast(t('business:create.noticeCreateDone'), 'success', true);
       }
 
       setNewNoticeTitle('');
@@ -1759,7 +1809,7 @@ const handleMapPress = useCallback((e: any) => {
       setEditingNoticeId(null);
     } catch (e) {
       console.error(e);
-      Alert.alert('오류', '공지를 저장하지 못했습니다.');
+      showBusinessToast(t('business:create.noticeSaveFail'), 'danger');
     } finally {
       setPostingNotice(false);
     }
@@ -1775,7 +1825,7 @@ const handleMapPress = useCallback((e: any) => {
   const handleCreateMenuBoard = useCallback(async () => {
     if (!business?.id) return;
     if (!newMenuTitle.trim()) {
-      Alert.alert('안내', '메뉴판 이름을 입력해 주세요.');
+      showBusinessToast(t('business:manager.boardNameRequired'), 'warning');
       return;
     }
 
@@ -1792,7 +1842,7 @@ const handleMapPress = useCallback((e: any) => {
       const { data, error } = await supabase
         .from('business_menus')
         .insert(payload)
-        .select('*')
+        .select(BUSINESS_MENU_SELECT)
         .single();
 
       if (error) throw error;
@@ -1807,7 +1857,7 @@ const handleMapPress = useCallback((e: any) => {
       setNewMenuCategory('');
     } catch (e) {
       console.error(e);
-      Alert.alert('오류', '메뉴판을 추가하지 못했습니다.');
+      showBusinessToast(t('business:create.boardCreateFail'), 'danger');
     } finally {
       setCreatingMenu(false);
     }
@@ -1817,98 +1867,90 @@ const handleMapPress = useCallback((e: any) => {
     async (menuId: string) => {
       if (!business?.id) return;
 
-      Alert.alert(
-        '메뉴판 삭제',
-        '이 메뉴판과 안에 있는 메뉴들이 모두 삭제됩니다. 계속하시겠어요?',
-        [
-          { text: '취소', style: 'cancel' },
-          {
-            text: '삭제',
-            style: 'destructive',
-            onPress: async () => {
-              try {
-                await supabase
-                  .from('business_menu_items')
-                  .delete()
-                  .eq('menu_id', menuId);
+      showBusinessAlert({
+        title: t('business:create.boardDeleteTitle'),
+        message: t('business:create.boardDeleteDesc'),
+        confirmText: t('business:common.delete'),
+        cancelText: t('business:common.cancel'),
+        variant: 'danger',
+        singleButton: false,
+        onConfirm: async () => {
+          try {
+            await supabase
+              .from('business_menu_items')
+              .delete()
+              .eq('menu_id', menuId);
 
-                const { error } = await supabase
-                  .from('business_menus')
-                  .delete()
-                  .eq('id', menuId)
-                  .eq('business_id', business.id);
+            const { error } = await supabase
+              .from('business_menus')
+              .delete()
+              .eq('id', menuId)
+              .eq('business_id', business.id);
 
-                if (error) throw error;
+            if (error) throw error;
 
-                setMenus((prev) =>
-                  prev.filter((m) => m.id !== menuId),
-                );
-                setMenuItemsByMenuId((prev) => {
-                  const next = { ...prev };
-                  delete next[menuId];
-                  return next;
-                });
-              } catch (e) {
-                console.error(e);
-                Alert.alert(
-                  '오류',
-                  '메뉴판을 삭제하지 못했습니다.',
-                );
-              }
-            },
-          },
-        ],
-      );
+            setMenus((prev) =>
+              prev.filter((m) => m.id !== menuId),
+            );
+            setMenuItemsByMenuId((prev) => {
+              const next = { ...prev };
+              delete next[menuId];
+              return next;
+            });
+          } catch (e) {
+            console.error(e);
+            showBusinessToast(t('business:create.boardDeleteFail'), 'danger');
+          }
+        },
+      });
     },
-    [business],
+    [business, showBusinessAlert, showBusinessToast, t],
   );
 
   const handleDeleteMenuItem = useCallback(
     async (menuId: string, itemId: string) => {
       if (!business?.id) return;
 
-      Alert.alert('삭제', '이 메뉴를 삭제하시겠어요?', [
-        { text: '취소', style: 'cancel' },
-        {
-          text: '삭제',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const { error } = await supabase
-                .from('business_menu_items')
-                .delete()
-                .eq('id', itemId)
-                .eq('business_id', business.id);
+      showBusinessAlert({
+        title: t('business:common.delete'),
+        message: t('business:create.menuDeleteConfirm'),
+        confirmText: t('business:common.delete'),
+        cancelText: t('business:common.cancel'),
+        variant: 'danger',
+        singleButton: false,
+        onConfirm: async () => {
+          try {
+            const { error } = await supabase
+              .from('business_menu_items')
+              .delete()
+              .eq('id', itemId)
+              .eq('business_id', business.id);
 
-              if (error) throw error;
+            if (error) throw error;
 
-              setMenuItemsByMenuId((prev) => ({
-                ...prev,
-                [menuId]: (prev[menuId] ?? []).filter(
-                  (it) => it.id !== itemId,
-                ),
-              }));
+            setMenuItemsByMenuId((prev) => ({
+              ...prev,
+              [menuId]: (prev[menuId] ?? []).filter(
+                (it) => it.id !== itemId,
+              ),
+            }));
 
-              if (editingMenuItemId === itemId) {
-                setEditingMenuItemId(null);
-              }
-            } catch (e) {
-              console.error(e);
-              Alert.alert('오류', '메뉴를 삭제하지 못했습니다.');
+            if (editingMenuItemId === itemId) {
+              setEditingMenuItemId(null);
             }
-          },
+          } catch (e) {
+            console.error(e);
+            showBusinessToast(t('business:create.menuDeleteFail'), 'danger');
+          }
         },
-      ]);
+      });
     },
-    [business, editingMenuItemId],
+    [business, editingMenuItemId, showBusinessAlert, showBusinessToast, t],
   );
 
   const handleEditMenuBoard = useCallback(
     (menu: BusinessMenu) => {
-      Alert.alert(
-        '준비 중',
-        `메뉴판 "${menu.name}" 수정 UI는 추후에 추가할 수 있습니다.`,
-      );
+      showBusinessToast(t('business:create.menuBoardEditSoon'), 'info');
     },
     [],
   );
@@ -1961,21 +2003,47 @@ const handleMapPress = useCallback((e: any) => {
 
   const handlePickMenuItemImage = useCallback(async () => {
     if (!business?.id) {
-      Alert.alert('안내', '먼저 비즈니스를 생성해야 합니다.');
+      showBusinessToast(t('business:create.businessRequired'), 'warning');
       return;
     }
-    const url = await pickAndUpload(business.id, 'menus');
-    if (url) setMenuItemImageUrl(url);
-  }, [business]);
+
+    const shouldRestoreModal = menuItemModalVisible;
+
+    if (shouldRestoreModal) {
+      setMenuItemModalVisible(false);
+      await wait(260);
+    }
+
+    try {
+      const url = await pickAndUpload(
+        business.id,
+        'menus',
+        imageUploadFeedback,
+        t,
+      );
+      if (url) setMenuItemImageUrl(url);
+    } finally {
+      if (shouldRestoreModal) {
+        await wait(120);
+        setMenuItemModalVisible(true);
+      }
+    }
+  }, [
+    business,
+    imageUploadFeedback,
+    menuItemModalVisible,
+    showBusinessToast,
+    t,
+  ]);
 
   const handleSubmitMenuItem = useCallback(async () => {
     if (!business?.id || !menuItemTargetMenuId) {
-      Alert.alert('오류', '메뉴판 정보를 찾을 수 없습니다.');
+      showBusinessToast(t('business:create.boardNotFound'), 'danger');
       return;
     }
 
     if (!menuItemName.trim()) {
-      Alert.alert('안내', '메뉴 이름을 입력해 주세요.');
+      showBusinessToast(t('business:manager.menuNameRequired'), 'warning');
       return;
     }
 
@@ -1991,6 +2059,7 @@ const handleMapPress = useCallback((e: any) => {
         name: menuItemName.trim(),
         description: menuItemDesc.trim() || null,
         price: priceValue,
+        price_currency: businessCurrency,
         is_signature: menuItemIsSignature,
         image_url: menuItemImageUrl ?? null,
       };
@@ -2001,7 +2070,7 @@ const handleMapPress = useCallback((e: any) => {
           .update(basePayload)
           .eq('id', editingMenuItemId)
           .eq('business_id', business.id)
-          .select('*')
+          .select(BUSINESS_MENU_ITEM_SELECT)
           .single();
 
         if (error) throw error;
@@ -2028,7 +2097,7 @@ const handleMapPress = useCallback((e: any) => {
         const { data, error } = await supabase
           .from('business_menu_items')
           .insert(payload)
-          .select('*')
+          .select(BUSINESS_MENU_ITEM_SELECT)
           .single();
 
         if (error) throw error;
@@ -2043,11 +2112,11 @@ const handleMapPress = useCallback((e: any) => {
         }));
       }
 
-      Alert.alert('저장 완료', '메뉴가 저장되었습니다.');
+      showBusinessToast(t('business:create.menuSaved'), 'success', true);
       handleCloseMenuItemModal();
     } catch (e) {
       console.error(e);
-      Alert.alert('오류', '메뉴를 저장하지 못했습니다.');
+      showBusinessToast(t('business:create.menuSaveFail'), 'danger');
     } finally {
       setSavingMenuItem(false);
     }
@@ -2056,6 +2125,7 @@ const handleMapPress = useCallback((e: any) => {
     menuItemTargetMenuId,
     menuItemName,
     menuItemPrice,
+    businessCurrency,
     menuItemDesc,
     menuItemImageUrl,
     menuItemIsSignature,
@@ -2078,13 +2148,12 @@ const handleMapPress = useCallback((e: any) => {
         styles.safeArea,
         {
           paddingTop: isIOS ? insets.top : 0,
-          backgroundColor: '#FFFFFF',
         },
       ]}
     >
       <StatusBar
-        backgroundColor="#FFFFFF"
-        barStyle="dark-content"
+        backgroundColor={ui.statusBarBackground}
+        barStyle={ui.statusBarStyle}
         translucent={false}
       />
 
@@ -2094,7 +2163,7 @@ const handleMapPress = useCallback((e: any) => {
           style={styles.headerLeft}
           onPress={() => navigation.goBack()}
         >
-          <ChevronLeft size={22} color="#111827" />
+          <ChevronLeft size={22} color={ui.text} />
         </Pressable>
 
         {/* 가운데: 가게 이름 + 영업중 배지 */}
@@ -2117,30 +2186,23 @@ const handleMapPress = useCallback((e: any) => {
             ]}
             numberOfLines={1}
           >
-            {(business?.name ?? name) || '가게 이름'}
+            {(business?.name ?? name) || t('business:common.storeName')}
           </Text>
 
           <Pressable
             onPress={() => setIsOpenNow((prev) => !prev)}
-            style={{
-              paddingHorizontal: 10,
-              paddingVertical: 4,
-              borderRadius: 999,
-              borderWidth: 1,
-              borderColor: isOpenNow ? '#16A34A' : '#9CA3AF',
-              backgroundColor: isOpenNow
-                ? '#DCFCE7'
-                : '#F3F4F6',
-            }}
+            style={[
+              styles.openBadge,
+              isOpenNow ? styles.openBadgeOn : styles.openBadgeOff,
+            ]}
           >
             <Text
-              style={{
-                fontSize: 11,
-                fontWeight: '600',
-                color: isOpenNow ? '#166534' : '#4B5563',
-              }}
+              style={[
+                styles.openBadgeText,
+                isOpenNow ? styles.openBadgeTextOn : styles.openBadgeTextOff,
+              ]}
             >
-              {isOpenNow ? '영업중' : '영업중 아님'}
+              {isOpenNow ? t('business:status.open') : t('business:status.notOpen')}
             </Text>
           </Pressable>
         </View>
@@ -2149,232 +2211,133 @@ const handleMapPress = useCallback((e: any) => {
         <Pressable
           onPress={handleSaveInfo}
           disabled={savingInfo}
-          style={{ paddingHorizontal: 8, paddingVertical: 4 }}
+          style={styles.headerSaveButton}
         >
           {savingInfo ? (
-            <ActivityIndicator size="small" color="#111827" />
+            <ActivityIndicator size="small" color={ui.text} />
           ) : (
-            <Text
-              style={{
-                fontSize: 16,
-                color: '#111827',
-                fontWeight: '600',
-              }}
-            >
-              저장
-            </Text>
+            <Text style={styles.headerSaveText}>{t('business:common.save')}</Text>
           )}
         </Pressable>
       </View>
 
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        style={styles.keyboardAvoiding}
         behavior={isIOS ? 'padding' : 'height'}
         keyboardVerticalOffset={
           isIOS ? HEADER_HEIGHT + TABBAR_HEIGHT : 0
         }
       >
         <ScrollView
+          ref={scrollRef}
           style={styles.scroll}
-          contentContainerStyle={{
-            paddingBottom: insets.bottom + 16,
-          }}
+          contentContainerStyle={[
+            styles.scrollContentContainer,
+            { paddingBottom: scrollBottomPadding },
+          ]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode={isIOS ? 'interactive' : 'on-drag'}
+          automaticallyAdjustKeyboardInsets={isIOS}
         >
           {/* 대표 사진 */}
           {renderHero()}
 
           {/* 쿠폰 정보 + 한줄 소개 + 방문자 피드 */}
           <View style={styles.basicInfoContainer}>
-            <Text
-              style={{
-                marginTop: 0,
-                fontSize: 12,
-                color: '#4B5563',
-              }}
-            >
+            <Text style={styles.couponText}>
               {couponLabel}
             </Text>
 
             <Text
-              style={{
-                marginTop: 6,
-                fontSize: 13,
-                color: '#6B7280',
-              }}
+              style={styles.introText}
               numberOfLines={2}
             >
               {oneLineIntro ||
-                '사장님이 한줄 소개를 작성하면 여기 표시됩니다.'}
+                t('business:create.introFallback')}
             </Text>
 
-            <Text
-              style={{
-                marginTop: 4,
-                fontSize: 12,
-                color: '#9CA3AF',
-              }}
-            >
+            <Text style={styles.visitorText}>
               {visitorFeedCountLabel}
             </Text>
           </View>
 
           {/* 아이콘 5개 */}
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              paddingVertical: 12,
-              borderTopWidth: 0.5,
-              borderBottomWidth: 0.5,
-              borderColor: '#E5E7EB',
-              backgroundColor: '#FFFFFF',
-            }}
-          >
-            <Pressable
-              style={{ alignItems: 'center' }}
-              onPress={handleCall}
-            >
-              <Phone size={20} color="#4B5563" />
-              <Text
-                style={{
-                  marginTop: 4,
-                  fontSize: 12,
-                  color: '#4B5563',
-                }}
-              >
-                전화
-              </Text>
+          <View style={styles.actionRow}>
+            <Pressable style={styles.actionBtn} onPress={handleCall}>
+              <Phone size={22} color={ui.textSecondary} strokeWidth={1.6} />
+              <Text style={styles.actionLabel}>{t('business:actions.call')}</Text>
             </Pressable>
 
             <Pressable
-              style={{ alignItems: 'center' }}
+              style={styles.actionBtn}
               onPress={() =>
-                Alert.alert(
-                  '문의',
-                  '채팅 문의 기능은 추후 제공 예정입니다.',
-                )
+                showBusinessToast(t('business:create.inquirySoon'), 'info')
               }
             >
-              <MessageCircle size={20} color="#4B5563" />
-              <Text
-                style={{
-                  marginTop: 4,
-                  fontSize: 12,
-                  color: '#4B5563',
-                }}
-              >
-                문의
-              </Text>
+              <MessageCircle size={22} color={ui.textSecondary} strokeWidth={1.6} />
+              <Text style={styles.actionLabel}>{t('business:actions.inquiry')}</Text>
             </Pressable>
 
             <Pressable
-              style={{ alignItems: 'center' }}
+              style={styles.actionBtn}
               onPress={() =>
-                Alert.alert(
-                  '저장',
-                  '즐겨찾기 기능은 추후 제공 예정입니다.',
-                )
+                showBusinessToast(t('business:create.favoriteSoon'), 'info')
               }
             >
-              <Bookmark size={20} color="#4B5563" />
-              <Text
-                style={{
-                  marginTop: 4,
-                  fontSize: 12,
-                  color: '#4B5563',
-                }}
-              >
-                저장
-              </Text>
+              <Bookmark size={22} color={ui.textSecondary} strokeWidth={1.6} />
+              <Text style={styles.actionLabel}>{t('business:actions.save')}</Text>
             </Pressable>
 
-            <Pressable
-              style={{ alignItems: 'center' }}
-              onPress={handleDirections}
-            >
-              <MapPin size={20} color="#4B5563" />
-              <Text
-                style={{
-                  marginTop: 4,
-                  fontSize: 12,
-                  color: '#4B5563',
-                }}
-              >
-                길찾기
-              </Text>
+            <Pressable style={styles.actionBtn} onPress={handleDirections}>
+              <MapPin size={22} color={ui.textSecondary} strokeWidth={1.6} />
+              <Text style={styles.actionLabel}>{t('business:actions.directions')}</Text>
             </Pressable>
 
-            <Pressable
-              style={{ alignItems: 'center' }}
-              onPress={handleShare}
-            >
-              <Share2 size={20} color="#4B5563" />
-              <Text
-                style={{
-                  marginTop: 4,
-                  fontSize: 12,
-                  color: '#4B5563',
-                }}
-              >
-                공유
-              </Text>
+            <Pressable style={styles.actionBtn} onPress={handleShare}>
+              <Share2 size={22} color={ui.textSecondary} strokeWidth={1.6} />
+              <Text style={styles.actionLabel}>{t('business:actions.share')}</Text>
             </Pressable>
           </View>
 
           {/* TAB */}
-          <View style={styles.tabBar}>
-            <TabButton
-              label="홈"
-              active={activeTab === 'home'}
-              onPress={() => setActiveTab('home')}
-            />
-            <TabButton
-              label="이벤트"
-              active={activeTab === 'events'}
-              onPress={() => setActiveTab('events')}
-            />
-            <TabButton
-              label="메뉴"
-              active={activeTab === 'menu'}
-              onPress={() => setActiveTab('menu')}
-            />
-            <TabButton
-              label="사진"
-              active={activeTab === 'photos'}
-              onPress={() => setActiveTab('photos')}
-            />
-            <TabButton
-              label="공지"
-              active={activeTab === 'notice'}
-              onPress={() => setActiveTab('notice')}
-            />
-            <TabButton
-              label="피드"
-              active={activeTab === 'feed'}
-              onPress={() => setActiveTab('feed')}
-            />
-            <TabButton
-              label="정보"
-              active={activeTab === 'info'}
-              onPress={() => setActiveTab('info')}
-            />
-          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.tabBar}
+            contentContainerStyle={styles.tabBarContent}
+          >
+            {([
+              ['home', t('business:tabs.home')],
+              ['events', t('business:tabs.event')],
+              ['menu', t('business:tabs.menu')],
+              ['photos', t('business:tabs.photos')],
+              ['notice', t('business:tabs.notice')],
+              ['feed', t('business:tabs.feed')],
+              ['info', t('business:tabs.info')],
+            ] as const).map(([key, label]) => {
+              const active = activeTab === key;
+
+              return (
+                <Pressable
+                  key={key}
+                  style={[styles.tabItem, active && styles.tabItemActive]}
+                  onPress={() => setActiveTab(key)}
+                >
+                  <Text style={[styles.tabText, active && styles.tabTextActive]}>
+                    {label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
 
           {/* 콘텐츠 */}
           {loading ? (
-            <View
-              style={{
-                paddingVertical: 40,
-                alignItems: 'center',
-              }}
-            >
-              <ActivityIndicator size="large" />
-              <Text
-                style={{ marginTop: 8, color: '#6B7280' }}
-              >
-                불러오는 중…
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={ui.text} />
+              <Text style={styles.loadingText}>
+                {t('business:common.loading')}
               </Text>
             </View>
           ) : (
@@ -2382,6 +2345,7 @@ const handleMapPress = useCallback((e: any) => {
               {activeTab === 'home' && (
                 <HomeTab
                   business={business}
+                  isOpenNow={isOpenNow}
                   headerImages={headerImages}
                   photos={photos}
                   events={events}
@@ -2426,6 +2390,7 @@ const handleMapPress = useCallback((e: any) => {
                   menuItemsByMenuId={menuItemsByMenuId}
                   menuCategories={menuCategories}
                   activeMenuCategory={activeMenuCategory}
+                  defaultCurrency={businessCurrency}
                   onChangeMenuCategory={setActiveMenuCategory}
                   newMenuTitle={newMenuTitle}
                   onChangeNewMenuTitle={setNewMenuTitle}
@@ -2452,6 +2417,7 @@ const handleMapPress = useCallback((e: any) => {
                   onChangePhotoCaption={setNewPhotoCaption}
                   onPressAddImage={handleAddPhotoImage}
                   onSubmitPhoto={handleSubmitPhoto}
+                  onCancelForm={handleCancelPhotoForm}
                   onEditPhoto={handleEditPhoto}
                   onDeletePhoto={handleDeletePhoto}
                   onSetHeroPhoto={handleSetHeroPhotoFromPhotos}
@@ -2479,6 +2445,10 @@ const handleMapPress = useCallback((e: any) => {
                 <InfoTab
                   oneLineIntro={oneLineIntro}
                   description={description}
+                  logoImageUrl={(business as any)?.logo_image_url ?? (business as any)?.logo_url ?? null}
+                  onPressLogo={() => showBusinessToast(t('business:create.logoSoon'), 'info')}
+                  businessCurrency={businessCurrency}
+                  onChangeBusinessCurrency={setBusinessCurrency}
                   minsaengCoupon={minsaengCoupon}
                   facilities={facilities}
                   parkingAvailable={parkingAvailable}
@@ -2522,7 +2492,6 @@ const handleMapPress = useCallback((e: any) => {
                   onChangeAddress={setAddress}
                   onChangeDetailAddress={setDetailAddress}
                   onPressSearchAddress={handleSearchAddress}
-                  onPressOpenMap={handleOpenMap}
                   onPressOpenTime={handlePickOpenTime}
                   onPressCloseTime={handlePickCloseTime}
                   onPressLastOrderTime={handlePickLastOrderTime}
@@ -2537,7 +2506,7 @@ const handleMapPress = useCallback((e: any) => {
               )}
 
               {activeTab === 'feed' && (
-                <PlaceholderTab title="방문자 피드" />
+                <PlaceholderTab title={t('business:create.visitorFeed')} />
               )}
             </>
           )}
@@ -2567,23 +2536,56 @@ const handleMapPress = useCallback((e: any) => {
         <View style={styles.modalBackdrop}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>
-              {editingMenuItemId ? '메뉴 수정' : '메뉴 추가'}
+              {editingMenuItemId ? t('business:manager.menuEdit') : t('business:manager.menuAdd')}
             </Text>
 
             <TextInput
               style={styles.modalInput}
               value={menuItemName}
               onChangeText={setMenuItemName}
-              placeholder="메뉴 이름"
+              placeholder={t('business:manager.menuName')}
             />
 
-            <TextInput
-              style={styles.modalInput}
-              value={menuItemPrice}
-              onChangeText={setMenuItemPrice}
-              placeholder="가격 (숫자만)"
-              keyboardType="numeric"
-            />
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 10,
+              }}
+            >
+              <TextInput
+                style={[styles.modalInput, { flex: 1, marginBottom: 0 }]}
+                value={menuItemPrice}
+                onChangeText={setMenuItemPrice}
+                placeholder={t('business:create.menuPricePlaceholder')}
+                keyboardType="numeric"
+              />
+              <View
+                style={{
+                  height: 44,
+                  minWidth: 62,
+                  marginLeft: 8,
+                  paddingHorizontal: 12,
+                  borderRadius: 14,
+                  borderWidth: StyleSheet.hairlineWidth,
+                  borderColor: '#D1D5DB',
+                  backgroundColor: '#F9FAFB',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 13,
+                    lineHeight: 17,
+                    fontWeight: '700',
+                    color: '#111827',
+                  }}
+                >
+                  {businessCurrency}
+                </Text>
+              </View>
+            </View>
 
             <TextInput
               style={[
@@ -2592,32 +2594,33 @@ const handleMapPress = useCallback((e: any) => {
               ]}
               value={menuItemDesc}
               onChangeText={setMenuItemDesc}
-              placeholder="메뉴 설명 (선택)"
+              placeholder={t('business:create.menuDescPlaceholder')}
               multiline
             />
 
             <View style={{ marginBottom: 10 }}>
-              <Text style={styles.inputLabel}>메뉴 사진 (선택)</Text>
+              <Text style={styles.inputLabel}>{t('business:create.menuPhotoOptional')}</Text>
               <Pressable
                 style={styles.imagePickerBox}
                 onPress={handlePickMenuItemImage}
               >
                 {menuItemImageUrl ? (
                   <Image
+                    {...BUSINESS_IMAGE_PROPS}
                     source={{ uri: menuItemImageUrl }}
                     style={styles.imagePickerPreview}
                     resizeMode="cover"
                   />
                 ) : (
                   <Text style={styles.imagePickerText}>
-                    사진 선택
+                    {t('business:manager.photoAdd')}
                   </Text>
                 )}
               </Pressable>
             </View>
 
             <View style={styles.toggleRow}>
-              <Text style={styles.toggleLabel}>대표 메뉴</Text>
+              <Text style={styles.toggleLabel}>{t('business:manager.signature')}</Text>
               <View style={styles.toggleButtons}>
                 <Pressable
                   style={[
@@ -2634,7 +2637,7 @@ const handleMapPress = useCallback((e: any) => {
                         styles.toggleButtonTextActiveLight,
                     ]}
                   >
-                    대표로 표시
+                    {t('business:create.signatureOn')}
                   </Text>
                 </Pressable>
                 <Pressable
@@ -2652,7 +2655,7 @@ const handleMapPress = useCallback((e: any) => {
                         styles.toggleButtonTextActiveLight,
                     ]}
                   >
-                    일반 메뉴
+                    {t('business:create.signatureOff')}
                   </Text>
                 </Pressable>
               </View>
@@ -2664,7 +2667,7 @@ const handleMapPress = useCallback((e: any) => {
                 style={styles.modalCancelButton}
               >
                 <Text style={styles.modalCancelButtonText}>
-                  취소
+                  {t('business:common.cancel')}
                 </Text>
               </Pressable>
               <Pressable
@@ -2676,7 +2679,7 @@ const handleMapPress = useCallback((e: any) => {
                   <ActivityIndicator size="small" color="#FFF" />
                 ) : (
                   <Text style={styles.modalSubmitButtonText}>
-                    저장
+                    {t('business:common.save')}
                   </Text>
                 )}
               </Pressable>
@@ -2698,6 +2701,7 @@ const handleMapPress = useCallback((e: any) => {
               {/* 상단 큰 사진 */}
               {menuPreviewData.item.image_url ? (
                 <Image
+                  {...BUSINESS_IMAGE_PROPS}
                   source={{ uri: menuPreviewData.item.image_url }}
                   style={styles.previewImage}
                   resizeMode="cover"
@@ -2748,16 +2752,22 @@ const handleMapPress = useCallback((e: any) => {
                           fontWeight: '600',
                         }}
                       >
-                        대표
+                        {t('business:create.signatureBadge')}
                       </Text>
                     </View>
                   )}
                 </View>
 
-                {/* 가격 (빨간색) */}
-                {typeof menuPreviewData.item.price === 'number' && (
+                {/* 가격 */}
+                {!!formatMenuPrice(
+                  menuPreviewData.item.price,
+                  businessCurrency,
+                ) && (
                   <Text style={styles.previewPrice}>
-                    {menuPreviewData.item.price.toLocaleString()}원
+                    {formatMenuPrice(
+                      menuPreviewData.item.price,
+                      businessCurrency,
+                    )}
                   </Text>
                 )}
 
@@ -2783,7 +2793,7 @@ const handleMapPress = useCallback((e: any) => {
                 style={styles.previewCloseButton}
                 onPress={handleCloseMenuPreview}
               >
-                <Text style={styles.previewCloseText}>닫기</Text>
+                <Text style={styles.previewCloseText}>{t('business:common.close')}</Text>
               </Pressable>
             </View>
           </View>
@@ -2799,7 +2809,7 @@ const handleMapPress = useCallback((e: any) => {
       >
         <View style={styles.modalBackdrop}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>주요 카테고리 선택</Text>
+            <Text style={styles.modalTitle}>{t('business:category.majorTitle')}</Text>
             <ScrollView
               style={{ maxHeight: 320, alignSelf: 'stretch' }}
             >
@@ -2825,7 +2835,7 @@ const handleMapPress = useCallback((e: any) => {
                         color: selected ? '#FFFFFF' : '#111827',
                       }}
                     >
-                      {item}
+                      {t(`business:category.options.${item}`, { defaultValue: item })}
                     </Text>
                   </Pressable>
                 );
@@ -2838,7 +2848,7 @@ const handleMapPress = useCallback((e: any) => {
                 style={styles.modalCancelButton}
               >
                 <Text style={styles.modalCancelButtonText}>
-                  닫기
+                  {t('business:common.close')}
                 </Text>
               </Pressable>
             </View>
@@ -2846,7 +2856,7 @@ const handleMapPress = useCallback((e: any) => {
         </View>
       </Modal>
 
-      {/* ✅ 세부 카테고리 선택 모달 */}
+      {/* ✅ {t('business:category.minorTitle')} 모달 */}
       <Modal
         visible={categoryMinorModalVisible}
         transparent
@@ -2856,7 +2866,7 @@ const handleMapPress = useCallback((e: any) => {
         <View style={styles.modalBackdrop}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>
-              세부 카테고리 선택
+              {t('business:category.minorTitle')}
             </Text>
             <Text
               style={{
@@ -2865,7 +2875,7 @@ const handleMapPress = useCallback((e: any) => {
                 marginBottom: 8,
               }}
             >
-              {categoryMajor || '주요 카테고리를 먼저 선택해 주세요.'}
+              {categoryMajor || t('business:category.majorFirst')}
             </Text>
             <ScrollView
               style={{ maxHeight: 320, alignSelf: 'stretch' }}
@@ -2877,7 +2887,7 @@ const handleMapPress = useCallback((e: any) => {
                     color: '#9CA3AF',
                   }}
                 >
-                  선택 가능한 세부 카테고리가 없습니다.
+                  {t('business:category.minorEmpty')}
                 </Text>
               ) : (
                 minorOptionsForCurrentMajor.map((item) => {
@@ -2904,7 +2914,7 @@ const handleMapPress = useCallback((e: any) => {
                             : '#111827',
                         }}
                       >
-                        {item}
+                        {t(`business:category.options.${item}`, { defaultValue: item })}
                       </Text>
                     </Pressable>
                   );
@@ -2918,7 +2928,7 @@ const handleMapPress = useCallback((e: any) => {
                 style={styles.modalCancelButton}
               >
                 <Text style={styles.modalCancelButtonText}>
-                  닫기
+                  {t('business:common.close')}
                 </Text>
               </Pressable>
             </View>
@@ -2927,113 +2937,7 @@ const handleMapPress = useCallback((e: any) => {
       </Modal>
 
       {/* 주소 검색 모달 */}
-      <Modal
-        visible={addressSearchVisible}
-        animationType="slide"
-      >
-        <SafeAreaView
-          style={{ flex: 1, backgroundColor: '#FFFFFF' }}
-        >
-          {/* 상단 검색 바 */}
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingHorizontal: 16,
-              paddingVertical: 8,
-              borderBottomWidth: 1,
-              borderColor: '#E5E7EB',
-            }}
-          >
-            <Pressable
-              onPress={() => setAddressSearchVisible(false)}
-              style={{ padding: 4, marginRight: 8 }}
-            >
-              <ChevronLeft size={22} color="#111827" />
-            </Pressable>
-            <TextInput
-              autoFocus
-              value={addressQuery}
-              onChangeText={setAddressQuery}
-              placeholder="주소 또는 상호명을 입력하세요"
-              style={{
-                flex: 1,
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 999,
-                backgroundColor: '#F3F4F6',
-                fontSize: 14,
-                color: '#111827',
-              }}
-              placeholderTextColor="#9CA3AF"
-            />
-          </View>
-
-          {/* 결과 리스트 */}
-          {addressSearching && (
-            <View
-              style={{
-                paddingVertical: 12,
-                alignItems: 'center',
-              }}
-            >
-              <ActivityIndicator />
-            </View>
-          )}
-
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={{ paddingVertical: 4 }}
-          >
-            {addressResults.map((item) => (
-              <Pressable
-                key={item.place_id}
-                onPress={() =>
-                  handleSelectAddressPrediction(item)
-                }
-                style={{
-                  paddingHorizontal: 16,
-                  paddingVertical: 12,
-                  borderBottomWidth: 0.5,
-                  borderColor: '#E5E7EB',
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: '#111827',
-                  }}
-                >
-                  {item.description}
-                </Text>
-              </Pressable>
-            ))}
-
-            {!addressSearching &&
-              addressResults.length === 0 &&
-              !!addressQuery.trim() && (
-                <View
-                  style={{
-                    paddingHorizontal: 16,
-                    paddingVertical: 16,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 13,
-                      color: '#6B7280',
-                    }}
-                  >
-                    검색 결과가 없습니다. 주소를 조금 더
-                    구체적으로 입력해 주세요.
-                  </Text>
-                </View>
-              )}
-          </ScrollView>
-        </SafeAreaView>
-      </Modal>
-
-      {/* 지도에서 위치 선택 모달 */}
+      {/* {t('business:create.mapPickTitle')} 모달 */}
       <Modal visible={mapPickerVisible} animationType="slide">
         <SafeAreaView
           style={{ flex: 1, backgroundColor: '#FFFFFF' }}
@@ -3063,7 +2967,7 @@ const handleMapPress = useCallback((e: any) => {
                 color: '#111827',
               }}
             >
-              지도에서 위치 선택
+              {t('business:create.mapPickTitle')}
             </Text>
             <Pressable
               onPress={handleConfirmMapPicker}
@@ -3076,7 +2980,7 @@ const handleMapPress = useCallback((e: any) => {
                   color: '#111827',
                 }}
               >
-                완료
+                {t('business:common.done')}
               </Text>
             </Pressable>
           </View>
@@ -3117,6 +3021,34 @@ const handleMapPress = useCallback((e: any) => {
           </View>
         </SafeAreaView>
       </Modal>
+      <CoonnAlert
+        visible={businessAlert.visible}
+        theme={alertThemeName}
+        variant={businessAlert.variant}
+        title={businessAlert.title}
+        message={businessAlert.message}
+        confirmText={businessAlert.confirmText}
+        cancelText={businessAlert.cancelText}
+        singleButton={businessAlert.singleButton}
+        onConfirm={handleBusinessAlertConfirm}
+        onCancel={closeBusinessAlert}
+        dismissOnBackdrop={false}
+        onConfirmError={(error) => {
+          const message = error instanceof Error && error.message
+            ? error.message
+            : t('business:common.error');
+          showBusinessToast(message, 'danger');
+        }}
+      />
+
+      <CoonnFloatingToast
+        visible={toast.visible}
+        message={toast.message}
+        tone={toast.tone}
+        showMark={toast.showMark}
+        bottomOffset={Math.max(insets.bottom + 28, 36)}
+        onHidden={hideToast}
+      />
     </SafeAreaView>
   );
 };

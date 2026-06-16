@@ -1,0 +1,133 @@
+{
+  "view_title": "Perfil",
+  "edit_title": "Editar perfil",
+  "nickname": "Apelido",
+  "handle": "Identificador",
+  "status_message": "Status",
+  "public_default": "Perfil público por padrão",
+  "save_done": "Salvo.",
+  "no_name": "Sem nome",
+  "no_id": "ID não definido",
+  "follow": "Seguir",
+  "following": "Seguindo",
+  "stat_posts": "Publicações",
+  "stat_followers": "Seguidores",
+  "stat_following": "Seguindo",
+  "empty_posts": "Sem publicações",
+  "empty_posts_tab": "Sem publicações",
+  "swipe": {
+    "new_post": "＋ Nova publicação",
+    "chat_1on1": "Chat 1:1",
+    "chat_me": "Chat comigo",
+    "call": "Chamar",
+    "more": "Mais →"
+  },
+  "alert": {
+    "setting_soon": "Em breve.",
+    "call_friend_only_title": "Chamada indisponível",
+    "call_friend_only_desc": "Disponível apenas para amigos.",
+    "call_feature_soon": "Em breve.",
+    "unfollow_title": "Deixar de seguir",
+    "unfollow_desc": "Deixar de seguir?",
+    "keep": "Manter",
+    "follow_fail": "Não foi possível seguir.",
+    "unfollow_fail": "Não foi possível cancelar.",
+    "self_chat_fail": "Não foi possível iniciar o chat."
+  },
+  "edit": {
+    "error_permission": "Você só pode editar seu próprio perfil.",
+    "revert_title": "Descartar alterações",
+    "revert_msg": "Descartar as alterações?",
+    "revert_action": "Cancelar",
+    "revert": "Descartar alterações",
+    "error_add_tab": "Não foi possível adicionar a aba.",
+    "confirm_delete_tab": "Excluir a aba \"{{name}}\"?",
+    "error_save": "Não foi possível salvar.",
+    "change_cover": "Alterar capa",
+    "status_placeholder": "Digite uma mensagem de status",
+    "section_theme": "Estilo",
+    "theme_color": "Cor do tema",
+    "font_color": "Cor da fonte",
+    "statusbar": "Barra superior",
+    "text_white": "Texto branco",
+    "text_black": "Texto preto",
+    "section_tabs": "Gerenciar abas",
+    "tab_all": "Todos",
+    "tab_input_placeholder": "+ Nova aba",
+    "hue": "Matiz (Hue)",
+    "brightness": "Brilho (Brightness)",
+    "apply": "Aplicar",
+    "setting_tab": "Configurações de \"{{name}}\"",
+    "move_up": "Mover para cima",
+    "move_down": "Mover para baixo",
+    "visibility": "Visibilidade",
+    "current_vis": "Atual: {{val}}",
+    "vis_public": "Todos",
+    "vis_private": "Só eu",
+    "vis_custom": "Selecionado",
+    "vis_friends": "Amigos",
+    "vis_followers": "Seguidores",
+    "picker_avatar": "Selecionar foto de perfil",
+    "picker_cover": "Selecionar foto de capa"
+  },
+  "menu": {
+    "settings": "Configurações",
+    "message": "Mensagem",
+    "unfollow": "Deixar de seguir",
+    "hide": "Ocultar",
+    "hide_confirm": "Ocultar este usuário?",
+    "block": "Bloquear",
+    "block_confirm": "Bloquear este usuário?",
+    "report": "Denunciar"
+  },
+  "followList": {
+    "title": "Seguir",
+    "searchPlaceholder": "Buscar apelido ou ID",
+    "searchHint": "Digite uma busca",
+    "searchEmpty": "Sem resultados",
+    "retry": "Carregar novamente",
+    "unfollowTitle": "Deixar de seguir",
+    "unfollowMessage": "Deixar de seguir {{name}}?",
+    "unfollowAction": "Cancelar",
+    "tab": {
+      "following": "Seguindo",
+      "followers": "Seguidores",
+      "requests": "Solicitações"
+    },
+    "list": {
+      "following": "Lista de seguindo",
+      "followers": "Lista de seguidores",
+      "requests": "Solicitações de seguir"
+    },
+    "section": {
+      "outgoing": "Enviadas",
+      "incoming": "Recebidas"
+    },
+    "badge": {
+      "follower": "Seguidor",
+      "pending": "Pendente"
+    },
+    "action": {
+      "accept": "Aceitar",
+      "decline": "Recusar"
+    },
+    "empty": {
+      "followingTitle": "Ninguém seguindo",
+      "followersTitle": "Sem seguidores",
+      "requestsTitle": "Sem solicitações",
+      "followingDesc": "Siga pessoas do seu interesse.",
+      "followersDesc": "Compartilhe seu perfil.",
+      "requestsDesc": "Envie ou aceite solicitações."
+    },
+    "error": {
+      "loadFollowing": "Não foi possível carregar seguindo.",
+      "loadFollowers": "Não foi possível carregar seguidores.",
+      "loadRequests": "Não foi possível carregar solicitações.",
+      "loadList": "Não foi possível carregar a lista.",
+      "unfollow": "Não foi possível cancelar.",
+      "cancelRequest": "Não foi possível cancelar a solicitação.",
+      "acceptRequest": "Não foi possível aceitar a solicitação.",
+      "rejectRequest": "Não foi possível recusar a solicitação."
+    }
+  }
+}

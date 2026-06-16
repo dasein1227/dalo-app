@@ -1,0 +1,183 @@
+{
+  "briefing_title": "วันนี้",
+  "briefing_toggle_show": "แสดง",
+  "briefing_toggle_hide": "ซ่อน",
+  "briefing_unread_chat": "แชทที่ยังไม่อ่าน",
+  "briefing_nearby_beacon": "บีคอนใกล้ตัว",
+  "briefing_new_friend_post": "โพสต์เพื่อน",
+  "briefing_new_follower": "ผู้ติดตามใหม่",
+  "briefing_count_unit": "",
+  "briefing_people_unit": "",
+  "tabs": {
+    "friends": "เพื่อน",
+    "following": "กำลังติดตาม",
+    "local": "ท้องถิ่น"
+  },
+  "banner_headerTitle": "ใกล้ตัว",
+  "banner_fallback_title": "แนะนำใกล้ตัว",
+  "banner_fallback_desc": "กำลังค้นหาสถานที่ใกล้คุณ",
+  "banner_default_headline": "สถานที่วันนี้",
+  "banner_unknown_place": "สถานที่ไม่ทราบ",
+  "banner_status_open": "เปิด",
+  "banner_status_closed": "ปิด",
+  "banner_tag_fallback": "แนะนำ",
+  "empty_feed": "ไม่มีฟีดให้แสดง",
+  "scroll_top": "ด้านบน",
+  "briefing_nearby_beacon_title": "บีคอนใกล้ตัว",
+  "briefing_today_schedule_title": "วันนี้ กำหนดการ",
+  "briefing_continue_chat_title": "คุยต่อ",
+  "briefing_near_news_title": "ข่าวใกล้ตัว",
+  "unknown_user": "ไม่ทราบ",
+  "near_news": {
+    "filters": {
+      "all": "ทั้งหมด",
+      "post": "ฟีด",
+      "event": "กิจกรรม",
+      "notice": "ประกาศ"
+    },
+    "kind": {
+      "post": "ฟีด",
+      "event": "กิจกรรม",
+      "notice": "ประกาศ"
+    },
+    "kind_en": {
+      "post": "FEED",
+      "event": "EVENT",
+      "notice": "NOTICE"
+    },
+    "masthead_overline": "CO·ONN LOCAL JOURNAL",
+    "masthead_title": "NEARBY NEWS",
+    "edition_line": "LOCAL EDITION · {{distance}}",
+    "count_line": "FEED {{post}} · EVENT {{event}} · NOTICE {{notice}}",
+    "self": "ฉัน",
+    "unknown_user": "ไม่ทราบ",
+    "unknown_place": "ข่าว ไม่ทราบ",
+    "distance_pending": "กำลังตรวจสอบระยะทาง",
+    "just_now": "เมื่อสักครู่",
+    "minutes_ago": "{{value}} นาทีที่แล้ว",
+    "hours_ago": "{{value}} ชั่วโมงที่แล้ว",
+    "days_ago": "{{value}} วันที่แล้ว",
+    "always": "ตลอดเวลา",
+    "until": "ถึง {{date}}",
+    "ongoing": "กำลังดำเนินการ",
+    "category": {
+      "restaurant": "ร้านอาหาร",
+      "cafe": "คาเฟ่",
+      "bakery": "เบเกอรี่",
+      "market": "ตลาด",
+      "drink": "ผับ",
+      "store": "ร้านค้า"
+    },
+    "place": "สถานที่",
+    "nearby_place": "ข่าว ใกล้ตัว",
+    "nearby_feed": "ข่าว ใกล้ตัว ฟีด",
+    "event_title": "กิจกรรม",
+    "notice_title": "ประกาศ",
+    "event_body": "มีกิจกรรมใหม่",
+    "notice_body": "มีประกาศใหม่",
+    "load_error": "โหลดข่าวใกล้ตัวไม่ได้",
+    "collection_title": "ข่าวใกล้ตัว",
+    "media_title": "ข่าวใกล้ตัว",
+    "empty_title": "ไม่มีข่าว",
+    "empty_desc": "โพสต์ใกล้ตัวและอัปเดตสถานที่จะแสดงที่นี่",
+    "editing": "กำลังจัดหน้า",
+    "load_failed": "โหลดไม่ได้",
+    "retry": "ลองอีกครั้ง",
+    "local_note": "LOCAL NOTE",
+    "by_prefix": "BY "
+  },
+  "schedule_sheet": {
+    "weekdays": {
+      "sun": "อา.",
+      "mon": "จ.",
+      "tue": "อ.",
+      "wed": "พ.",
+      "thu": "พฤ.",
+      "fri": "ศ.",
+      "sat": "ส."
+    },
+    "date_title": "{{day}}/{{month}} ({{weekday}})",
+    "period": {
+      "am": "AM",
+      "pm": "PM"
+    },
+    "time_range_cross_day": "{{start}} - {{date}} {{end}}",
+    "default_room_title": "ห้องแชท",
+    "participation": {
+      "joined": "เข้าร่วม",
+      "pending": "ยังไม่เข้าร่วม"
+    },
+    "search_placeholder": {
+      "joined": "ค้นหากำหนดการที่เข้าร่วม",
+      "pending": "ค้นหากำหนดการที่เปิดอยู่"
+    },
+    "load_error": "โหลดกำหนดการไม่ได้",
+    "people_count": "{{value}} คน",
+    "default_title": "กำหนดการ ค่าเริ่มต้น",
+    "time_unknown": "ยังไม่ระบุเวลา",
+    "today_title": "กำหนดการ วันนี้",
+    "today_empty": "วันนี้ไม่มีกำหนดการ",
+    "count": "{{value}} รายการ",
+    "header_title": "กำหนดการ",
+    "empty": {
+      "load_failed_title": "โหลดไม่ได้",
+      "load_failed_desc": "โปรดตรวจสอบอีกครั้งภายหลัง",
+      "joined_title": "ไม่มีกำหนดการที่เข้าร่วม",
+      "joined_desc": "กำหนดการที่คุณเข้าร่วมจะแสดงที่นี่",
+      "pending_title": "ไม่มีกำหนดการเปิดอยู่",
+      "pending_desc": "กำหนดการที่เข้าร่วมได้จะแสดงที่นี่"
+    }
+  },
+  "notifications": {
+    "header_title": "การแจ้งเตือน",
+    "mark_all_read": "อ่านทั้งหมด",
+    "follow_back": "ติดตามกลับ",
+    "following": "กำลังติดตาม",
+    "retry": "โหลดใหม่",
+    "empty_title": "ไม่มีการแจ้งเตือน",
+    "empty_desc": "อัปเดตใหม่จะแสดงที่นี่",
+    "fallback_actor": "บางคน",
+    "fallback_schedule": "หน้าแรก การแจ้งเตือน กำหนดการ",
+    "fallback_beacon": "บีคอน",
+    "fallback_room": "ห้องแชท",
+    "fallback_notification": "การแจ้งเตือนใหม่",
+    "sections": {
+      "today": "วันนี้",
+      "recent": "ล่าสุด",
+      "unread": "ยังไม่อ่าน",
+      "earlier": "ก่อนหน้า",
+      "this_week": "สัปดาห์นี้",
+      "older": "ก่อนหน้านี้",
+      "thisWeek": "สัปดาห์นี้"
+    },
+    "time": {
+      "just_now": "เมื่อสักครู่",
+      "minutes": "{{value}} นาที",
+      "hours": "{{value}} ชม.",
+      "days": "{{value}} วัน",
+      "weeks": "{{value}} สัปดาห์",
+      "months": "{{value}} เดือน",
+      "years": "{{value}} ปี"
+    },
+    "copy": {
+      "others": " และอีก {{value}} คน",
+      "follow_created": "{{name}} เริ่มติดตามคุณ",
+      "chat_reply_created": "{{name}} ตอบกลับแล้ว",
+      "chat_mention_created": "{{name}} กล่าวถึงคุณ",
+      "beacon_join_request_created": "{{name}} ขอเข้าร่วมบีคอน",
+      "beacon_join_approved": "อนุมัติการเข้าร่วมบีคอนแล้ว",
+      "beacon_friend_created": "{{name}} สร้างบีคอนใหม่",
+      "schedule_created": "{{room}} · เพิ่มกำหนดการ {{target}}",
+      "schedule_updated": "{{room}} · เปลี่ยนกำหนดการ {{target}}",
+      "schedule_cancelled": "{{room}} · ยกเลิกกำหนดการ {{target}}",
+      "post_like_grouped": "{{name}}{{others}} ถูกใจโพสต์ของคุณ",
+      "post_comment_grouped": "{{name}}{{others}} แสดงความคิดเห็น",
+      "post_reply_grouped": "{{name}}{{others}} ตอบกลับความคิดเห็นของคุณ",
+      "post_mention_grouped": "{{name}}{{others}} กล่าวถึงคุณ"
+    },
+    "error": {
+      "load_failed": "โหลดการแจ้งเตือนไม่สำเร็จ"
+    },
+    "loading_short": "…"
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "briefing_title": "今天",
+  "briefing_toggle_show": "展開",
+  "briefing_toggle_hide": "收合",
+  "briefing_unread_chat": "未讀聊天",
+  "briefing_nearby_beacon": "附近 Beacon",
+  "briefing_new_friend_post": "好友貼文",
+  "briefing_new_follower": "新追蹤者",
+  "briefing_count_unit": "個",
+  "briefing_people_unit": "人",
+  "tabs": {
+    "friends": "好友",
+    "following": "追蹤中",
+    "local": "在地"
+  },
+  "banner_headerTitle": "我的附近",
+  "banner_fallback_title": "附近推薦",
+  "banner_fallback_desc": "正在尋找附近地點",
+  "banner_default_headline": "今日地點",
+  "banner_unknown_place": "未知地點",
+  "banner_status_open": "營業中",
+  "banner_status_closed": "已打烊",
+  "banner_tag_fallback": "推薦",
+  "empty_feed": "沒有可顯示的動態。",
+  "scroll_top": "回到頂部",
+  "briefing_nearby_beacon_title": "附近 Beacon",
+  "briefing_today_schedule_title": "今日行程",
+  "briefing_continue_chat_title": "繼續聊天",
+  "briefing_near_news_title": "附近消息",
+  "unknown_user": "未知",
+  "near_news": {
+    "filters": {
+      "all": "全部",
+      "post": "動態",
+      "event": "活動",
+      "notice": "公告"
+    },
+    "kind": {
+      "post": "動態",
+      "event": "活動",
+      "notice": "公告"
+    },
+    "kind_en": {
+      "post": "FEED",
+      "event": "EVENT",
+      "notice": "NOTICE"
+    },
+    "masthead_overline": "CO·ONN LOCAL JOURNAL",
+    "masthead_title": "NEARBY NEWS",
+    "edition_line": "LOCAL EDITION · {{distance}}",
+    "count_line": "FEED {{post}} · EVENT {{event}} · NOTICE {{notice}}",
+    "self": "我",
+    "unknown_user": "未知",
+    "unknown_place": "附近地點",
+    "distance_pending": "正在確認距離",
+    "just_now": "剛剛",
+    "minutes_ago": "{{value}} 分鐘前",
+    "hours_ago": "{{value}} 小時前",
+    "days_ago": "{{value}} 天前",
+    "always": "常設",
+    "until": "至 {{date}}",
+    "ongoing": "進行中",
+    "category": {
+      "restaurant": "餐廳",
+      "cafe": "咖啡廳",
+      "bakery": "麵包店",
+      "market": "市場",
+      "drink": "酒館",
+      "store": "商店"
+    },
+    "place": "地點",
+    "nearby_place": "附近地點",
+    "nearby_feed": "附近動態",
+    "event_title": "活動",
+    "notice_title": "公告",
+    "event_body": "有新的活動。",
+    "notice_body": "有新的公告。",
+    "load_error": "無法載入附近消息。",
+    "collection_title": "附近消息",
+    "media_title": "附近消息",
+    "empty_title": "沒有消息",
+    "empty_desc": "附近動態與店家消息會顯示在這裡。",
+    "editing": "版面編輯中",
+    "load_failed": "無法載入",
+    "retry": "重試",
+    "local_note": "LOCAL NOTE",
+    "by_prefix": "BY "
+  },
+  "schedule_sheet": {
+    "weekdays": {
+      "sun": "專案",
+      "mon": "專案",
+      "tue": "專案",
+      "wed": "專案",
+      "thu": "專案",
+      "fri": "專案",
+      "sat": "專案"
+    },
+    "date_title": "{{month}}月{{day}}日（{{weekday}}）",
+    "period": {
+      "am": "上午",
+      "pm": "下午"
+    },
+    "time_range_cross_day": "{{start}} - {{date}} {{end}}",
+    "default_room_title": "聊天室",
+    "participation": {
+      "joined": "已參加",
+      "pending": "未參加"
+    },
+    "search_placeholder": {
+      "joined": "搜尋已參加行程",
+      "pending": "搜尋未參加行程"
+    },
+    "load_error": "無法載入行程。",
+    "people_count": "{{value}} 人",
+    "default_title": "行程",
+    "time_unknown": "時間未定",
+    "today_title": "今日行程",
+    "today_empty": "今天沒有行程",
+    "count": "{{value}} 個",
+    "header_title": "行程",
+    "empty": {
+      "load_failed_title": "無法載入",
+      "load_failed_desc": "請稍後再確認。",
+      "joined_title": "沒有已參加行程",
+      "joined_desc": "已參加的行程會顯示在這裡。",
+      "pending_title": "沒有未參加行程",
+      "pending_desc": "可參加的行程會顯示在這裡。"
+    }
+  },
+  "notifications": {
+    "header_title": "通知",
+    "mark_all_read": "全部標為已讀",
+    "follow_back": "回追",
+    "following": "追蹤中",
+    "retry": "重新載入",
+    "empty_title": "沒有通知",
+    "empty_desc": "新消息會顯示在這裡。",
+    "fallback_actor": "有人",
+    "fallback_schedule": "行程",
+    "fallback_beacon": "Beacon",
+    "fallback_room": "聊天室",
+    "fallback_notification": "新通知",
+    "sections": {
+      "today": "今天",
+      "recent": "最近",
+      "unread": "未讀",
+      "earlier": "較早",
+      "this_week": "本週",
+      "older": "較早",
+      "thisWeek": "本週"
+    },
+    "time": {
+      "just_now": "剛剛",
+      "minutes": "{{value}} 分鐘",
+      "hours": "{{value}} 小時",
+      "days": "{{value}} 天",
+      "weeks": "{{value}} 週",
+      "months": "{{value}} 個月",
+      "years": "{{value}} 年"
+    },
+    "copy": {
+      "others": " 等 {{value}} 人",
+      "follow_created": "{{name}} 追蹤了你",
+      "chat_reply_created": "{{name}} 回覆了你",
+      "chat_mention_created": "{{name}} 提到了你",
+      "beacon_join_request_created": "{{name}} 請求加入 Beacon",
+      "beacon_join_approved": "Beacon 加入請求已核准",
+      "beacon_friend_created": "{{name}} 建立了新 Beacon",
+      "schedule_created": "{{room}} · {{target}} 已新增行程",
+      "schedule_updated": "{{room}} · {{target}} 已更新行程",
+      "schedule_cancelled": "{{room}} · {{target}} 已取消行程",
+      "post_like_grouped": "{{name}}{{others}} 對你的貼文按讚",
+      "post_comment_grouped": "{{name}}{{others}} 留下了留言",
+      "post_reply_grouped": "{{name}}{{others}} 回覆了你的留言",
+      "post_mention_grouped": "{{name}}{{others}} 提到了你"
+    },
+    "error": {
+      "load_failed": "無法載入通知。"
+    },
+    "loading_short": "…"
+  }
+}

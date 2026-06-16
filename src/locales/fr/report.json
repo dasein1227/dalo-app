@@ -1,0 +1,28 @@
+{
+  "common": {
+    "title": "Signalement"
+  },
+  "reasonList": {
+    "title": "Motif du signalement",
+    "guide": "Guide d’utilisation"
+  },
+  "reasonDetail": {
+    "submit": "Envoyer",
+    "more": "Voir plus",
+    "empty": "Impossible de charger le signalement."
+  },
+  "guide": {
+    "title": "Guide",
+    "empty": "Impossible de charger le guide."
+  },
+  "done": {
+    "title": "Signalement envoyé.",
+    "body": "Nous l’examinerons et prendrons les mesures nécessaires."
+  },
+  "alert": {
+    "loadFail": "Échec du chargement",
+    "info": "Information",
+    "linkOpenFail": "Impossible d’ouvrir le lien.",
+    "submitFail": "Échec de l’envoi"
+  }
+}

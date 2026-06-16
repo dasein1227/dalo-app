@@ -1,0 +1,28 @@
+{
+  "common": {
+    "title": "Reportar"
+  },
+  "reasonList": {
+    "title": "Selecciona un motivo",
+    "guide": "Guía de uso"
+  },
+  "reasonDetail": {
+    "submit": "Enviar",
+    "more": "Ver detalles",
+    "empty": "No se pudo cargar la información del reporte."
+  },
+  "guide": {
+    "title": "Guía",
+    "empty": "No se pudo cargar la guía."
+  },
+  "done": {
+    "title": "Reporte enviado.",
+    "body": "Revisaremos el caso y tomaremos las medidas necesarias."
+  },
+  "alert": {
+    "loadFail": "Error al cargar",
+    "info": "Aviso",
+    "linkOpenFail": "No se pudo abrir el enlace.",
+    "submitFail": "No se pudo enviar."
+  }
+}

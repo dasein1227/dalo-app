@@ -1,109 +1,36 @@
 // src/screens/chat/hooks/useChatBootAnimation.ts
 import { useEffect, useRef, useState } from 'react';
-import { Animated, InteractionManager } from 'react-native';
+import { Animated } from 'react-native';
 
 export function useChatBootAnimation(opts: { roomId: number; loading: boolean; me: string | null }) {
   const { roomId, loading, me } = opts;
 
-  const headerAnim = useRef(new Animated.Value(0)).current;
-  const listAnim = useRef(new Animated.Value(0)).current;
-  const listMoveY = useRef(new Animated.Value(20)).current;
-  const inputAnim = useRef(new Animated.Value(0)).current;
-  const inputMoveY = useRef(new Animated.Value(20)).current;
+  const headerAnim = useRef(new Animated.Value(1)).current;
+  const listAnim = useRef(new Animated.Value(1)).current;
+  const listMoveY = useRef(new Animated.Value(0)).current;
+  const inputAnim = useRef(new Animated.Value(1)).current;
+  const inputMoveY = useRef(new Animated.Value(0)).current;
 
-  const bootCoverAnim = useRef(new Animated.Value(1)).current; // 1=가림, 0=해제
-  const [bootCoverVisible, setBootCoverVisible] = useState(true);
+  const bootCoverAnim = useRef(new Animated.Value(0)).current;
+  const [bootCoverVisible, setBootCoverVisible] = useState(false);
 
-  // roomId 바뀌면 애니메이션/커버 초기화
+  // 채팅방 진입은 연출보다 안정성이 우선이다.
+  // 테마/스냅샷 게이트가 끝난 뒤에는 헤더·리스트 래퍼·입력창을 즉시 노출한다.
+  // MessageList 내부의 initialBottomPending/isReadyToDisplay가 최신 메시지 하단 고정 전까지
+  // 메시지 행만 숨기므로, 사용자는 중간 scrollToEnd 재조정 모먼트를 보지 않는다.
   useEffect(() => {
     try {
-      headerAnim.setValue(0);
-      listAnim.setValue(0);
-      listMoveY.setValue(20);
-      inputAnim.setValue(0);
-      inputMoveY.setValue(20);
-      bootCoverAnim.setValue(1);
+      headerAnim.setValue(1);
+      listAnim.setValue(1);
+      listMoveY.setValue(0);
+      inputAnim.setValue(1);
+      inputMoveY.setValue(0);
+      bootCoverAnim.setValue(0);
     } catch {}
 
-    setBootCoverVisible(true);
+    setBootCoverVisible(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomId]);
-
-  // loading 종료 + InteractionManager 이후에만 순차 등장
-  useEffect(() => {
-    if (loading || !me) return;
-
-    let cancelled = false;
-
-    const task = InteractionManager.runAfterInteractions(() => {
-      if (cancelled) return;
-
-      // 레이아웃 안정화 2프레임
-      requestAnimationFrame(() => {
-        if (cancelled) return;
-        requestAnimationFrame(() => {
-          if (cancelled) return;
-
-          Animated.stagger(100, [
-            Animated.timing(headerAnim, {
-              toValue: 1,
-              duration: 300,
-              useNativeDriver: true,
-            }),
-            Animated.parallel([
-              Animated.timing(listAnim, {
-                toValue: 1,
-                duration: 400,
-                useNativeDriver: true,
-              }),
-              Animated.spring(listMoveY, {
-                toValue: 0,
-                friction: 7,
-                tension: 40,
-                useNativeDriver: true,
-              }),
-            ]),
-            Animated.parallel([
-              Animated.timing(inputAnim, {
-                toValue: 1,
-                duration: 300,
-                useNativeDriver: true,
-              }),
-              Animated.timing(inputMoveY, {
-                toValue: 0,
-                duration: 300,
-                useNativeDriver: true,
-              }),
-            ]),
-          ]).start();
-
-          Animated.timing(bootCoverAnim, {
-            toValue: 0,
-            duration: 180,
-            useNativeDriver: true,
-          }).start(({ finished }) => {
-            if (!cancelled && finished) setBootCoverVisible(false);
-          });
-        });
-      });
-    });
-
-    return () => {
-      cancelled = true;
-      try {
-        task?.cancel?.();
-      } catch {}
-      try {
-        headerAnim.stopAnimation();
-        listAnim.stopAnimation();
-        listMoveY.stopAnimation();
-        inputAnim.stopAnimation();
-        inputMoveY.stopAnimation();
-        bootCoverAnim.stopAnimation();
-      } catch {}
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, me, roomId]);
+  }, [roomId, loading, me]);
 
   return {
     headerAnim,

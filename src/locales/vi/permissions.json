@@ -1,0 +1,35 @@
+{
+  "title": "Cài đặt quyền",
+  "subtitle": "Cho phép các quyền cần thiết.",
+  "location_title": "Quyền vị trí",
+  "location_desc": "Cần để hiển thị beacon gần bạn và bản đồ.",
+  "notifications_title": "Quyền thông báo (tùy chọn)",
+  "notifications_desc": "Nhận lời mời beacon, chat và thông báo.",
+  "allow_now": "Cho phép ngay",
+  "allowed": "Đã cho phép",
+  "open_settings": "Mở cài đặt",
+  "continue_without_location": "Thiết lập sau và tiếp tục",
+  "background_location_title": "Quyền vị trí nền (tùy chọn)",
+  "background_location_desc": "Nhận beacon gần bạn và thông báo theo vị trí ngay cả khi chưa mở ứng dụng.",
+  "background_location_hint": "Có thể tăng mức dùng pin. Bạn có thể thay đổi bất cứ lúc nào trong Cài đặt.",
+  "gallery": {
+    "title": "Cần quyền truy cập ảnh",
+    "description": "Cần quyền truy cập để chọn ảnh."
+  },
+  "camera": {
+    "title": "Cần quyền camera",
+    "description": "Cần quyền camera để chụp ảnh."
+  },
+  "location": {
+    "title": "Cần quyền vị trí",
+    "description": "Cần quyền để xác nhận vị trí hiện tại."
+  },
+  "notification": {
+    "title": "Quyền thông báo",
+    "description": "Cần quyền để nhận thông báo."
+  },
+  "action": {
+    "openSettings": "Mở cài đặt",
+    "notNow": "Để sau"
+  }
+}

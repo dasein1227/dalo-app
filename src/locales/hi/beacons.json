@@ -1,0 +1,421 @@
+{
+  "create_title": "बीकन बनाएँ",
+  "edit_title": "बीकन संपादित करें",
+  "detail_title": "बीकन जानकारी",
+  "members_title": "बीकन प्रबंधन",
+  "my_rooms_title": "मेरे बीकन",
+  "join": "शामिल हों",
+  "enter": "प्रवेश",
+  "owner_tools": "होस्ट टूल",
+  "visibility": "दृश्यता",
+  "status_message": "स्थिति संदेश",
+  "public_profile": "सार्वजनिक प्रोफ़ाइल",
+  "current_members": "वर्तमान सदस्य",
+  "age_range": "आयु सीमा",
+  "memo": "मेमो",
+  "time_left": "शेष समय",
+  "common": {
+    "beacon": "बीकन",
+    "noName": "नाम नहीं",
+    "anonymous": "अनाम उपयोगकर्ता",
+    "loading": "लोड हो रहा है…",
+    "done": "पूर्ण",
+    "confirm": "पुष्टि",
+    "cancel": "रद्द करें",
+    "save": "सहेजें",
+    "submit": "भेजें",
+    "approve": "स्वीकृत",
+    "reject": "अस्वीकृत",
+    "block": "ब्लॉक",
+    "kick": "निकालें",
+    "none": "नहीं",
+    "unlimited": "सीमा नहीं"
+  },
+  "error": {
+    "invalidId": "अमान्य ID।",
+    "invalidAccess": "अमान्य पहुँच।",
+    "loginRequired": "लॉगिन आवश्यक है।",
+    "locationPermission": "स्थान अनुमति आवश्यक है।",
+    "locationUnavailable": "वर्तमान स्थान नहीं मिल सका।",
+    "locationLoadFail": "स्थान लोड नहीं हो सका।",
+    "notFound": "बीकन नहीं मिला।",
+    "detailNotFound": "बीकन जानकारी नहीं मिली।",
+    "detailLoadFail": "बीकन जानकारी लोड नहीं हो सकी।",
+    "operationFail": "कार्य पूरा नहीं हो सका।"
+  },
+  "time": {
+    "am": "AM",
+    "pm": "PM",
+    "monthDay": "{{month}}/{{day}}",
+    "minute": "{{count}} मिनट",
+    "hour": "{{count}} घंटे",
+    "hourMinute": "{{hour}} घंटे {{minute}} मिनट",
+    "remainEnded": "समाप्त",
+    "remainMinute": "{{count}} मिनट शेष",
+    "remainHour": "{{count}} घंटे शेष",
+    "remainHourMinute": "{{hour}} घंटे {{minute}} मिनट शेष",
+    "justNow": "अभी",
+    "agoMinute": "{{count}} मिनट पहले",
+    "agoHour": "{{count}} घंटे पहले",
+    "agoDay": "{{count}} दिन पहले"
+  },
+  "unit": {
+    "people": "लोग",
+    "age": "वर्ष",
+    "count": "आइटम",
+    "times": "बार",
+    "peopleCount": "{{count}} लोग",
+    "ageCount": "{{count}} वर्ष",
+    "retryLeft": "{{count}} बार शेष"
+  },
+  "tabs": {
+    "dm": "निजी",
+    "group": "समूह",
+    "open": "ओपन",
+    "beacon": "बीकन"
+  },
+  "visibilityLabel": {
+    "public": "सभी के लिए सार्वजनिक",
+    "friends": "मित्रों के लिए",
+    "labels": "समूह के लिए",
+    "custom": "कस्टम",
+    "publicCompact": "सार्वजनिक",
+    "friendsCompact": "मित्र",
+    "labelsCompact": "समूह",
+    "customCompact": "कस्टम",
+    "publicExcludeFriends": "परिचितों को छोड़कर"
+  },
+  "visibilityDesc": {
+    "public": "अनिर्दिष्ट लोगों को दिखेगा। डिफ़ॉल्ट प्रवेश स्वीकृति आधारित है।",
+    "friends": "केवल मित्रों को दिखेगा। डिफ़ॉल्ट प्रवेश खुला है।",
+    "labels": "केवल चुने गए समूहों को दिखेगा। डिफ़ॉल्ट प्रवेश खुला है।",
+    "custom": "मित्र और समूह सीधे चुनें। डिफ़ॉल्ट प्रवेश खुला है।"
+  },
+  "gender": {
+    "any": "कोई भी लिंग",
+    "male": "पुरुष",
+    "female": "महिला"
+  },
+  "myRooms": {
+    "headerTitle": "चैट",
+    "status": {
+      "pending": "स्वीकृति लंबित",
+      "joined": "{{visibility}} · शामिल",
+      "owner": "{{visibility}} · {{minutes}} मिनट शेष",
+      "host": "होस्ट",
+      "waiting": "प्रतीक्षा",
+      "member": "सदस्य"
+    },
+    "title": {
+      "mine": "मेरे बीकन",
+      "fallback": "बीकन"
+    },
+    "empty": {
+      "title": "कोई बातचीत नहीं।",
+      "beaconDesc": "मेरे बीकन और शामिल बीकन यहाँ दिखेंगे।"
+    },
+    "error": {
+      "loadFail": "सूची लोड नहीं हो सकी।"
+    },
+    "alert": {
+      "routeCreate": "बीकन निर्माण स्क्रीन जाँचें।",
+      "routeChatCreate": "नई चैट निर्माण तैयारी में है।",
+      "routeBeaconSearch": "बीकन खोज स्क्रीन जाँचें।",
+      "routeSearch": "खोज स्क्रीन जाँचें।"
+    }
+  },
+  "form": {
+    "titlePlaceholder": "बीकन उद्देश्य",
+    "descPlaceholder": "विवरण या नियम दर्ज करें",
+    "durationMin": "30 मिनट",
+    "durationMax": "4 घंटे",
+    "minuteSuffix": "मिनट",
+    "locationSelectTitle": "मित्र स्थान",
+    "locationSelectHelper": "वर्तमान स्थान से 200m के भीतर",
+    "locationPickFailTitle": "स्थान नहीं चुना जा सका",
+    "selectedAddress": "चुना गया पता",
+    "locationEmpty": "कोई स्थान चुना नहीं गया। मानचित्र खोलें।",
+    "locationShortPlaceholder": "लगभग स्थान",
+    "locationDetailPlaceholder": "विस्तृत स्थान",
+    "conditionsTitle": "भागीदारी शर्तें",
+    "genderTitle": "लिंग",
+    "quotaTitle": "भर्ती सीमा",
+    "quotaDesc": "0 का अर्थ कोई सीमा नहीं। संख्या टैप कर सीधे दर्ज कर सकते हैं।",
+    "ageLimitTitle": "आयु सीमा",
+    "ageLimitDesc": "डिफ़ॉल्ट आपकी आयु के ±10 वर्ष है।",
+    "ageNoLimit": "सीमा नहीं",
+    "ageMin": "न्यूनतम आयु",
+    "ageMax": "अधिकतम आयु",
+    "maleQuota": "पुरुष",
+    "femaleQuota": "महिला",
+    "mixQuota": "कोई भी लिंग",
+    "selectGroups": "दिखाने वाले समूह",
+    "selectFriends": "दिखाने वाले मित्र",
+    "friendSearch": "मित्र खोजें",
+    "emptyGroups": "कोई समूह नहीं।",
+    "emptyFriends": "कोई मित्र नहीं।",
+    "protectionOff": "सुरक्षा बंद",
+    "protectionOffAlt": "सुरक्षा बंद",
+    "createButton": "बीकन बनाएँ",
+    "saveButton": "सहेजें",
+    "durationTitle": "अवधि",
+    "durationDesc": "निर्धारित समय के बाद स्वतः समाप्त होगा।",
+    "locationProtectionTitle": "स्थान सुरक्षा",
+    "locationProtectionDesc": "निर्धारित सीमा के भीतर स्थान यादृच्छिक रूप से दिखेगा।",
+    "refreshLocation": "वर्तमान स्थान फिर जाँचें",
+    "meetingTitle": "यह बीकन किसके लिए है?",
+    "requireApprovalTitle": "स्वीकृति आवश्यक",
+    "requireApprovalDesc": "होस्ट द्वारा स्वीकृत लोग ही शामिल हो सकते हैं।",
+    "hideFromFriendsTitle": "मेरे दोस्तों से छिपाएँ",
+    "hideFromFriendsDesc": "यह सार्वजनिक रहेगा, पर आपके संपर्कों को नहीं दिखेगा।",
+    "selectedGroupsCount": "{{count}} समूह चुने गए",
+    "selectedFriendsCount": "{{count}} दोस्त चुने गए",
+    "friendLocationDesc": "यह स्थान नोट सिर्फ चुने गए लोगों को दिखेगा। अपनी वर्तमान लोकेशन से 200m के भीतर चुनें।",
+    "locationPickTitle": "मैप पर चुनें",
+    "locationPickHint": "चुना गया पता नीचे दिखेगा।",
+    "friendLocationEmpty": "कोई स्थान नहीं चुना गया। दाएँ बटन से मैप खोलें।",
+    "moveToCurrentLocation": "वर्तमान लोकेशन इस्तेमाल करें"
+  },
+  "create": {
+    "validation": {
+      "titleRequired": "मिलने का नाम दर्ज करें।",
+      "titleMax": "नाम 80 अक्षरों के भीतर होना चाहिए।",
+      "duration": "अवधि 10–240 मिनट होनी चाहिए।",
+      "ageRange": "आयु सीमा जाँचें।",
+      "locationRequired": "वर्तमान स्थान जाँचें।",
+      "labelsRequired": "समूह चुनें।",
+      "customRequired": "मित्र या समूह चुनें।"
+    },
+    "alert": {
+      "labelLoadFailTitle": "समूह लोड विफल",
+      "labelLoadFail": "समूह सूची लोड नहीं हो सकी।",
+      "friendLoadFailTitle": "मित्र लोड विफल",
+      "friendLoadFail": "मित्र सूची लोड नहीं हो सकी।",
+      "createFailTitle": "बीकन निर्माण विफल",
+      "createFail": "त्रुटि हुई।"
+    }
+  },
+  "edit": {
+    "validation": {
+      "titleRequired": "रूम शीर्षक दर्ज करें।",
+      "titleMax": "रूम शीर्षक 80 अक्षरों के भीतर होना चाहिए।",
+      "duration": "अवधि 10–240 मिनट होनी चाहिए।",
+      "ageRange": "आयु सीमा जाँचें।",
+      "labelsRequired": "समूह चुनें।",
+      "customRequired": "मित्र या समूह चुनें।"
+    },
+    "toast": {
+      "moved": "वर्तमान स्थान पर ले जाया गया।",
+      "moveFail": "स्थान नहीं बदला जा सका।",
+      "saved": "सहेजा गया।",
+      "saveFail": "त्रुटि हुई।"
+    }
+  },
+  "detail": {
+    "action": {
+      "ended": "भर्ती समाप्त",
+      "enter_chat": "चैट रूम में प्रवेश",
+      "cancel_request": "अनुरोध रद्द",
+      "join_direct": "शामिल हों",
+      "request_retry": "फिर अनुरोध",
+      "request_join": "शामिल होने का अनुरोध",
+      "forbidden": "प्रवेश सीमित",
+      "full": "सीमा पूरी",
+      "closed": "शामिल नहीं हो सकते"
+    },
+    "badge": {
+      "pending": "स्वीकृति लंबित",
+      "rejected": "अस्वीकृत",
+      "approval": "स्वीकृति आधारित",
+      "free": "खुला प्रवेश"
+    },
+    "empty": {
+      "deleted": "यह बीकन मौजूद नहीं है।",
+      "back": "वापस"
+    },
+    "fallbackTitle": "बिना नाम का बीकन",
+    "info": {
+      "status": "स्थिति",
+      "capacity": "भर्ती सीमा",
+      "audience": "दर्शक",
+      "retry": "फिर आवेदन अवसर"
+    },
+    "location": {
+      "title": "मिलने का स्थान",
+      "visible": "शामिल होने से पहले विस्तृत स्थान दिया जाएगा।",
+      "hidden": "सटीक पता शामिल होने के बाद चैट में साझा होगा।",
+      "openMap": "मानचित्र में देखें ›"
+    },
+    "host": {
+      "settings": "बीकन सेटिंग्स",
+      "settingsDesc": "रूम शीर्षक, परिचय और दृश्यता बदलें",
+      "members": "सदस्य प्रबंधन",
+      "membersDesc": "सदस्य जाँचें और निकालें",
+      "close": "बीकन समाप्त",
+      "closeDesc": "भर्ती बंद करें और चैट रूम बंद करें"
+    },
+    "requests": {
+      "title": "प्रतीक्षा अनुरोध",
+      "empty": "कोई लंबित अनुरोध नहीं।",
+      "messageTitle": "भागीदारी अनुरोध संदेश",
+      "messageDesc": "होस्ट को संदेश छोड़ें। वैकल्पिक है।",
+      "placeholder": "जैसे) मैं पास में हूँ।",
+      "send": "अनुरोध भेजें",
+      "sending": "भेजा जा रहा है…",
+      "code": "कोड {{code}}",
+      "temperature": "तापमान {{temp}}°",
+      "rejectionCount": "पिछले अस्वीकार {{count}} बार"
+    },
+    "alert": {
+      "editRoute": "संपादन स्क्रीन जाँचें।",
+      "membersRoute": "सदस्य प्रबंधन स्क्रीन जाँचें।",
+      "loginTitle": "लॉगिन आवश्यक",
+      "loginDesc": "शामिल होने के लिए लॉगिन आवश्यक है।",
+      "chatNotFound": "चैट रूम जानकारी नहीं मिली।",
+      "cancelTitle": "अनुरोध रद्द",
+      "cancelDesc": "शामिल होने का अनुरोध रद्द करें?",
+      "keep": "रखें",
+      "cancelFailTitle": "रद्द विफल",
+      "cancelFail": "अनुरोध रद्द नहीं हो सका।",
+      "fullTitle": "सीमा पूरी",
+      "fullDesc": "भर्ती पूरी हो चुकी है।",
+      "forbiddenTitle": "भागीदारी सीमित",
+      "forbiddenDesc": "आप इस बीकन में शामिल नहीं हो सकते।",
+      "endedTitle": "भर्ती समाप्त",
+      "endedDesc": "यह बीकन समाप्त हो चुका है।",
+      "unavailableTitle": "सूचना",
+      "unavailableDesc": "अभी शामिल नहीं हो सकते।",
+      "requestSentTitle": "अनुरोध भेजा गया",
+      "requestSentDesc": "होस्ट की स्वीकृति की प्रतीक्षा करें।",
+      "requestFailTitle": "भेजना विफल",
+      "requestFail": "अनुरोध भेजा नहीं जा सका।",
+      "approveFailTitle": "स्वीकृति विफल",
+      "approveFail": "सदस्य स्वीकृत नहीं किया जा सका।",
+      "rejectFailTitle": "अस्वीकृति विफल",
+      "rejectFail": "अनुरोध अस्वीकार नहीं किया जा सका।",
+      "closeTitle": "बीकन समाप्त करें",
+      "closeDesc": "भर्ती और चैट रूम दोनों समाप्त करें?",
+      "closeAction": "समाप्त",
+      "closeDoneTitle": "समाप्त",
+      "closeDoneDesc": "बीकन समाप्त हो गया।",
+      "closeFailTitle": "समाप्ति विफल",
+      "closeFail": "बीकन समाप्त नहीं हो सका।"
+    }
+  },
+  "members": {
+    "role": {
+      "host": "होस्ट",
+      "mod": "मॉडरेटर",
+      "member": "सदस्य"
+    },
+    "tab": {
+      "members": "सदस्य",
+      "requests": "अनुरोध {{count}}"
+    },
+    "meta": {
+      "joined": "शामिल {{time}}",
+      "request": "अनुरोध {{time}} · पिछले अस्वीकार {{count}} बार"
+    },
+    "hero": {
+      "titleFallback": "बीकन",
+      "approval": "स्वीकृति आधारित",
+      "free": "खुला प्रवेश"
+    },
+    "empty": {
+      "members": "अभी कोई सदस्य नहीं।",
+      "requests": "कोई लंबित अनुरोध नहीं।"
+    },
+    "alert": {
+      "loadFailTitle": "लोड विफल",
+      "loadFail": "जानकारी लोड नहीं हो सकी।",
+      "kickTitle": "सदस्य निकालें",
+      "kickDesc": "{{name}} को निकालें?",
+      "kickAction": "निकालें",
+      "alreadyHandled": "पहले से संसाधित है या निकाला नहीं जा सकता।",
+      "kickFailTitle": "विफल",
+      "kickFail": "सदस्य को निकाला नहीं जा सका।",
+      "blockTitle": "सदस्य ब्लॉक",
+      "blockDesc": "{{name}} को ब्लॉक और हटाएँ?\nब्लॉक किए गए उपयोगकर्ता फिर दिखाई नहीं देंगे।",
+      "blockFail": "सदस्य को ब्लॉक नहीं किया जा सका।",
+      "approveTitle": "भागीदारी स्वीकृत",
+      "approveDesc": "{{name}} की भागीदारी स्वीकृत करें?",
+      "approveFailTitle": "स्वीकृति विफल",
+      "approveFail": "स्वीकृत नहीं किया जा सका।",
+      "rejectTitle": "भागीदारी अस्वीकार",
+      "rejectDesc": "{{name}} का भागीदारी अनुरोध अस्वीकार करें?",
+      "rejectFailTitle": "अस्वीकृति विफल",
+      "rejectFail": "अस्वीकार नहीं किया जा सका।"
+    }
+  },
+  "main": {
+    "loadingMap": "मानचित्र लोड हो रहा है…",
+    "listButton": "सूची",
+    "emptyRadius": "दिखाने के लिए कोई बीकन नहीं।",
+    "card": {
+      "noTitle": "शीर्षक नहीं",
+      "meta": "दूरी {{distance}}m · दायरा {{radius}}m · {{entry}}",
+      "endsAfterMinute": "{{count}} मिनट बाद समाप्त",
+      "endingSoon": "जल्द समाप्त",
+      "always": "हमेशा"
+    },
+    "toast": {
+      "movedHere": "वर्तमान स्थान अपडेट किया गया।"
+    },
+    "error": {
+      "loadFail": "आसपास के बीकन लोड नहीं हो सके।",
+      "locationUnavailable": "स्थान नहीं मिल सका।",
+      "noActiveBeacon": "कोई सक्रिय बीकन नहीं।",
+      "moveFail": "स्थान अपडेट नहीं हो सका।"
+    },
+    "accessibility": {
+      "detail": "बीकन विवरण देखें",
+      "create": "नया बीकन बनाएँ"
+    }
+  },
+  "search": {
+    "title": "खोज",
+    "placeholder": "खोजने वाला मिलना",
+    "distance": "दूरी",
+    "target": "लक्ष्य",
+    "age": "आयु",
+    "quick": {
+      "friendsOnly": "केवल मित्र",
+      "public": "सार्वजनिक",
+      "tenMin": "10 मिनट",
+      "twenties": "20s"
+    },
+    "visibility": {
+      "title": "दृश्यता",
+      "any": "सभी",
+      "public": "सार्वजनिक",
+      "publicFiltered": "सार्वजनिक · मित्र छोड़कर",
+      "friends": "मित्र",
+      "labels": "समूह",
+      "custom": "निर्दिष्ट"
+    },
+    "gender": {
+      "title": "लिंग",
+      "any": "सभी",
+      "male": "पुरुष",
+      "female": "महिला",
+      "other": "अन्य"
+    },
+    "distancePreset": {
+      "fiveMin": "5 मिनट",
+      "tenMin": "10 मिनट",
+      "twentyMin": "20 मिनट",
+      "near": "पास"
+    },
+    "agePreset": {
+      "all": "सभी",
+      "twenties": "20s",
+      "thirties": "30s",
+      "forties": "40s",
+      "fiftyPlus": "50+"
+    },
+    "action": {
+      "reset": "रीसेट",
+      "apply": "लागू करें"
+    }
+  }
+}

@@ -26,6 +26,16 @@ export type PickedAsset = {
   durationSec?: number;
 };
 
+export function buildCompactGroupTitle(peerNames: string[]): string {
+  const names = (peerNames ?? []).map((v) => String(v ?? '').trim()).filter(Boolean);
+  if (names.length === 0) return '그룹 채팅';
+  if (names.length <= 3) return names.join(', ');
+  const first3 = names.slice(0, 3);
+  const fourth = names[3] || '';
+  const head = fourth.slice(0, 1) || '…';
+  return `${first3.join(', ')}, ${head}....`;
+}
+
 export function buildChatTitle(opts: {
   roomType: RoomKind | null;
   meId: string;
@@ -41,23 +51,21 @@ export function buildChatTitle(opts: {
     case 'self':
       return '나와의 채팅';
     case 'dm':
-    case 'personal': {
+    case 'personal':
+    case 'business_dm': {
       const other = members.find((m) => m.user_id !== meId);
-      return other?.nickname || '1:1 채팅';
+      return other?.nickname || (roomType === 'business_dm' ? '상담' : '1:1 채팅');
     }
     case 'group': {
       const others = members.filter((m) => m.user_id !== meId);
       if (!others.length) return '그룹 채팅';
       const names = others.map((m) => m.nickname || '사용자');
-      if (names.length <= 3) return names.join(' · ');
-      return `${names[0]} 외 ${names.length - 1}명`;
+      return buildCompactGroupTitle(names);
     }
     case 'open':
-      return '오픈채팅';
+      return '오픈톡';
     case 'beacon':
       return '비콘 채팅';
-    case 'business_dm':
-      return '상담';
     default:
       return '채팅';
   }

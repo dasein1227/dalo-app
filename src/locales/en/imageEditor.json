@@ -1,0 +1,14 @@
+{
+  "title": "Edit image",
+  "ratio_original": "Original",
+  "ratio_free": "Free",
+  "rotate": "Rotate",
+  "ratio": "Ratio",
+  "invert": "Flip",
+  "orientation": "Swap",
+  "reset": "Reset",
+  "error_load_title": "Error",
+  "error_load_msg": "Couldn’t load image.",
+  "error_save_title": "Couldn’t save",
+  "error_save_msg": "Try again later."
+}

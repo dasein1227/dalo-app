@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "Q3RXD89LZ7.com.geniestudio.coonn",
+        "paths": [
+          "/add",
+          "/add/*"
+        ]
+      }
+    ]
+  }
+}

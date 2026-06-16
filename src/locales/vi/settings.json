@@ -1,0 +1,525 @@
+{
+  "home_title": "Cài đặt",
+  "title": "Cài đặt",
+  "version": "Phiên bản ứng dụng",
+  "open": "Mở",
+  "change": "Đổi",
+  "run": "Chạy",
+  "logout": "Đăng xuất",
+  "logoutDone": "Đã đăng xuất.",
+  "sections": {
+    "communication": "Liên lạc",
+    "general": "Chung",
+    "advanced": "Nâng cao",
+    "service_info": "Dịch vụ",
+    "account": "Tài khoản",
+    "notification": "Thông báo",
+    "display_language": "Hiển thị & ngôn ngữ",
+    "location": "Vị trí",
+    "data": "Dữ liệu",
+    "support": "Hỗ trợ",
+    "info": "Thông tin"
+  },
+  "menus": {
+    "call": "Gọi",
+    "etc": "Khác",
+    "app_manage": "Quản lý ứng dụng",
+    "version": "Phiên bản ứng dụng"
+  },
+  "alerts": {
+    "logout_title": "Đăng xuất",
+    "logout_desc": "Đăng xuất ngay?",
+    "language_change_error": "Không thể đổi ngôn ngữ.",
+    "logout_fail": "Không thể đăng xuất."
+  },
+  "search": {
+    "title": "Tìm cài đặt",
+    "soon": "Tìm kiếm cài đặt sắp ra mắt."
+  },
+  "me": {
+    "noName": "Chưa có tên",
+    "profileManage": "Quản lý hồ sơ",
+    "loadingAccount": "Đang kiểm tra tài khoản"
+  },
+  "account": {
+    "title": "Tài khoản",
+    "editProfile": "Sửa hồ sơ",
+    "profilePublicDefault": "Mặc định hiển thị hồ sơ trong beacon",
+    "profilePublicHint": "Dùng làm mặc định khi tạo beacon. Có thể đổi theo từng beacon.",
+    "header_title": "Tài khoản",
+    "section": {
+      "contact": "Liên hệ",
+      "identity": "Định danh",
+      "visibility": "Hiển thị",
+      "profile": "Hồ sơ",
+      "account_management": "Tài khoản"
+    },
+    "field": {
+      "phone": "Điện thoại",
+      "email": "Email",
+      "id_label": "CO·ONN ID",
+      "friend_code": "Mã bạn bè",
+      "show_nickname": "Hiển thị biệt danh",
+      "profile_photo": "Ảnh hồ sơ",
+      "nickname": "Biệt danh"
+    },
+    "value": {
+      "not_registered": "Chưa đăng ký"
+    },
+    "badge": {
+      "verified": "Đã xác minh",
+      "verify": "Xác minh"
+    },
+    "placeholder": {
+      "id": "ID",
+      "friend_code": "Mã bạn bè",
+      "nickname": "Biệt danh"
+    },
+    "help": {
+      "id_desc": "ID duy nhất dùng để tìm kiếm.",
+      "show_nickname_desc": "Hiển thị biệt danh với bạn bè."
+    },
+    "error": {
+      "check_duplication": "Hãy kiểm tra trước.",
+      "id_taken": "Đã được sử dụng.",
+      "code_taken": "Đã được sử dụng.",
+      "check_failed": "Không thể kiểm tra.",
+      "invalid_id": "2–30 chữ thường, số hoặc dấu gạch dưới",
+      "invalid_friend_code": "2–30 chữ thường, số hoặc dấu gạch dưới",
+      "duplicate_exists": "Giá trị này đã được sử dụng.",
+      "duplicate_check_required": "Hãy hoàn tất kiểm tra trùng trước khi lưu.",
+      "duplicate_check_retry": "Vui lòng kiểm tra lại.",
+      "duplicate_value_retry": "Tài khoản Lỗi Trùng Giá trị",
+      "nickname_required": "Nhập biệt danh.",
+      "nickname_too_long": "Biệt danh tối đa 30 ký tự."
+    },
+    "alert": {
+      "check_required": "Cần kiểm tra",
+      "save_success_title": "Đã lưu",
+      "save_success_desc": "Đã lưu cài đặt tài khoản.",
+      "save_fail_title": "Lưu thất bại"
+    },
+    "action": {
+      "save": "Lưu",
+      "check_duplicate_short": "Kiểm tra",
+      "checking_short": "…",
+      "change_photo": "Đổi ảnh",
+      "remove_photo": "Xóa ảnh"
+    },
+    "status": {
+      "available_short": "Khả dụng",
+      "duplicate_short": "Đã dùng"
+    },
+    "picker": {
+      "profile_photo": "Chọn ảnh"
+    },
+    "withdrawal": {
+      "entryTitle": "Xóa tài khoản",
+      "entryDescription": "Xóa tài khoản và dữ liệu cá nhân.",
+      "noticeTitle": "Vui lòng xem lại trước khi tiếp tục.",
+      "noticeMessage": "Hồ sơ, bạn bè và cài đặt sẽ bị xóa.",
+      "noticeItemProfile": "Một số lịch sử chat có thể còn lại với người tham gia khác dưới dạng người dùng đã xóa.",
+      "noticeItemChat": "Bạn không thể đăng ký lại bằng cùng tài khoản trong 7 ngày.",
+      "noticeItemRejoin": "CO·ONN ID và mã bạn bè không thể dùng lại trong 30 ngày.",
+      "noticeItemIdentifier": "Tôi đã xem lại và muốn tiếp tục.",
+      "noticeAcknowledge": "Tiếp",
+      "continue": "Hủy",
+      "cancel": "Cho chúng tôi biết lý do rời đi",
+      "surveyTitle": "Phản hồi giúp chúng tôi cải thiện CO·ONN.",
+      "surveyMessage": "Tiếp tục",
+      "surveyAction": "Nhập lý do.",
+      "otherPlaceholder": "Chọn lý do.",
+      "reasonRequired": "Nhập lý do.",
+      "otherRequired": "Đang tải lý do.",
+      "reasonsLoading": "Không thể tải lý do.",
+      "reasonsEmpty": "Xác nhận cuối",
+      "confirmTitle": "Quyền truy cập tài khoản sẽ dừng ngay.",
+      "confirmMessage": "Nhập “{{keyword}}” bên dưới.",
+      "confirmInstruction": "XÓA",
+      "confirmKeyword": "XÓA",
+      "confirmPlaceholder": "Xóa",
+      "confirmAction": "Đã gửi yêu cầu xóa.",
+      "completed": "Không thể xóa tài khoản."
+    }
+  },
+  "privacy": {
+    "title": "Quyền riêng tư",
+    "header_title": "Quyền riêng tư",
+    "section": {
+      "profile": "Hồ sơ",
+      "friend_req": "Yêu cầu kết bạn",
+      "activity": "Hoạt động"
+    },
+    "field": {
+      "public_profile": "Hồ sơ công khai",
+      "allow_search": "Cho phép tìm kiếm",
+      "show_nickname": "Hiển thị biệt danh",
+      "show_location": "Hiển thị vị trí",
+      "last_active": "Hiện lần hoạt động gần nhất"
+    },
+    "help": {
+      "public_profile": "Người dùng khác có thể xem hồ sơ của bạn.",
+      "allow_search": "Quyền riêng tư Trợ giúp Tìm kiếm",
+      "show_nickname": "Hiển thị biệt danh với bạn bè.",
+      "show_location": "Quyền riêng tư Trợ giúp Vị trí",
+      "last_active": "Quyền riêng tư Trợ giúp"
+    },
+    "option": {
+      "all": "Quyền riêng tư Tùy chọn Tất cả",
+      "all_desc": "Quyền riêng tư Tùy chọn Tất cả Mô tả",
+      "friends": "Bạn của bạn bè",
+      "friends_desc": "Chỉ người có kết nối mới có thể yêu cầu",
+      "none": "Chưa có quyền riêng tư tùy chọn không có.",
+      "none_desc": "Chặn yêu cầu kết bạn"
+    },
+    "alert": {
+      "save_success": "Đã lưu.",
+      "save_fail": "Không thể lưu.",
+      "load_fail": "Không thể tải.",
+      "login_required": "Cần đăng nhập."
+    }
+  },
+  "radius": {
+    "title": "Phạm vi khu vực",
+    "current": "Hiện tại",
+    "desc": "Cài đặt Phạm vi Mô tả",
+    "save_error": "Không thể lưu phạm vi khu vực."
+  },
+  "friends": {
+    "title": "Bạn bè",
+    "manage": "Cài đặt Bạn bè",
+    "caption": "Cài đặt Bạn bè",
+    "soon": "Sắp ra mắt."
+  },
+  "notification": {
+    "title": "Thông báo",
+    "manage": "Thông báo",
+    "caption": "Push, thông báo trong app, âm thanh",
+    "soon": "Sắp ra mắt.",
+    "section": {
+      "defaults": "Mặc định",
+      "types": "Loại",
+      "quiet": "Giờ yên lặng",
+      "push_types": "Loại push",
+      "in_app": "Thông báo trong app"
+    },
+    "field": {
+      "push": "Thông báo push",
+      "preview": "Xem trước",
+      "sound": "Âm thanh",
+      "vibrate": "Rung",
+      "chat": "Chat",
+      "system": "Thông báo & hệ thống",
+      "marketing": "Marketing"
+    },
+    "help": {
+      "push": "Tất cả thông báo push",
+      "preview": "Hiển thị nội dung trên màn hình khóa",
+      "chat_push": "Push tin nhắn chat",
+      "system_push": "Thông báo dịch vụ và cập nhật quan trọng",
+      "marketing_push": "Sự kiện và khuyến mãi"
+    },
+    "action": {
+      "save": "Lưu",
+      "open_system": "Cài đặt hệ thống",
+      "cancel": "Hủy",
+      "done": "Xong"
+    },
+    "time": {
+      "start": "Bắt đầu",
+      "end": "Kết thúc",
+      "hour": "Cài đặt thông báo",
+      "minute": "Cài đặt thông báo",
+      "close": "Đóng chọn giờ",
+      "select": "Chọn {{label}} {{value}}",
+      "start_time": "Giờ bắt đầu",
+      "end_time": "Giờ kết thúc"
+    },
+    "alert": {
+      "table_missing_title": "Thiếu bảng cài đặt",
+      "table_missing_message": "Tạo user_notification_settings.",
+      "load_fail": "Không thể tải cài đặt thông báo.",
+      "time_invalid_title": "Kiểm tra giờ",
+      "time_invalid_message": "Chọn cài đặt thông báo.",
+      "save_success": "Đã lưu.",
+      "save_fail": "Lưu thất bại",
+      "open_settings_fail_title": "Mở cài đặt thất bại",
+      "open_settings_fail_message": "Không thể mở cài đặt hệ thống.",
+      "login_required": "Cần đăng nhập."
+    },
+    "in_app": {
+      "master": "Thông báo trong app",
+      "master_help": "Hiển thị trong hộp thông báo của app",
+      "group": {
+        "social": "Xã hội",
+        "chat": "Chat",
+        "beacon": "Beacon",
+        "schedule": "Lịch",
+        "post": "Bài viết"
+      },
+      "follow_created": "Người theo dõi mới",
+      "follow_created_help": "Khi có người theo dõi bạn",
+      "chat_reply": "Trả lời",
+      "chat_reply_help": "Khi có người trả lời tin nhắn của bạn",
+      "chat_mention": "Nhắc đến",
+      "chat_mention_help": "Khi có người nhắc đến bạn",
+      "beacon_join_request": "Yêu cầu tham gia",
+      "beacon_join_request_help": "Khi có yêu cầu tham gia beacon",
+      "beacon_join_approved": "Đã duyệt tham gia",
+      "beacon_join_approved_help": "Khi yêu cầu tham gia beacon được duyệt",
+      "beacon_friend_created": "Beacon của bạn bè",
+      "beacon_friend_created_help": "Khi bạn bè tạo beacon",
+      "schedule_created": "Lịch mới",
+      "schedule_created_help": "Khi lịch được thêm vào phòng đã tham gia",
+      "schedule_updated": "Lịch thay đổi",
+      "schedule_updated_help": "Khi lịch bạn tham gia thay đổi",
+      "schedule_cancelled": "Lịch bị hủy",
+      "schedule_cancelled_help": "Khi lịch bạn tham gia bị hủy",
+      "post_like": "Lượt thích",
+      "post_like_help": "Khi bài viết của bạn nhận lượt thích",
+      "post_comment": "Bình luận",
+      "post_comment_help": "Khi có người bình luận bài viết của bạn",
+      "post_reply": "Trả lời",
+      "post_reply_help": "Khi có người trả lời bình luận của bạn",
+      "post_mention": "Nhắc trong bài viết",
+      "post_mention_help": "Khi có người nhắc bạn trong bài viết hoặc bình luận"
+    }
+  },
+  "display": {
+    "title": "Hiển thị & ngôn ngữ"
+  },
+  "language": {
+    "title": "Ngôn ngữ",
+    "select": "Chọn ngôn ngữ",
+    "inUse": "Cài đặt Ngôn ngữ"
+  },
+  "theme": {
+    "title": "Giao diện",
+    "caption": "Sáng / tối",
+    "soon": "Sắp ra mắt.",
+    "header_title": "Giao diện",
+    "section_style": "Chế độ",
+    "mode": {
+      "system": "Hệ thống",
+      "system_desc": "Theo cài đặt thiết bị",
+      "light": "Sáng",
+      "light_desc": "Giao diện Mô tả",
+      "dark": "Tối",
+      "dark_desc": "Giao diện Mô tả"
+    }
+  },
+  "chat": {
+    "title": "Chat"
+  },
+  "translate": {
+    "autoDefault": "Tự động dịch tin nhắn",
+    "autoDefaultHint": "Dùng làm mặc định cho chat mới.",
+    "showOriginal": "Hiện bản gốc cùng bản dịch",
+    "showOriginalHint": "Cài đặt Dịch"
+  },
+  "storage": {
+    "title": "Dữ liệu & lưu trữ",
+    "clearCache": "Xóa cache",
+    "clearCacheHint": "Xóa tệp tạm",
+    "soon": "Sắp ra mắt.",
+    "section": {
+      "ratio": "Tỷ lệ dữ liệu",
+      "rooms": "Lưu trữ"
+    },
+    "summary": {
+      "total_media": "Tổng media",
+      "saved_count": "Đã lưu {{count}}"
+    },
+    "legend": {
+      "photo": "Ảnh",
+      "video": "Lưu trữ",
+      "audio": "Âm thanh",
+      "file": "Tệp",
+      "other": "Khác"
+    },
+    "action": {
+      "delete_all": "Xóa tất cả",
+      "delete_all_with_size": "Lưu trữ {{size}}",
+      "delete_room": "Xóa",
+      "scroll_top": "Đầu trang"
+    },
+    "empty": {
+      "title": "Chưa có media đã lưu",
+      "desc": "Lưu trữ"
+    },
+    "alert": {
+      "load_fail": "Không thể tải.",
+      "delete_fail": "Không thể xóa dữ liệu.",
+      "delete_all_title": "Xóa toàn bộ media",
+      "delete_all_message": "Lưu trữ",
+      "delete_room_title": "Lưu trữ {{room}}",
+      "delete_room_message": "Lưu trữ",
+      "delete_all_success": "Đã xóa.",
+      "delete_room_success": "Đã xóa lưu trữ {{room}}"
+    },
+    "room": {
+      "fallback_title": "Phòng chat {{id}}",
+      "delete_accessibility": "Xóa dữ liệu {{room}}"
+    }
+  },
+  "support": {
+    "title": "Hỗ trợ",
+    "cs": "Hỗ trợ",
+    "notice": {
+      "title": "Thông báo",
+      "eyebrow": "NOTICE",
+      "sectionTitle": "Thông báo {{category}}",
+      "markAll": "Đánh dấu tất cả đã đọc",
+      "markAllDone": "Đã đánh dấu đã đọc.",
+      "loadFail": "Không thể tải thông báo.",
+      "readFail": "Không thể đánh dấu đã đọc.",
+      "markAllFail": "Không thể đánh dấu đã đọc.",
+      "emptyTitle": "Chưa có thông báo",
+      "emptyDesc": "Thông báo mới sẽ hiện ở đây.",
+      "category": {
+        "normal": "Chung",
+        "important": "Quan trọng",
+        "legal": "Pháp lý",
+        "security": "Bảo mật"
+      }
+    },
+    "guide": "Hướng dẫn",
+    "soon": "Sắp ra mắt.",
+    "loading": "Đang tải…",
+    "action": {
+      "ok": "OK"
+    },
+    "alert": {
+      "notice": "Thông báo",
+      "error": "Lỗi"
+    },
+    "center": {
+      "title": "Hỗ trợ",
+      "hero": "Bạn cần hỗ trợ gì?",
+      "searchPlaceholder": "Tìm kiếm",
+      "faq": "FAQ",
+      "categories": "Hỗ trợ",
+      "contactTitle": "Bạn cần trợ giúp?",
+      "emailDesc": "Hỗ trợ",
+      "aiTitle": "Hỗ trợ AI",
+      "aiDesc": "Hỗ trợ",
+      "policies": "Điều khoản & chính sách"
+    },
+    "contact": {
+      "title": "Hỗ trợ",
+      "guide": "Hỗ trợ",
+      "category": "Danh mục",
+      "categoryLoading": "Đang tải…",
+      "categoryPlaceholder": "Chọn danh mục",
+      "categorySelect": "Danh mục",
+      "email": "Email trả lời",
+      "emailPlaceholder": "Địa chỉ email",
+      "content": "Tin nhắn",
+      "contentPlaceholder": "Nhập hỗ trợ.",
+      "submit": "Hỗ trợ",
+      "required": "Nhập hỗ trợ.",
+      "categoryRequired": "Chọn danh mục.",
+      "loadFail": "Không thể tải màn hình.",
+      "submitFail": "Không thể gửi.",
+      "successTitle": "Đã gửi",
+      "successDesc": "Hỗ trợ"
+    },
+    "list": {
+      "all": "Tất cả",
+      "common": "Chung",
+      "result": "Hỗ trợ",
+      "empty": "Không có kết quả."
+    },
+    "policy": {
+      "title": "Điều khoản & chính sách",
+      "effectiveDate": "Ngày hiệu lực",
+      "summary": "Tóm tắt",
+      "download": "Tải xuống",
+      "downloadStart": "Hỗ trợ",
+      "empty": "Không thể tải nội dung.",
+      "versions": "Phiên bản trước",
+      "behaviorInfoTitle": "Hỗ trợ",
+      "behaviorInfoDesc": "Chỉ thu thập dữ liệu tối thiểu cần thiết để cải thiện dịch vụ.",
+      "userControlTitle": "Hỗ trợ",
+      "userControlDesc": "Bạn có thể đổi cài đặt quảng cáo cá nhân hóa trong ứng dụng.",
+      "version": "Phiên bản",
+      "language": "Ngôn ngữ",
+      "loadFail": "Không thể tải tài liệu chính sách.",
+      "summaryEmpty": "Chưa có tóm tắt.",
+      "downloadCancelledTitle": "Hỗ trợ",
+      "downloadCancelled": "Chưa chọn vị trí lưu.",
+      "downloadSuccessTitle": "Đã tải xuống",
+      "downloadSuccess": "Đã lưu tài liệu chính sách.",
+      "downloadFailTitle": "Tải xuống thất bại",
+      "downloadFail": "Không thể lưu tài liệu chính sách.",
+      "privacyTitle": "Hỗ trợ",
+      "termsTitle": "Điều khoản dịch vụ CO·ONN",
+      "marketingTitle": "Đồng ý nhận marketing"
+    },
+    "company": {
+      "ceo": "Đại diện",
+      "regNum": "Hỗ trợ",
+      "businessNum": "Hỗ trợ",
+      "address": "Địa chỉ",
+      "cs": "Hỗ trợ",
+      "host": "Nhà cung cấp hosting"
+    }
+  },
+  "labs": {
+    "title": "Phòng thử nghiệm",
+    "features": "Tính năng thử nghiệm",
+    "caption": "Cài đặt Thử nghiệm",
+    "soon": "Màn hình thử nghiệm sắp ra mắt.",
+    "subtitle": "Cài đặt Thử nghiệm",
+    "empty_title": "Chưa có cài đặt thử nghiệm trống tiêu đề.",
+    "empty_desc": "Cài đặt Thử nghiệm Trống Mô tả",
+    "note": "Tính năng thử nghiệm có thể thay đổi trước khi ra mắt chính thức."
+  },
+  "admin": {
+    "title": "Quản trị",
+    "console": "Bảng quản trị"
+  },
+  "open_profiles": {
+    "title": "Open profile",
+    "subtitle": "Open profile",
+    "header_title": "Open profile",
+    "fallback_name": "Open profile",
+    "default_badge": "Mặc định",
+    "status_empty": "Chưa có trạng thái",
+    "room": {
+      "fallback_title": "Open chat",
+      "used_count": "Đang dùng trong {{count}} open chat",
+      "empty": "Chưa có open profile."
+    },
+    "empty": {
+      "title": "Chưa có open profile",
+      "desc": "Open profile"
+    },
+    "form": {
+      "create_title": "Open profile",
+      "edit_title": "Sửa open profile",
+      "nickname": "Open profile",
+      "status_message": "Trạng thái",
+      "status_placeholder": "Open profile",
+      "default_profile": "Open profile",
+      "delete": "Open profile",
+      "pick_avatar": "Chọn open profile."
+    },
+    "alert": {
+      "load_fail": "Không thể tải open profile.",
+      "nickname_required": "Nhập biệt danh.",
+      "create_fail": "Tạo thất bại",
+      "save_fail": "Lưu thất bại",
+      "delete_title": "Xóa open profile?",
+      "delete_used_desc": "Open profile",
+      "delete_desc": "Open profile",
+      "delete_fail": "Xóa thất bại"
+    },
+    "toast": {
+      "created": "Đã tạo open profile.",
+      "saved": "Đã lưu.",
+      "deleted": "Đã xóa.",
+      "photo_applied": "Đã áp dụng ảnh."
+    }
+  }
+}

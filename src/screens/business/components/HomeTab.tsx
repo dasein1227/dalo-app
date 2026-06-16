@@ -1,21 +1,30 @@
-// src/screens/business/components/HomeTab.tsx
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
   Image,
   ScrollView,
   Pressable,
-  Platform,
-  Linking,
+  StyleSheet,
+  Switch,
+  useWindowDimensions,
 } from 'react-native';
-import { styles } from './bizStyles';
-import { SectionHeader } from './SectionHeader';
+import { LinearGradient } from 'expo-linear-gradient';
+import { CoonnMosaicGrid } from '@/components/media/CoonnMosaicGrid';
+import {
+  MapPin,
+  Clock,
+  ChevronRight,
+  Sparkles,
+  Utensils,
+  Phone,
+  Megaphone,
+  Car,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react-native';
+
 import type {
   BusinessRow,
   BusinessPhoto,
@@ -25,603 +34,989 @@ import type {
   BusinessMenuItem,
   MenuItemsByMenuId,
   TabKey,
+  BusinessReview,
 } from './businessTypes';
-import { supabase } from '@/lib/supabase';
+import { useBusinessComponentTheme, type BusinessComponentTheme } from './businessTheme';
+import CoonnFloatingToast from '@/components/feedback/CoonnFloatingToast';
+import { useCoonnFloatingToast } from '@/components/feedback/useCoonnFloatingToast';
+
+const BUSINESS_IMAGE_PROPS = { resizeMethod: 'resize' as const, fadeDuration: 0 } as const;
+
+const HOME_HORIZONTAL_PADDING = 14;
+const SECTION_HORIZONTAL_PADDING = 18;
+const MOSAIC_GAP = StyleSheet.hairlineWidth;
+const FEED_GRID_HORIZONTAL_PADDING = 16;
 
 type Props = {
   business: BusinessRow | null;
-  headerImages: string[];
-  photos: BusinessPhoto[];
-  events: BusinessEvent[];
-  notices: BusinessNotice[];
-  description: string;
-  minsaengCoupon: boolean | null;
-  facilities: string;
-  parkingAvailable: boolean | null;
-  parkingInfo: string;
-  seatingInfo: string;
-  paymentMethods: string;
-  visitorFeedCountLabel: string; // 호환용으로만 유지
+
+  headerImages?: string[];
+  photos?: BusinessPhoto[];
+  events?: BusinessEvent[];
+  notices?: BusinessNotice[];
+  description?: string;
+  minsaengCoupon?: boolean | null;
+  facilities?: string;
+  parkingAvailable?: boolean | null;
+  parkingInfo?: string;
+  seatingInfo?: string;
+  paymentMethods?: string;
+  visitorFeedCountLabel?: string;
+  menus?: BusinessMenu[];
+  menuItemsByMenuId?: MenuItemsByMenuId;
+
+  isOpenNow?: boolean;
+  isAutoOpen?: boolean;
+  onToggleAutoOpen?: (value: boolean) => void;
+  reviews?: BusinessReview[];
+
+  aiBriefing?: string;
+  aiBriefingUpdatedAt?: string | null;
   onChangeTab: (tab: TabKey) => void;
-
-  menus: BusinessMenu[];
-  menuItemsByMenuId: MenuItemsByMenuId;
-
-  // ✅ AI 브리핑 관련
-  aiBriefing: string;
-  aiBriefingUpdatedAt: string | null;
+  onPressPost?: (post: any) => void;
 };
 
-type FeedPreview = {
-  id: string;
-  caption: string | null;
-  created_at: string;
-  post_media: any[] | null;
-};
+type HomeTabStyles = ReturnType<typeof createStyles>;
 
-/** 한국 전화번호 포맷팅 */
-const formatPhoneNumber = (raw: string): string => {
-  const digits = raw.replace(/[^0-9]/g, '');
-  if (digits.length < 7) return raw;
-
-  if (digits.startsWith('02')) {
-    if (digits.length === 9) return `02-${digits.slice(2, 5)}-${digits.slice(5)}`;
-    if (digits.length === 10) return `02-${digits.slice(2, 6)}-${digits.slice(6)}`;
-    return `02-${digits.slice(2)}`;
+function formatPrice(value: unknown, wonLabel: string, emptyLabel: string) {
+  if (typeof value === 'number') {
+    return `${value.toLocaleString()}${wonLabel}`;
   }
 
-  if (digits.length === 10) {
-    return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
-  }
-  if (digits.length === 11) {
-    return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+  if (typeof value === 'string' && value.trim().length > 0) {
+    const numeric = Number(value.replace(/[^0-9]/g, ''));
+    if (Number.isFinite(numeric) && numeric > 0) {
+      return `${numeric.toLocaleString()}${wonLabel}`;
+    }
+    return value;
   }
 
-  return raw;
-};
+  return emptyLabel;
+}
+
+
+function normalizeMediaRows(post: any) {
+  const mediaRows = Array.isArray(post?.post_media)
+    ? post.post_media
+    : Array.isArray(post?.postMedia)
+      ? post.postMedia
+      : [];
+
+  return mediaRows
+    .map((media: any, index: number) => ({
+      id: String(media?.id ?? `${post?.id ?? 'post'}-media-${index}`),
+      file_url: media?.file_url ?? media?.url ?? media?.image_url ?? media?.media_url ?? null,
+      width: typeof media?.width === 'number' ? media.width : null,
+      height: typeof media?.height === 'number' ? media.height : null,
+      sort_order: typeof media?.sort_order === 'number' ? media.sort_order : index,
+    }))
+    .filter((media: any) => !!media.file_url);
+}
+
+function normalizePostForCollection(post: any) {
+  const postMedia = normalizeMediaRows(post);
+  return {
+    ...(post ?? {}),
+    id: String(post?.id ?? ''),
+    user_id: String(post?.user_id ?? ''),
+    business_id: post?.business_id ?? null,
+    caption: post?.caption ?? null,
+    visibility: post?.visibility ?? null,
+    created_at: post?.created_at ?? new Date().toISOString(),
+    post_media: postMedia,
+  };
+}
+
+function SectionHeader({
+  title,
+  onMore,
+  hasMore = true,
+  styles,
+  ui,
+}: {
+  title: string;
+  onMore?: () => void;
+  hasMore?: boolean;
+  styles: HomeTabStyles;
+  ui: BusinessComponentTheme;
+}) {
+  const { t } = useTranslation();
+
+  return (
+    <View style={styles.sectionHeader}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      {hasMore && (
+        <Pressable onPress={onMore} hitSlop={10} style={styles.moreBtn}>
+          <Text style={styles.moreText}>{t('business:detail.viewAll')}</Text>
+          <ChevronRight size={17} color={ui.textMuted} strokeWidth={2.2} />
+        </Pressable>
+      )}
+    </View>
+  );
+}
 
 export const HomeTab: React.FC<Props> = ({
   business,
-  headerImages,
-  photos,
-  events,
-  notices,
-  description,
-  minsaengCoupon,
-  facilities,
-  parkingAvailable,
-  parkingInfo,
-  seatingInfo,
-  paymentMethods,
-  visitorFeedCountLabel,
+  isOpenNow = true,
+  isAutoOpen = false,
+  onToggleAutoOpen = () => {},
+  events = [],
+  notices = [],
+  facilities = '',
   onChangeTab,
-  menus,
-  menuItemsByMenuId,
-  aiBriefing,
-  aiBriefingUpdatedAt,
+  onPressPost,
+  menuItemsByMenuId = {},
+  reviews = [],
+  aiBriefing = '',
 }) => {
+  const { t } = useTranslation();
+  const { width } = useWindowDimensions();
+  const { theme: ui } = useBusinessComponentTheme();
+  const styles = useMemo(() => createStyles(ui), [ui]);
+  const { toast, showToast, hideToast } = useCoonnFloatingToast();
+  const [isAiExpanded, setIsAiExpanded] = useState(false);
+
+  const anyBiz = business as any;
   const latestEvent = events[0];
+  const latestNotice = notices[0];
 
-  // ================== 공통 값 ==================
-  const addrMain = business?.address || '';
-  const addrDetail =
-    (business as any)?.detail_address || (business as any)?.detailAddress || '';
-  const addrFull = addrDetail ? `${addrMain} ${addrDetail}` : addrMain;
+  const formattedAddress = useMemo(() => {
+    return business?.address?.replace(/^(대한민국|South Korea)\s*/, '') || '';
+  }, [business?.address]);
 
-  const phoneRaw = business?.phone || '';
-  const phoneDisplay = phoneRaw ? formatPhoneNumber(phoneRaw) : '';
+  const handleCopyAddress = useCallback(() => {
+    showToast({
+      message: t('business:common.copied'),
+      tone: 'success',
+      showMark: true,
+    });
+  }, [showToast, t]);
 
-  const homepage = business?.website_url || '';
-
-  const openTime = business?.open_time || '';
-  const closeTime = business?.close_time || '';
-  const lastOrderTime = business?.last_order_time || '';
-
-  const hasBreak =
-    !!business?.has_break_time &&
-    (!!business?.break_start_time || !!business?.break_end_time);
-
-  const breakLabel =
-    business?.break_start_time && business?.break_end_time
-      ? `${business.break_start_time} ~ ${business.break_end_time}`
-      : business?.break_start_time || business?.break_end_time || '';
-
-  const effectiveFacilities = facilities || business?.facilities || '';
-
-  const parkingState =
-    parkingAvailable ?? business?.parking_available ?? null;
-
-  let parkingLabel = '주차 정보가 없습니다.';
-  if (parkingState === true) parkingLabel = '주차 가능';
-  if (parkingState === false) parkingLabel = '주차 불가';
-
-  const parkingDetail = parkingInfo || business?.parking_info || '';
-  const parkingFull = parkingDetail
-    ? `${parkingLabel} · ${parkingDetail}`
-    : parkingLabel;
-
-  // ✅ AI 브리핑 텍스트 (props > DB > 기본문구)
-  const aiBriefingText =
-    aiBriefing ||
-    business?.ai_briefing ||
-    '곧 AI가 이 가게의 분위기와 인기 메뉴를 한눈에 정리해 드릴 예정입니다.';
-
-  // 대표 메뉴
-  const signatureMenuItems: BusinessMenuItem[] = useMemo(() => {
-    const allItems: BusinessMenuItem[] = [];
-
-    Object.values(menuItemsByMenuId).forEach((items) => {
-      items.forEach((it) => {
-        if (it.is_signature) {
-          allItems.push(it);
-        }
+  const signatureMenuItems = useMemo(() => {
+    const all: BusinessMenuItem[] = [];
+    Object.values(menuItemsByMenuId).forEach((group: BusinessMenuItem[]) => {
+      group.forEach((item) => {
+        if (item.is_signature) all.push(item);
       });
     });
-
-    allItems.sort((a, b) => {
-      const sa = (a.sort_order ?? 0) as number;
-      const sb = (b.sort_order ?? 0) as number;
-      if (sa !== sb) return sa - sb;
-      return String(a.id).localeCompare(String(b.id));
-    });
-
-    return allItems;
+    return all.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)).slice(0, 5);
   }, [menuItemsByMenuId]);
 
-  // ================== 방문자 피드 프리뷰 ==================
-  const [feedPreviewItems, setFeedPreviewItems] = useState<FeedPreview[]>([]);
-  const [feedPreviewLoading, setFeedPreviewLoading] = useState(false);
-  const [feedPreviewError, setFeedPreviewError] = useState<string | null>(null);
+  const displayAiBriefing =
+    aiBriefing || (business as any)?.ai_briefing || t('business:detail.aiEmpty');
 
-  const loadFeedPreview = useCallback(async () => {
-    if (!business?.id) return;
+  const visitorFeedMosaicItems = useMemo(() => {
+    return (reviews ?? [])
+      .slice(0, 6)
+      .map((review: any) => review?.post)
+      .filter(Boolean)
+      .map((post: any) => {
+        const normalizedPost = normalizePostForCollection(post);
+        const postMedia = normalizeMediaRows(normalizedPost);
+        return {
+          id: String(normalizedPost.id),
+          imageUrl: postMedia[0]?.file_url ?? null,
+          userId: String(normalizedPost.user_id ?? ''),
+          businessId: normalizedPost.business_id ? String(normalizedPost.business_id) : null,
+          caption: normalizedPost.caption ?? null,
+          createdAt: normalizedPost.created_at ?? new Date().toISOString(),
+          visibility: normalizedPost.visibility ?? null,
+          postMedia,
+          likeCount: typeof normalizedPost.like_count === 'number' ? normalizedPost.like_count : 0,
+          commentCount: typeof normalizedPost.comment_count === 'number' ? normalizedPost.comment_count : 0,
+          shareCount: typeof normalizedPost.share_count === 'number' ? normalizedPost.share_count : 0,
+          __rawPost: normalizedPost,
+        };
+      })
+      .filter((item: any) => !!item.id);
+  }, [reviews]);
 
-    setFeedPreviewLoading(true);
-    setFeedPreviewError(null);
-
-    try {
-      const { data, error } = await supabase
-        .from('posts')
-        .select(
-          `
-          id,
-          caption,
-          created_at,
-          business_id,
-          post_media (*)
-        `,
-        )
-        .eq('business_id', business.id)
-        .is('deleted_at', null)
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (error) {
-        console.error(error);
-        setFeedPreviewError('방문자 피드를 불러오는 중 오류가 발생했습니다.');
-        return;
-      }
-
-      setFeedPreviewItems((data ?? []) as FeedPreview[]);
-    } catch (e) {
-      console.error(e);
-      setFeedPreviewError('방문자 피드를 불러오는 중 오류가 발생했습니다.');
-    } finally {
-      setFeedPreviewLoading(false);
-    }
-  }, [business?.id]);
-
-  useEffect(() => {
-    loadFeedPreview();
-  }, [loadFeedPreview]);
-
-  const getFeedImageUrl = (item: FeedPreview): string | null => {
-    const media = item.post_media;
-    if (!Array.isArray(media) || media.length === 0) return null;
-
-    const first = media[0];
-    return (
-      first.thumbnail_url ||
-      first.url ||
-      first.image_url ||
-      first.media_url ||
-      first.file_url ||
-      null
-    );
-  };
-
-  // ✅ 제목 = 캡션 앞부분, 내용 = 나머지 캡션
-  const getFeedTitleAndBody = (
-    item: FeedPreview,
-  ): { title: string; body: string } => {
-    const caption = (item.caption ?? '').trim();
-    if (!caption) {
-      return {
-        title: '사진 게시물',
-        body: '',
-      };
-    }
-
-    const newlineIdx = caption.indexOf('\n');
-    let title: string;
-    let body: string;
-
-    if (newlineIdx >= 0) {
-      title = caption.slice(0, newlineIdx).trim();
-      body = caption.slice(newlineIdx + 1).trim();
-    } else if (caption.length > 30) {
-      title = caption.slice(0, 30).trim();
-      body = caption.slice(30).trim();
-    } else {
-      title = caption;
-      body = '';
-    }
-
-    return { title, body };
-  };
-
-  // ================== 액션 ==================
-  const handlePressAddress = async () => {
-    if (!addrFull) return;
-    const encoded = encodeURIComponent(addrFull);
-    const url =
-      Platform.OS === 'ios'
-        ? `http://maps.apple.com/?q=${encoded}`
-        : `geo:0,0?q=${encoded}`;
-
-    try {
-      const supported = await Linking.canOpenURL(url);
-      if (!supported) {
-        const webUrl = `https://maps.google.com/?q=${encoded}`;
-        Linking.openURL(webUrl);
-        return;
-      }
-      Linking.openURL(url);
-    } catch (e) {
-      console.warn(e);
-    }
-  };
-
-  const handlePressPhone = async () => {
-    if (!phoneRaw) return;
-    const cleaned = phoneRaw.replace(/[^0-9+]/g, '');
-    const url = `tel:${cleaned}`;
-    try {
-      const supported = await Linking.canOpenURL(url);
-      if (!supported) return;
-      Linking.openURL(url);
-    } catch (e) {
-      console.warn(e);
-    }
-  };
-
-  const handlePressHomepage = async () => {
-    if (!homepage) return;
-    try {
-      const url =
-        homepage.startsWith('http://') ||
-        homepage.startsWith('https://')
-          ? homepage
-          : `https://${homepage}`;
-      const supported = await Linking.canOpenURL(url);
-      if (!supported) return;
-      Linking.openURL(url);
-    } catch (e) {
-      console.warn(e);
-    }
-  };
-
-  const InfoRow: React.FC<{
-    label: string;
-    value?: string;
-    onPress?: () => void;
-  }> = ({ label, value, onPress }) => {
-    if (!value) return null;
-
-    const content = (
-      <View
-        style={{
-          flexDirection: 'row',
-          paddingVertical: 4,
-        }}
-      >
-        <Text
-          style={{
-            width: 72,
-            fontSize: 12,
-            color: '#6B7280',
-          }}
-        >
-          {label}
-        </Text>
-        <Text
-          style={[
-            styles.infoText,
-            { flex: 1, fontSize: 13, color: '#111827' },
-          ]}
-          numberOfLines={2}
-        >
-          {value}
-        </Text>
-      </View>
-    );
-
-    if (!onPress) return content;
-
-    return (
-      <Pressable onPress={onPress} style={{ paddingVertical: 2 }}>
-        {content}
-      </Pressable>
-    );
-  };
+  const visitorFeedGridWidth = Math.max(
+    0,
+    width - FEED_GRID_HORIZONTAL_PADDING * 2,
+  );
 
   return (
-    <View style={styles.tabContent}>
-      {/* ============ AI 브리핑 ============ */}
-      <View style={styles.card}>
-        <SectionHeader title="AI 브리핑" />
-        <Text style={styles.aiText}>{aiBriefingText}</Text>
-        {aiBriefingUpdatedAt && (
-          <Text
-            style={[
-              styles.mutedText,
-              { marginTop: 6 },
-            ]}
-          >
-            {`업데이트: ${aiBriefingUpdatedAt}`}
-          </Text>
-        )}
-      </View>
+    <View style={styles.container}>
+      <View style={styles.sectionCard}>
+        <SectionHeader title={t('business:detail.operationInfo')} onMore={() => onChangeTab('info')} styles={styles} ui={ui} />
 
-      {/* ============ 이벤트 / 쿠폰 ============ */}
-      <View style={styles.card}>
-        <SectionHeader
-          title="이벤트 / 쿠폰"
-          onMore={() => onChangeTab('events')}
-        />
-        {latestEvent ? (
-          <View style={styles.posterRow}>
-            {latestEvent.image_url && (
-              <Image
-                source={{ uri: latestEvent.image_url }}
-                style={styles.posterThumb}
-                resizeMode="cover"
-              />
-            )}
-            <View style={{ flex: 1 }}>
-              <Text style={styles.posterTitle} numberOfLines={1}>
-                {latestEvent.title || '제목 없음'}
-              </Text>
-              {latestEvent.body ? (
-                <Text style={styles.posterBody} numberOfLines={2}>
-                  {latestEvent.body}
-                </Text>
-              ) : null}
-            </View>
-          </View>
-        ) : (
-          <Text style={styles.mutedText}>
-            등록된 이벤트가 없어요.
-          </Text>
-        )}
-      </View>
-
-      {/* ============ 핵심 정보 ============ */}
-      <View style={styles.card}>
-        <InfoRow
-          label="주소"
-          value={addrFull}
-          onPress={handlePressAddress}
-        />
-
-        <InfoRow
-          label="영업시간"
-          value={
-            openTime && closeTime
-              ? `${openTime} ~ ${closeTime}`
-              : openTime || closeTime || ''
-          }
-        />
-
-        {hasBreak && <InfoRow label="브레이크" value={breakLabel} />}
-
-        <InfoRow label="라스트오더" value={lastOrderTime || ''} />
-
-        <InfoRow label="편의사항" value={effectiveFacilities} />
-
-        <InfoRow label="주차" value={parkingFull} />
-
-        <InfoRow
-          label="전화번호"
-          value={phoneDisplay}
-          onPress={handlePressPhone}
-        />
-
-        <InfoRow
-          label="홈페이지"
-          value={homepage}
-          onPress={handlePressHomepage}
-        />
-
-        <Pressable
-          onPress={() => onChangeTab('info')}
-          style={{
-            marginTop: 12,
-            paddingVertical: 10,
-            borderTopWidth: 0.5,
-            borderTopColor: '#E5E7EB',
-            alignItems: 'center',
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 13,
-              fontWeight: '600',
-              color: '#111827',
-            }}
-          >
-            정보 더보기
-          </Text>
-        </Pressable>
-      </View>
-
-      {/* ============ 메뉴 ============ */}
-      <View style={styles.card}>
-        <SectionHeader
-          title="메뉴"
-          onMore={() => onChangeTab('menu')}
-        />
-
-        {signatureMenuItems.length === 0 ? (
-          <Text style={styles.mutedText}>
-            대표 메뉴가 아직 등록되지 않았습니다.
-          </Text>
-        ) : (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.signatureMenuScroll}
-          >
-            {signatureMenuItems.map((item) => (
-              <View key={item.id} style={styles.signatureMenuCard}>
-                <View style={styles.signatureMenuImageWrapper}>
-                  {item.image_url ? (
-                    <Image
-                      source={{ uri: item.image_url }}
-                      style={styles.signatureMenuImage}
-                      resizeMode="cover"
-                    />
-                  ) : (
-                    <View
-                      style={styles.signatureMenuImagePlaceholder}
-                    />
-                  )}
-                </View>
-                <Text
-                  style={styles.signatureMenuName}
-                  numberOfLines={1}
-                >
-                  {item.name || '메뉴 이름'}
-                </Text>
-                {typeof item.price === 'number' && (
-                  <Text style={styles.signatureMenuPrice}>
-                    {item.price.toLocaleString()}원
-                  </Text>
-                )}
-              </View>
-            ))}
-          </ScrollView>
-        )}
-      </View>
-
-      {/* ============ 방문자 피드 ============ */}
-      <View style={styles.card}>
-        {/* 타이틀 + 개수 + 더보기 */}
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: 8,
-          }}
-        >
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'baseline',
-            }}
-          >
-            {/* flex:1 때문에 숫자를 밀어내는 걸 막기 위해 flex:0 으로 덮어씀 */}
-            <Text style={[styles.sectionTitle, { flex: 0 }]}>
-              방문자 피드
+        <View style={styles.infoRow}>
+          <MapPin size={24} color={ui.textMuted} style={styles.infoIcon} strokeWidth={1.8} />
+          <View style={styles.infoContent}>
+            <Text style={styles.infoText} selectable>
+              {formattedAddress || t('business:detail.addressEmpty')}
             </Text>
-            {feedPreviewItems.length > 0 && (
-              <Text
-                style={{
-                  marginLeft: 6,
-                  fontSize: 12,
-                  color: '#9CA3AF',
-                }}
-              >
-                {feedPreviewItems.length}
-              </Text>
-            )}
+            {anyBiz?.detail_address ? (
+              <Text style={styles.infoSubText}>{anyBiz.detail_address}</Text>
+            ) : null}
           </View>
-
-          <Pressable onPress={() => onChangeTab('feed')}>
-            <Text
-              style={{
-                fontSize: 12,
-                color: '#9CA3AF',
-              }}
-            >
-              더보기 &gt;
-            </Text>
+          <Pressable style={styles.copyBtn} onPress={handleCopyAddress}>
+            <Text style={styles.copyBtnText}>{t('business:common.copy')}</Text>
           </Pressable>
         </View>
 
-        {feedPreviewLoading ? (
-          <Text style={styles.mutedText}>
-            방문자 피드를 불러오는 중…
-          </Text>
-        ) : feedPreviewError ? (
-          <Text
-            style={[
-              styles.mutedText,
-              { color: '#DC2626' },
-            ]}
-          >
-            {feedPreviewError}
-          </Text>
-        ) : feedPreviewItems.length === 0 ? (
-          <Text style={styles.mutedText}>
-            아직 방문자 피드가 없습니다.
-          </Text>
-        ) : (
+        <View style={styles.divider} />
+
+        <View style={styles.infoRow}>
+          <Clock size={24} color={ui.textMuted} style={styles.infoIcon} strokeWidth={1.8} />
+          <View style={styles.infoContent}>
+            <View style={styles.timeHeaderRow}>
+              <Text style={styles.infoTextBold}>
+                {business?.open_time && business?.close_time
+                  ? `${business.open_time} - ${business.close_time}`
+                  : t('business:detail.hoursEmpty')}
+              </Text>
+
+              <View style={styles.autoToggleContainer}>
+                <Text style={[styles.autoToggleLabel, isAutoOpen ? styles.autoToggleOn : styles.autoToggleOff]}>
+                  {isAutoOpen ? t('business:status.autoOn') : t('business:status.autoOff')}
+                </Text>
+                <Switch
+                  trackColor={{ false: ui.switchTrackOff, true: ui.switchTrackOn }}
+                  thumbColor={isAutoOpen ? ui.primary : ui.switchThumbOff}
+                  ios_backgroundColor={ui.switchTrackOff}
+                  onValueChange={onToggleAutoOpen}
+                  value={isAutoOpen}
+                  style={styles.autoSwitch}
+                />
+              </View>
+            </View>
+
+            <View style={[styles.statusBadge, isOpenNow ? styles.badgeOpen : styles.badgeClose]}>
+              <Text style={[styles.statusText, isOpenNow ? styles.textOpen : styles.textClose]}>
+                {isOpenNow ? t('business:status.open') : t('business:status.closed')}
+              </Text>
+            </View>
+
+            {(anyBiz?.break_start_time || anyBiz?.last_order_time) && (
+              <View style={styles.subTimeContainer}>
+                {anyBiz?.break_start_time ? (
+                  <Text style={styles.subTimeText}>
+                    <Text style={styles.breakText}>{t('business:detail.break')}</Text> {anyBiz.break_start_time} ~ {anyBiz.break_end_time}
+                  </Text>
+                ) : null}
+                {anyBiz?.last_order_time ? (
+                  <Text style={styles.subTimeText}>
+                    <Text style={styles.lastOrderText}>{t('business:detail.lastOrder')}</Text> {anyBiz.last_order_time}
+                  </Text>
+                ) : null}
+              </View>
+            )}
+          </View>
+        </View>
+
+        <View style={styles.divider} />
+
+        <View style={styles.infoRowLast}>
+          <Phone size={24} color={ui.textMuted} style={styles.infoIcon} strokeWidth={1.8} />
+          <Text style={styles.infoText}>{business?.phone || t('business:detail.phoneEmpty')}</Text>
+        </View>
+      </View>
+
+      {signatureMenuItems.length > 0 && (
+        <View style={styles.sectionCard}>
+          <SectionHeader title={t('business:detail.signatureMenu')} onMore={() => onChangeTab('menu')} styles={styles} ui={ui} />
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={{ marginTop: 8 }}
+            contentContainerStyle={styles.horizontalScrollPadding}
           >
-            {feedPreviewItems.map((item) => {
-              const imageUrl = getFeedImageUrl(item);
-              if (!imageUrl) return null;
-
-              const { title, body } = getFeedTitleAndBody(item);
-
-              return (
-                <Pressable
-                  key={item.id}
-                  style={styles.feedPreviewCard}
-                  onPress={() => onChangeTab('feed')}
-                >
-                  <Image
-                    source={{ uri: imageUrl }}
-                    style={styles.feedPreviewImagePlaceholder}
-                    resizeMode="cover"
-                  />
-                  <View style={{ padding: 8 }}>
-                    <Text
-                      style={styles.feedPreviewTitle}
-                      numberOfLines={1}
-                    >
-                      {title}
-                    </Text>
-                    {body ? (
-                      <Text
-                        style={styles.feedPreviewText}
-                        numberOfLines={2}
-                      >
-                        {body}
-                      </Text>
-                    ) : null}
+            {signatureMenuItems.map((item) => (
+              <View key={item.id} style={styles.menuCard}>
+                <View style={styles.menuImageWrapper}>
+                  {item.image_url ? (
+                    <Image {...BUSINESS_IMAGE_PROPS} source={{ uri: item.image_url }} style={styles.menuImage} resizeMode="cover" />
+                  ) : (
+                    <View style={styles.menuImageFallback}>
+                      <Utensils size={24} color={ui.textFaint} />
+                    </View>
+                  )}
+                  <View style={styles.signatureBadge}>
+                    <Text style={styles.signatureBadgeText}>{t('business:menu.signature')}</Text>
                   </View>
-                </Pressable>
-              );
-            })}
+                </View>
+                <View style={styles.menuInfo}>
+                  <Text style={styles.menuName} numberOfLines={1}>
+                    {item.name}
+                  </Text>
+                  <Text style={styles.menuPrice}>{formatPrice(item.price, t('business:common.won'), t('business:menu.priceEmpty'))}</Text>
+                </View>
+              </View>
+            ))}
           </ScrollView>
+        </View>
+      )}
+
+      {(latestEvent || latestNotice) && (
+        <View style={styles.sectionCard}>
+          <SectionHeader
+            title={t('business:detail.newsEvent')}
+            onMore={() => onChangeTab(latestEvent ? 'events' : 'notice')}
+            styles={styles}
+            ui={ui}
+          />
+          <View style={styles.eventList}>
+            {latestEvent ? (
+              <Pressable
+                style={({ pressed }) => [styles.eventListRow, pressed && styles.pressedRow]}
+                onPress={() => onChangeTab('events')}
+              >
+                <View style={styles.eventLeft}>
+                  <View style={styles.eventTag}>
+                    <Text style={styles.eventTagText}>EVENT</Text>
+                  </View>
+                  <Text style={styles.eventTitle} numberOfLines={1}>{latestEvent.title}</Text>
+                  <Text style={styles.eventDesc} numberOfLines={2}>{latestEvent.body}</Text>
+                  <Text style={styles.eventDate}>{t('business:status.active')}</Text>
+                </View>
+                {latestEvent.image_url ? (
+                  <Image {...BUSINESS_IMAGE_PROPS} source={{ uri: latestEvent.image_url }} style={styles.eventImage} />
+                ) : null}
+              </Pressable>
+            ) : null}
+
+            {latestEvent && latestNotice ? <View style={styles.innerDivider} /> : null}
+
+            {latestNotice ? (
+              <Pressable
+                style={({ pressed }) => [styles.miniNoticeRow, pressed && styles.pressedRow]}
+                onPress={() => onChangeTab('notice')}
+              >
+                {latestEvent ? (
+                  <Megaphone size={15} color={ui.textSecondary} />
+                ) : (
+                  <View style={styles.noticeTag}>
+                    <Text style={styles.noticeTagText}>{t('business:notices.badge')}</Text>
+                  </View>
+                )}
+                <Text style={styles.miniNoticeText} numberOfLines={1}>
+                  {latestEvent ? t('business:detail.latestNoticePrefix', { title: latestNotice.title }) : latestNotice.title}
+                </Text>
+                <ChevronRight size={15} color={ui.textMuted} />
+              </Pressable>
+            ) : null}
+          </View>
+        </View>
+      )}
+
+      <View style={styles.aiSectionCard}>
+        <LinearGradient colors={ui.aiGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.aiCard}>
+          <View style={styles.aiHeader}>
+            <View style={styles.aiBadge}>
+              <Sparkles size={12} color="#FFFFFF" fill="#FFFFFF" />
+              <Text style={styles.aiBadgeText}>{t('business:detail.aiAnalysis')}</Text>
+            </View>
+          </View>
+          <Text style={[styles.aiDescription, !isAiExpanded && styles.collapsedText]}>
+            {displayAiBriefing}
+          </Text>
+          <Pressable style={styles.aiExpandBtn} onPress={() => setIsAiExpanded(!isAiExpanded)} hitSlop={15}>
+            <Text style={styles.aiExpandText}>{isAiExpanded ? t('business:detail.collapse') : t('business:detail.more')}</Text>
+            {isAiExpanded ? (
+              <ChevronUp size={14} color="rgba(255,255,255,0.62)" />
+            ) : (
+              <ChevronDown size={14} color="rgba(255,255,255,0.62)" />
+            )}
+          </Pressable>
+        </LinearGradient>
+      </View>
+
+      <View style={styles.feedSection}>
+        <SectionHeader title={t('business:detail.visitorFeedCount', { count: reviews.length })} onMore={() => onChangeTab('feed')} styles={styles} ui={ui} />
+        {reviews.length === 0 ? (
+          <View style={styles.noDataBox}>
+            <Text style={styles.noDataText}>{t('business:detail.visitorFeedEmpty')}</Text>
+          </View>
+        ) : (
+          <CoonnMosaicGrid
+            items={visitorFeedMosaicItems}
+            width={visitorFeedGridWidth}
+            gap={MOSAIC_GAP}
+            radius={ui.radius.xl}
+            variant="compact"
+            leadSide="left"
+            backgroundColor={ui.surface}
+            fallbackBackgroundColor={ui.imageSurface}
+            fallbackIconColor={ui.textFaint}
+            overlayBackgroundColor="rgba(0,0,0,0.28)"
+            overlayTextColor={ui.fixedWhite}
+            pressedOpacity={0.86}
+            onPressItem={(item: any) => {
+              if (onPressPost && item?.__rawPost) {
+                onPressPost(item.__rawPost);
+                return;
+              }
+              onChangeTab('feed');
+            }}
+          />
         )}
       </View>
+
+      {(facilities || anyBiz?.parking_info) && (
+        <View style={styles.sectionCard}>
+          <SectionHeader title={t('business:detail.amenities')} hasMore={false} styles={styles} ui={ui} />
+          <View style={styles.facilityList}>
+            {anyBiz?.parking_info ? (
+              <View style={styles.facilityListRow}>
+                <Car size={16} color={ui.textSecondary} style={styles.parkingIcon} />
+                <View style={styles.parkingTextWrap}>
+                  <Text style={styles.parkingTitle}>{t('business:detail.parkingAvailable')}</Text>
+                  <Text style={styles.parkingDesc}>{anyBiz.parking_info}</Text>
+                </View>
+              </View>
+            ) : null}
+            {anyBiz?.parking_info && facilities ? <View style={styles.innerDivider} /> : null}
+            {facilities
+              ? facilities
+                  .split(',')
+                  .map((f: string) => f.trim())
+                  .filter(Boolean)
+                  .map((f: string, i: number, arr: string[]) => (
+                    <React.Fragment key={`${f}-${i}`}>
+                      <View style={styles.facilityListRow}>
+                        <View style={styles.facilityDot} />
+                        <Text style={styles.facilityText}>{f}</Text>
+                      </View>
+                      {i < arr.length - 1 ? <View style={styles.innerDivider} /> : null}
+                    </React.Fragment>
+                  ))
+              : null}
+          </View>
+        </View>
+      )}
+
+      <CoonnFloatingToast
+        visible={toast.visible}
+        message={toast.message}
+        tone={toast.tone}
+        showMark={toast.showMark}
+        onHidden={hideToast}
+      />
     </View>
   );
 };
+
+function createStyles(ui: BusinessComponentTheme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: ui.background,
+      paddingHorizontal: 14,
+      paddingTop: 14,
+      paddingBottom: 16,
+      gap: 14,
+    },
+    sectionCard: {
+      backgroundColor: ui.surface,
+      borderRadius: ui.radius.xl,
+      paddingHorizontal: 18,
+      paddingVertical: 20,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: ui.hairline,
+      shadowColor: ui.cardShadow,
+      shadowOpacity: ui.isDark ? 0 : 0.08,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: ui.isDark ? 0 : 1,
+    },
+    feedSection: {
+      marginHorizontal: -HOME_HORIZONTAL_PADDING,
+      backgroundColor: ui.surface,
+      paddingHorizontal: FEED_GRID_HORIZONTAL_PADDING,
+      paddingVertical: 16,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderColor: ui.hairline,
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    sectionTitle: {
+      fontSize: 19,
+      lineHeight: 24,
+      fontWeight: '700',
+      color: ui.text,
+      letterSpacing: -0.35,
+    },
+    moreBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      minHeight: 32,
+      paddingLeft: 8,
+    },
+    moreText: {
+      fontSize: 13,
+      lineHeight: 17,
+      fontWeight: '600',
+      color: ui.textMuted,
+      marginRight: 2,
+    },
+
+    infoRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      paddingVertical: 1,
+    },
+    infoRowLast: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 1,
+    },
+    divider: {
+      height: StyleSheet.hairlineWidth,
+      backgroundColor: ui.hairlineSoft,
+      marginVertical: 18,
+      marginLeft: 36,
+    },
+    infoIcon: {
+      marginTop: 2,
+      marginRight: 14,
+    },
+    infoContent: {
+      flex: 1,
+      minWidth: 0,
+    },
+    infoText: {
+      fontSize: 16,
+      lineHeight: 24,
+      fontWeight: '500',
+      color: ui.textSecondary,
+      letterSpacing: -0.2,
+    },
+    infoTextBold: {
+      fontSize: 18,
+      lineHeight: 24,
+      fontWeight: '700',
+      color: ui.text,
+      letterSpacing: -0.28,
+    },
+    infoSubText: {
+      fontSize: 14,
+      lineHeight: 20,
+      fontWeight: '500',
+      color: ui.textMuted,
+      marginTop: 4,
+    },
+    copyBtn: {
+      minHeight: 34,
+      borderRadius: 17,
+      paddingHorizontal: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: ui.primarySoft,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: ui.hairlineSoft,
+      marginLeft: 12,
+      marginTop: -1,
+    },
+    copyBtnText: {
+      fontSize: 12,
+      lineHeight: 16,
+      fontWeight: '700',
+      color: ui.textSecondary,
+    },
+    timeHeaderRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      width: '100%',
+      gap: 10,
+      marginBottom: 9,
+    },
+    autoToggleContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flexShrink: 0,
+    },
+    autoToggleLabel: {
+      fontSize: 12,
+      lineHeight: 16,
+      fontWeight: '700',
+      marginRight: 2,
+    },
+    autoToggleOn: {
+      color: ui.blue,
+    },
+    autoToggleOff: {
+      color: ui.textMuted,
+    },
+    autoSwitch: {
+      transform: [{ scaleX: 0.72 }, { scaleY: 0.72 }],
+      marginLeft: 2,
+    },
+    statusBadge: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: 9,
+      paddingVertical: 5,
+      borderRadius: ui.radius.full,
+      borderWidth: StyleSheet.hairlineWidth,
+    },
+    badgeOpen: {
+      borderColor: ui.success,
+      backgroundColor: ui.successSoft,
+    },
+    badgeClose: {
+      borderColor: ui.hairline,
+      backgroundColor: ui.primarySoft,
+    },
+    statusText: {
+      fontSize: 12,
+      lineHeight: 16,
+      fontWeight: '700',
+    },
+    textOpen: {
+      color: ui.success,
+    },
+    textClose: {
+      color: ui.textSecondary,
+    },
+    subTimeContainer: {
+      marginTop: 10,
+      gap: 4,
+    },
+    subTimeText: {
+      fontSize: 14,
+      lineHeight: 20,
+      fontWeight: '600',
+      color: ui.textSecondary,
+    },
+    breakText: {
+      color: ui.danger,
+      fontWeight: '700',
+    },
+    lastOrderText: {
+      color: ui.warning,
+      fontWeight: '700',
+    },
+
+    horizontalScrollPadding: {
+      paddingRight: 2,
+      gap: 12,
+    },
+    menuCard: {
+      width: 150,
+      borderRadius: ui.radius.lg,
+      backgroundColor: ui.elevated,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: ui.hairline,
+      overflow: 'hidden',
+    },
+    menuImageWrapper: {
+      width: '100%',
+      height: 150,
+      backgroundColor: ui.imageSurface,
+    },
+    menuImage: {
+      width: '100%',
+      height: '100%',
+    },
+    menuImageFallback: {
+      width: '100%',
+      height: '100%',
+      backgroundColor: ui.imageSurface,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    signatureBadge: {
+      position: 'absolute',
+      top: 8,
+      left: 8,
+      minHeight: 26,
+      borderRadius: 13,
+      paddingHorizontal: 9,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'rgba(0,0,0,0.72)',
+    },
+    signatureBadgeText: {
+      color: '#FFFFFF',
+      fontSize: 12,
+      lineHeight: 16,
+      fontWeight: '700',
+    },
+    menuInfo: {
+      paddingHorizontal: 13,
+      paddingTop: 13,
+      paddingBottom: 14,
+      backgroundColor: ui.elevated,
+    },
+    menuName: {
+      fontSize: 16,
+      lineHeight: 21,
+      fontWeight: '700',
+      color: ui.text,
+      marginBottom: 6,
+      letterSpacing: -0.22,
+    },
+    menuPrice: {
+      fontSize: 17,
+      lineHeight: 22,
+      fontWeight: '700',
+      color: ui.accent,
+      letterSpacing: -0.25,
+    },
+
+    eventList: {
+      marginTop: -2,
+    },
+    eventListRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 13,
+      gap: 14,
+    },
+    pressedRow: {
+      backgroundColor: ui.pressed,
+    },
+    innerDivider: {
+      height: StyleSheet.hairlineWidth,
+      backgroundColor: ui.hairline,
+      width: '100%',
+    },
+    eventCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 13,
+    },
+    eventLeft: {
+      flex: 1,
+      minWidth: 0,
+      marginRight: 12,
+    },
+    eventTag: {
+      alignSelf: 'flex-start',
+      backgroundColor: ui.dangerSoft,
+      paddingHorizontal: 7,
+      paddingVertical: 3,
+      borderRadius: ui.radius.full,
+      marginBottom: 8,
+    },
+    eventTagText: {
+      fontSize: 10,
+      lineHeight: 14,
+      color: ui.danger,
+      fontWeight: '700',
+    },
+    noticeTag: {
+      alignSelf: 'flex-start',
+      backgroundColor: ui.blueSoft,
+      paddingHorizontal: 7,
+      paddingVertical: 3,
+      borderRadius: ui.radius.full,
+      marginBottom: 8,
+    },
+    noticeTagText: {
+      fontSize: 10,
+      lineHeight: 14,
+      color: ui.blue,
+      fontWeight: '700',
+    },
+    eventTitle: {
+      fontSize: 15,
+      lineHeight: 20,
+      fontWeight: '700',
+      color: ui.text,
+      marginBottom: 5,
+    },
+    eventDesc: {
+      fontSize: 13,
+      lineHeight: 19,
+      fontWeight: '500',
+      color: ui.textSecondary,
+    },
+    eventDate: {
+      fontSize: 12,
+      lineHeight: 16,
+      fontWeight: '600',
+      color: ui.textMuted,
+      marginTop: 7,
+    },
+    eventImage: {
+      width: 72,
+      height: 72,
+      borderRadius: ui.radius.md,
+      backgroundColor: ui.imageSurface,
+    },
+    miniNoticeRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      minHeight: 44,
+      paddingVertical: 11,
+      gap: 8,
+    },
+    miniNoticeText: {
+      fontSize: 14,
+      lineHeight: 19,
+      fontWeight: '600',
+      color: ui.textSecondary,
+      flex: 1,
+    },
+
+    aiSectionCard: {
+      borderRadius: ui.radius.xl,
+      overflow: 'hidden',
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: ui.isDark ? ui.hairline : ui.hairlineSoft,
+      shadowColor: ui.cardShadow,
+      shadowOpacity: ui.isDark ? 0 : 0.08,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: ui.isDark ? 0 : 1,
+    },
+    aiCard: {
+      paddingHorizontal: 20,
+      paddingTop: 20,
+      paddingBottom: 18,
+      minHeight: 154,
+    },
+    aiHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 11,
+    },
+    aiBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: 'rgba(255,255,255,0.13)',
+      paddingHorizontal: 9,
+      paddingVertical: 5,
+      borderRadius: ui.radius.full,
+    },
+    aiBadgeText: {
+      color: '#FFFFFF',
+      fontSize: 11,
+      lineHeight: 15,
+      fontWeight: '700',
+      marginLeft: 4,
+    },
+    aiDescription: {
+      color: 'rgba(255,255,255,0.86)',
+      fontSize: 13,
+      lineHeight: 21,
+      fontWeight: '500',
+    },
+    collapsedText: {
+      maxHeight: 66,
+      overflow: 'hidden',
+    },
+    aiExpandBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 14,
+      minHeight: 30,
+    },
+    aiExpandText: {
+      color: 'rgba(255,255,255,0.66)',
+      fontSize: 12,
+      lineHeight: 16,
+      fontWeight: '700',
+      marginRight: 4,
+    },
+
+    reviewCard: {
+      width: 130,
+      height: 130,
+      borderRadius: ui.radius.lg,
+      overflow: 'hidden',
+      marginRight: 10,
+      backgroundColor: ui.imageSurface,
+    },
+    reviewImg: {
+      width: '100%',
+      height: '100%',
+    },
+    reviewOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0,0,0,0.36)',
+      justifyContent: 'flex-end',
+      padding: 10,
+    },
+    reviewUser: {
+      color: '#FFFFFF',
+      fontSize: 12,
+      lineHeight: 16,
+      fontWeight: '700',
+    },
+    noDataBox: {
+      minHeight: 56,
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+    },
+    noDataText: {
+      fontSize: 13,
+      lineHeight: 19,
+      fontWeight: '500',
+      color: ui.textMuted,
+    },
+
+    facilityList: {
+      marginTop: -2,
+    },
+    facilityRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 7,
+      marginBottom: 13,
+    },
+    facilityListRow: {
+      minHeight: 46,
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 11,
+    },
+    facilityDot: {
+      width: 4,
+      height: 4,
+      borderRadius: 2,
+      marginRight: 10,
+      backgroundColor: ui.textMuted,
+      opacity: 0.7,
+    },
+    facilityTag: {
+      paddingHorizontal: 11,
+      paddingVertical: 7,
+      backgroundColor: ui.primarySoft,
+      borderRadius: ui.radius.full,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: ui.hairlineSoft,
+    },
+    facilityText: {
+      fontSize: 13,
+      lineHeight: 17,
+      fontWeight: '600',
+      color: ui.textSecondary,
+    },
+    parkingBox: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      paddingVertical: 11,
+    },
+    parkingIcon: {
+      marginRight: 9,
+      marginTop: 2,
+    },
+    parkingTextWrap: {
+      flex: 1,
+      minWidth: 0,
+    },
+    parkingTitle: {
+      fontSize: 14,
+      lineHeight: 19,
+      fontWeight: '700',
+      color: ui.text,
+      marginBottom: 3,
+    },
+    parkingDesc: {
+      fontSize: 13,
+      lineHeight: 19,
+      fontWeight: '500',
+      color: ui.textSecondary,
+    },
+  });
+}

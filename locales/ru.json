@@ -1,0 +1,10 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "COONN",
+    "NSPhotoLibraryUsageDescription": "Доступ к фото используется для выбора изображений профиля, публикаций и чата.",
+    "NSPhotoLibraryAddUsageDescription": "Доступ к медиатеке используется для сохранения изображений и медиа на устройстве.",
+    "NSLocationWhenInUseUsageDescription": "Геолокация используется для ближайших публикаций, маяков и функций по расстоянию.",
+    "NSCameraUsageDescription": "Камера используется для фото профиля, публикаций и чата.",
+    "NSMicrophoneUsageDescription": "Микрофон используется при записи видео."
+  }
+}

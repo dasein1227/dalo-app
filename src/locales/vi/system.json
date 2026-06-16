@@ -1,0 +1,27 @@
+{
+  "splash_loading": "Đang chuẩn bị…",
+  "offline": "Bạn đang ngoại tuyến. Vui lòng kiểm tra mạng.",
+  "not_found": "Không tìm thấy trang.",
+  "notFound": {
+    "header": "Không có trang",
+    "title": "Không tìm thấy trang",
+    "desc": "Không tìm thấy màn hình yêu cầu. Vui lòng kiểm tra đường dẫn hoặc thông tin.",
+    "retry": "Thử lại",
+    "home": "Về trang chủ",
+    "homeShort": "Trang chủ",
+    "previous": "Quay lại",
+    "quick": {
+      "friends": "Bạn bè",
+      "settings": "Cài đặt"
+    }
+  },
+  "offlineScreen": {
+    "header": "Ngoại tuyến",
+    "title": "Bạn đang ngoại tuyến",
+    "desc": "Vui lòng kiểm tra kết nối mạng.\nWi‑Fi hoặc dữ liệu di động có thể đang tắt.",
+    "retry": "Thử lại",
+    "check": "Kiểm tra kết nối",
+    "openSettings": "Mở cài đặt",
+    "home": "Trang chủ"
+  }
+}

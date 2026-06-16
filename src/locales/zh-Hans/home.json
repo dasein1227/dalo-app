@@ -1,0 +1,183 @@
+{
+  "briefing_title": "今天",
+  "briefing_toggle_show": "展开",
+  "briefing_toggle_hide": "收起",
+  "briefing_unread_chat": "未读聊天",
+  "briefing_nearby_beacon": "附近 Beacon",
+  "briefing_new_friend_post": "好友帖子",
+  "briefing_new_follower": "新粉丝",
+  "briefing_count_unit": "",
+  "briefing_people_unit": "",
+  "tabs": {
+    "friends": "好友",
+    "following": "正在关注",
+    "local": "本地"
+  },
+  "banner_headerTitle": "附近",
+  "banner_fallback_title": "附近推荐",
+  "banner_fallback_desc": "正在查找附近地点",
+  "banner_default_headline": "今日地点",
+  "banner_unknown_place": "未知地点",
+  "banner_status_open": "打开",
+  "banner_status_closed": "已打烊",
+  "banner_tag_fallback": "推荐",
+  "empty_feed": "暂无可显示动态。",
+  "scroll_top": "项目",
+  "briefing_nearby_beacon_title": "附近 Beacon",
+  "briefing_today_schedule_title": "日程",
+  "briefing_continue_chat_title": "继续聊天",
+  "briefing_near_news_title": "附近动态",
+  "unknown_user": "未知",
+  "near_news": {
+    "filters": {
+      "all": "全部",
+      "post": "动态",
+      "event": "活动",
+      "notice": "公告"
+    },
+    "kind": {
+      "post": "动态",
+      "event": "活动",
+      "notice": "公告"
+    },
+    "kind_en": {
+      "post": "FEED",
+      "event": "EVENT",
+      "notice": "NOTICE"
+    },
+    "masthead_overline": "CO·ONN LOCAL JOURNAL",
+    "masthead_title": "NEARBY NEWS",
+    "edition_line": "LOCAL EDITION · {{distance}}",
+    "count_line": "FEED {{post}} · EVENT {{event}} · NOTICE {{notice}}",
+    "self": "我",
+    "unknown_user": "未知",
+    "unknown_place": "附近地点",
+    "distance_pending": "正在确认距离",
+    "just_now": "刚刚",
+    "minutes_ago": "{{value}} 分钟前",
+    "hours_ago": "{{value}} 小时前",
+    "days_ago": "{{value}} 天前",
+    "always": "长期",
+    "until": "截至 {{date}}",
+    "ongoing": "进行中",
+    "category": {
+      "restaurant": "餐厅",
+      "cafe": "咖啡馆",
+      "bakery": "烘焙",
+      "market": "市场",
+      "drink": "酒吧",
+      "store": "商店"
+    },
+    "place": "地点",
+    "nearby_place": "附近地点",
+    "nearby_feed": "附近动态",
+    "event_title": "活动",
+    "notice_title": "公告",
+    "event_body": "有新的活动。",
+    "notice_body": "有新的公告。",
+    "load_error": "无法加载附近动态。",
+    "collection_title": "附近动态",
+    "media_title": "附近动态",
+    "empty_title": "暂无动态",
+    "empty_desc": "附近帖子和地点更新会显示在这里。",
+    "editing": "正在整理版面",
+    "load_failed": "无法加载。",
+    "retry": "重试",
+    "local_note": "LOCAL NOTE",
+    "by_prefix": "BY "
+  },
+  "schedule_sheet": {
+    "weekdays": {
+      "sun": "项目",
+      "mon": "项目",
+      "tue": "项目",
+      "wed": "项目",
+      "thu": "项目",
+      "fri": "项目",
+      "sat": "项目"
+    },
+    "date_title": "{{month}}月{{day}}日（{{weekday}}）",
+    "period": {
+      "am": "上午",
+      "pm": "下午"
+    },
+    "time_range_cross_day": "{{start}} - {{date}} {{end}}",
+    "default_room_title": "聊天室",
+    "participation": {
+      "joined": "已参加",
+      "pending": "未参加"
+    },
+    "search_placeholder": {
+      "joined": "搜索已参加日程",
+      "pending": "搜索可参加日程"
+    },
+    "load_error": "无法加载日程。",
+    "people_count": "{{value}} 人",
+    "default_title": "日程",
+    "time_unknown": "时间待定",
+    "today_title": "日程",
+    "today_empty": "今天没有日程",
+    "count": "{{value}} 个",
+    "header_title": "日程",
+    "empty": {
+      "load_failed_title": "无法加载。",
+      "load_failed_desc": "请稍后再试。",
+      "joined_title": "暂无已参加日程",
+      "joined_desc": "你参加的日程会显示在这里。",
+      "pending_title": "暂无可参加日程",
+      "pending_desc": "可参加的日程会显示在这里。"
+    }
+  },
+  "notifications": {
+    "header_title": "通知",
+    "mark_all_read": "全部已读",
+    "follow_back": "回关",
+    "following": "正在关注",
+    "retry": "重新加载",
+    "empty_title": "暂无通知",
+    "empty_desc": "新动态会显示在这里。",
+    "fallback_actor": "有人",
+    "fallback_schedule": "日程",
+    "fallback_beacon": "Beacon",
+    "fallback_room": "聊天室",
+    "fallback_notification": "新通知",
+    "sections": {
+      "today": "今天",
+      "recent": "最近",
+      "unread": "未读",
+      "earlier": "更早",
+      "this_week": "本周",
+      "older": "更早",
+      "thisWeek": "本周"
+    },
+    "time": {
+      "just_now": "刚刚",
+      "minutes": "{{value}} 分钟",
+      "hours": "{{value}} 小时",
+      "days": "{{value}} 天",
+      "weeks": "{{value}} 周",
+      "months": "{{value}} 个月",
+      "years": "{{value}} 年"
+    },
+    "copy": {
+      "others": " 等 {{value}} 人",
+      "follow_created": "{{name}} 关注了你",
+      "chat_reply_created": "{{name}} 回复了你",
+      "chat_mention_created": "{{name}} 提到了你",
+      "beacon_join_request_created": "{{name}} 请求加入你的 Beacon",
+      "beacon_join_approved": "Beacon 加入申请已通过",
+      "beacon_friend_created": "{{name}} 创建了新 Beacon",
+      "schedule_created": "{{room}} · {{target}} 已添加日程",
+      "schedule_updated": "{{room}} · {{target}} 已更新日程",
+      "schedule_cancelled": "{{room}} · {{target}} 已取消日程",
+      "post_like_grouped": "{{name}}{{others}} 赞了你的帖子",
+      "post_comment_grouped": "{{name}}{{others}} 评论了你的帖子",
+      "post_reply_grouped": "{{name}}{{others}} 回复了你的评论",
+      "post_mention_grouped": "{{name}}{{others}} 提到了你"
+    },
+    "error": {
+      "load_failed": "无法加载通知。"
+    },
+    "loading_short": "…"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "common": {
+    "title": "Melden"
+  },
+  "reasonList": {
+    "title": "Grund auswählen",
+    "guide": "Nutzungsleitfaden"
+  },
+  "reasonDetail": {
+    "submit": "Senden",
+    "more": "Mehr anzeigen",
+    "empty": "Meldedaten konnten nicht geladen werden."
+  },
+  "guide": {
+    "title": "Leitfaden",
+    "empty": "Leitfaden konnte nicht geladen werden."
+  },
+  "done": {
+    "title": "Meldung gesendet.",
+    "body": "Wir prüfen den Fall und ergreifen bei Bedarf Maßnahmen."
+  },
+  "alert": {
+    "loadFail": "Laden fehlgeschlagen",
+    "info": "Hinweis",
+    "linkOpenFail": "Link konnte nicht geöffnet werden.",
+    "submitFail": "Senden fehlgeschlagen"
+  }
+}

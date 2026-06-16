@@ -1,0 +1,35 @@
+{
+  "title": "İzinler",
+  "subtitle": "Gerekli izinlere izin verin.",
+  "location_title": "Konum izni",
+  "location_desc": "Yakındaki beacon’ları ve haritayı göstermek için gereklidir.",
+  "notifications_title": "Bildirim izni (isteğe bağlı)",
+  "notifications_desc": "Beacon davetleri, sohbetler ve bildirimleri alabilirsiniz.",
+  "allow_now": "Şimdi izin ver",
+  "allowed": "İzin verildi",
+  "open_settings": "Ayarları aç",
+  "continue_without_location": "Sonra ayarla ve devam et",
+  "background_location_title": "Arka plan konumu (isteğe bağlı)",
+  "background_location_desc": "Uygulama açık olmasa da yakındaki beacon ve konum bildirimlerini alabilirsiniz.",
+  "background_location_hint": "Pil kullanımı artabilir. Bunu ayarlardan her zaman değiştirebilirsiniz.",
+  "gallery": {
+    "title": "Fotoğraf erişimi gerekli",
+    "description": "Fotoğraf seçmek için erişim izni gerekir."
+  },
+  "camera": {
+    "title": "Kamera erişimi gerekli",
+    "description": "Çekim yapmak için kamera izni gerekir."
+  },
+  "location": {
+    "title": "Konum erişimi gerekli",
+    "description": "Mevcut konumu görmek için izin gerekir."
+  },
+  "notification": {
+    "title": "Bildirim izni",
+    "description": "Bildirim almak için izin gerekir."
+  },
+  "action": {
+    "openSettings": "Ayarları aç",
+    "notNow": "Sonra"
+  }
+}

@@ -1,0 +1,409 @@
+{
+  "create_title": "ビーコン作成",
+  "edit_title": "ビーコン編集",
+  "detail_title": "ビーコン情報",
+  "members_title": "ビーコン管理",
+  "my_rooms_title": "マイビーコン",
+  "join": "参加",
+  "enter": "入場",
+  "owner_tools": "オーナーツール",
+  "visibility": "公開範囲",
+  "status_message": "ステータスメッセージ",
+  "public_profile": "プロフィール公開",
+  "current_members": "現在の人数",
+  "age_range": "年齢層",
+  "memo": "メモ",
+  "time_left": "残り時間",
+  "common": {
+    "beacon": "ビーコン",
+    "noName": "名前なし",
+    "anonymous": "匿名ユーザー",
+    "loading": "読み込み中…",
+    "done": "完了",
+    "confirm": "OK",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "submit": "送信",
+    "approve": "承認",
+    "reject": "拒否",
+    "block": "ブロック",
+    "kick": "退出させる",
+    "none": "なし",
+    "unlimited": "制限なし"
+  },
+  "error": {
+    "invalidId": "無効なIDです。",
+    "invalidAccess": "無効なアクセスです。",
+    "loginRequired": "ログインが必要です。",
+    "locationPermission": "位置情報の権限が必要です。",
+    "locationUnavailable": "現在地を確認できません。",
+    "locationLoadFail": "位置情報を読み込めませんでした。",
+    "notFound": "ビーコンが見つかりません。",
+    "detailNotFound": "ビーコン情報が見つかりません。",
+    "detailLoadFail": "ビーコン情報を読み込めませんでした。",
+    "operationFail": "操作を完了できませんでした。"
+  },
+  "time": {
+    "am": "午前",
+    "pm": "午後",
+    "monthDay": "{{month}}月{{day}}日",
+    "minute": "{{count}}分",
+    "hour": "{{count}}時間",
+    "hourMinute": "{{hour}}時間{{minute}}分",
+    "remainEnded": "終了",
+    "remainMinute": "残り{{count}}分",
+    "remainHour": "残り{{count}}時間",
+    "remainHourMinute": "残り{{hour}}時間{{minute}}分",
+    "justNow": "たった今",
+    "agoMinute": "{{count}}分前",
+    "agoHour": "{{count}}時間前",
+    "agoDay": "{{count}}日前"
+  },
+  "unit": {
+    "people": "人",
+    "age": "歳",
+    "count": "件",
+    "times": "回",
+    "peopleCount": "{{count}}人",
+    "ageCount": "{{count}}歳",
+    "retryLeft": "残り{{count}}回"
+  },
+  "tabs": {
+    "dm": "個人",
+    "group": "グループ",
+    "open": "オープン",
+    "beacon": "ビーコン"
+  },
+  "visibilityLabel": {
+    "public": "全体公開",
+    "friends": "友だち公開",
+    "labels": "グループ公開",
+    "custom": "カスタム公開",
+    "publicCompact": "全体公開",
+    "friendsCompact": "友だち公開",
+    "labelsCompact": "グループ公開",
+    "customCompact": "カスタム公開",
+    "publicExcludeFriends": "知人を除外"
+  },
+  "visibilityDesc": {
+    "public": "不特定多数に表示されます。標準は承認制です。",
+    "friends": "友だちだけに表示されます。標準は自由入場です。",
+    "labels": "選択したグループだけに表示されます。標準は自由入場です。",
+    "custom": "友だちとグループを直接指定します。標準は自由入場です。"
+  },
+  "gender": {
+    "any": "性別問わず",
+    "male": "男性",
+    "female": "女性"
+  },
+  "myRooms": {
+    "headerTitle": "チャット",
+    "status": {
+      "pending": "承認待ち",
+      "joined": "{{visibility}} · 参加中",
+      "owner": "{{visibility}} · 残り{{minutes}}分",
+      "host": "オーナー",
+      "waiting": "待機",
+      "member": "参加中"
+    },
+    "title": {
+      "mine": "マイビーコン",
+      "fallback": "ビーコン"
+    },
+    "empty": {
+      "title": "会話がありません。",
+      "beaconDesc": "自分のビーコンと参加中のビーコンが表示されます。"
+    },
+    "error": {
+      "loadFail": "一覧を読み込めませんでした。"
+    },
+    "alert": {
+      "routeCreate": "ビーコン作成画面を確認してください。",
+      "routeChatCreate": "新しいチャット作成は準備中です。",
+      "routeBeaconSearch": "ビーコン検索画面を確認してください。",
+      "routeSearch": "検索画面を確認してください。"
+    }
+  },
+  "form": {
+    "titlePlaceholder": "ビーコンの目的",
+    "descPlaceholder": "説明またはルールを入力",
+    "durationMin": "30分",
+    "durationMax": "4時間",
+    "minuteSuffix": "分",
+    "locationSelectTitle": "友だち公開位置",
+    "locationSelectHelper": "現在地から200m以内",
+    "locationPickFailTitle": "位置を選択できません",
+    "selectedAddress": "選択した住所",
+    "locationEmpty": "選択した位置がありません。地図を開いてください。",
+    "locationShortPlaceholder": "おおよその位置",
+    "locationDetailPlaceholder": "詳細位置",
+    "conditionsTitle": "参加条件",
+    "genderTitle": "性別",
+    "quotaTitle": "募集定員",
+    "quotaDesc": "0人は制限なしです。数字をタップして直接入力できます。",
+    "ageLimitTitle": "年齢制限",
+    "ageLimitDesc": "標準は自分の年齢から±10歳です。",
+    "ageNoLimit": "制限なし",
+    "ageMin": "最小年齢",
+    "ageMax": "最大年齢",
+    "maleQuota": "男性",
+    "femaleQuota": "女性",
+    "mixQuota": "性別問わず",
+    "selectGroups": "公開するグループ",
+    "selectFriends": "公開する友だち",
+    "friendSearch": "友だち検索",
+    "emptyGroups": "グループがありません。",
+    "emptyFriends": "友だちがいません。",
+    "protectionOff": "保護しない",
+    "protectionOffAlt": "保護なし",
+    "createButton": "ビーコン作成",
+    "saveButton": "保存",
+    "durationTitle": "維持時間",
+    "durationDesc": "指定時間が過ぎると自動終了します。",
+    "locationProtectionTitle": "位置保護",
+    "locationProtectionDesc": "設定した範囲内で位置をランダム表示します。",
+    "refreshLocation": "現在地を再確認"
+  },
+  "create": {
+    "validation": {
+      "titleRequired": "集まり名を入力してください。",
+      "titleMax": "集まり名は80文字以内です。",
+      "duration": "持続時間は10〜240分です。",
+      "ageRange": "年齢範囲を確認してください。",
+      "locationRequired": "現在地を確認してください。",
+      "labelsRequired": "グループを選択してください。",
+      "customRequired": "友だちまたはグループを選択してください。"
+    },
+    "alert": {
+      "labelLoadFailTitle": "グループ読み込み失敗",
+      "labelLoadFail": "グループ一覧を読み込めませんでした。",
+      "friendLoadFailTitle": "友だち読み込み失敗",
+      "friendLoadFail": "友だち一覧を読み込めませんでした。",
+      "createFailTitle": "ビーコン作成失敗",
+      "createFail": "エラーが発生しました。"
+    }
+  },
+  "edit": {
+    "validation": {
+      "titleRequired": "ルーム名を入力してください。",
+      "titleMax": "ルーム名は80文字以内です。",
+      "duration": "持続時間は10〜240分です。",
+      "ageRange": "年齢範囲を確認してください。",
+      "labelsRequired": "グループを選択してください。",
+      "customRequired": "友だちまたはグループを選択してください。"
+    },
+    "toast": {
+      "moved": "現在地へ移動しました。",
+      "moveFail": "位置を移動できませんでした。",
+      "saved": "保存しました。",
+      "saveFail": "エラーが発生しました。"
+    }
+  },
+  "detail": {
+    "action": {
+      "ended": "募集終了",
+      "enter_chat": "チャットに入る",
+      "cancel_request": "リクエスト取消",
+      "join_direct": "参加",
+      "request_retry": "再リクエスト",
+      "request_join": "参加リクエスト",
+      "forbidden": "入場制限",
+      "full": "定員締切",
+      "closed": "参加不可"
+    },
+    "badge": {
+      "pending": "承認待ち",
+      "rejected": "拒否済み",
+      "approval": "承認制",
+      "free": "自由入場"
+    },
+    "empty": {
+      "deleted": "存在しないビーコンです。",
+      "back": "戻る"
+    },
+    "fallbackTitle": "名前のないビーコン",
+    "info": {
+      "status": "進行状態",
+      "capacity": "募集定員",
+      "audience": "公開対象",
+      "retry": "再申請機会"
+    },
+    "location": {
+      "title": "集合場所",
+      "visible": "参加前に詳細位置が表示されます。",
+      "hidden": "正確な住所は参加後、チャットで共有されます。",
+      "openMap": "地図で見る ›"
+    },
+    "host": {
+      "settings": "ビーコン設定",
+      "settingsDesc": "ルーム名、紹介、公開範囲を変更",
+      "members": "参加者管理",
+      "membersDesc": "メンバー確認と退出処理",
+      "close": "ビーコン終了",
+      "closeDesc": "募集を締め切り、チャットを閉じます。"
+    },
+    "requests": {
+      "title": "参加待ち",
+      "empty": "待機中のリクエストはありません。",
+      "messageTitle": "参加リクエストメッセージ",
+      "messageDesc": "オーナーに伝える言葉を残せます。任意です。",
+      "placeholder": "例）近くにいます。",
+      "send": "リクエスト送信",
+      "sending": "送信中…",
+      "code": "コード {{code}}",
+      "temperature": "温度 {{temp}}°",
+      "rejectionCount": "過去の拒否 {{count}}回"
+    },
+    "alert": {
+      "editRoute": "編集画面を確認してください。",
+      "membersRoute": "メンバー管理画面を確認してください。",
+      "loginTitle": "ログインが必要です",
+      "loginDesc": "参加するにはログインが必要です。",
+      "chatNotFound": "チャット情報が見つかりません。",
+      "cancelTitle": "リクエスト取消",
+      "cancelDesc": "参加リクエストを取り消しますか？",
+      "keep": "維持",
+      "cancelFailTitle": "取消できませんでした",
+      "cancelFail": "リクエストを取り消せませんでした。",
+      "fullTitle": "定員締切",
+      "fullDesc": "募集人数がいっぱいです。",
+      "forbiddenTitle": "参加制限",
+      "forbiddenDesc": "このビーコンには参加できません。",
+      "endedTitle": "募集終了",
+      "endedDesc": "終了したビーコンです。",
+      "unavailableTitle": "案内",
+      "unavailableDesc": "現在参加できません。",
+      "requestSentTitle": "リクエストしました",
+      "requestSentDesc": "オーナーの承認をお待ちください。",
+      "requestFailTitle": "送信できませんでした",
+      "requestFail": "リクエストを送れませんでした。",
+      "approveFailTitle": "承認失敗",
+      "approveFail": "参加者を承認できませんでした。",
+      "rejectFailTitle": "拒否失敗",
+      "rejectFail": "参加リクエストを拒否できませんでした。",
+      "closeTitle": "ビーコン終了",
+      "closeDesc": "募集とチャットを終了しますか？",
+      "closeAction": "終了",
+      "closeDoneTitle": "終了しました",
+      "closeDoneDesc": "ビーコンを終了しました。",
+      "closeFailTitle": "終了できませんでした",
+      "closeFail": "ビーコンを終了できませんでした。"
+    }
+  },
+  "members": {
+    "role": {
+      "host": "オーナー",
+      "mod": "運営者",
+      "member": "参加者"
+    },
+    "tab": {
+      "members": "参加者",
+      "requests": "申請 {{count}}"
+    },
+    "meta": {
+      "joined": "参加 {{time}}",
+      "request": "リクエスト {{time}} · 過去拒否 {{count}}回"
+    },
+    "hero": {
+      "titleFallback": "ビーコン",
+      "approval": "承認制",
+      "free": "自由入場"
+    },
+    "empty": {
+      "members": "参加者はまだいません。",
+      "requests": "待機中の申請はありません。"
+    },
+    "alert": {
+      "loadFailTitle": "読み込み失敗",
+      "loadFail": "情報を読み込めませんでした。",
+      "kickTitle": "参加者を退出",
+      "kickDesc": "{{name}}さんを退出させますか？",
+      "kickAction": "退出させる",
+      "alreadyHandled": "すでに処理済み、または退出させられません。",
+      "kickFailTitle": "失敗",
+      "kickFail": "参加者を退出させられませんでした。",
+      "blockTitle": "参加者をブロック",
+      "blockDesc": "{{name}}さんをブロックして除外しますか？\nブロックされたユーザーは再表示されません。",
+      "blockFail": "参加者をブロックできませんでした。",
+      "approveTitle": "参加を承認",
+      "approveDesc": "{{name}}さんの参加を承認しますか？",
+      "approveFailTitle": "承認失敗",
+      "approveFail": "承認できませんでした。",
+      "rejectTitle": "参加を拒否",
+      "rejectDesc": "{{name}}さんの参加リクエストを拒否しますか？",
+      "rejectFailTitle": "拒否失敗",
+      "rejectFail": "拒否できませんでした。"
+    }
+  },
+  "main": {
+    "loadingMap": "地図を読み込み中…",
+    "listButton": "リスト",
+    "emptyRadius": "表示できるビーコンがありません。",
+    "card": {
+      "noTitle": "タイトルなし",
+      "meta": "距離{{distance}}m · 半径{{radius}}m · {{entry}}",
+      "endsAfterMinute": "{{count}}分後に終了",
+      "endingSoon": "まもなく終了",
+      "always": "常時"
+    },
+    "toast": {
+      "movedHere": "現在地に更新しました。"
+    },
+    "error": {
+      "loadFail": "周辺ビーコンを読み込めませんでした。",
+      "locationUnavailable": "位置を確認できません。",
+      "noActiveBeacon": "有効なビーコンがありません。",
+      "moveFail": "位置を更新できませんでした。"
+    },
+    "accessibility": {
+      "detail": "ビーコン詳細を見る",
+      "create": "新しいビーコンを作成"
+    }
+  },
+  "search": {
+    "title": "検索",
+    "placeholder": "探したい出会い",
+    "distance": "距離",
+    "target": "対象",
+    "age": "年齢",
+    "quick": {
+      "friendsOnly": "友だちのみ",
+      "public": "公開",
+      "tenMin": "10分",
+      "twenties": "20代"
+    },
+    "visibility": {
+      "title": "公開範囲",
+      "any": "すべて",
+      "public": "全体公開",
+      "publicFiltered": "公開 · 友だち除外",
+      "friends": "友だち公開",
+      "labels": "グループ",
+      "custom": "指定"
+    },
+    "gender": {
+      "title": "性別",
+      "any": "すべて",
+      "male": "男性",
+      "female": "女性",
+      "other": "その他"
+    },
+    "distancePreset": {
+      "fiveMin": "5分",
+      "tenMin": "10分",
+      "twentyMin": "20分",
+      "near": "近く"
+    },
+    "agePreset": {
+      "all": "すべて",
+      "twenties": "20代",
+      "thirties": "30代",
+      "forties": "40代",
+      "fiftyPlus": "50+"
+    },
+    "action": {
+      "reset": "リセット",
+      "apply": "適用"
+    }
+  }
+}

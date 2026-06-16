@@ -1,0 +1,14 @@
+{
+  "title": "圖片編輯",
+  "ratio_original": "原始",
+  "ratio_free": "自由",
+  "rotate": "旋轉",
+  "ratio": "比例",
+  "invert": "橫向/直向",
+  "orientation": "橫向/直向",
+  "reset": "重設",
+  "error_load_title": "錯誤",
+  "error_load_msg": "無法載入圖片。",
+  "error_save_title": "儲存失敗",
+  "error_save_msg": "請稍後再試。"
+}

@@ -1,15 +1,18 @@
 // src/screens/auth/Login.tsx
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
   ActivityIndicator,
+  Animated,
+  Dimensions,
+  Easing,
   Image,
-  Alert,
   Platform,
-  TextInput,
   Pressable,
+  ScrollView,
+  StatusBar as NativeStatusBar,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,22 +20,36 @@ import { StatusBar } from 'expo-status-bar';
 import * as WebBrowser from 'expo-web-browser';
 import * as AuthSession from 'expo-auth-session';
 import * as Linking from 'expo-linking';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import Constants from 'expo-constants';
-import { useNavigation, CommonActions } from '@react-navigation/native';
+import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
+import { FontAwesome5 } from '@expo/vector-icons';
+
 import { supabase } from '../../lib/supabase';
-import SocialLoginButtons from '../../components/SocialLoginButtons';
+import { ensurePushTokenRegistered } from '@/lib/push/registerPushToken';
+
+const { width, height } = Dimensions.get('window');
+
+const AUTH_SCHEME = 'coonn';
+const AUTH_PATH = 'auth/callback';
+
+const extra: any =
+  (Constants as any)?.expoConfig?.extra ||
+  (Constants as any)?.manifest?.extra ||
+  {};
+
+const PHONE_VERIFICATION_REQUIRED =
+  String(extra.EXPO_PUBLIC_PHONE_VERIFICATION_REQUIRED ?? 'false').toLowerCase() === 'true';
 
 WebBrowser.maybeCompleteAuthSession?.();
 
-/** 네비게이션 루트 핸들 */
 function getRootNavigation(navigation: any) {
   let nav = navigation;
   while (nav?.getParent && nav.getParent()) nav = nav.getParent();
   return nav ?? navigation;
 }
 
-/** 중첩 네비게이션으로 reset (['MainTabs','Map','Main'] 예시) */
 function resetToNested(navigation: any, path: string[]) {
   const build = (names: string[], i = 0): any =>
     i === names.length - 1
@@ -42,506 +59,601 @@ function resetToNested(navigation: any, path: string[]) {
   navigation.dispatch(CommonActions.reset(build(path)));
 }
 
-/** 세션 사용자용 프로필 보장: RLS 상 클라이언트 upsert 필요 */
 async function ensureProfiles(uid: string) {
-  // public
-  const { error: e1 } = await supabase
-    .from('profiles_public')
-    .upsert([{ user_id: uid }], { onConflict: 'user_id' });
-  if (e1 && (e1 as any).code !== '23505') throw e1;
-
-  // private
-  const { error: e2 } = await supabase
+  const { error } = await supabase
     .from('profiles_private')
     .upsert([{ user_id: uid }], { onConflict: 'user_id' });
-  if (e2 && (e2 as any).code !== '23505') throw e2;
+
+  if (error && (error as any).code !== '23505') {
+    console.warn('[Login] profiles_private ensure failed:', error);
+  }
 }
+
+function compactAppleFullName(fullName?: AppleAuthentication.AppleAuthenticationFullName | null) {
+  if (!fullName) return '';
+  return [fullName.givenName, fullName.middleName, fullName.familyName]
+    .filter(Boolean)
+    .join(' ')
+    .trim();
+}
+
+function firstQueryValue(value: unknown) {
+  if (Array.isArray(value)) return String(value[0] ?? '');
+  return typeof value === 'string' ? value : '';
+}
+
+const AuroraBackground = () => {
+  const translate1 = useRef(new Animated.Value(0)).current;
+  const translate2 = useRef(new Animated.Value(0)).current;
+  const breathing = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const createMoveLoop = (animValue: Animated.Value, duration: number, toValue: number) => {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(animValue, {
+            toValue,
+            duration,
+            easing: Easing.inOut(Easing.sin),
+            useNativeDriver: true,
+          }),
+          Animated.timing(animValue, {
+            toValue: 0,
+            duration,
+            easing: Easing.inOut(Easing.sin),
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    };
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(breathing, {
+          toValue: 1,
+          duration: 6000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(breathing, {
+          toValue: 0,
+          duration: 6000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+    createMoveLoop(translate1, 12000, -width * 0.4);
+    createMoveLoop(translate2, 15000, -height * 0.3);
+  }, [breathing, translate1, translate2]);
+
+  const opacityInterp = breathing.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.3, 0.8],
+  });
+
+  const scaleInterp = breathing.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.15],
+  });
+
+  const animatedLayerStyle = {
+    position: 'absolute',
+    width: width * 2,
+    height: height * 2,
+    top: -height * 0.4,
+    left: -width * 0.5,
+  } as const;
+
+  return (
+    <View style={[StyleSheet.absoluteFill, { backgroundColor: '#0F0524' }]}> 
+      <LinearGradient
+        colors={['#0F0524', '#240b36', '#1a0b2e'] as const}
+        style={StyleSheet.absoluteFill}
+      />
+
+      <Animated.View
+        style={[
+          animatedLayerStyle,
+          {
+            transform: [{ translateX: translate1 }, { translateY: translate2 }, { scale: scaleInterp }],
+            opacity: 0.6,
+          },
+        ]}
+      >
+        <LinearGradient
+          colors={['transparent', '#3a0ca3', '#7209b7', 'transparent'] as const}
+          start={{ x: 0, y: 0.3 }}
+          end={{ x: 1, y: 0.7 }}
+          style={StyleSheet.absoluteFill}
+        />
+      </Animated.View>
+
+      <Animated.View
+        style={[
+          animatedLayerStyle,
+          {
+            transform: [
+              { translateX: Animated.multiply(translate2, -0.5) },
+              { translateY: Animated.multiply(translate1, 0.5) },
+            ],
+            opacity: opacityInterp,
+          },
+        ]}
+      >
+        <LinearGradient
+          colors={['transparent', '#4cc9f0', '#f72585', 'transparent'] as const}
+          start={{ x: 0.8, y: 0.2 }}
+          end={{ x: 0.2, y: 0.8 }}
+          style={StyleSheet.absoluteFill}
+        />
+      </Animated.View>
+
+      <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.3)' }]} />
+    </View>
+  );
+};
 
 export default function LoginScreen() {
   const navigation = useNavigation<any>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('auth');
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const clickingRef = useRef(false);
+  const routingRef = useRef(false);
+  const handledOAuthCodesRef = useRef<Set<string>>(new Set());
 
-  // 이메일/전화 폼 상태
-  const [authMode, setAuthMode] = useState<'none' | 'email' | 'phone'>('none');
-  const [isSignUp, setIsSignUp] = useState(true);
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [otp, setOtp] = useState(''); // 휴대폰 최초 인증용
-
-  /** 홈 이동 (프로필 보장 포함) */
-  const goHome = async () => {
-    const { data } = await supabase.auth.getSession();
-    const uid = data?.session?.user?.id;
-    if (uid) {
-      try {
-        await ensureProfiles(uid);
-      } catch {}
-    }
-    const root = getRootNavigation(navigation);
-    resetToNested(root, ['MainTabs', 'Map', 'Main']);
-  };
-
-  /** 세션 생기면 자동 이동(백업 안전망) */
-  useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (session) goHome();
-    });
-    return () => sub.subscription?.unsubscribe();
-  }, []);
-
-  /** Prod 딥링크(dalo://auth?code=...) 수신 → 코드 교환 */
-  useEffect(() => {
-    const onUrl = async ({ url }: { url: string }) => {
-      try {
-        const parsed = Linking.parse(url);
-        const qp = parsed.queryParams ?? {};
-        const code = (qp.code as string) || '';
-        const errorDesc = qp.error_description as string | undefined;
-
-        console.log('[Login] onUrl called. code =', code ? '***' : '(empty)');
-
-        if (errorDesc) {
-          setErr(decodeURIComponent(errorDesc));
-          return;
+  useFocusEffect(
+    useCallback(() => {
+      const timer = setTimeout(() => {
+        NativeStatusBar.setBarStyle('light-content');
+        if (Platform.OS === 'android') {
+          NativeStatusBar.setTranslucent(true);
+          NativeStatusBar.setBackgroundColor('transparent');
         }
-        if (!code) return;
+      }, 100);
 
-        setLoading(true);
+      return () => clearTimeout(timer);
+    }, [])
+  );
 
-        // ✅ JS 클라이언트는 문자열만 넘긴다 (auth_code 객체 X)
-        const { error } = await supabase.auth.exchangeCodeForSession(code);
-        if (error) throw error;
+  const goHome = useCallback(async () => {
+    if (routingRef.current) return;
+    routingRef.current = true;
 
-        console.log('[Login] exchangeCodeForSession success, going home');
-        await goHome();
-      } catch (e: any) {
-        console.warn('[Login] onUrl error:', e);
-        setErr(e?.message ?? t('auth.error_during_login'));
-      } finally {
-        setLoading(false);
-      }
-    };
+    const root = getRootNavigation(navigation);
 
-    // 앱이 이미 딥링크로 켜진 경우
-    Linking.getInitialURL().then((url) => {
-      if (url) onUrl({ url });
-    });
-
-    // 실행 중에 들어오는 딥링크
-    const sub = Linking.addEventListener('url', (ev) => {
-      if (ev?.url) onUrl({ url: ev.url });
-    });
-
-    return () => sub.remove();
-  }, []);
-
-  /** Dev(Expo) ↔ Prod 자동 전환용 redirect */
-  const makeRedirectUri = () => {
-    const isStandalone = (Constants as any).appOwnership === 'standalone';
-    return AuthSession.makeRedirectUri({
-      scheme: 'dalo',
-      path: 'auth',
-      useProxy: !isStandalone, // Dev는 프록시 사용, Prod는 딥링크
-      projectNameForProxy: '@youngjin1/dalo',
-    } as any);
-  };
-
-  /** Dev(프록시)에서 세션 폴링 (앱 복귀 후 세션 확정 확인 용도) */
-  const pollSession = async (tries = 12, delay = 300) => {
-    for (let i = 0; i < tries; i++) {
-      const { data } = await supabase.auth.getSession();
-      if (data?.session) return data.session;
-      if (i < tries - 1) await new Promise((r) => setTimeout(r, delay));
-    }
-    return null;
-  };
-
-  /** 공통 OAuth 핸들러 */
-  const signInWithProvider = async (
-    provider: 'google' | 'apple' | 'kakao' | 'facebook' | 'oidc',
-    conf?: any
-  ) => {
-    if (clickingRef.current) return;
-    clickingRef.current = true;
-
-    setErr(null);
-    setLoading(true);
     try {
-      const redirectTo = makeRedirectUri();
-      const useProxy = redirectTo.startsWith('https://auth.expo.io/');
+      const { data, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
 
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: { redirectTo, skipBrowserRedirect: true, ...conf },
-      } as any);
-      if (error) throw error;
-      if (!data?.url) throw new Error(t('auth.oauth_url_missing'));
-
-      await WebBrowser.warmUpAsync?.();
-      const res = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
-      await WebBrowser.coolDownAsync?.();
-
-      if (res.type === 'cancel') {
-        setErr(t('auth.error_during_login'));
+      const uid = data?.session?.user?.id;
+      if (!uid) {
+        routingRef.current = false;
         return;
       }
 
-      if (useProxy) {
-        const s = await pollSession();
-        if (!s) throw new Error(t('auth.oauth_redirect_missing'));
-        try {
-          await ensureProfiles(s.user.id);
-        } catch {}
-        await goHome();
+      await ensureProfiles(uid);
+
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('terms_accepted, terms_accepted_at, phone_verified_at')
+        .eq('user_id', uid)
+        .maybeSingle();
+
+      if (profileError) throw profileError;
+
+      const hasAcceptedTerms = Boolean(profile?.terms_accepted_at) || profile?.terms_accepted === true;
+
+      if (!hasAcceptedTerms) {
+        resetToNested(root, ['TermsConsent']);
+        return;
       }
-      // Prod(딥링크): 교환은 onUrl에서 처리
+
+      try {
+        await ensurePushTokenRegistered({ reason: 'login_go_home' });
+      } catch (e) {
+        console.warn('[Login] ensurePushTokenRegistered failed:', e);
+      }
+
+      if (PHONE_VERIFICATION_REQUIRED && !profile?.phone_verified_at) {
+        resetToNested(root, ['PhoneVerification']);
+        return;
+      }
+
+      resetToNested(root, ['MainTabs', 'Map', 'Main']);
+    } catch (e) {
+      console.warn('[Login] routing check error:', e);
+      resetToNested(root, ['TermsConsent']);
+    }
+  }, [navigation]);
+
+  const handleOAuthReturnUrl = useCallback(
+    async (url: string) => {
+      const parsed = Linking.parse(url);
+      const qp = parsed.queryParams ?? {};
+      const code = firstQueryValue(qp.code);
+      const errorDesc = firstQueryValue(qp.error_description) || firstQueryValue(qp.error);
+
+      if (errorDesc) {
+        setErr(decodeURIComponent(errorDesc));
+        return;
+      }
+
+      if (!code) return;
+
+      if (handledOAuthCodesRef.current.has(code)) {
+        return;
+      }
+
+      handledOAuthCodesRef.current.add(code);
+      setLoading(true);
+
+      try {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+        if (error) {
+          const { data: sessionData } = await supabase.auth.getSession();
+          const message = String((error as any)?.message ?? '');
+
+          if (sessionData?.session && message.includes('code verifier')) {
+            await goHome();
+            return;
+          }
+
+          throw error;
+        }
+
+        await goHome();
+      } finally {
+        setLoading(false);
+      }
+    },
+    [goHome]
+  );
+
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        void goHome();
+      }
+    });
+
+    return () => sub.subscription?.unsubscribe();
+  }, [goHome]);
+
+  useEffect(() => {
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        void handleOAuthReturnUrl(url).catch((e: any) => {
+          console.warn('[Login] initial URL error:', e);
+          setErr(e?.message ?? t('error_login'));
+          setLoading(false);
+        });
+      }
+    });
+
+    const sub = Linking.addEventListener('url', (ev) => {
+      if (!ev?.url) return;
+      void handleOAuthReturnUrl(ev.url).catch((e: any) => {
+        console.warn('[Login] URL listener error:', e);
+        setErr(e?.message ?? t('error_login'));
+        setLoading(false);
+      });
+    });
+
+    return () => sub.remove();
+  }, [handleOAuthReturnUrl, t]);
+
+  const makeRedirectUri = useCallback(() => {
+    return AuthSession.makeRedirectUri({
+      scheme: AUTH_SCHEME,
+      path: AUTH_PATH,
+    } as any);
+  }, []);
+
+  const signInWithOAuthProvider = useCallback(
+    async (provider: 'google' | 'apple') => {
+      if (clickingRef.current) return;
+      clickingRef.current = true;
+      setErr(null);
+      setLoading(true);
+
+      try {
+        const redirectTo = makeRedirectUri();
+
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider,
+          options: {
+            redirectTo,
+            skipBrowserRedirect: true,
+          },
+        } as any);
+
+        if (error) throw error;
+        if (!data?.url) throw new Error(t('oauth_url_missing'));
+
+        await WebBrowser.warmUpAsync?.();
+        const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
+        await WebBrowser.coolDownAsync?.();
+
+        if (result.type === 'success' && result.url) {
+          await handleOAuthReturnUrl(result.url);
+          return;
+        }
+
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (sessionData?.session) {
+          await goHome();
+        }
+      } catch (e: any) {
+        console.warn('[Login] OAuth sign in error:', e);
+        setErr(e?.message ?? t('error_login'));
+      } finally {
+        setLoading(false);
+        clickingRef.current = false;
+      }
+    },
+    [goHome, handleOAuthReturnUrl, makeRedirectUri, t]
+  );
+
+  const signInWithGoogle = useCallback(() => {
+    void signInWithOAuthProvider('google');
+  }, [signInWithOAuthProvider]);
+
+  const signInWithAppleNative = useCallback(async () => {
+    const credential = await AppleAuthentication.signInAsync({
+      requestedScopes: [
+        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+        AppleAuthentication.AppleAuthenticationScope.EMAIL,
+      ],
+    });
+
+    if (!credential.identityToken) {
+      throw new Error(t('apple_identity_token_missing'));
+    }
+
+    const { data, error } = await supabase.auth.signInWithIdToken({
+      provider: 'apple',
+      token: credential.identityToken,
+    } as any);
+
+    if (error) throw error;
+
+    const displayName = compactAppleFullName(credential.fullName);
+    if (displayName) {
+      const currentName = data?.user?.user_metadata?.full_name || data?.user?.user_metadata?.name;
+      if (!currentName) {
+        await supabase.auth.updateUser({
+          data: {
+            full_name: displayName,
+            name: displayName,
+          },
+        });
+      }
+    }
+
+    await goHome();
+  }, [goHome, t]);
+
+  const signInWithApple = useCallback(async () => {
+    if (Platform.OS !== 'ios') {
+      void signInWithOAuthProvider('apple');
+      return;
+    }
+
+    if (clickingRef.current) return;
+    clickingRef.current = true;
+    setErr(null);
+    setLoading(true);
+
+    let shouldFallbackToOAuth = false;
+
+    try {
+      const available = await AppleAuthentication.isAvailableAsync();
+
+      if (available) {
+        await signInWithAppleNative();
+        return;
+      }
+
+      shouldFallbackToOAuth = true;
     } catch (e: any) {
-      const m = (e?.message || '').toLowerCase();
-      if (m.includes('invalid client') || m.includes('client id')) {
-        setErr(t('auth.oauth_invalid_client'));
-      } else if (m.includes('redirect')) {
-        setErr(t('auth.oauth_redirect_missing'));
-      } else {
-        setErr(e?.message ?? t('auth.error_during_login'));
+      const code = String(e?.code ?? '');
+      if (code !== 'ERR_REQUEST_CANCELED' && code !== 'ERR_CANCELED') {
+        console.warn('[Login] Apple sign in error:', e);
+        setErr(e?.message ?? t('error_login'));
       }
     } finally {
       setLoading(false);
       clickingRef.current = false;
     }
-  };
 
-  /** 소셜 개별 핸들러 */
-  const signInWithGoogle = () => signInWithProvider('google');
-  const signInWithApple = () => {
-    if (Platform.OS !== 'ios') return Alert.alert('Apple', t('auth.apple_only_ios'));
-    return signInWithProvider('apple');
-  };
-  const signInWithKakao = () => signInWithProvider('kakao' as any);
-  const signInWithFacebook = () => signInWithProvider('facebook' as any);
-
-  /** 이메일/전화 폼 열기 */
-  const openEmailForm = () => {
-    setAuthMode('email');
-    setIsSignUp(true);
-  };
-  const openPhoneForm = () => {
-    setAuthMode('phone');
-    setIsSignUp(true);
-  };
-
-  /** 이메일: 가입/로그인 (비밀번호 기반) */
-  const handleEmailSubmit = async () => {
-    try {
-      setLoading(true);
-      setErr(null);
-      if (isSignUp) {
-        const redirectTo = makeRedirectUri();
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: redirectTo },
-        });
-        if (error) throw error;
-        Alert.alert(t('auth.signup_done_title'), t('auth.signup_done_desc'));
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) throw error;
-        await goHome();
-      }
-    } catch (e: any) {
-      setErr(e?.message ?? t('auth.error_during_login'));
-    } finally {
-      setLoading(false);
+    if (shouldFallbackToOAuth) {
+      void signInWithOAuthProvider('apple');
     }
-  };
-
-  /** 휴대폰: 가입/로그인 (비밀번호 기반) + 최초 1회 SMS 인증 */
-  const handlePhoneSubmit = async () => {
-    try {
-      setLoading(true);
-      setErr(null);
-      if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ phone, password });
-        if (error) throw error;
-        Alert.alert(t('auth.signup_done_title'), t('auth.signup_send_code'));
-      } else {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          phone,
-          password,
-        });
-        if (error) throw error;
-        if (data?.user?.id) {
-          try {
-            await ensureProfiles(data.user.id);
-          } catch {}
-        }
-        await goHome();
-      }
-    } catch (e: any) {
-      setErr(e?.message ?? t('auth.error_during_login'));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const verifyPhoneOnce = async () => {
-    try {
-      setLoading(true);
-      setErr(null);
-      const { error } = await supabase.auth.verifyOtp({
-        phone,
-        token: otp,
-        type: 'sms',
-      });
-      if (error) throw error;
-      const { data } = await supabase.auth.getSession();
-      const uid = data?.session?.user?.id;
-      if (uid) {
-        try {
-          await ensureProfiles(uid);
-        } catch {}
-      }
-      Alert.alert(t('auth.signup_done_title'), t('auth.verify_code'));
-    } catch (e: any) {
-      setErr(e?.message ?? t('auth.error_during_login'));
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [signInWithAppleNative, signInWithOAuthProvider, t]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#000' }}>
-      {/* ✅ SplashGate와 동일: 상단 StatusBar 투명 */}
-      <StatusBar translucent backgroundColor="transparent" style="light" />
+    <View style={styles.root}>
+      <StatusBar style="light" translucent backgroundColor="transparent" />
+      <AuroraBackground />
 
-      <LinearGradient
-        colors={['#833ab4', '#fd1d1d', '#fcb045']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={StyleSheet.absoluteFill}
-      />
-      <SafeAreaView style={styles.wrap}>
-        <Image
-          source={require('../../../assets/co-onn.png')}
-          style={{ width: 260, height: 280, resizeMode: 'contain', marginBottom: 26 }}
-        />
-        <Text style={styles.subtitle}>{t('auth.subtitle')}</Text>
+      <SafeAreaView style={styles.container}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.logoSection}>
+            <Image source={require('../../../assets/co-onn.png')} style={styles.logoImage} />
+          </View>
 
-        <SocialLoginButtons
-          loading={loading}
-          onApple={Platform.OS === 'ios' ? signInWithApple : undefined}
-          onGoogle={signInWithGoogle}
-          onFacebook={signInWithFacebook}
-          onKakao={signInWithKakao}
-          onPhone={openPhoneForm}
-          onEmail={openEmailForm}
-        />
+          <View style={styles.buttonSection}>
+            <Pressable
+              style={({ pressed }) => [styles.primaryButton, pressed && styles.buttonPressed]}
+              onPress={signInWithGoogle}
+              disabled={loading}
+            >
+              <Image
+                source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2991/2991148.png' }}
+                style={styles.googleIcon}
+              />
+              <Text style={styles.googleButtonText}>{t('continue_google')}</Text>
+            </Pressable>
 
-        {/* 이메일 폼 */}
-        {authMode === 'email' && (
-          <View style={styles.formWrap}>
-            <View style={styles.formHeader}>
-              <Text style={styles.formTitle}>
-                {t('auth.with_email_title', {
-                  mode: t(isSignUp ? 'auth.mode_signup' : 'auth.mode_login'),
-                })}
-              </Text>
-              <Pressable onPress={() => setIsSignUp((v) => !v)}>
-                <Text style={styles.formSwitch}>
-                  {isSignUp ? t('auth.have_account') : t('auth.new_here')}
-                </Text>
-              </Pressable>
-            </View>
-
-            <View style={styles.card}>
-              <View style={styles.inputBox}>
-                <TextInput
-                  placeholder={t('auth.email_placeholder')}
-                  placeholderTextColor="#999"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  keyboardType="email-address"
-                  value={email}
-                  onChangeText={setEmail}
-                  style={styles.input}
+            {Platform.OS === 'ios' ? (
+              <View style={styles.appleNativeWrap}>
+                <AppleAuthentication.AppleAuthenticationButton
+                  buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
+                  buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+                  cornerRadius={27}
+                  style={styles.appleNativeButton}
+                  onPress={signInWithApple}
                 />
               </View>
-              <View style={styles.inputBox}>
-                <TextInput
-                  placeholder={t('auth.password_placeholder')}
-                  placeholderTextColor="#999"
-                  secureTextEntry
-                  autoCorrect={false}
-                  value={password}
-                  onChangeText={setPassword}
-                  style={styles.input}
-                />
-              </View>
+            ) : (
               <Pressable
-                onPress={handleEmailSubmit}
-                disabled={loading || !email || !password}
-                style={[
-                  styles.cta,
-                  (!email || !password || loading) && styles.ctaDisabled,
-                ]}
+                style={({ pressed }) => [styles.primaryButton, styles.appleButton, pressed && styles.buttonPressed]}
+                onPress={signInWithApple}
+                disabled={loading}
               >
-                <Text style={styles.ctaText}>
-                  {t(isSignUp ? 'auth.signup' : 'auth.login')}
-                </Text>
+                <FontAwesome5 name="apple" size={23} color="#fff" style={styles.appleIcon} />
+                <Text style={styles.appleButtonText}>{t('continue_apple')}</Text>
               </Pressable>
-            </View>
+            )}
+
+            <Text style={styles.termsText}>{t('login_terms_note')}</Text>
+
+            {!!err && <Text style={styles.errorText}>{err}</Text>}
           </View>
-        )}
-
-        {/* 휴대폰 폼 */}
-        {authMode === 'phone' && (
-          <View style={styles.formWrap}>
-            <View style={styles.formHeader}>
-              <Text style={styles.formTitle}>
-                {t('auth.with_phone_title', {
-                  mode: t(isSignUp ? 'auth.mode_signup' : 'auth.mode_login'),
-                })}
-              </Text>
-              <Pressable onPress={() => setIsSignUp((v) => !v)}>
-                <Text style={styles.formSwitch}>
-                  {isSignUp ? t('auth.have_account') : t('auth.new_here')}
-                </Text>
-              </Pressable>
-            </View>
-
-            <View style={styles.card}>
-              <Text style={{ color: '#666', marginBottom: 6 }}>
-                {t('auth.phone_hint')}
-              </Text>
-              <View style={styles.inputBox}>
-                <TextInput
-                  placeholder={t('auth.phone_placeholder')}
-                  placeholderTextColor="#999"
-                  keyboardType="phone-pad"
-                  autoCorrect={false}
-                  value={phone}
-                  onChangeText={setPhone}
-                  style={styles.input}
-                />
-              </View>
-              <View style={styles.inputBox}>
-                <TextInput
-                  placeholder={t('auth.password_placeholder')}
-                  placeholderTextColor="#999"
-                  secureTextEntry
-                  autoCorrect={false}
-                  value={password}
-                  onChangeText={setPassword}
-                  style={styles.input}
-                />
-              </View>
-
-              {isSignUp && (
-                <View style={styles.inputBox}>
-                  <TextInput
-                    placeholder={t('auth.otp_placeholder')}
-                    placeholderTextColor="#999"
-                    keyboardType="number-pad"
-                    autoCorrect={false}
-                    value={otp}
-                    onChangeText={setOtp}
-                    style={styles.input}
-                  />
-                </View>
-              )}
-
-              <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
-                <Pressable
-                  onPress={handlePhoneSubmit}
-                  disabled={loading || !phone || !password}
-                  style={[
-                    styles.ctaHalf,
-                    { backgroundColor: '#6B7280' },
-                    (!phone || !password || loading) && styles.ctaDisabled,
-                  ]}
-                >
-                  <Text style={styles.ctaText}>
-                    {isSignUp ? t('auth.signup_send_code') : t('auth.login')}
-                  </Text>
-                </Pressable>
-
-                {isSignUp && (
-                  <Pressable
-                    onPress={verifyPhoneOnce}
-                    disabled={loading || !phone || !otp}
-                    style={[
-                      styles.ctaHalf,
-                      (!phone || !otp || loading) && styles.ctaDisabled,
-                    ]}
-                  >
-                    <Text style={styles.ctaText}>{t('auth.verify_code')}</Text>
-                  </Pressable>
-                )}
-              </View>
-            </View>
-          </View>
-        )}
-
-        <View style={{ height: 8 }} />
-        {loading && <ActivityIndicator color="#fff" style={{ marginTop: 8 }} />}
-
-        {!!err && <Text style={styles.err}>{err}</Text>}
+        </ScrollView>
       </SafeAreaView>
+
+      {loading && (
+        <View style={styles.loadingOverlay} pointerEvents="auto">
+          <ActivityIndicator size="large" color="#fff" />
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: {
+  root: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#0F0524',
+  },
+  container: {
+    flex: 1,
     paddingHorizontal: 24,
+    paddingBottom: 20,
   },
-  subtitle: { color: '#fff', opacity: 0.9, marginBottom: 18 },
-  err: { color: '#ffe4e6', textAlign: 'center', marginTop: 16 },
-
-  formWrap: { width: '86%', marginTop: 14 },
-  formHeader: {
-    flexDirection: 'row',
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
   },
-  formTitle: { color: '#fff', fontSize: 16 },
-  formSwitch: { color: '#ffd' },
-
-  card: { backgroundColor: '#fff', borderRadius: 12, padding: 12 },
-  inputBox: {
-    backgroundColor: '#f5f5f5',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-  },
-  input: { height: 46, color: '#000' },
-
-  cta: {
-    backgroundColor: '#2F80ED',
-    borderRadius: 10,
-    height: 46,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ctaHalf: {
+  logoSection: {
     flex: 1,
-    backgroundColor: '#2F80ED',
-    borderRadius: 10,
-    height: 46,
+    minHeight: 260,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  ctaText: { color: '#fff', fontWeight: '600' },
-  ctaDisabled: { opacity: 0.6 },
+  logoImage: {
+    width: width * 0.55,
+    height: width * 0.55,
+    resizeMode: 'contain',
+    shadowColor: '#A91079',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 25,
+  },
+  buttonSection: {
+    width: '100%',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: Math.max(58, height * 0.085),
+  },
+  primaryButton: {
+    width: '100%',
+    height: 54,
+    borderRadius: 27,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 5,
+  },
+  appleButton: {
+    backgroundColor: '#050708',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(255,255,255,0.16)',
+  },
+  buttonPressed: {
+    opacity: 0.84,
+    transform: [{ scale: 0.992 }],
+  },
+  googleIcon: {
+    width: 22,
+    height: 22,
+    marginRight: 12,
+  },
+  appleIcon: {
+    marginRight: 11,
+  },
+  googleButtonText: {
+    color: '#050505',
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: -0.2,
+  },
+  appleButtonText: {
+    color: '#FFFFFF',
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: -0.2,
+  },
+  appleNativeWrap: {
+    width: '100%',
+    height: 54,
+    borderRadius: 27,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+  },
+  appleNativeButton: {
+    width: '100%',
+    height: 54,
+  },
+  termsText: {
+    marginTop: 8,
+    paddingHorizontal: 8,
+    color: 'rgba(255,255,255,0.52)',
+    fontSize: 12,
+    lineHeight: 18,
+    fontWeight: '500',
+    textAlign: 'center',
+    letterSpacing: -0.15,
+  },
+  errorText: {
+    marginTop: 8,
+    color: '#FF8A8A',
+    fontSize: 13,
+    fontWeight: '600',
+    lineHeight: 18,
+    textAlign: 'center',
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.34)',
+  },
 });

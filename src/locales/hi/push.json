@@ -1,0 +1,48 @@
+{
+  "channel": {
+    "social_name": "सोशल",
+    "social_description": "मित्र और सोशल सूचनाएँ",
+    "chat_name": "चैट",
+    "chat_description": "चैट संदेश और बातचीत सूचनाएँ"
+  },
+  "summary": {
+    "social_title": "CO·ONN",
+    "social_body": "नई सोशल सूचना",
+    "chat_title": "CO·ONN",
+    "chat_body": "नई चैट सूचना"
+  },
+  "actions": {
+    "read": "पढ़ा",
+    "reply": "जवाब"
+  },
+  "common": {
+    "someone": "किसी ने",
+    "new_notification": "नई सूचना",
+    "new_notification_body": "नई सूचना आई है।",
+    "new_message": "नया संदेश"
+  },
+  "friend": {
+    "request_received_title": "मित्र अनुरोध",
+    "request_received_subtitle": "{{actor}}",
+    "request_received_body": "{{actor}} ने मित्र अनुरोध भेजा है"
+  },
+  "chat": {
+    "dm_title": "{{sender}}",
+    "dm_subtitle": "",
+    "dm_body_text": "{{message}}",
+    "dm_body_image": "फ़ोटो भेजी",
+    "dm_body_video": "वीडियो भेजा",
+    "dm_body_audio": "वॉइस संदेश भेजा",
+    "dm_body_file": "फ़ाइल भेजी",
+    "dm_body_map": "स्थान साझा किया",
+    "group_title": "{{room}}",
+    "group_subtitle": "{{sender}}",
+    "group_body_text": "{{sender}}: {{message}}",
+    "group_body_image": "{{sender}} ने फ़ोटो भेजी",
+    "group_body_video": "{{sender}} ने वीडियो भेजा",
+    "group_body_audio": "{{sender}} ने वॉइस संदेश भेजा",
+    "group_body_file": "{{sender}} ने फ़ाइल भेजी",
+    "group_body_map": "{{sender}} ने स्थान साझा किया",
+    "reply_placeholder": "जवाब लिखें…"
+  }
+}

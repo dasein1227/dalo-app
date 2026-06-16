@@ -13,7 +13,7 @@ import {
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AppHeader from '@/components/AppHeader';
+import DetailHeader from '@/components/header/DetailHeader';
 import { supabase } from '../../lib/supabase';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -132,7 +132,7 @@ export default function Signup() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#fff" translucent={false} barStyle="dark-content" />
-      <AppHeader title={t('auth.signup', '회원가입')} showBack />
+      <DetailHeader title={t('auth.signup', '회원가입')} showBack />
 
       <View style={styles.body}>
         <Text style={styles.caption}>

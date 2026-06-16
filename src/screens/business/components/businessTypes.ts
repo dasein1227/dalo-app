@@ -28,6 +28,8 @@ export type BusinessRow = {
   logo_image_url?: string | null;
   is_active?: boolean | null;
   visitor_feed_count?: number | null;
+  
+  // ✅ AI 브리핑 필드 확인
   ai_briefing?: string | null;
   one_line_intro?: string | null;
 
@@ -46,6 +48,7 @@ export type BusinessRow = {
   break_start_time?: string | null;
   break_end_time?: string | null;
   ai_briefing_updated_at?: string | null;
+  detail_address?: string | null; 
 };
 
 export type BusinessRegistrationRow = {
@@ -75,7 +78,6 @@ export type BusinessMenuItem = {
   description?: string | null;
   image_url?: string | null;
   is_signature?: boolean | null;
-  // ✅ 홈 대표 사진용 플래그
   is_main_photo?: boolean | null;
   sort_order?: number | null;
 };
@@ -97,6 +99,8 @@ export type BusinessEvent = {
   body?: string | null;
   image_url?: string | null;
   created_at?: string | null;
+  starts_at?: string | null; 
+  ends_at?: string | null;
 };
 
 export type BusinessNotice = {
@@ -106,6 +110,27 @@ export type BusinessNotice = {
   body?: string | null;
   image_url?: string | null;
   created_at?: string | null;
+};
+
+// ✅ [유지] 리뷰 오류 수정 사항 적용됨
+export type BusinessReview = {
+  // id: string; // 삭제됨 (테이블에 없음)
+  post_id: string;
+  created_at: string;
+  post: {
+    id: string;
+    caption: string;
+    // ✅ post_media 테이블 (file_url 컬럼)
+    post_media: {
+      file_url: string | null; 
+    }[] | null;
+    created_at: string;
+    user_id: string;
+    user?: {
+      nickname: string;
+      avatar_url: string | null;
+    };
+  } | null;
 };
 
 export type TabKey =

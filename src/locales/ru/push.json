@@ -1,0 +1,48 @@
+{
+  "channel": {
+    "social_name": "Социальные",
+    "social_description": "Друзья и социальные уведомления",
+    "chat_name": "Чаты",
+    "chat_description": "Сообщения и уведомления чатов"
+  },
+  "summary": {
+    "social_title": "CO·ONN",
+    "social_body": "Новое социальное уведомление",
+    "chat_title": "CO·ONN",
+    "chat_body": "Новое сообщение"
+  },
+  "actions": {
+    "read": "Прочитано",
+    "reply": "Ответить"
+  },
+  "common": {
+    "someone": "Кто-то",
+    "new_notification": "Новое уведомление",
+    "new_notification_body": "У вас новое уведомление.",
+    "new_message": "Новое сообщение"
+  },
+  "friend": {
+    "request_received_title": "Запрос в друзья",
+    "request_received_subtitle": "{{actor}}",
+    "request_received_body": "{{actor}} отправил(а) запрос в друзья"
+  },
+  "chat": {
+    "dm_title": "{{sender}}",
+    "dm_subtitle": "",
+    "dm_body_text": "{{message}}",
+    "dm_body_image": "Отправлено фото",
+    "dm_body_video": "Отправлено видео",
+    "dm_body_audio": "Отправлено голосовое сообщение",
+    "dm_body_file": "Отправлен файл",
+    "dm_body_map": "Отправлена геопозиция",
+    "group_title": "{{room}}",
+    "group_subtitle": "{{sender}}",
+    "group_body_text": "{{sender}}: {{message}}",
+    "group_body_image": "{{sender}} отправил(а) фото",
+    "group_body_video": "{{sender}} отправил(а) видео",
+    "group_body_audio": "{{sender}} отправил(а) голосовое сообщение",
+    "group_body_file": "{{sender}} отправил(а) файл",
+    "group_body_map": "{{sender}} отправил(а) геопозицию",
+    "reply_placeholder": "Введите ответ…"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "common": "오류",
+  "auth": {
+    "loginRequired": "로그인이 필요합니다."
+  },
+  "unknown": "오류가 발생했습니다.",
+  "network": "네트워크 연결을 확인해 주세요.",
+  "invalid_credentials": "이메일 또는 비밀번호가 올바르지 않습니다.",
+  "oauth_cancelled": "로그인이 취소되었습니다.",
+  "provider_config": "인증 제공자 설정을 확인하세요.",
+  "redirect_config": "Redirect URL 설정을 확인하세요.",
+  "session_check_failed": "세션을 확인하지 못했습니다.",
+  "sms_required": "인증번호를 입력해 주세요.",
+  "phone_format": "전화번호는 국제형식(+8210…)으로 입력해 주세요.",
+  "email_format": "올바른 이메일 형식이 아닙니다."
+}

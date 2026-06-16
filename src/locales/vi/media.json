@@ -1,0 +1,14 @@
+{
+  "recent": "Gần đây",
+  "select_photo": "Chọn ảnh",
+  "max_select": "Tối đa {{count}} ảnh",
+  "processing_error": "Không thể xử lý.",
+  "select_to_edit": "Chọn ảnh để chỉnh sửa.",
+  "video_edit_warning": "Không thể chỉnh sửa video.",
+  "bundle_photos": "Gửi theo nhóm",
+  "quality_settings": "Chất lượng",
+  "quality_original": "Gốc",
+  "quality_standard": "Tiêu chuẩn",
+  "quality_low": "Dung lượng thấp",
+  "quality_high": "Chất lượng cao"
+}

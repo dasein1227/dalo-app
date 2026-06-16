@@ -1,0 +1,133 @@
+{
+  "view_title": "Profil",
+  "edit_title": "Modifier le profil",
+  "nickname": "Pseudo",
+  "handle": "Identifiant",
+  "status_message": "Statut",
+  "public_default": "Profil public par défaut",
+  "save_done": "Enregistré.",
+  "no_name": "Sans nom",
+  "no_id": "ID non défini",
+  "follow": "Suivre",
+  "following": "Abonné",
+  "stat_posts": "Publications",
+  "stat_followers": "Abonnés",
+  "stat_following": "Abonnements",
+  "empty_posts": "Aucune publication",
+  "empty_posts_tab": "Aucune publication",
+  "swipe": {
+    "new_post": "＋ Nouvelle publication",
+    "chat_1on1": "Chat 1:1",
+    "chat_me": "Chat personnel",
+    "call": "Appel",
+    "more": "Plus →"
+  },
+  "alert": {
+    "setting_soon": "Bientôt disponible.",
+    "call_friend_only_title": "Appel indisponible",
+    "call_friend_only_desc": "Réservé aux amis.",
+    "call_feature_soon": "Bientôt disponible.",
+    "unfollow_title": "Ne plus suivre",
+    "unfollow_desc": "Ne plus suivre ?",
+    "keep": "Conserver",
+    "follow_fail": "Impossible de suivre.",
+    "unfollow_fail": "Annulation impossible.",
+    "self_chat_fail": "Impossible de démarrer le chat."
+  },
+  "edit": {
+    "error_permission": "Vous ne pouvez modifier que votre profil.",
+    "revert_title": "Annuler les modifications",
+    "revert_msg": "Annuler les modifications ?",
+    "revert_action": "Annuler",
+    "revert": "Annuler les modifications",
+    "error_add_tab": "Impossible d’ajouter l’onglet.",
+    "confirm_delete_tab": "Supprimer l’onglet « {{name}} » ?",
+    "error_save": "Enregistrement impossible.",
+    "change_cover": "Changer la couverture",
+    "status_placeholder": "Saisissez un statut",
+    "section_theme": "Style",
+    "theme_color": "Couleur du thème",
+    "font_color": "Couleur du texte",
+    "statusbar": "Barre supérieure",
+    "text_white": "Texte blanc",
+    "text_black": "Texte noir",
+    "section_tabs": "Gestion des onglets",
+    "tab_all": "Tous",
+    "tab_input_placeholder": "+ Nouvel onglet",
+    "hue": "Teinte (Hue)",
+    "brightness": "Luminosité (Brightness)",
+    "apply": "Appliquer",
+    "setting_tab": "Réglages « {{name}} »",
+    "move_up": "Monter",
+    "move_down": "Descendre",
+    "visibility": "Visibilité",
+    "current_vis": "Actuel : {{val}}",
+    "vis_public": "Tous",
+    "vis_private": "Moi seul",
+    "vis_custom": "Sélection",
+    "vis_friends": "Amis",
+    "vis_followers": "Abonnés",
+    "picker_avatar": "Choisir une photo de profil",
+    "picker_cover": "Choisir une couverture"
+  },
+  "menu": {
+    "settings": "Réglages",
+    "message": "Message",
+    "unfollow": "Ne plus suivre",
+    "hide": "Masquer",
+    "hide_confirm": "Masquer cet utilisateur ?",
+    "block": "Bloquer",
+    "block_confirm": "Bloquer cet utilisateur ?",
+    "report": "Signaler"
+  },
+  "followList": {
+    "title": "Suivi",
+    "searchPlaceholder": "Pseudo ou ID",
+    "searchHint": "Saisir une recherche",
+    "searchEmpty": "Aucun résultat",
+    "retry": "Recharger",
+    "unfollowTitle": "Ne plus suivre",
+    "unfollowMessage": "Annuler le suivi de {{name}} ?",
+    "unfollowAction": "Annuler",
+    "tab": {
+      "following": "Abonnements",
+      "followers": "Abonnés",
+      "requests": "Demandes"
+    },
+    "list": {
+      "following": "Liste des abonnements",
+      "followers": "Liste des abonnés",
+      "requests": "Demandes de suivi"
+    },
+    "section": {
+      "outgoing": "Demandes envoyées",
+      "incoming": "Demandes reçues"
+    },
+    "badge": {
+      "follower": "Abonné",
+      "pending": "En attente"
+    },
+    "action": {
+      "accept": "Accepter",
+      "decline": "Refuser"
+    },
+    "empty": {
+      "followingTitle": "Aucun abonnement",
+      "followersTitle": "Aucun abonné",
+      "requestsTitle": "Aucune demande",
+      "followingDesc": "Suivez les personnes qui vous intéressent.",
+      "followersDesc": "Partagez votre profil.",
+      "requestsDesc": "Envoyez ou acceptez des demandes."
+    },
+    "error": {
+      "loadFollowing": "Impossible de charger les abonnements.",
+      "loadFollowers": "Impossible de charger les abonnés.",
+      "loadRequests": "Impossible de charger les demandes.",
+      "loadList": "Impossible de charger la liste.",
+      "unfollow": "Annulation impossible.",
+      "cancelRequest": "Impossible d’annuler la demande.",
+      "acceptRequest": "Impossible d’accepter la demande.",
+      "rejectRequest": "Impossible de refuser la demande."
+    }
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "view_title": "प्रोफ़ाइल",
+  "edit_title": "प्रोफ़ाइल संपादित करें",
+  "nickname": "निकनेम",
+  "handle": "हैंडल",
+  "status_message": "स्टेटस संदेश",
+  "public_default": "प्रोफ़ाइल डिफ़ॉल्ट सार्वजनिक",
+  "save_done": "सेव किया गया.",
+  "no_name": "नाम नहीं",
+  "no_id": "ID सेट नहीं",
+  "follow": "फ़ॉलो",
+  "following": "फ़ॉलो कर रहे हैं",
+  "stat_posts": "पोस्ट",
+  "stat_followers": "फ़ॉलोअर",
+  "stat_following": "फ़ॉलोइंग",
+  "empty_posts": "कोई पोस्ट नहीं",
+  "empty_posts_tab": "कोई पोस्ट नहीं",
+  "swipe": {
+    "new_post": "＋ नई पोस्ट",
+    "chat_1on1": "1:1 चैट",
+    "chat_me": "मेरे साथ चैट",
+    "call": "कॉल",
+    "more": "और देखें →"
+  },
+  "alert": {
+    "setting_soon": "तैयार हो रहा है.",
+    "call_friend_only_title": "कॉल उपलब्ध नहीं",
+    "call_friend_only_desc": "केवल मित्रों के लिए उपलब्ध.",
+    "call_feature_soon": "तैयार हो रहा है.",
+    "unfollow_title": "अनफ़ॉलो",
+    "unfollow_desc": "फ़ॉलो हटाएँ?",
+    "keep": "रखें",
+    "follow_fail": "फ़ॉलो नहीं कर सके.",
+    "unfollow_fail": "रद्द नहीं कर सके.",
+    "self_chat_fail": "चैट शुरू नहीं कर सके."
+  },
+  "edit": {
+    "error_permission": "केवल अपनी प्रोफ़ाइल संपादित कर सकते हैं.",
+    "revert_title": "बदलाव रद्द करें",
+    "revert_msg": "बदलाव रद्द करें?",
+    "revert_action": "रद्द",
+    "revert": "बदलाव रद्द करें",
+    "error_add_tab": "टैब जोड़ नहीं सके.",
+    "confirm_delete_tab": "\"{{name}}\" टैब हटाएँ?",
+    "error_save": "सेव नहीं कर सके.",
+    "change_cover": "कवर बदलें",
+    "status_placeholder": "स्टेटस संदेश दर्ज करें",
+    "section_theme": "स्टाइल",
+    "theme_color": "थीम रंग",
+    "font_color": "फ़ॉन्ट रंग",
+    "statusbar": "स्टेटस बार",
+    "text_white": "सफ़ेद टेक्स्ट",
+    "text_black": "काला टेक्स्ट",
+    "section_tabs": "टैब प्रबंधन",
+    "tab_all": "सभी",
+    "tab_input_placeholder": "+ नया टैब",
+    "hue": "रंग (Hue)",
+    "brightness": "चमक (Brightness)",
+    "apply": "लागू करें",
+    "setting_tab": "\"{{name}}\" सेटिंग",
+    "move_up": "ऊपर ले जाएँ",
+    "move_down": "नीचे ले जाएँ",
+    "visibility": "दृश्यता",
+    "current_vis": "वर्तमान: {{val}}",
+    "vis_public": "सभी",
+    "vis_private": "केवल मैं",
+    "vis_custom": "चयनित",
+    "vis_friends": "मित्र",
+    "vis_followers": "फ़ॉलोअर",
+    "picker_avatar": "प्रोफ़ाइल फोटो चुनें",
+    "picker_cover": "कवर फोटो चुनें"
+  },
+  "menu": {
+    "settings": "सेटिंग",
+    "message": "संदेश",
+    "unfollow": "अनफ़ॉलो",
+    "hide": "छिपाएँ",
+    "hide_confirm": "इस उपयोगकर्ता को छिपाएँ?",
+    "block": "ब्लॉक",
+    "block_confirm": "इस उपयोगकर्ता को ब्लॉक करें?",
+    "report": "रिपोर्ट"
+  },
+  "followList": {
+    "title": "फ़ॉलो",
+    "searchPlaceholder": "निकनेम या ID खोजें",
+    "searchHint": "खोज शब्द दर्ज करें",
+    "searchEmpty": "कोई परिणाम नहीं",
+    "retry": "फिर लोड करें",
+    "unfollowTitle": "अनफ़ॉलो",
+    "unfollowMessage": "{{name}} को अनफ़ॉलो करें?",
+    "unfollowAction": "रद्द",
+    "tab": {
+      "following": "फ़ॉलोइंग",
+      "followers": "फ़ॉलोअर",
+      "requests": "अनुरोध"
+    },
+    "list": {
+      "following": "फ़ॉलोइंग सूची",
+      "followers": "फ़ॉलोअर सूची",
+      "requests": "फ़ॉलो अनुरोध"
+    },
+    "section": {
+      "outgoing": "भेजे गए अनुरोध",
+      "incoming": "प्राप्त अनुरोध"
+    },
+    "badge": {
+      "follower": "फ़ॉलोअर",
+      "pending": "लंबित"
+    },
+    "action": {
+      "accept": "स्वीकार",
+      "decline": "अस्वीकार"
+    },
+    "empty": {
+      "followingTitle": "कोई फ़ॉलोइंग नहीं",
+      "followersTitle": "कोई फ़ॉलोअर नहीं",
+      "requestsTitle": "कोई अनुरोध नहीं",
+      "followingDesc": "रुचि वाले लोगों को फ़ॉलो करें.",
+      "followersDesc": "अपनी प्रोफ़ाइल साझा करें.",
+      "requestsDesc": "अनुरोध भेजें या स्वीकार करें."
+    },
+    "error": {
+      "loadFollowing": "फ़ॉलोइंग लोड नहीं कर सके.",
+      "loadFollowers": "फ़ॉलोअर लोड नहीं कर सके.",
+      "loadRequests": "अनुरोध लोड नहीं कर सके.",
+      "loadList": "सूची लोड नहीं कर सके.",
+      "unfollow": "रद्द नहीं कर सके.",
+      "cancelRequest": "अनुरोध रद्द नहीं कर सके.",
+      "acceptRequest": "अनुरोध स्वीकार नहीं कर सके.",
+      "rejectRequest": "अनुरोध अस्वीकार नहीं कर सके."
+    }
+  }
+}

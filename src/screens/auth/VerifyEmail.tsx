@@ -1,7 +1,7 @@
 ﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ActivityIndicator, Alert, Linking, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AppHeader from '@/components/AppHeader';
+import DetailHeader from '@/components/header/DetailHeader';
 import { supabase } from '@/lib/supabase';
 
 type OtpType = 'signup' | 'magiclink' | 'recovery' | 'invite' | 'email_change';
@@ -35,7 +35,7 @@ export default function VerifyEmail() {
     }
   }, []);
 
-  // ---- 딥링크 처리 (앱이 링크로 열리거나, 이미 열린 뒤 링크 수신) ----
+
   const handleUrl = useCallback(async (url: string | null) => {
     if (!url) return;
     try {
@@ -48,7 +48,7 @@ export default function VerifyEmail() {
       const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
       if (error) throw error;
 
-      // verifyOtp가 성공하면 session이 올 수 있음
+
       if (data?.user || data?.session) {
         await refreshUser();
         Alert.alert('완료', '이메일 인증이 완료되었습니다.');
@@ -64,19 +64,17 @@ export default function VerifyEmail() {
 
   useEffect(() => {
     mounted.current = true;
-    // 초기 유저 상태
+
     refreshUser();
 
-    // 앱이 링크로 최초 실행된 경우
+
     Linking.getInitialURL().then(handleUrl).catch(() => {});
 
-    // 실행 중에 링크 수신
+
     const sub = Linking.addEventListener('url', (ev) => handleUrl(ev.url));
 
     return () => {
       mounted.current = false;
-      // RN 0.71+ 에서 remove() 필요
-      // @ts-ignore
       sub?.remove?.();
     };
   }, [handleUrl, refreshUser]);
@@ -114,7 +112,7 @@ export default function VerifyEmail() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <AppHeader title="이메일 인증" showBack />
+      <DetailHeader title="이메일 인증" showBack />
       <View style={s.body}>
         <View style={s.badgeWrap}>
           <Text style={[s.badge, done ? s.badgeOk : s.badgePending]}>

@@ -1,0 +1,28 @@
+{
+  "common": {
+    "title": "Denúncia"
+  },
+  "reasonList": {
+    "title": "Escolher motivo",
+    "guide": "Guia de uso"
+  },
+  "reasonDetail": {
+    "submit": "Enviar",
+    "more": "Ver detalhes",
+    "empty": "Não foi possível carregar as informações da denúncia."
+  },
+  "guide": {
+    "title": "Guia",
+    "empty": "Não foi possível carregar o guia."
+  },
+  "done": {
+    "title": "Denúncia enviada.",
+    "body": "Após a análise, tomaremos as medidas necessárias."
+  },
+  "alert": {
+    "loadFail": "Falha ao carregar",
+    "info": "Aviso",
+    "linkOpenFail": "Não foi possível abrir o link.",
+    "submitFail": "Falha ao enviar"
+  }
+}

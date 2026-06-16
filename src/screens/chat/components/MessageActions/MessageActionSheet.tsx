@@ -8,9 +8,13 @@ import {
   Animated,
   Easing,
   Platform,
+  ScrollView,
+  useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import type { ChatTheme } from '@/screens/chat/theme/chatTheme';
+import ReactionIcon from '../../reactions/ReactionIcon';
 
 export type MessageActionKey =
   | 'copy'
@@ -51,7 +55,7 @@ type Props<TMessage> = {
   onAction: (key: MessageActionKey, message: TMessage) => void;
 
   // 리액션 클릭 콜백(옵션)
-  onReact?: (emoji: string, message: TMessage) => void;
+  onReact?: (reactionKey: string, message: TMessage) => void;
 
   // 액션/리액션 커스터마이즈(옵션)
   actions?: MessageActionItem[];
@@ -60,29 +64,99 @@ type Props<TMessage> = {
   // UI 옵션
   titleText?: string;
   maxSheetHeight?: number; // 기본 520
+
+  // 공지 등록 권한/노출 제어.
+  // ActionModals에서 넘기고, false면 notice 액션을 숨긴다.
+  canShowNoticeAction?: boolean;
 };
 
-// ✅ 사용자 확정 리액션: ❤️👍✔️😆😮😭 (총 6개 고정)
+// ✅ 사용자 확정 리액션: heart / like / check / laugh / surprise / sad (총 6개 고정)
 const DEFAULT_REACTIONS: ReactionItem[] = [
-  { key: 'heart', emoji: '❤️' },
+  { key: 'heart', emoji: '❤' },
   { key: 'like', emoji: '👍' },
-  { key: 'check', emoji: '✔️' },
-  { key: 'lol', emoji: '😆' },
-  { key: 'wow', emoji: '😮' },
-  { key: 'sad', emoji: '😭' },
+  { key: 'check', emoji: '✓' },
+  { key: 'laugh', emoji: '😊' },
+  { key: 'surprise', emoji: '😮' },
+  { key: 'sad', emoji: '😢' },
 ];
 
 const DEFAULT_ACTIONS: MessageActionItem[] = [
-  { key: 'copy', label: '복사' },
-  { key: 'select_copy', label: '선택 복사' },
-  { key: 'reply', label: '답장' },
-  { key: 'share', label: '공유' },
-  { key: 'to_me', label: '나에게' },
-  { key: 'notice', label: '공지' },
-  { key: 'highlight', label: '책갈피 설정' },
-  { key: 'capture', label: '캡처' },
-  { key: 'delete', label: '삭제', destructive: true },
+  { key: 'copy', label: '' },
+  { key: 'select_copy', label: '' },
+  { key: 'reply', label: '' },
+  { key: 'share', label: '' },
+  { key: 'to_me', label: '' },
+  { key: 'notice', label: '' },
+  { key: 'highlight', label: '' },
+  { key: 'capture', label: '' },
+  { key: 'delete', label: '', destructive: true },
 ];
+
+
+function parseJsonObject(value: any): Record<string, any> | null {
+  if (!value) return null;
+  if (typeof value === 'object') return value as Record<string, any>;
+  if (typeof value !== 'string') return null;
+  const text = value.trim();
+  if (!text || (text[0] !== '{' && text[0] !== '[')) return null;
+  try {
+    const parsed = JSON.parse(text);
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      ? (parsed as Record<string, any>)
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+function mergedMessageMeta(msg: any): Record<string, any> {
+  const raw = msg?._raw ?? {};
+  return {
+    ...(parseJsonObject(raw?.metadata) ?? {}),
+    ...(parseJsonObject(raw?.meta) ?? {}),
+    ...(parseJsonObject(msg?.metadata) ?? {}),
+    ...(parseJsonObject(msg?.meta) ?? {}),
+  };
+}
+
+function canPromoteMessageToNotice(message: any): boolean {
+  if (!message) return false;
+
+  const raw = message?._raw ?? {};
+  const id = String(message?.id ?? raw?.id ?? '').trim();
+  const messageUid = String(
+    message?.message_uid ?? message?.messageUid ?? raw?.message_uid ?? raw?.messageUid ?? '',
+  ).trim();
+  if (!id || id.startsWith('local_') || id.startsWith('opt_')) return false;
+  if (!messageUid) return false;
+
+  const kind = String(message?.kind ?? raw?.kind ?? '').trim().toLowerCase();
+  if (!['text', 'image', 'video', 'audio', 'file', 'map'].includes(kind)) return false;
+
+  const deletedForAll = message?.deleted_for_all_at ?? message?.deletedForAllAt ?? raw?.deleted_for_all_at ?? null;
+  const deleteAt = message?.delete_at ?? message?.deleteAt ?? raw?.delete_at ?? null;
+  if (deletedForAll != null || deleteAt != null) return false;
+
+  const isSecure = message?.is_secure ?? message?.isSecure ?? raw?.is_secure ?? raw?.isSecure;
+  if (isSecure === true) return false;
+
+  const meta = mergedMessageMeta(message);
+  if (meta?.system === true || meta?.secure_system === true) return false;
+
+  const systemType = String(
+    meta?.secure_system_type ?? meta?.secureSystemType ?? meta?.system_type ?? meta?.systemType ?? '',
+  ).toLowerCase();
+  if (
+    systemType.startsWith('secure_peer_recovery_') ||
+    systemType === 'secure_system' ||
+    systemType === 'secure_recovery' ||
+    systemType === 'system_private'
+  ) {
+    return false;
+  }
+
+  return true;
+}
 
 function withAlpha(hexOrRgba: string, alpha: number) {
   if (!hexOrRgba) return hexOrRgba;
@@ -118,16 +192,41 @@ export default function MessageActionSheet<TMessage>({
   reactions,
   titleText,
   maxSheetHeight = 520,
+  canShowNoticeAction,
 }: Props<TMessage>) {
   const insets = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
+  const { t } = useTranslation();
 
   const sheetTranslateY = useRef(new Animated.Value(999)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
+
+  const actionLabels = useMemo<Record<MessageActionKey, string>>(
+    () => ({
+      copy: t('chat:messageAction.copy'),
+      select_copy: t('chat:messageAction.selectCopy'),
+      reply: t('chat:messageAction.reply'),
+      share: t('chat:messageAction.share'),
+      to_me: t('chat:messageAction.shareToMe'),
+      notice: t('chat:messageAction.notice'),
+      highlight: t('chat:messageAction.highlight'),
+      capture: t('chat:messageAction.capture'),
+      delete: t('chat:messageAction.delete'),
+      cancel_moment: t('chat:messageAction.cancelMoment'),
+    }),
+    [t],
+  );
 
   const actionItems = useMemo(() => {
     const base = actions ?? DEFAULT_ACTIONS;
 
     const msg: any = message as any;
+    const canPromoteNotice = canPromoteMessageToNotice(msg);
+    let filteredBase = base.filter((item) => String((item as any).key) !== 'schedule_detail');
+    if (!canPromoteNotice || canShowNoticeAction === false) {
+      filteredBase = filteredBase.filter((item) => item.key !== 'notice');
+    }
+
     const id = msg?.id;
     const sender = msg?.senderId ?? msg?.sender_id ?? msg?.sender;
     const del = msg?.delete_at ?? msg?.deleteAt ?? null;
@@ -143,18 +242,18 @@ export default function MessageActionSheet<TMessage>({
       !!id &&
       !String(id).startsWith('local_');
 
-    if (!canCancelMoment) return base;
+    if (!canCancelMoment) return filteredBase;
 
     // ✅ "삭제 설정 취소"는 삭제 메뉴 바로 위에
-    const out = [...base];
+    const out = [...filteredBase];
     const idx = out.findIndex((a) => a.key === 'delete');
-    const item: MessageActionItem = { key: 'cancel_moment', label: '삭제 설정 취소' };
+    const item: MessageActionItem = { key: 'cancel_moment', label: '' };
 
     if (idx >= 0) out.splice(idx, 0, item);
     else out.push(item);
 
     return out;
-  }, [actions, message, meId]);
+  }, [actions, canShowNoticeAction, message, meId]);
 
   // ✅ 6개 딱 고정: 커스텀 reactions가 들어와도 최대 6개만 사용
   const reactionItems = useMemo(() => {
@@ -163,10 +262,20 @@ export default function MessageActionSheet<TMessage>({
   }, [reactions]);
 
   const canInteract = visible && !!message;
+  const isBookmarked = !!(message as any)?.__bookmarked;
+  const safeSheetMaxHeight = Math.min(
+    maxSheetHeight + Math.max(insets.bottom, 10),
+    Math.max(320, windowHeight - insets.top - insets.bottom - 48),
+  );
+
+  // 대부분의 메시지 액션은 한 화면에 모두 보여야 한다.
+  // 작은 화면/액션 과다 케이스에서만 ScrollView로 fallback 한다.
+  const estimatedActionHeight = actionItems.length * 43 + 12;
+  const actionsMaxHeight = Math.max(156, safeSheetMaxHeight - 62 - (titleText ? 26 : 0));
+  const shouldScrollActions = estimatedActionHeight > actionsMaxHeight;
 
   // ✅ 테마 기반 색상 매핑(필드가 없을 수도 있으니 안전 fallback)
   const sheetBg = (theme as any).headerBg ?? '#FFF';
-  const chipBg = (theme as any).inputFieldBg ?? 'rgba(0,0,0,0.06)';
   const baseText = (theme as any).headerText ?? '#111';
   const subtleText = withAlpha(baseText, 0.6);
   const pressedBg = (theme as any).highlightLine ?? withAlpha(baseText, 0.12);
@@ -208,13 +317,23 @@ export default function MessageActionSheet<TMessage>({
 
   const handleActionPress = (key: MessageActionKey) => {
     if (!message) return;
-    onAction(key, message);
+    const currentMessage = message;
+
+    // 캡처는 모달이 열린 동안의 interaction lock에 막히면 안 된다.
+    // 먼저 롱프레스 메뉴를 닫고, 다음 프레임에서 Chat의 capture controller로 넘긴다.
+    if (key === 'capture') {
+      onClose();
+      requestAnimationFrame(() => onAction(key, currentMessage));
+      return;
+    }
+
+    onAction(key, currentMessage);
     onClose();
   };
 
-  const handleReactPress = (emoji: string) => {
+  const handleReactPress = (reactionKey: string) => {
     if (!message) return;
-    onReact?.(emoji, message);
+    onReact?.(reactionKey, message);
     onClose();
   };
 
@@ -250,7 +369,7 @@ export default function MessageActionSheet<TMessage>({
               backgroundColor: sheetBg,
               paddingBottom: Math.max(insets.bottom, 10),
               transform: [{ translateY: sheetTranslateY }],
-              maxHeight: maxSheetHeight + Math.max(insets.bottom, 10),
+              maxHeight: safeSheetMaxHeight,
             },
           ]}
         >
@@ -262,16 +381,16 @@ export default function MessageActionSheet<TMessage>({
                   key={r.key}
                   onPress={() => {
                     if (!canInteract) return;
-                    handleReactPress(r.emoji);
+                    handleReactPress(r.key);
                   }}
+                  hitSlop={8}
                   style={({ pressed }) => [
                     styles.reactionBtn,
-                    { backgroundColor: chipBg },
-                    pressed && { opacity: 0.78 },
+                    pressed && { opacity: 0.58, transform: [{ scale: 0.96 }] },
                     !canInteract && styles.disabled,
                   ]}
                 >
-                  <Text style={styles.reactionEmoji}>{r.emoji}</Text>
+                  <ReactionIcon reactionKey={r.key} size={28} theme={theme} />
                 </Pressable>
               ))}
             </View>
@@ -284,35 +403,80 @@ export default function MessageActionSheet<TMessage>({
           ) : null}
 
           {/* Actions */}
-          <View style={styles.actionsBox}>
-            {actionItems.map((a) => {
-              const isDisabled = !!a.disabled || !canInteract;
-              const isDestructive = !!a.destructive;
+          {shouldScrollActions ? (
+            <ScrollView
+              style={[styles.actionsScroll, { maxHeight: actionsMaxHeight }]}
+              contentContainerStyle={styles.actionsBox}
+              showsVerticalScrollIndicator={false}
+              bounces={false}
+            >
+              {actionItems.map((a) => {
+                const isDisabled = !!a.disabled || !canInteract;
+                const isDestructive = !!a.destructive;
 
-              return (
-                <Pressable
-                  key={a.key}
-                  onPress={() => !isDisabled && handleActionPress(a.key)}
-                  style={({ pressed }) => [
-                    styles.actionRow,
-                    pressed && { backgroundColor: pressedBg },
-                    isDisabled && styles.disabled,
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.actionText,
-                      { color: baseText },
-                      isDestructive && { color: '#D11A2A' }, // 삭제는 고정(명확성)
-                      isDisabled && { color: withAlpha(baseText, 0.45) },
+                return (
+                  <Pressable
+                    key={a.key}
+                    onPress={() => !isDisabled && handleActionPress(a.key)}
+                    style={({ pressed }) => [
+                      styles.actionRow,
+                      pressed && { backgroundColor: pressedBg },
+                      isDisabled && styles.disabled,
                     ]}
                   >
-                    {a.label}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
+                    <Text
+                      style={[
+                        styles.actionText,
+                        { color: baseText },
+                        isDestructive && { color: '#D11A2A' }, // 삭제는 고정(명확성)
+                        isDisabled && { color: withAlpha(baseText, 0.45) },
+                      ]}
+                    >
+                      {a.key === 'highlight'
+                        ? isBookmarked
+                          ? t('chat:messageAction.unhighlight')
+                          : t('chat:messageAction.highlight')
+                        : actionLabels[a.key] ?? a.label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          ) : (
+            <View style={styles.actionsBox}>
+              {actionItems.map((a) => {
+                const isDisabled = !!a.disabled || !canInteract;
+                const isDestructive = !!a.destructive;
+
+                return (
+                  <Pressable
+                    key={a.key}
+                    onPress={() => !isDisabled && handleActionPress(a.key)}
+                    style={({ pressed }) => [
+                      styles.actionRow,
+                      pressed && { backgroundColor: pressedBg },
+                      isDisabled && styles.disabled,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.actionText,
+                        { color: baseText },
+                        isDestructive && { color: '#D11A2A' }, // 삭제는 고정(명확성)
+                        isDisabled && { color: withAlpha(baseText, 0.45) },
+                      ]}
+                    >
+                      {a.key === 'highlight'
+                        ? isBookmarked
+                          ? t('chat:messageAction.unhighlight')
+                          : t('chat:messageAction.highlight')
+                        : actionLabels[a.key] ?? a.label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          )}
         </Animated.View>
       </View>
     </Modal>
@@ -331,7 +495,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 18,
+    paddingHorizontal: 20,
   },
 
   sheet: {
@@ -352,9 +516,9 @@ const styles = StyleSheet.create({
   },
 
   topRow: {
-    paddingHorizontal: 14,
-    paddingTop: 12,
-    paddingBottom: 10,
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 8,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
 
@@ -368,13 +532,8 @@ const styles = StyleSheet.create({
   reactionBtn: {
     width: 38,
     height: 38,
-    borderRadius: 19,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-
-  reactionEmoji: {
-    fontSize: 18,
   },
 
   titleText: {
@@ -384,17 +543,25 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 
+  actionsScroll: {
+    flexGrow: 0,
+  },
+
   actionsBox: {
-    paddingVertical: 10,
+    paddingVertical: 6,
   },
 
   actionRow: {
+    minHeight: 43,
     paddingHorizontal: 18,
-    paddingVertical: 13,
+    paddingVertical: 9,
+    justifyContent: 'center',
   },
 
   actionText: {
-    fontSize: 16,
+    fontSize: 15,
+    lineHeight: 21,
+    fontWeight: '400',
   },
 
   disabled: {

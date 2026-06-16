@@ -1,0 +1,253 @@
+{
+  "title": "Amici",
+  "requests": "Richieste di amicizia",
+  "requests_empty": "Nessuna nuova richiesta.",
+  "requests_received": "Ricevute",
+  "requests_sent": "Inviate",
+  "add_friend": "Aggiungi amico",
+  "send_request": "Invia richiesta",
+  "request_sent": "Richiesta inviata.",
+  "request_send_failed": "Invio richiesta non riuscito.",
+  "request_cancel": "Annulla richiesta",
+  "request_canceled": "Richiesta annullata.",
+  "request_cancel_failed": "Annullamento richiesta non riuscito.",
+  "accept": "Accetta",
+  "decline": "Rifiuta",
+  "accepted": "Richiesta accettata.",
+  "declined": "Richiesta rifiutata.",
+  "accept_failed": "Accettazione non riuscita.",
+  "decline_failed": "Rifiuto non riuscito.",
+  "remove_friend": "Rimuovi amico",
+  "remove_friend_confirm": "Vuoi rimuovere questo amico?",
+  "remove_friend_done": "Amico rimosso.",
+  "remove_friend_failed": "Rimozione non riuscita.",
+  "blocked": "Bloccato",
+  "block": "Blocca",
+  "unblock": "Sblocca",
+  "block_done": "Bloccato.",
+  "unblock_done": "Sbloccato.",
+  "search_placeholder": "Cerca nickname, ID o codice amico",
+  "code_placeholder": "Inserisci codice amico",
+  "already_friends": "Siete già amici.",
+  "already_requested": "Richiesta già inviata.",
+  "self_not_allowed": "Non puoi inviare una richiesta a te stesso.",
+  "hidden": "Nascosto",
+  "favorite": "Preferito",
+  "memo": "Nota",
+  "alias": "Alias",
+  "group": {
+    "title": "Gruppi",
+    "manageTitle": "Gruppi amici",
+    "createTitle": "Nuovo gruppo",
+    "createDesc": "Inserisci il nome del gruppo.",
+    "createPlaceholder": "Es. Colleghi, vicini, studio",
+    "createAction": "Crea",
+    "createFail": "Creazione non riuscita",
+    "editTitle": "Modifica nome gruppo",
+    "editDesc": "Inserisci un nuovo nome.",
+    "editPlaceholder": "Nome gruppo",
+    "saveAction": "Salva",
+    "renameFail": "Modifica non riuscita",
+    "nameRequired": "Inserisci il nome del gruppo.",
+    "deleteTitle": "Elimina gruppo",
+    "deleteMessage": "Eliminare il gruppo “{{name}}”?",
+    "emptyTitle": "Nessun gruppo",
+    "emptyDesc": "Crea un nuovo gruppo.",
+    "memberEmpty": "Nessun membro nel gruppo.",
+    "addTitle": "Aggiungi amici",
+    "addSuccess": "Aggiunto.",
+    "addFail": "Aggiunta non riuscita",
+    "addEmpty": "Nessun amico da aggiungere.",
+    "removeSuccess": "Rimosso.",
+    "removeFail": "Rimozione non riuscita",
+    "memberCount": "{{count}} persone"
+  },
+  "userFallback": "Utente",
+  "list": {
+    "favoriteFriendsCount": "Preferiti {{count}}",
+    "friendsCount": "Amici {{count}}"
+  },
+  "tabs": {
+    "friends": "Amici",
+    "groups": "Gruppi"
+  },
+  "search": {
+    "placeholder": "Inserisci una ricerca",
+    "friendPlaceholder": "Cerca nome o ID",
+    "groupPlaceholder": "Cerca gruppi o membri",
+    "namePlaceholder": "Cerca nome",
+    "friendPickerPlaceholder": "Cerca amici",
+    "contactsPlaceholder": "Cerca nome o numero",
+    "waitTitle": "In attesa",
+    "waitCaption": "Inserisci le informazioni e cerca.",
+    "emptyTitle": "Nessun risultato",
+    "emptyCaption": "Nessun utente corrispondente.",
+    "contactEmptyTitle": "Nessun contatto",
+    "contactEmptyCaption": "Nessun contatto corrispondente.",
+    "groupNamePlaceholder": "Cerca gruppo"
+  },
+  "action": {
+    "favoriteAdd": "Preferito",
+    "favoriteRemove": "Rimuovi",
+    "manageFriend": "Gestisci amico",
+    "manageGroup": "Gestisci gruppo",
+    "contact": "Contatta",
+    "create": "Crea",
+    "save": "Salva",
+    "add": "Aggiungi",
+    "remove": "Rimuovi",
+    "select": "Seleziona",
+    "search": "Cerca",
+    "processing": "Elaborazione",
+    "saving": "Salvataggio"
+  },
+  "alert": {
+    "notice": "Avviso",
+    "fail": "Non riuscito",
+    "loadFail": "Caricamento non riuscito",
+    "deleteFail": "Eliminazione non riuscita",
+    "profileRouteMissing": "Schermata profilo non trovata.",
+    "chatRouteMissing": "Schermata chat non trovata.",
+    "phoneMissing": "Numero di telefono assente.",
+    "phoneOpenFail": "Impossibile aprire l’app telefono.",
+    "removeFriendTitle": "Rimuovi amico",
+    "removeFriendMessage": "Rimuovere {{name}}?",
+    "blockTitle": "Blocca",
+    "blockMessage": "Bloccare {{name}}?",
+    "blockFail": "Blocco non riuscito",
+    "friendEditRouteMissing": "Schermata gestione amico non trovata."
+  },
+  "add": {
+    "title": "Aggiungi amico",
+    "loginRequired": "Accesso richiesto.",
+    "contactSearch": "Trova dai contatti",
+    "userFallback": "Utente {{id}}",
+    "noName": "Senza nome",
+    "myProfile": "Il mio profilo",
+    "notSet": "Non impostato",
+    "friendCodeLabel": "Codice amico",
+    "qrOfflineHint": "Connettiti subito con un codice QR.",
+    "shareLink": "Condividi link",
+    "scanQr": "Scansiona QR",
+    "qrTitle": "Il mio codice",
+    "qrDesc": "Quando l’altra persona lo scansiona,\nvi connettete subito.",
+    "scanGuide": "Scansiona il QR dell’altra persona.",
+    "contactsTitle": "Trova nei contatti",
+    "contactsDesc": "Seleziona dalla rubrica e cerca.",
+    "mode": {
+      "coonnIdTitle": "CO·ONN ID",
+      "coonnIdHint": "Inserisci l’ID pubblico dell’altra persona.",
+      "coonnIdPlaceholder": "Inserisci ID",
+      "friendCodeTitle": "Codice amico",
+      "friendCodeHint": "Inserisci il codice amico.",
+      "friendCodePlaceholder": "Inserisci codice",
+      "phoneTitle": "Contatti",
+      "phoneHint": "Cerca tramite numero di telefono.",
+      "phonePlaceholder": "Inserisci numero"
+    },
+    "result": {
+      "noPublicId": "Nessun ID pubblico",
+      "friendCodeVerified": "Codice verificato",
+      "friendCodeMatched": "Codice corrispondente",
+      "contact": "Contatto · {{phone}}",
+      "added": "Aggiunto",
+      "limited": "Limitato",
+      "add": "Aggiungi"
+    },
+    "share": {
+      "myId": "Il mio ID",
+      "friendCode": "Codice amico",
+      "title": "Condividi link CO·ONN",
+      "message": "[CO·ONN] Connettiti con me.{{idText}}{{codeText}}\n\nApri la schermata per aggiungermi dal link qui sotto.\n{{url}}"
+    },
+    "toast": {
+      "added": "Aggiunto agli amici."
+    },
+    "alert": {
+      "permissionRequired": "Permesso richiesto",
+      "cameraPermissionRequired": "Serve il permesso fotocamera.",
+      "contactsPermissionRequired": "Serve il permesso contatti.",
+      "contactsLoadFail": "Caricamento contatti non riuscito",
+      "searchFail": "Ricerca non riuscita",
+      "addFail": "Aggiunta non riuscita"
+    },
+    "error": {
+      "invalidUser": "Utente non valido.",
+      "selfQr": "Questo è il tuo QR.",
+      "userNotFound": "Utente non trovato.",
+      "invalidQr": "Codice non valido.",
+      "minLength": "Inserisci almeno {{count}} caratteri."
+    },
+    "findTitle": "Trova nuovi amici",
+    "card": {
+      "idTitle": "Trova con ID",
+      "idDesc": "Cerca CO·ONN ID",
+      "codeTitle": "Trova con codice",
+      "codeDesc": "Cerca codice amico",
+      "contactsTitle": "Contatti",
+      "contactsDesc": "Dalla rubrica"
+    },
+    "digitalCardTitle": "Il mio biglietto"
+  },
+  "communication": {
+    "noPhone": "Numero assente",
+    "phoneCall": "Chiamata",
+    "voiceCall": "VoiceTalk",
+    "comingSoon": "In arrivo"
+  },
+  "edit": {
+    "title": "Impostazioni amico",
+    "unknownUser": "Sconosciuto",
+    "none": "Nessuno",
+    "field": {
+      "name": "Nome"
+    },
+    "placeholder": {
+      "alias": "Inserisci alias",
+      "memo": "Inserisci nota"
+    },
+    "helper": {
+      "friendName": "Nome amico · {{name}}",
+      "privateMemo": "Visibile solo a te."
+    },
+    "section": {
+      "groups": "Gruppi",
+      "security": "Sicurezza"
+    },
+    "state": {
+      "on": "Attivo",
+      "off": "Disattivo",
+      "hidden": "Nascosto",
+      "visible": "Visibile",
+      "blocked": "Bloccato",
+      "unblocked": "Non bloccato"
+    },
+    "toast": {
+      "saved": "Salvato."
+    },
+    "alert": {
+      "loadFail": "Caricamento non riuscito",
+      "saveFail": "Salvataggio non riuscito",
+      "removeFail": "Eliminazione non riuscita",
+      "userLoadFail": "Impossibile caricare l’utente.",
+      "blockedByPeer": "L’altra persona ti ha bloccato."
+    },
+    "remove": {
+      "title": "Rimuovi amico",
+      "message": "Rimuovere {{name}}?"
+    },
+    "unsaved": {
+      "title": "Modifiche",
+      "message": "Ci sono modifiche non salvate.",
+      "discard": "Non salvare"
+    },
+    "groups": {
+      "title": "Gestisci gruppi",
+      "subtitle": "Seleziona i gruppi da includere.",
+      "selectedCount": "Selezionati {{count}}",
+      "inGroup": "Già incluso",
+      "addHint": "Tocca per aggiungere",
+      "emptySearch": "Prova con un altro nome."
+    }
+  }
+}

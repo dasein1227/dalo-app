@@ -1,5 +1,7 @@
 // src/screens/chat/components/ChatRoomCard.tsx
+
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -7,7 +9,12 @@ import {
   StyleSheet,
   Pressable,
 } from 'react-native';
-import { BellOff, Pin, ChevronRight } from 'lucide-react-native';
+import { BellOff, Lock, Pin } from 'lucide-react-native';
+import { useAppTheme } from '@/theme/useAppTheme';
+import {
+  createChatRoomCardTheme,
+  type ChatRoomCardTheme,
+} from './ChatRoomCard.theme';
 
 export type ChatRoomRow = {
   id: number | string;
@@ -18,12 +25,13 @@ export type ChatRoomRow = {
   is_owner: boolean;
   pending: boolean;
   unread: number | null;
-
-  // --- 즐겨찾기 / 고정 / 알림 / 비콘 섹션 ---
-  favorite: boolean;             // 즐겨찾기 여부
-  pinned: boolean;               // 상단 고정 여부
-  muted: boolean;                // 알림 끄기 여부
-  section?: 'mine' | 'joined';   // 비콘 탭에서 "내 비콘" / "참여 중인 비콘"
+  favorite: boolean;
+  pinned: boolean;
+  muted: boolean;
+  roomType?: string | null;
+  memberCount?: number | null;
+  section?: 'mine' | 'joined';
+  selfBadge?: string | null;
 };
 
 type Props = {
@@ -32,19 +40,192 @@ type Props = {
   onLongPress?: (row: ChatRoomRow) => void;
 };
 
+const AVATAR_SIZE = 50;
+
+const ROOM_PREVIEW_TOKEN_MAP: Record<string, { key: string; defaultValue: string }> = {
+  '__coonn_preview:secure': { key: 'chat:messageBody.secureMessage', defaultValue: 'Encrypted message' },
+  '__coonn_preview:image': { key: 'chat:roomCard.preview.image', defaultValue: '[Photo]' },
+  '__coonn_preview:video': { key: 'chat:roomCard.preview.video', defaultValue: '[Video]' },
+  '__coonn_preview:audio': { key: 'chat:roomCard.preview.audio', defaultValue: '[Voice]' },
+  '__coonn_preview:file': { key: 'chat:roomCard.preview.file', defaultValue: '[File]' },
+  '__coonn_preview:map': { key: 'chat:roomCard.preview.map', defaultValue: '[Location]' },
+  '__coonn_preview:notice': { key: 'chat:roomCard.preview.notice', defaultValue: '[Notice]' },
+};
+
+type Translate = ReturnType<typeof useTranslation>['t'];
+
+type PreviewResolution = {
+  text: string;
+  isSecure: boolean;
+};
+
+function resolveRoomCardPreview(
+  value: string | null | undefined,
+  fallbackMessage: string,
+  t: Translate,
+): PreviewResolution {
+  const cleaned = cleanMessagePreview(value ?? null, fallbackMessage).trim();
+  if (!cleaned) return { text: '', isSecure: false };
+
+  const mapped = ROOM_PREVIEW_TOKEN_MAP[cleaned];
+  if (!mapped) return { text: cleaned, isSecure: false };
+
+  return {
+    text: String(t(mapped.key, { defaultValue: mapped.defaultValue })),
+    isSecure: cleaned === '__coonn_preview:secure',
+  };
+}
+
+
+function normalizeRoomType(input: unknown): string {
+  const raw = String(input ?? '').trim().toLowerCase();
+  if (raw === 'grp') return 'group';
+  if (raw === 'public' || raw === 'open_room' || raw === 'openroom' || raw === 'openchat' || raw === 'open_talk' || raw === 'opentalk' || raw === 'public_group' || raw === 'public_chat' || raw === 'public_room') return 'open';
+  if (raw === 'map') return 'beacon';
+  return raw;
+}
+
+function shouldShowMemberCount(item: ChatRoomRow, avatarUrls: string[]) {
+  const roomType = normalizeRoomType(item.roomType);
+  return roomType === 'group' || roomType === 'open' || roomType === 'beacon' || avatarUrls.length > 1;
+}
+
+function getDisplayMemberCount(item: ChatRoomRow, avatarUrls: string[]) {
+  const explicitCount = Number(item.memberCount);
+  if (Number.isFinite(explicitCount) && explicitCount > 0) return Math.floor(explicitCount);
+
+  if (avatarUrls.length > 1) return avatarUrls.length + 1;
+  return null;
+}
+
+type ChatRoomCardStyleSheet = ReturnType<typeof createStyles>;
+
+const GroupAvatar = ({
+  urls,
+  styles,
+}: {
+  urls: string[];
+  styles: ChatRoomCardStyleSheet;
+}) => {
+  const count = Math.min(urls.length, 4);
+
+  if (count === 0) {
+    return (
+      <View style={[styles.avatar, styles.placeholder]}>
+        <Text style={styles.placeholderText}>?</Text>
+      </View>
+    );
+  }
+
+  if (count === 1) {
+    return <Image source={{ uri: urls[0] }} style={styles.avatar} />;
+  }
+
+  return (
+    <View style={styles.groupContainer}>
+      {urls.slice(0, 4).map((url, index) => {
+        let size = 0;
+        let pos: Record<string, number | string> = {};
+
+        if (count === 2) {
+          size = 32;
+          if (index === 0) pos = { top: 0, left: 0, zIndex: 1 };
+          if (index === 1) pos = { bottom: 0, right: 0, zIndex: 0 };
+        } else if (count === 3) {
+          if (index === 0) {
+            size = 32;
+            pos = { top: 0, left: '50%', marginLeft: -16 };
+          }
+          if (index === 1) {
+            size = 26;
+            pos = { bottom: 0, left: 0 };
+          }
+          if (index === 2) {
+            size = 26;
+            pos = { bottom: 0, right: 0 };
+          }
+        } else {
+          size = 22;
+          pos = {
+            top: index < 2 ? 0 : 'auto',
+            bottom: index >= 2 ? 0 : 'auto',
+            left: index % 2 === 0 ? 0 : 'auto',
+            right: index % 2 !== 0 ? 0 : 'auto',
+          };
+        }
+
+        return (
+          <Image
+            key={`${url}-${index}`}
+            source={{ uri: url }}
+            style={[
+              styles.groupItem,
+              { width: size, height: size, borderRadius: size / 2 },
+              pos,
+            ]}
+          />
+        );
+      })}
+    </View>
+  );
+};
+
 const ChatRoomCard: React.FC<Props> = ({ item, onPress, onLongPress }) => {
   const handlePress = () => onPress(item);
-  const handleLongPress = () => {
-    if (onLongPress) onLongPress(item);
-  };
+  const handleLongPress = () => onLongPress?.(item);
 
-  const timeLabel = formatTime(item.updated_at);
-  const hasUnread = item.unread != null && item.unread > 0;
+  const appTheme = useAppTheme();
+  const ui = useMemo(() => createChatRoomCardTheme(appTheme), [appTheme]);
+  const { t } = useTranslation();
+  const styles = useMemo(() => createStyles(ui), [ui]);
 
-  const previewText = useMemo(() => {
-    if (item.pending) return '수락 대기중';
-    return normalizeLastMessagePreview(item.last_msg) || '메시지가 없습니다.';
-  }, [item.pending, item.last_msg]);
+  const timeLabel = formatTime(item.updated_at, {
+    am: t('chat:roomCard.am'),
+    pm: t('chat:roomCard.pm'),
+    date: (month, day) => t('chat:roomCard.date', { month, day }),
+  });
+
+  const avatarUrls = useMemo(() => {
+    if (!item.avatar_url) return [];
+    if (item.avatar_url.includes(',')) {
+      return item.avatar_url
+        .split(',')
+        .map((url) => url.trim())
+        .filter(Boolean);
+    }
+    return [item.avatar_url];
+  }, [item.avatar_url]);
+
+  const preview = useMemo<PreviewResolution>(() => {
+    if (item.pending) {
+      return { text: t('chat:roomCard.pending'), isSecure: false };
+    }
+
+    const resolved = resolveRoomCardPreview(
+      item.last_msg,
+      t('chat:roomCard.messageFallback'),
+      t,
+    );
+
+    if (!resolved.text) {
+      return { text: t('chat:roomCard.emptyMessage'), isSecure: false };
+    }
+
+    return resolved;
+  }, [item.pending, item.last_msg, t]);
+
+  const previewText = preview.text;
+
+  const showMemberCount = shouldShowMemberCount(item, avatarUrls);
+  const memberCount = showMemberCount ? getDisplayMemberCount(item, avatarUrls) : null;
+
+  const unreadCount = useMemo(() => {
+    const parsed = Number(item.unread);
+    if (!Number.isFinite(parsed) || parsed <= 0) return 0;
+    return Math.floor(parsed);
+  }, [item.unread]);
+
+  const unreadLabel = unreadCount > 99 ? '99+' : String(unreadCount);
 
   return (
     <Pressable
@@ -52,85 +233,91 @@ const ChatRoomCard: React.FC<Props> = ({ item, onPress, onLongPress }) => {
       onLongPress={handleLongPress}
       style={({ pressed }) => [
         styles.container,
-        pressed && { opacity: 0.7 },
+        pressed && styles.containerPressed,
       ]}
     >
-      {/* 아바타 */}
       <View style={styles.avatarWrap}>
-        {item.avatar_url ? (
-          <Image
-            source={{ uri: item.avatar_url }}
-            style={styles.avatar}
-          />
+        {avatarUrls.length > 1 ? (
+          <GroupAvatar urls={avatarUrls} styles={styles} />
+        ) : avatarUrls.length === 1 ? (
+          <Image source={{ uri: avatarUrls[0] }} style={styles.avatar} />
         ) : (
-          <View style={styles.avatarPlaceholder}>
-            <Text style={styles.avatarPlaceholderText}>
+          <View style={[styles.avatar, styles.placeholder]}>
+            <Text style={styles.placeholderText}>
               {item.title?.[0] ?? '?'}
             </Text>
           </View>
         )}
       </View>
 
-      {/* 중앙 텍스트 영역 */}
       <View style={styles.centerArea}>
         <View style={styles.titleRow}>
-          <Text
-            style={styles.title}
-            numberOfLines={1}
-          >
+          <Text style={styles.title} numberOfLines={1}>
             {item.title}
           </Text>
 
-          {/* 타이틀 옆 아이콘들 */}
-          {item.pinned && (
-            <Pin
-              size={14}
-              color="#111827"
-              style={{ marginLeft: 4 }}
-            />
-          )}
-          {item.favorite && !item.pinned && (
-            <Pin
-              size={14}
-              color="#F59E0B"
-              style={{ marginLeft: 4 }}
-            />
-          )}
-          {item.muted && (
-            <BellOff
-              size={14}
-              color="#9CA3AF"
-              style={{ marginLeft: 4 }}
-            />
-          )}
-        </View>
-
-        <View style={styles.subtitleRow}>
-          <Text
-            style={styles.lastMsg}
-            numberOfLines={1}
-          >
-            {previewText}
-          </Text>
-        </View>
-      </View>
-
-      {/* 우측 시간 / 뱃지 */}
-      <View style={styles.rightArea}>
-        {!!timeLabel && (
-          <Text style={styles.timeText}>{timeLabel}</Text>
-        )}
-
-        <View style={styles.rightBottomRow}>
-          {hasUnread && (
-            <View style={styles.unreadBadge}>
-              <Text style={styles.unreadText}>
-                {item.unread && item.unread > 99 ? '99+' : item.unread}
+          {item.selfBadge ? (
+            <View style={styles.selfPill}>
+              <Text style={styles.selfPillText} numberOfLines={1}>
+                {item.selfBadge}
               </Text>
             </View>
-          )}
-          <ChevronRight size={16} color="#D1D5DB" />
+          ) : null}
+
+          {memberCount ? (
+            <Text style={styles.memberCount} numberOfLines={1}>
+              {memberCount}
+            </Text>
+          ) : null}
+
+          {item.pinned ? (
+            <Pin
+              size={13}
+              color={ui.colors.statusIcon}
+              strokeWidth={2.1}
+              style={styles.statusIcon}
+            />
+          ) : null}
+
+          {item.muted ? (
+            <BellOff
+              size={13}
+              color={ui.colors.statusIcon}
+              strokeWidth={2.1}
+              style={styles.statusIcon}
+            />
+          ) : null}
         </View>
+
+        {preview.isSecure ? (
+          <View style={styles.lastMsgRow}>
+            <Lock
+              size={14}
+              color={ui.colors.previewText}
+              strokeWidth={1.8}
+              style={styles.securePreviewIcon}
+            />
+            <Text style={styles.lastMsg} numberOfLines={1}>
+              {previewText}
+            </Text>
+          </View>
+        ) : (
+          <Text style={styles.lastMsg} numberOfLines={1}>
+            {previewText}
+          </Text>
+        )}
+      </View>
+
+      <View style={styles.rightArea}>
+        <Text style={styles.timeText}>{timeLabel}</Text>
+
+        {unreadCount > 0 ? (
+          <View style={styles.unreadBadge}>
+            <Text style={styles.unreadBadgeText} numberOfLines={1}>
+              {unreadLabel}
+            </Text>
+          </View>
+        ) : null}
       </View>
     </Pressable>
   );
@@ -138,271 +325,177 @@ const ChatRoomCard: React.FC<Props> = ({ item, onPress, onLongPress }) => {
 
 export default ChatRoomCard;
 
-/* =========================
- * Preview normalizer
- * ========================= */
+function cleanMessagePreview(text: string | null, fallbackMessage: string) {
+  if (!text) return '';
 
-function safeJsonParse(v?: string | null) {
-  if (!v) return null;
-  try {
-    return JSON.parse(v);
-  } catch {
-    return null;
-  }
-}
-
-function stripReplyPrefix(s: string): string {
-  const raw = String(s ?? '');
-  return raw.replace(/^\s*\[reply:[^\]]+\]\s*/i, '').trim();
-}
-
-function isUrlLike(v?: string | null) {
-  if (!v) return false;
-  const s = String(v).trim();
-  return (
-    s.startsWith('http://') ||
-    s.startsWith('https://') ||
-    s.startsWith('file://') ||
-    s.startsWith('content://')
-  );
-}
-
-function hasAudioHint(s: string) {
-  const t = s.toLowerCase();
-  return (
-    t.includes('audio') ||
-    t.includes('voice') ||
-    t.includes('record') ||
-    t.includes('.m4a') ||
-    t.includes('.aac') ||
-    t.includes('.mp3') ||
-    t.includes('.wav') ||
-    t.includes('.ogg') ||
-    t.includes('.webm')
-  );
-}
-
-function hasImageHint(s: string) {
-  const t = s.toLowerCase();
-  return (
-    t.includes('image') ||
-    t.includes('photo') ||
-    t.includes('picture') ||
-    t.includes('.jpg') ||
-    t.includes('.jpeg') ||
-    t.includes('.png') ||
-    t.includes('.gif') ||
-    t.includes('.webp') ||
-    t.includes('.heic')
-  );
-}
-
-function hasVideoHint(s: string) {
-  const t = s.toLowerCase();
-  return (
-    t.includes('video') ||
-    t.includes('.mp4') ||
-    t.includes('.mov') ||
-    t.includes('.mkv') ||
-    t.includes('.m4v') ||
-    t.includes('.avi')
-  );
-}
-
-/**
- * ✅ 채팅방 리스트 프리뷰 규칙
- * - URL이 그대로 노출되면 안됨
- * - file/content/http(s) 형태면: 오디오/이미지/비디오 힌트로 라벨링
- * - JSON(배열/메타) 형태면 그것도 라벨링
- */
-function normalizeLastMessagePreview(lastMsg: string | null): string {
-  if (!lastMsg) return '';
-
-  const raw = stripReplyPrefix(String(lastMsg));
-
-  // 1) JSON 형태(배열/메타)로 들어오는 경우
-  const js = safeJsonParse(raw);
-  if (Array.isArray(js)) {
-    // 이미지/파일 uri 배열로 저장되는 케이스
-    const first = js[0] != null ? String(js[0]) : '';
-    if (isUrlLike(first)) {
-      if (hasImageHint(first)) return '사진';
-      if (hasVideoHint(first)) return '동영상';
-      if (hasAudioHint(first)) return '음성 메시지';
-      return '파일';
+  if (text.startsWith('{') && text.includes('text_original')) {
+    try {
+      const parsed = JSON.parse(text);
+      return parsed.text_original || parsed.text || fallbackMessage;
+    } catch {
+      return fallbackMessage;
     }
-    // 문자열 배열이지만 URL이 아니면 그냥 축약
-    const text = js.map((x) => String(x)).join(' ');
-    return text.trim().length ? text : '';
   }
 
-  if (js && typeof js === 'object') {
-    const kind = String((js as any).kind ?? (js as any).type ?? '').toLowerCase();
-    if (kind === 'audio' || kind === 'voice') return '음성 메시지';
-    if (kind === 'image' || kind === 'photo') return '사진';
-    if (kind === 'video') return '동영상';
-
-    const uri = String(
-      (js as any).uri ??
-      (js as any).url ??
-      (js as any).path ??
-      (js as any).file_key ??
-      (js as any).fileKey ??
-      ''
-    ).trim();
-
-    if (isUrlLike(uri)) {
-      if (hasImageHint(uri)) return '사진';
-      if (hasVideoHint(uri)) return '동영상';
-      if (hasAudioHint(uri)) return '음성 메시지';
-      return '파일';
-    }
-
-    const text = String((js as any).text ?? (js as any).content ?? '').trim();
-    if (text) return text;
-  }
-
-  // 2) plain string인데 URL 노출되는 경우 → 라벨로 치환
-  if (isUrlLike(raw)) {
-    if (hasImageHint(raw)) return '사진';
-    if (hasVideoHint(raw)) return '동영상';
-    if (hasAudioHint(raw)) return '음성 메시지';
-    return '파일';
-  }
-
-  // 3) 문자열 내부에 URL이 섞여있는 경우도 방지(보수적으로 처리)
-  //    예: "file:///...something.m4a"
-  if (raw.includes('file://') || raw.includes('content://') || raw.includes('http://') || raw.includes('https://')) {
-    if (hasImageHint(raw)) return '사진';
-    if (hasVideoHint(raw)) return '동영상';
-    if (hasAudioHint(raw)) return '음성 메시지';
-    return '파일';
-  }
-
-  // 4) 일반 텍스트
-  return raw;
+  return text;
 }
 
-/* =========================
- * Time formatter
- * ========================= */
-
-function formatTime(iso: string | null | undefined): string {
+function formatTime(
+  iso: string | null | undefined,
+  labels: { am: string; pm: string; date: (month: number, day: number) => string },
+): string {
   if (!iso) return '';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '';
+
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
 
   const now = new Date();
   const isSameDay =
-    d.getFullYear() === now.getFullYear() &&
-    d.getMonth() === now.getMonth() &&
-    d.getDate() === now.getDate();
-
-  const hh = d.getHours();
-  const mm = d.getMinutes();
-  const hh12 = hh % 12 || 12;
-  const ampm = hh < 12 ? '오전' : '오후';
-  const mmStr = mm < 10 ? `0${mm}` : `${mm}`;
+    date.getFullYear() === now.getFullYear() &&
+    date.getMonth() === now.getMonth() &&
+    date.getDate() === now.getDate();
 
   if (isSameDay) {
-    return `${ampm} ${hh12}:${mmStr}`;
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours < 12 ? labels.am : labels.pm;
+    const hour12 = hours % 12 || 12;
+    return `${ampm} ${hour12}:${minutes < 10 ? `0${minutes}` : minutes}`;
   }
 
-  const month = d.getMonth() + 1;
-  const date = d.getDate();
-  return `${month}/${date}`;
+  return labels.date(date.getMonth() + 1, date.getDate());
 }
 
-/* ---- 스타일 ---- */
-
-const AVATAR_SIZE = 44;
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    paddingHorizontal: 8,
-    paddingVertical: 8,
-    borderRadius: 12,
-    backgroundColor: '#ffffff',
-  },
-  avatarWrap: {
-    width: AVATAR_SIZE,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  avatar: {
-    width: AVATAR_SIZE,
-    height: AVATAR_SIZE,
-    borderRadius: AVATAR_SIZE / 2,
-    backgroundColor: '#E5E7EB',
-  },
-  avatarPlaceholder: {
-    width: AVATAR_SIZE,
-    height: AVATAR_SIZE,
-    borderRadius: AVATAR_SIZE / 2,
-    backgroundColor: '#E5E7EB',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarPlaceholderText: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#6B7280',
-  },
-
-  centerArea: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 2,
-  },
-  title: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#111827',
-    maxWidth: '80%',
-  },
-  subtitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  lastMsg: {
-    fontSize: 13,
-    color: '#6B7280',
-  },
-
-  rightArea: {
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-    paddingLeft: 6,
-  },
-  timeText: {
-    fontSize: 11,
-    color: '#9CA3AF',
-    marginBottom: 4,
-  },
-  rightBottomRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  unreadBadge: {
-    minWidth: 18,
-    paddingHorizontal: 5,
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: '#EF4444',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 4,
-  },
-  unreadText: {
-    fontSize: 11,
-    color: '#ffffff',
-    fontWeight: '700',
-  },
-});
+function createStyles(ui: ChatRoomCardTheme) {
+  return StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      backgroundColor: ui.colors.containerBackground,
+      alignItems: 'center',
+    },
+    containerPressed: {
+      backgroundColor: ui.colors.containerPressedBackground,
+    },
+    avatarWrap: {
+      width: AVATAR_SIZE,
+      height: AVATAR_SIZE,
+      marginRight: 12,
+    },
+    avatar: {
+      width: '100%',
+      height: '100%',
+      borderRadius: ui.radius.avatar,
+      backgroundColor: ui.colors.avatarBackground,
+      borderWidth: ui.borderWidth.avatar,
+      borderColor: ui.colors.avatarBorder,
+    },
+    groupContainer: {
+      width: '100%',
+      height: '100%',
+      position: 'relative',
+    },
+    groupItem: {
+      position: 'absolute',
+      borderWidth: ui.borderWidth.groupAvatarItem,
+      borderColor: ui.colors.groupAvatarItemBorder,
+      backgroundColor: ui.colors.groupAvatarItemBackground,
+    },
+    placeholder: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    placeholderText: {
+      fontSize: 18,
+      fontWeight: ui.fontWeight.placeholder,
+      color: ui.colors.avatarFallbackText,
+    },
+    centerArea: {
+      flex: 1,
+      justifyContent: 'center',
+      marginRight: 8,
+    },
+    titleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 3,
+    },
+    title: {
+      fontSize: 16,
+      fontWeight: ui.fontWeight.title,
+      color: ui.colors.titleText,
+      flexShrink: 1,
+    },
+    selfPill: {
+      height: 16,
+      minWidth: 20,
+      paddingHorizontal: 6,
+      marginLeft: 6,
+      borderRadius: ui.radius.selfPill,
+      borderWidth: ui.borderWidth.selfPill,
+      borderColor: ui.colors.selfPillBorder,
+      backgroundColor: ui.colors.selfPillBackground,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    selfPillText: {
+      fontSize: 10,
+      lineHeight: 12,
+      fontWeight: ui.fontWeight.selfPill,
+      color: ui.colors.selfPillText,
+    },
+    memberCount: {
+      fontSize: 12,
+      color: ui.colors.memberCountText,
+      marginLeft: 6,
+      fontWeight: ui.fontWeight.memberCount,
+    },
+    statusIcon: {
+      marginLeft: 5,
+    },
+    lastMsgRow: {
+      minWidth: 0,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    securePreviewIcon: {
+      marginRight: 5,
+    },
+    lastMsg: {
+      minWidth: 0,
+      flexShrink: 1,
+      fontSize: 13,
+      color: ui.colors.previewText,
+      lineHeight: 18,
+    },
+    rightArea: {
+      alignItems: 'flex-end',
+      justifyContent: 'flex-start',
+      height: AVATAR_SIZE,
+      paddingTop: 4,
+      minWidth: 50,
+    },
+    timeText: {
+      fontSize: 11,
+      color: ui.colors.timeText,
+      fontWeight: ui.fontWeight.time,
+    },
+    unreadBadge: {
+      minWidth: 20,
+      height: 20,
+      paddingHorizontal: 6,
+      borderRadius: ui.radius.unreadBadge,
+      backgroundColor: ui.colors.unreadBadgeBackground,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 6,
+    },
+    unreadBadgeText: {
+      fontSize: 11,
+      lineHeight: 13,
+      fontWeight: ui.fontWeight.unreadBadge,
+      color: ui.colors.unreadBadgeText,
+    },
+  });
+}

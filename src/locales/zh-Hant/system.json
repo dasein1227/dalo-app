@@ -1,0 +1,27 @@
+{
+  "splash_loading": "正在準備啟動…",
+  "offline": "目前離線。請檢查網路。",
+  "not_found": "找不到頁面。",
+  "notFound": {
+    "header": "頁面不存在",
+    "title": "找不到頁面",
+    "desc": "找不到要求的畫面。請確認路徑或資訊。",
+    "retry": "重試",
+    "home": "前往首頁",
+    "homeShort": "首頁",
+    "previous": "返回上一頁",
+    "quick": {
+      "friends": "好友",
+      "settings": "設定"
+    }
+  },
+  "offlineScreen": {
+    "header": "離線",
+    "title": "目前離線",
+    "desc": "請檢查網路連線。\nWi‑Fi 或行動數據可能已關閉。",
+    "retry": "重試",
+    "check": "檢查連線",
+    "openSettings": "開啟設定",
+    "home": "回首頁"
+  }
+}

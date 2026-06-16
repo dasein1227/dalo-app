@@ -1,0 +1,14 @@
+{
+  "recent": "Recent",
+  "select_photo": "Select photo",
+  "max_select": "Up to {{count}}",
+  "processing_error": "Couldn’t process.",
+  "select_to_edit": "Select a photo to edit.",
+  "video_edit_warning": "Videos can’t be edited.",
+  "bundle_photos": "Send as bundle",
+  "quality_settings": "Quality",
+  "quality_original": "Original",
+  "quality_standard": "Standard",
+  "quality_low": "Low",
+  "quality_high": "High"
+}

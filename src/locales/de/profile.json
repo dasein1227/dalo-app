@@ -1,0 +1,133 @@
+{
+  "view_title": "Profil",
+  "edit_title": "Profil bearbeiten",
+  "nickname": "Nickname",
+  "handle": "Handle",
+  "status_message": "Status",
+  "public_default": "Profil standardmäßig öffentlich",
+  "save_done": "Gespeichert.",
+  "no_name": "Kein Name",
+  "no_id": "ID nicht festgelegt",
+  "follow": "Folgen",
+  "following": "Folge ich",
+  "stat_posts": "Beiträge",
+  "stat_followers": "Follower",
+  "stat_following": "Folgt",
+  "empty_posts": "Keine Beiträge",
+  "empty_posts_tab": "Keine Beiträge",
+  "swipe": {
+    "new_post": "＋ Neuer Beitrag",
+    "chat_1on1": "1:1-Chat",
+    "chat_me": "Chat mit mir",
+    "call": "Anruf",
+    "more": "Mehr →"
+  },
+  "alert": {
+    "setting_soon": "In Vorbereitung.",
+    "call_friend_only_title": "Anruf nicht möglich",
+    "call_friend_only_desc": "Nur für Freunde verfügbar.",
+    "call_feature_soon": "In Vorbereitung.",
+    "unfollow_title": "Nicht mehr folgen",
+    "unfollow_desc": "Nicht mehr folgen?",
+    "keep": "Behalten",
+    "follow_fail": "Folgen fehlgeschlagen.",
+    "unfollow_fail": "Abbrechen fehlgeschlagen.",
+    "self_chat_fail": "Chat konnte nicht gestartet werden."
+  },
+  "edit": {
+    "error_permission": "Nur dein eigenes Profil kann bearbeitet werden.",
+    "revert_title": "Änderungen verwerfen",
+    "revert_msg": "Änderungen verwerfen?",
+    "revert_action": "Verwerfen",
+    "revert": "Änderungen verwerfen",
+    "error_add_tab": "Tab konnte nicht hinzugefügt werden.",
+    "confirm_delete_tab": "Tab „{{name}}“ löschen?",
+    "error_save": "Speichern fehlgeschlagen.",
+    "change_cover": "Hintergrund ändern",
+    "status_placeholder": "Status eingeben",
+    "section_theme": "Stil",
+    "theme_color": "Designfarbe",
+    "font_color": "Textfarbe",
+    "statusbar": "Statusleiste",
+    "text_white": "Weißer Text",
+    "text_black": "Schwarzer Text",
+    "section_tabs": "Tabs verwalten",
+    "tab_all": "Alle",
+    "tab_input_placeholder": "+ Neuer Tab",
+    "hue": "Farbton (Hue)",
+    "brightness": "Helligkeit (Brightness)",
+    "apply": "Anwenden",
+    "setting_tab": "„{{name}}“ einstellen",
+    "move_up": "Nach oben",
+    "move_down": "Nach unten",
+    "visibility": "Sichtbarkeit",
+    "current_vis": "Aktuell: {{val}}",
+    "vis_public": "Alle",
+    "vis_private": "Nur ich",
+    "vis_custom": "Auswahl",
+    "vis_friends": "Freunde",
+    "vis_followers": "Follower",
+    "picker_avatar": "Profilfoto wählen",
+    "picker_cover": "Hintergrundfoto wählen"
+  },
+  "menu": {
+    "settings": "Einstellungen",
+    "message": "Nachricht",
+    "unfollow": "Nicht mehr folgen",
+    "hide": "Ausblenden",
+    "hide_confirm": "Diesen Nutzer ausblenden?",
+    "block": "Blockieren",
+    "block_confirm": "Diesen Nutzer blockieren?",
+    "report": "Melden"
+  },
+  "followList": {
+    "title": "Folgen",
+    "searchPlaceholder": "Nickname oder ID suchen",
+    "searchHint": "Suchbegriff eingeben",
+    "searchEmpty": "Keine Ergebnisse",
+    "retry": "Erneut laden",
+    "unfollowTitle": "Nicht mehr folgen",
+    "unfollowMessage": "{{name}} nicht mehr folgen?",
+    "unfollowAction": "Entfolgen",
+    "tab": {
+      "following": "Folge ich",
+      "followers": "Follower",
+      "requests": "Anfragen"
+    },
+    "list": {
+      "following": "Gefolgte Konten",
+      "followers": "Followerliste",
+      "requests": "Folgeanfragen"
+    },
+    "section": {
+      "outgoing": "Gesendet",
+      "incoming": "Erhalten"
+    },
+    "badge": {
+      "follower": "Follower",
+      "pending": "Ausstehend"
+    },
+    "action": {
+      "accept": "Annehmen",
+      "decline": "Ablehnen"
+    },
+    "empty": {
+      "followingTitle": "Du folgst niemandem",
+      "followersTitle": "Keine Follower",
+      "requestsTitle": "Keine Anfragen",
+      "followingDesc": "Folge Menschen, die dich interessieren.",
+      "followersDesc": "Teile dein Profil.",
+      "requestsDesc": "Sende oder akzeptiere Anfragen."
+    },
+    "error": {
+      "loadFollowing": "Gefolgte Konten konnten nicht geladen werden.",
+      "loadFollowers": "Follower konnten nicht geladen werden.",
+      "loadRequests": "Anfragen konnten nicht geladen werden.",
+      "loadList": "Liste konnte nicht geladen werden.",
+      "unfollow": "Entfolgen fehlgeschlagen.",
+      "cancelRequest": "Anfrage konnte nicht abgebrochen werden.",
+      "acceptRequest": "Anfrage konnte nicht angenommen werden.",
+      "rejectRequest": "Anfrage konnte nicht abgelehnt werden."
+    }
+  }
+}

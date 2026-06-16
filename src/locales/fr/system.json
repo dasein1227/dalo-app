@@ -1,0 +1,27 @@
+{
+  "splash_loading": "Préparation…",
+  "offline": "Vous êtes hors ligne. Vérifiez votre connexion.",
+  "not_found": "Page introuvable.",
+  "notFound": {
+    "header": "Page introuvable",
+    "title": "Page introuvable",
+    "desc": "L’écran demandé est introuvable. Vérifiez le chemin ou les informations.",
+    "retry": "Réessayer",
+    "home": "Aller à l’accueil",
+    "homeShort": "Accueil",
+    "previous": "Retour",
+    "quick": {
+      "friends": "Amis",
+      "settings": "Réglages"
+    }
+  },
+  "offlineScreen": {
+    "header": "Hors ligne",
+    "title": "Vous êtes hors ligne",
+    "desc": "Vérifiez votre connexion réseau.\nLe Wi‑Fi ou les données mobiles peuvent être désactivés.",
+    "retry": "Réessayer",
+    "check": "Vérifier",
+    "openSettings": "Ouvrir les réglages",
+    "home": "Accueil"
+  }
+}

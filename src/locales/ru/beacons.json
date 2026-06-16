@@ -1,0 +1,421 @@
+{
+  "create_title": "Создать бикон",
+  "edit_title": "Изменить бикон",
+  "detail_title": "Информация о биконе",
+  "members_title": "Управление биконом",
+  "my_rooms_title": "Мои биконы",
+  "join": "Присоединиться",
+  "enter": "Войти",
+  "owner_tools": "Инструменты владельца",
+  "visibility": "Видимость",
+  "status_message": "Статус",
+  "public_profile": "Открытый профиль",
+  "current_members": "Участники сейчас",
+  "age_range": "Возраст",
+  "memo": "Заметка",
+  "time_left": "Осталось",
+  "common": {
+    "beacon": "Бикон",
+    "noName": "Без имени",
+    "anonymous": "Анонимный пользователь",
+    "loading": "Загрузка…",
+    "done": "Готово",
+    "confirm": "Подтвердить",
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "submit": "Отправить",
+    "approve": "Одобрить",
+    "reject": "Отклонить",
+    "block": "Заблокировать",
+    "kick": "Удалить",
+    "none": "Нет",
+    "unlimited": "Без лимита"
+  },
+  "error": {
+    "invalidId": "Неверный ID.",
+    "invalidAccess": "Неверный доступ.",
+    "loginRequired": "Требуется вход.",
+    "locationPermission": "Нужно разрешение на геолокацию.",
+    "locationUnavailable": "Не удалось определить текущее место.",
+    "locationLoadFail": "Не удалось загрузить местоположение.",
+    "notFound": "Бикон не найден.",
+    "detailNotFound": "Не удалось найти данные бикона.",
+    "detailLoadFail": "Не удалось загрузить данные бикона.",
+    "operationFail": "Не удалось выполнить действие."
+  },
+  "time": {
+    "am": "AM",
+    "pm": "PM",
+    "monthDay": "{{month}}/{{day}}",
+    "minute": "{{count}} мин",
+    "hour": "{{count}} ч",
+    "hourMinute": "{{hour}} ч {{minute}} мин",
+    "remainEnded": "Завершено",
+    "remainMinute": "Осталось {{count}} мин",
+    "remainHour": "Осталось {{count}} ч",
+    "remainHourMinute": "Осталось {{hour}} ч {{minute}} мин",
+    "justNow": "Только что",
+    "agoMinute": "{{count}} мин назад",
+    "agoHour": "{{count}} ч назад",
+    "agoDay": "{{count}} дн. назад"
+  },
+  "unit": {
+    "people": "чел.",
+    "age": "лет",
+    "count": "шт.",
+    "times": "раз",
+    "peopleCount": "{{count}} чел.",
+    "ageCount": "{{count}} лет",
+    "retryLeft": "Осталось {{count}} попыток"
+  },
+  "tabs": {
+    "dm": "Личные",
+    "group": "Группы",
+    "open": "Открытые",
+    "beacon": "Биконы"
+  },
+  "visibilityLabel": {
+    "public": "Для всех",
+    "friends": "Для друзей",
+    "labels": "Для групп",
+    "custom": "Выборочно",
+    "publicCompact": "Для всех",
+    "friendsCompact": "Друзья",
+    "labelsCompact": "Группы",
+    "customCompact": "Выборочно",
+    "publicExcludeFriends": "Без знакомых"
+  },
+  "visibilityDesc": {
+    "public": "Будет виден широкой аудитории. По умолчанию вход по одобрению.",
+    "friends": "Виден только друзьям. По умолчанию свободный вход.",
+    "labels": "Виден только выбранным группам. По умолчанию свободный вход.",
+    "custom": "Выберите друзей и группы вручную. По умолчанию свободный вход."
+  },
+  "gender": {
+    "any": "Любой пол",
+    "male": "Мужчины",
+    "female": "Женщины"
+  },
+  "myRooms": {
+    "headerTitle": "Чаты",
+    "status": {
+      "pending": "Ожидает одобрения",
+      "joined": "{{visibility}} · вы участвуете",
+      "owner": "{{visibility}} · осталось {{minutes}} мин",
+      "host": "Владелец",
+      "waiting": "Ожидание",
+      "member": "Участник"
+    },
+    "title": {
+      "mine": "Мои биконы",
+      "fallback": "Бикон"
+    },
+    "empty": {
+      "title": "Нет чатов.",
+      "beaconDesc": "Здесь появятся ваши биконы и биконы, где вы участвуете."
+    },
+    "error": {
+      "loadFail": "Не удалось загрузить список."
+    },
+    "alert": {
+      "routeCreate": "Проверьте экран создания бикона.",
+      "routeChatCreate": "Новый чат скоро будет доступен.",
+      "routeBeaconSearch": "Проверьте экран поиска биконов.",
+      "routeSearch": "Проверьте экран поиска."
+    }
+  },
+  "form": {
+    "titlePlaceholder": "Цель бикона",
+    "descPlaceholder": "Описание или правила",
+    "durationMin": "30 мин",
+    "durationMax": "4 часа",
+    "minuteSuffix": "мин",
+    "locationSelectTitle": "Место для друзей",
+    "locationSelectHelper": "В пределах 200 м от текущего места",
+    "locationPickFailTitle": "Не удалось выбрать место",
+    "selectedAddress": "Выбранный адрес",
+    "locationEmpty": "Место не выбрано. Откройте карту.",
+    "locationShortPlaceholder": "Примерное место",
+    "locationDetailPlaceholder": "Подробное место",
+    "conditionsTitle": "Условия участия",
+    "genderTitle": "Пол",
+    "quotaTitle": "Лимит участников",
+    "quotaDesc": "0 означает без лимита. Нажмите число, чтобы ввести вручную.",
+    "ageLimitTitle": "Возрастной лимит",
+    "ageLimitDesc": "По умолчанию ±10 лет от вашего возраста.",
+    "ageNoLimit": "Без лимита",
+    "ageMin": "Мин. возраст",
+    "ageMax": "Макс. возраст",
+    "maleQuota": "Мужчины",
+    "femaleQuota": "Женщины",
+    "mixQuota": "Любой пол",
+    "selectGroups": "Группы для показа",
+    "selectFriends": "Друзья для показа",
+    "friendSearch": "Поиск друзей",
+    "emptyGroups": "Нет групп.",
+    "emptyFriends": "Нет друзей.",
+    "protectionOff": "Без защиты",
+    "protectionOffAlt": "Без защиты",
+    "createButton": "Создать бикон",
+    "saveButton": "Сохранить",
+    "durationTitle": "Длительность",
+    "durationDesc": "Бикон завершится автоматически после выбранного времени.",
+    "locationProtectionTitle": "Защита места",
+    "locationProtectionDesc": "Место будет показано случайно в заданном радиусе.",
+    "refreshLocation": "Обновить текущее место",
+    "meetingTitle": "Для чего этот beacon?",
+    "requireApprovalTitle": "Требуется одобрение",
+    "requireApprovalDesc": "Присоединиться смогут только одобренные хостом пользователи.",
+    "hideFromFriendsTitle": "Скрыть от моих друзей",
+    "hideFromFriendsDesc": "Beacon останется публичным, но не будет виден вашим контактам.",
+    "selectedGroupsCount": "Выбрано групп: {{count}}",
+    "selectedFriendsCount": "Выбрано друзей: {{count}}",
+    "friendLocationDesc": "Подсказка о месте видна только выбранной аудитории. Можно выбрать в радиусе 200 м от текущего места.",
+    "locationPickTitle": "Выбрать на карте",
+    "locationPickHint": "Выбранный адрес появится ниже.",
+    "friendLocationEmpty": "Место не выбрано. Откройте карту кнопкой справа.",
+    "moveToCurrentLocation": "Использовать текущее место"
+  },
+  "create": {
+    "validation": {
+      "titleRequired": "Введите название встречи.",
+      "titleMax": "Название до 80 символов.",
+      "duration": "Длительность должна быть 10–240 мин.",
+      "ageRange": "Проверьте возрастной диапазон.",
+      "locationRequired": "Проверьте текущее место.",
+      "labelsRequired": "Выберите группу.",
+      "customRequired": "Выберите друзей или группы."
+    },
+    "alert": {
+      "labelLoadFailTitle": "Ошибка загрузки групп",
+      "labelLoadFail": "Не удалось загрузить группы.",
+      "friendLoadFailTitle": "Ошибка загрузки друзей",
+      "friendLoadFail": "Не удалось загрузить друзей.",
+      "createFailTitle": "Не удалось создать бикон",
+      "createFail": "Произошла ошибка."
+    }
+  },
+  "edit": {
+    "validation": {
+      "titleRequired": "Введите название комнаты.",
+      "titleMax": "Название до 80 символов.",
+      "duration": "Длительность должна быть 10–240 мин.",
+      "ageRange": "Проверьте возрастной диапазон.",
+      "labelsRequired": "Выберите группу.",
+      "customRequired": "Выберите друзей или группы."
+    },
+    "toast": {
+      "moved": "Перешли к текущему месту.",
+      "moveFail": "Не удалось перейти к месту.",
+      "saved": "Сохранено.",
+      "saveFail": "Произошла ошибка."
+    }
+  },
+  "detail": {
+    "action": {
+      "ended": "Набор завершён",
+      "enter_chat": "Войти в чат",
+      "cancel_request": "Отменить запрос",
+      "join_direct": "Присоединиться",
+      "request_retry": "Запросить снова",
+      "request_join": "Запросить участие",
+      "forbidden": "Вход ограничен",
+      "full": "Мест нет",
+      "closed": "Недоступно"
+    },
+    "badge": {
+      "pending": "Ожидает одобрения",
+      "rejected": "Отклонено",
+      "approval": "По одобрению",
+      "free": "Свободный вход"
+    },
+    "empty": {
+      "deleted": "Этого бикона нет.",
+      "back": "Назад"
+    },
+    "fallbackTitle": "Бикон без названия",
+    "info": {
+      "status": "Статус",
+      "capacity": "Лимит",
+      "audience": "Аудитория",
+      "retry": "Повторные заявки"
+    },
+    "location": {
+      "title": "Место встречи",
+      "visible": "Подробное место будет доступно до участия.",
+      "hidden": "Точный адрес будет доступен в чате после участия.",
+      "openMap": "Открыть на карте ›"
+    },
+    "host": {
+      "settings": "Настройки бикона",
+      "settingsDesc": "Название, описание и видимость",
+      "members": "Участники",
+      "membersDesc": "Просмотр и удаление участников",
+      "close": "Завершить бикон",
+      "closeDesc": "Закрыть набор и чат"
+    },
+    "requests": {
+      "title": "Ожидают участия",
+      "empty": "Нет ожидающих запросов.",
+      "messageTitle": "Сообщение к запросу",
+      "messageDesc": "Сообщение владельцу. Необязательно.",
+      "placeholder": "Напр.: я рядом.",
+      "send": "Отправить запрос",
+      "sending": "Отправка…",
+      "code": "Код {{code}}",
+      "temperature": "Температура {{temp}}°",
+      "rejectionCount": "Ранее отклонено {{count}} раз"
+    },
+    "alert": {
+      "editRoute": "Проверьте экран редактирования.",
+      "membersRoute": "Проверьте экран управления участниками.",
+      "loginTitle": "Требуется вход",
+      "loginDesc": "Войдите, чтобы присоединиться.",
+      "chatNotFound": "Не удалось найти данные чата.",
+      "cancelTitle": "Отменить запрос",
+      "cancelDesc": "Отменить запрос на участие?",
+      "keep": "Оставить",
+      "cancelFailTitle": "Ошибка отмены",
+      "cancelFail": "Не удалось отменить запрос.",
+      "fullTitle": "Мест нет",
+      "fullDesc": "Все места заняты.",
+      "forbiddenTitle": "Участие ограничено",
+      "forbiddenDesc": "Вы не можете присоединиться к этому бикону.",
+      "endedTitle": "Набор завершён",
+      "endedDesc": "Этот бикон завершён.",
+      "unavailableTitle": "Уведомление",
+      "unavailableDesc": "Сейчас участие недоступно.",
+      "requestSentTitle": "Запрос отправлен",
+      "requestSentDesc": "Ожидайте одобрения владельца.",
+      "requestFailTitle": "Ошибка отправки",
+      "requestFail": "Не удалось отправить запрос.",
+      "approveFailTitle": "Ошибка одобрения",
+      "approveFail": "Не удалось одобрить участника.",
+      "rejectFailTitle": "Ошибка отклонения",
+      "rejectFail": "Не удалось отклонить запрос.",
+      "closeTitle": "Завершить бикон",
+      "closeDesc": "Завершить набор и закрыть чат?",
+      "closeAction": "Завершить",
+      "closeDoneTitle": "Завершено",
+      "closeDoneDesc": "Бикон завершён.",
+      "closeFailTitle": "Ошибка завершения",
+      "closeFail": "Не удалось завершить бикон."
+    }
+  },
+  "members": {
+    "role": {
+      "host": "Владелец",
+      "mod": "Модератор",
+      "member": "Участник"
+    },
+    "tab": {
+      "members": "Участники",
+      "requests": "Заявки {{count}}"
+    },
+    "meta": {
+      "joined": "Участие {{time}}",
+      "request": "Запрос {{time}} · прошлых отказов {{count}}"
+    },
+    "hero": {
+      "titleFallback": "Бикон",
+      "approval": "По одобрению",
+      "free": "Свободный вход"
+    },
+    "empty": {
+      "members": "Пока нет участников.",
+      "requests": "Нет ожидающих заявок."
+    },
+    "alert": {
+      "loadFailTitle": "Ошибка загрузки",
+      "loadFail": "Не удалось загрузить данные.",
+      "kickTitle": "Удалить участника",
+      "kickDesc": "Удалить {{name}}?",
+      "kickAction": "Удалить",
+      "alreadyHandled": "Уже обработано или удаление недоступно.",
+      "kickFailTitle": "Ошибка",
+      "kickFail": "Не удалось удалить участника.",
+      "blockTitle": "Заблокировать участника",
+      "blockDesc": "Заблокировать и исключить {{name}}?\nЗаблокированный пользователь больше не будет виден.",
+      "blockFail": "Не удалось заблокировать участника.",
+      "approveTitle": "Одобрить участие",
+      "approveDesc": "Одобрить участие {{name}}?",
+      "approveFailTitle": "Ошибка одобрения",
+      "approveFail": "Не удалось одобрить.",
+      "rejectTitle": "Отклонить участие",
+      "rejectDesc": "Отклонить запрос {{name}}?",
+      "rejectFailTitle": "Ошибка отклонения",
+      "rejectFail": "Не удалось отклонить."
+    }
+  },
+  "main": {
+    "loadingMap": "Загрузка карты…",
+    "listButton": "Список",
+    "emptyRadius": "Нет биконов для показа.",
+    "card": {
+      "noTitle": "Без названия",
+      "meta": "Расстояние {{distance}} м · радиус {{radius}} м · {{entry}}",
+      "endsAfterMinute": "Закончится через {{count}} мин",
+      "endingSoon": "Скоро завершится",
+      "always": "Всегда"
+    },
+    "toast": {
+      "movedHere": "Место обновлено."
+    },
+    "error": {
+      "loadFail": "Не удалось загрузить биконы рядом.",
+      "locationUnavailable": "Не удалось определить место.",
+      "noActiveBeacon": "Нет активных биконов.",
+      "moveFail": "Не удалось обновить место."
+    },
+    "accessibility": {
+      "detail": "Подробнее о биконе",
+      "create": "Создать новый бикон"
+    }
+  },
+  "search": {
+    "title": "Поиск",
+    "placeholder": "Что хотите найти",
+    "distance": "Расстояние",
+    "target": "Аудитория",
+    "age": "Возраст",
+    "quick": {
+      "friendsOnly": "Только друзья",
+      "public": "Публичные",
+      "tenMin": "10 мин",
+      "twenties": "20-е"
+    },
+    "visibility": {
+      "title": "Видимость",
+      "any": "Все",
+      "public": "Для всех",
+      "publicFiltered": "Публичные · без друзей",
+      "friends": "Для друзей",
+      "labels": "Группы",
+      "custom": "Выборочно"
+    },
+    "gender": {
+      "title": "Пол",
+      "any": "Все",
+      "male": "Мужчины",
+      "female": "Женщины",
+      "other": "Другое"
+    },
+    "distancePreset": {
+      "fiveMin": "5 мин",
+      "tenMin": "10 мин",
+      "twentyMin": "20 мин",
+      "near": "Рядом"
+    },
+    "agePreset": {
+      "all": "Все",
+      "twenties": "20-е",
+      "thirties": "30-е",
+      "forties": "40-е",
+      "fiftyPlus": "50+"
+    },
+    "action": {
+      "reset": "Сброс",
+      "apply": "Применить"
+    }
+  }
+}

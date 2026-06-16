@@ -1,0 +1,14 @@
+{
+  "recent": "最近の項目",
+  "select_photo": "写真を選択",
+  "max_select": "最大{{count}}枚",
+  "processing_error": "処理できませんでした。",
+  "select_to_edit": "編集する写真を選択してください。",
+  "video_edit_warning": "動画は編集できません。",
+  "bundle_photos": "まとめて送信",
+  "quality_settings": "画質",
+  "quality_original": "オリジナル",
+  "quality_standard": "標準",
+  "quality_low": "低容量",
+  "quality_high": "高画質"
+}

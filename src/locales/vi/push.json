@@ -1,0 +1,48 @@
+{
+  "channel": {
+    "social_name": "Xã hội",
+    "social_description": "Thông báo bạn bè và xã hội",
+    "chat_name": "Chat",
+    "chat_description": "Tin nhắn chat và thông báo cuộc trò chuyện"
+  },
+  "summary": {
+    "social_title": "CO·ONN",
+    "social_body": "Thông báo xã hội mới",
+    "chat_title": "CO·ONN",
+    "chat_body": "Thông báo chat mới"
+  },
+  "actions": {
+    "read": "Đã đọc",
+    "reply": "Trả lời"
+  },
+  "common": {
+    "someone": "Ai đó",
+    "new_notification": "Thông báo mới",
+    "new_notification_body": "Bạn có thông báo mới.",
+    "new_message": "Tin nhắn mới"
+  },
+  "friend": {
+    "request_received_title": "Lời mời kết bạn",
+    "request_received_subtitle": "{{actor}}",
+    "request_received_body": "{{actor}} đã gửi lời mời kết bạn"
+  },
+  "chat": {
+    "dm_title": "{{sender}}",
+    "dm_subtitle": "",
+    "dm_body_text": "{{message}}",
+    "dm_body_image": "Đã gửi ảnh",
+    "dm_body_video": "Đã gửi video",
+    "dm_body_audio": "Đã gửi tin nhắn thoại",
+    "dm_body_file": "Đã gửi tệp",
+    "dm_body_map": "Đã chia sẻ vị trí",
+    "group_title": "{{room}}",
+    "group_subtitle": "{{sender}}",
+    "group_body_text": "{{sender}}: {{message}}",
+    "group_body_image": "{{sender}} đã gửi ảnh",
+    "group_body_video": "{{sender}} đã gửi video",
+    "group_body_audio": "{{sender}} đã gửi tin nhắn thoại",
+    "group_body_file": "{{sender}} đã gửi tệp",
+    "group_body_map": "{{sender}} đã chia sẻ vị trí",
+    "reply_placeholder": "Nhập trả lời…"
+  }
+}

@@ -29,7 +29,6 @@ export async function ensureChatRoom(
     .limit(1);
 
   if (existingErr) {
-    console.log('ensureChatRoom existingErr', existingErr);
     throw existingErr;
   }
 
@@ -51,7 +50,6 @@ export async function ensureChatRoom(
       .single();
 
     if (insertErr || !inserted) {
-      console.log('ensureChatRoom insertErr', insertErr);
       throw insertErr ?? new Error('채팅방 생성 실패');
     }
 
@@ -76,7 +74,6 @@ export async function ensureChatRoom(
     );
 
   if (memberErr) {
-    console.log('ensureChatRoom memberErr', memberErr);
     // 멤버십 실패해도 일단 room 자체는 리턴
   }
 

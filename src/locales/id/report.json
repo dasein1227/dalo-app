@@ -1,0 +1,28 @@
+{
+  "common": {
+    "title": "Laporkan"
+  },
+  "reasonList": {
+    "title": "Pilih Alasan Laporan",
+    "guide": "Panduan"
+  },
+  "reasonDetail": {
+    "submit": "Kirim",
+    "more": "Lihat Detail",
+    "empty": "Informasi laporan tidak dapat dimuat."
+  },
+  "guide": {
+    "title": "Panduan",
+    "empty": "Panduan tidak dapat dimuat."
+  },
+  "done": {
+    "title": "Laporan diterima.",
+    "body": "Kami akan meninjau dan mengambil tindakan yang diperlukan."
+  },
+  "alert": {
+    "loadFail": "Gagal Memuat",
+    "info": "Info",
+    "linkOpenFail": "Tautan tidak dapat dibuka.",
+    "submitFail": "Gagal Mengirim"
+  }
+}

@@ -1,535 +1,797 @@
 // src/screens/beacons/Detail.tsx
-import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
   Pressable,
-  StyleSheet,
   ActivityIndicator,
   Alert,
   ScrollView,
   Modal,
   TextInput,
+  StatusBar,
+  RefreshControl,
   Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeScreen } from '../../components/layout';
+import { useAppTheme } from '../../theme/useAppTheme';
+import { createBeaconDetailTheme, createBeaconDetailStyles, type BeaconDetailTheme } from './Detail.theme';
+import { useRoute, useNavigation, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { supabase } from '@/lib/supabase';
 import type { RootStackParamList } from '@/navigation/types';
+import { useTranslation } from 'react-i18next';
 
-type Visibility = 'public' | 'friends' | 'group' | 'invite';
-type JoinStatus = 'pending' | 'approved' | 'rejected';
+type DetailAction =
+  | 'ended'
+  | 'enter_chat'
+  | 'cancel_request'
+  | 'join_direct'
+  | 'request_retry'
+  | 'request_join'
+  | 'forbidden'
+  | 'full'
+  | 'closed';
 
-type BeaconRow = {
-  id: number;
+type BeaconDetailRow = {
+  beacon_id: number;
   title: string | null;
   description: string | null;
-  visibility: Visibility | string;
-  expires_at: string | null;
-  active: boolean;
-  host_id: string;
+  visibility: 'public' | 'friends' | 'labels' | 'custom' | string;
+  public_exclude_friends: boolean;
   require_approval: boolean;
+  active: boolean;
+  expires_at: string | null;
+  host_id: string;
+  max_members: number | null;
+  current_member_count: number;
+  is_full: boolean;
+  room_id: number | null;
+  is_host: boolean;
+  is_member: boolean;
+  request_status: 'pending' | 'approved' | 'rejected' | null;
+  rejection_count: number;
+  retry_remaining: number;
+  can_join_direct: boolean;
+  can_request_join: boolean;
+  can_cancel_request: boolean;
+  show_location: boolean;
+  map_lat: number | null;
+  map_lng: number | null;
+  location_policy: 'chat_only' | 'detail_visible_for_targets' | string;
+  primary_action: DetailAction;
+};
+
+type BeaconDetailInitialSnapshot = {
+  beacon_id?: number | string | null;
+  id?: number | string | null;
+  title?: string | null;
+  description?: string | null;
+  visibility?: string | null;
+  public_exclude_friends?: boolean | null;
+  require_approval?: boolean | null;
+  active?: boolean | null;
+  expires_at?: string | null;
+  host_id?: string | null;
   max_members?: number | null;
-  created_at?: string | null;
-  updated_at?: string | null;
+  current_member_count?: number | null;
+  map_visible?: boolean | null;
+  map_lat?: number | null;
+  map_lng?: number | null;
+  display_lat?: number | null;
+  display_lng?: number | null;
+  show_location?: boolean | null;
+  location_policy?: string | null;
 };
 
-const minutesLeft = (iso?: string | null) =>
-  iso ? Math.max(0, Math.ceil((new Date(iso).getTime() - Date.now()) / 60000)) : 0;
-
-// ✅ 라벨 보강 (labels/custom)
-const VIS_LABEL: Record<string, string> = {
-  public: '전체공개',
-  friends: '친구만',
-  group: '그룹공개',
-  invite: '초대전용',
-  labels: '그룹공개',
-  custom: '커스텀 공개',
+type JoinRequestRow = {
+  request_id: number;
+  beacon_id: number;
+  requester_id: string;
+  message: string | null;
+  status: string;
+  created_at: string;
+  requester_profile: {
+    user_id?: string;
+    nickname?: string | null;
+    avatar_url?: string | null;
+    status_message?: string | null;
+    birthdate?: string | null;
+    temp?: number | null;
+    friend_code?: string | null;
+  } | null;
+  rejection_count: number;
 };
+
+const VIS_LABEL_KEY: Record<string, string> = {
+  public: 'beacons:visibilityLabel.public',
+  friends: 'beacons:visibilityLabel.friends',
+  labels: 'beacons:visibilityLabel.labels',
+  custom: 'beacons:visibilityLabel.custom',
+};
+
+const ACTION_LABEL_KEY: Record<DetailAction, string> = {
+  ended: 'beacons:detail.action.ended',
+  enter_chat: 'beacons:detail.action.enter_chat',
+  cancel_request: 'beacons:detail.action.cancel_request',
+  join_direct: 'beacons:detail.action.join_direct',
+  request_retry: 'beacons:detail.action.request_retry',
+  request_join: 'beacons:detail.action.request_join',
+  forbidden: 'beacons:detail.action.forbidden',
+  full: 'beacons:detail.action.full',
+  closed: 'beacons:detail.action.closed',
+};
+
+function minutesLeft(iso?: string | null) {
+  if (!iso) return 0;
+  return Math.max(0, Math.ceil((new Date(iso).getTime() - Date.now()) / 60000));
+}
+
+function formatRemain(iso: string | null | undefined, t: (key: string, options?: Record<string, unknown>) => string) {
+  const mins = minutesLeft(iso);
+  if (mins <= 0) return t('beacons:time.remainEnded');
+  if (mins < 60) return t('beacons:time.remainMinute', { count: mins });
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return m > 0 ? t('beacons:time.remainHourMinute', { hour: h, minute: m }) : t('beacons:time.remainHour', { count: h });
+}
+
+function getRootNavigation(navigation: any) {
+  let nav = navigation;
+  while (nav?.getParent && nav.getParent()) nav = nav.getParent();
+  return nav ?? navigation;
+}
+
+async function getCurrentUserId() {
+  const { data, error } = await supabase.auth.getUser();
+  if (error) throw error;
+  return data.user?.id ?? null;
+}
+
+function pickSingleRow<T>(data: T[] | T | null | undefined): T | null {
+  if (!data) return null;
+  if (Array.isArray(data)) return data[0] ?? null;
+  return data;
+}
+
+function createInitialDetailFromSnapshot(
+  snapshot: BeaconDetailInitialSnapshot | null | undefined,
+  fallbackBeaconId: number,
+): BeaconDetailRow | null {
+  if (!snapshot) return null;
+
+  const rawId = snapshot.beacon_id ?? snapshot.id ?? fallbackBeaconId;
+  const beacon_id = Number(rawId);
+  if (!Number.isFinite(beacon_id)) return null;
+
+  const mapLat = snapshot.map_lat ?? snapshot.display_lat ?? null;
+  const mapLng = snapshot.map_lng ?? snapshot.display_lng ?? null;
+
+  return {
+    beacon_id,
+    title: snapshot.title ?? null,
+    description: snapshot.description ?? null,
+    visibility: snapshot.visibility ?? 'public',
+    public_exclude_friends: !!snapshot.public_exclude_friends,
+    require_approval: !!snapshot.require_approval,
+    active: snapshot.active ?? true,
+    expires_at: snapshot.expires_at ?? null,
+    host_id: snapshot.host_id ?? '',
+    max_members: snapshot.max_members ?? null,
+    current_member_count: Number(snapshot.current_member_count ?? 0),
+    is_full: false,
+    room_id: null,
+    is_host: false,
+    is_member: false,
+    request_status: null,
+    rejection_count: 0,
+    retry_remaining: 0,
+    can_join_direct: false,
+    can_request_join: false,
+    can_cancel_request: false,
+    show_location: !!snapshot.show_location,
+    map_lat: typeof mapLat === 'number' && Number.isFinite(mapLat) ? mapLat : null,
+    map_lng: typeof mapLng === 'number' && Number.isFinite(mapLng) ? mapLng : null,
+    location_policy: snapshot.location_policy ?? 'chat_only',
+    primary_action: 'closed',
+  };
+}
 
 export default function BeaconDetailScreen() {
   const route = useRoute<RouteProp<RootStackParamList, 'BeaconDetail'>>();
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
+  const rootNav = getRootNavigation(navigation);
+  const routeParams = route.params as any;
+  const beaconId = Number(routeParams?.beaconId);
+  const initialDetail = useMemo(
+    () => createInitialDetailFromSnapshot(routeParams?.initialBeacon as BeaconDetailInitialSnapshot | null | undefined, beaconId),
+    [beaconId, routeParams?.initialBeacon],
+  );
+  const insets = useSafeAreaInsets();
+  const appTheme = useAppTheme();
+  const C = useMemo(() => createBeaconDetailTheme(appTheme), [appTheme]);
+  const styles = useMemo(() => createBeaconDetailStyles(C), [C]);
+  const getVisibilityLabel = useCallback((value?: string | null) => {
+    const raw = String(value ?? '');
+    const key = VIS_LABEL_KEY[raw];
+    return key ? t(key) : raw;
+  }, [t]);
 
-  const beaconId = route.params?.beaconId;
-
-  const [beacon, setBeacon] = useState<BeaconRow | null>(null);
   const [loading, setLoading] = useState(true);
-  const joiningRef = useRef(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [detail, setDetail] = useState<BeaconDetailRow | null>(() => initialDetail);
+  const [requests, setRequests] = useState<JoinRequestRow[]>([]);
 
-  // 상태
-  const [isMember, setIsMember] = useState(false);
-  const [roomId, setRoomId] = useState<number | null>(null);
-  const [reqStatus, setReqStatus] = useState<JoinStatus | null>(null);
+  const [requestModalOpen, setRequestModalOpen] = useState(false);
+  const [requestMessage, setRequestMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const busyRef = useRef(false);
+  const firstFocusPassedRef = useRef(false);
+  const inFlightRef = useRef(false);
 
-  // 요청 모달
-  const [reqOpen, setReqOpen] = useState(false);
-  const [reqMsg, setReqMsg] = useState('');
-  const [sending, setSending] = useState(false);
+  const remainText = useMemo(() => formatRemain(detail?.expires_at, t), [detail?.expires_at, t]);
+  const primaryAction = detail?.primary_action ?? 'closed';
+  const primaryLabel = t(ACTION_LABEL_KEY[primaryAction]);
+  const primaryDisabled = !detail || loading || submitting || busyRef.current || primaryAction === 'ended' || primaryAction === 'full' || primaryAction === 'forbidden' || primaryAction === 'closed';
 
-  // ===== 비콘 상세 =====
-  const loadBeacon = useCallback(async (id: number) => {
-    const cols =
-      'id,title,description,visibility,expires_at,active,host_id,require_approval,max_members,created_at,updated_at';
-    const { data, error } = await supabase
-      .from('beacons')
-      .select(cols)
-      .eq('id', id)
-      .maybeSingle();
+  const loadDetail = useCallback(async () => {
+    if (!Number.isFinite(beaconId)) throw new Error(t('beacons:error.invalidAccess'));
+
+    const { data, error } = await supabase.rpc('get_beacon_detail_v2', {
+      p_beacon_id: beaconId,
+    });
+
     if (error) throw error;
-    if (!data) throw new Error('비콘을 찾을 수 없습니다.');
-    setBeacon(data as BeaconRow);
-  }, []);
 
-  const left = useMemo(() => minutesLeft(beacon?.expires_at), [beacon?.expires_at]);
+    const row = pickSingleRow<BeaconDetailRow>(data as any);
+    if (!row) throw new Error(t('beacons:error.detailNotFound'));
+    setDetail(row);
+    return row;
+  }, [beaconId]);
 
-  // 표기 라인
-  const lines = useMemo(() => {
-    if (!beacon) return [] as string[];
-    const arr: string[] = [];
-    if (beacon.max_members) arr.push(`정원: ${beacon.max_members}명`);
-    const visKey = String(beacon.visibility);
-    arr.push(`공개 범위: ${VIS_LABEL[visKey] ?? visKey}`);
-    if (beacon.description) arr.push(`메모: ${beacon.description}`);
-    arr.push(`남은 시간: ${left}분`);
-    return arr;
-  }, [beacon, left]);
-
-  // 멤버/요청 상태
-  const loadMembershipAndRequest = useCallback(async (id: number) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      setIsMember(false);
-      setReqStatus(null);
-      setRoomId(null);
+  const loadRequests = useCallback(async (row: BeaconDetailRow | null) => {
+    if (!row?.is_host) {
+      setRequests([]);
       return;
     }
-    const { data: room } = await supabase
-      .from('chat_rooms')
-      .select('id')
-      .eq('type', 'beacon')
-      .eq('beacon_id', id)
-      .maybeSingle();
-    const rid = room?.id ?? null;
-    setRoomId(rid ?? null);
 
-    if (rid) {
-      const { data: memRow } = await supabase
-        .from('chat_members')
-        .select('user_id,active')
-        .eq('room_id', rid)
-        .eq('user_id', user.id)
-        .maybeSingle();
-      setIsMember(!!memRow?.active);
-    } else {
-      setIsMember(false);
-    }
+    const { data, error } = await supabase.rpc('list_beacon_join_requests_v2', {
+      p_beacon_id: row.beacon_id,
+    });
 
-    const { data: req } = await supabase
-      .from('beacon_join_requests')
-      .select('status')
-      .eq('beacon_id', id)
-      .eq('requester_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    setReqStatus((req?.status as JoinStatus) ?? null);
+    if (error) throw error;
+    setRequests(Array.isArray(data) ? (data as JoinRequestRow[]) : []);
   }, []);
 
-  // 초기 로드
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        if (beaconId == null) throw new Error('잘못된 접근입니다.');
-        await loadBeacon(Number(beaconId));
-        await loadMembershipAndRequest(Number(beaconId));
-      } catch (e: any) {
-        Alert.alert('오류', e?.message ?? '비콘 정보를 불러오지 못했습니다.');
-        navigation.goBack();
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    })();
-    return () => { mounted = false; };
-  }, [beaconId, navigation, loadBeacon, loadMembershipAndRequest]);
+  const reload = useCallback(async (mode: 'initial' | 'refresh' | 'silent' = 'initial') => {
+    if (inFlightRef.current) return;
+    inFlightRef.current = true;
 
-  // 실시간 갱신
-  useEffect(() => {
-    if (beaconId == null) return;
-    const ch = supabase
-      .channel(`beacon_${beaconId}`)
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'beacons', filter: `id=eq.${beaconId}` },
-        async () => {
-          try {
-            await loadBeacon(Number(beaconId));
-          } catch {}
-        },
-      )
-      .subscribe();
-    return () => { try { supabase.removeChannel(ch); } catch {} };
-  }, [beaconId, loadBeacon]);
-
-  const ended = !beacon?.active || left <= 0;
-  const isOpen = !!beacon && beacon.require_approval === false;
-
-  // ===== 입장/요청 =====
-  const handleEnter = useCallback(async () => {
-    if (joiningRef.current || !beacon) return;
-    joiningRef.current = true;
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        Alert.alert('로그인이 필요합니다', '입장/요청을 하려면 먼저 로그인하세요.');
-        return;
-      }
-      if (ended) throw new Error('이미 종료된 비콘입니다.');
+      if (mode === 'initial') setLoading(true);
+      if (mode === 'refresh') setRefreshing(true);
 
-      if (isMember) {
-        if (!roomId) throw new Error('채팅방 정보를 찾을 수 없습니다.');
-        navigation.navigate('Chat', { roomId: Number(roomId), roomType: 'beacon', beaconId: String(beacon.id), beaconTitle: beacon.title ?? null });
-        return;
-      }
-
-      if (isOpen) {
-        // ✅ 누구나 입장: RPC 우선 시도
-        try {
-          const { error: rpcErr } = await supabase.rpc('join_open_beacon', { p_beacon_id: beacon.id });
-          if (rpcErr) {
-            // RPC가 없거나 실패해도 계속 진행(다음 조회로 확인)
-          }
-        } catch {}
-
-        // 방 바로 재조회 → 네비게이트
-        const { data: r2 } = await supabase
-          .from('chat_rooms')
-          .select('id')
-          .eq('type', 'beacon')
-          .eq('beacon_id', beacon.id)
-          .maybeSingle();
-
-        if (r2?.id) {
-          navigation.navigate('Chat', { roomId: Number(r2.id), roomType: 'beacon', beaconId: String(beacon.id), beaconTitle: beacon.title ?? null });
-          return;
-        }
-
-        // 멤버십/요청 최신화
-        await loadMembershipAndRequest(beacon.id);
-
-        // state의 roomId 의존 말고 한 번 더 안전 조회
-        const { data: r3 } = await supabase
-          .from('chat_rooms')
-          .select('id')
-          .eq('type', 'beacon')
-          .eq('beacon_id', beacon.id)
-          .maybeSingle();
-
-        if (r3?.id) {
-          navigation.navigate('Chat', { roomId: Number(r3.id), roomType: 'beacon', beaconId: String(beacon.id), beaconTitle: beacon.title ?? null });
-          return;
-        }
-
-        Alert.alert('입장 대기', '입장 처리 중입니다. 잠시 후 다시 시도해 주세요.');
-        return;
-      }
-
-      // 승인 필요 방 → 요청 모달
-      setReqOpen(true);
+      const row = await loadDetail();
+      await loadRequests(row);
     } catch (e: any) {
-      Alert.alert('입장 실패', e?.message ?? '오류가 발생했습니다.');
+      Alert.alert(t('common:error'), e?.message ?? t('beacons:error.detailLoadFail'));
+      if (mode === 'initial') navigation.goBack();
     } finally {
-      joiningRef.current = false;
+      if (mode === 'initial') setLoading(false);
+      if (mode === 'refresh') setRefreshing(false);
+      inFlightRef.current = false;
     }
-  }, [beacon, ended, isMember, isOpen, roomId, navigation, loadMembershipAndRequest]);
+  }, [loadDetail, loadRequests, navigation]);
+
+  useEffect(() => {
+    void reload('initial');
+  }, [reload]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!firstFocusPassedRef.current) {
+        firstFocusPassedRef.current = true;
+        return;
+      }
+      void reload('silent');
+    }, [reload]),
+  );
+
+  useEffect(() => {
+    if (!Number.isFinite(beaconId)) return;
+
+    const channelName = `beacon-detail-v2:${beaconId}:${Date.now()}:${Math.random().toString(36).slice(2)}`;
+
+    const channel = supabase
+      .channel(channelName)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'beacons',
+        filter: `id=eq.${beaconId}`,
+      }, () => {
+        void reload('silent');
+      })
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'beacon_join_requests',
+        filter: `beacon_id=eq.${beaconId}`,
+      }, () => {
+        void reload('silent');
+      });
+
+    channel.subscribe();
+
+    return () => {
+      try {
+        void supabase.removeChannel(channel);
+      } catch {}
+    };
+  }, [beaconId, reload]);
+
+  const openMap = useCallback(() => {
+    if (!detail) return;
+    rootNav.navigate?.('MainTabs', {
+      screen: 'MapStack',
+      params: { highlightBeaconId: detail.beacon_id },
+    });
+  }, [detail, rootNav]);
+
+  const openEdit = useCallback(() => {
+    if (!detail) return;
+    try {
+      navigation.navigate('EditBeacon', { id: Number(detail.beacon_id) });
+    } catch {
+      Alert.alert(t('common:notice'), t('beacons:detail.alert.editRoute'));
+    }
+  }, [detail, navigation]);
+
+  const openMembers = useCallback(() => {
+    if (!detail) return;
+    try {
+      navigation.navigate('MembersBeacon', { id: Number(detail.beacon_id) });
+    } catch {
+      Alert.alert(t('common:notice'), t('beacons:detail.alert.membersRoute'));
+    }
+  }, [detail, navigation]);
+
+  const enterChat = useCallback((roomId: number, title?: string | null) => {
+    rootNav.navigate?.('Chat', {
+      roomId,
+      roomType: 'beacon',
+      beaconId: String(beaconId),
+      beaconTitle: title ?? null,
+      isBeacon: true,
+      fromBeacon: true,
+      customTitle: title ?? null,
+    });
+  }, [beaconId, rootNav]);
+
+  const handlePrimary = useCallback(async () => {
+    if (!detail || busyRef.current) return;
+    busyRef.current = true;
+
+    try {
+      const uid = await getCurrentUserId();
+      if (!uid) {
+        Alert.alert(t('beacons:detail.alert.loginTitle'), t('beacons:detail.alert.loginDesc'));
+        return;
+      }
+
+      switch (detail.primary_action) {
+        case 'enter_chat': {
+          if (!detail.room_id) throw new Error(t('beacons:detail.alert.chatNotFound'));
+          enterChat(detail.room_id, detail.title);
+          return;
+        }
+        case 'join_direct': {
+          const { data, error } = await supabase.rpc('join_beacon_v2', {
+            p_beacon_id: detail.beacon_id,
+          });
+          if (error) throw error;
+          const row = pickSingleRow<{ action: string; room_id: number | null }>(data as any);
+          if (row?.room_id) {
+            enterChat(row.room_id, detail.title);
+          } else {
+            await reload('refresh');
+          }
+          return;
+        }
+        case 'cancel_request': {
+          Alert.alert(t('beacons:detail.alert.cancelTitle'), t('beacons:detail.alert.cancelDesc'), [
+            { text: t('beacons:detail.alert.keep'), style: 'cancel' },
+            {
+              text: t('beacons:detail.action.cancel_request'),
+              style: 'destructive',
+              onPress: async () => {
+                try {
+                  setSubmitting(true);
+                  const { data, error } = await supabase.rpc('cancel_beacon_join_request_v2', {
+                    p_beacon_id: detail.beacon_id,
+                  });
+                  if (error) throw error;
+                  if (data) {
+                    await reload('refresh');
+                  }
+                } catch (e: any) {
+                  Alert.alert(t('beacons:detail.alert.cancelFailTitle'), e?.message ?? t('beacons:detail.alert.cancelFail'));
+                } finally {
+                  setSubmitting(false);
+                }
+              },
+            },
+          ]);
+          return;
+        }
+        case 'request_join':
+        case 'request_retry': {
+          setRequestModalOpen(true);
+          return;
+        }
+        case 'full':
+          Alert.alert(t('beacons:detail.alert.fullTitle'), t('beacons:detail.alert.fullDesc'));
+          return;
+        case 'forbidden':
+          Alert.alert(t('beacons:detail.alert.forbiddenTitle'), t('beacons:detail.alert.forbiddenDesc'));
+          return;
+        case 'ended':
+          Alert.alert(t('beacons:detail.alert.endedTitle'), t('beacons:detail.alert.endedDesc'));
+          return;
+        default:
+          Alert.alert(t('beacons:detail.alert.unavailableTitle'), t('beacons:detail.alert.unavailableDesc'));
+      }
+    } catch (e: any) {
+      Alert.alert(t('common:error'), e?.message ?? t('beacons:error.operationFail'));
+    } finally {
+      busyRef.current = false;
+    }
+  }, [detail, enterChat, reload]);
 
   const sendJoinRequest = useCallback(async () => {
-    if (!beacon || sending) return; // ✅ 중복 방지
-    setSending(true);
+    if (!detail || submitting) return;
+    setSubmitting(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('로그인이 필요합니다.');
-      const { error } = await supabase.from('beacon_join_requests').insert({
-        beacon_id: beacon.id,
-        requester_id: user.id,
-        message: reqMsg?.trim() || null,
+      const { error } = await supabase.rpc('request_beacon_join_v2', {
+        p_beacon_id: detail.beacon_id,
+        p_message: requestMessage.trim() || null,
       });
-      if (error) {
-        if (String(error.message || '').toLowerCase().includes('duplicate')) {
-          setReqStatus('pending');
-          setReqOpen(false);
-          setReqMsg('');
-          Alert.alert('요청 중', '이미 승인 대기 중입니다.');
-          return;
-        }
-        throw error;
-      }
-      setReqStatus('pending');
-      setReqOpen(false);
-      setReqMsg('');
-      Alert.alert('요청 완료', '방장 승인 대기 중입니다.');
+      if (error) throw error;
+      setRequestModalOpen(false);
+      setRequestMessage('');
+      Alert.alert(t('beacons:detail.alert.requestSentTitle'), t('beacons:detail.alert.requestSentDesc'));
+      await reload('refresh');
     } catch (e: any) {
-      Alert.alert('요청 실패', e?.message ?? '요청을 보낼 수 없습니다.');
+      Alert.alert(t('beacons:detail.alert.requestFailTitle'), e?.message ?? t('beacons:detail.alert.requestFail'));
     } finally {
-      setSending(false);
+      setSubmitting(false);
     }
-  }, [beacon, reqMsg, sending]);
+  }, [detail, requestMessage, submitting, reload]);
 
-  // 버튼 라벨/상태 (✅ rejected → 다시 요청)
-  const primaryLabel = ended
-    ? '종료됨'
-    : isMember
-    ? '채팅 들어가기'
-    : isOpen
-    ? '입장하기'
-    : reqStatus === 'pending'
-    ? '승인 대기중'
-    : reqStatus === 'rejected'
-    ? '다시 요청하기'
-    : '입장 승인 요청';
+  const approveRequest = useCallback(async (requestId: number) => {
+    if (!detail) return;
+    try {
+      setSubmitting(true);
+      const { error } = await supabase.rpc('approve_beacon_join_v2', {
+        p_request_id: requestId,
+      });
+      if (error) throw error;
+      await reload('refresh');
+    } catch (e: any) {
+      Alert.alert(t('beacons:detail.alert.approveFailTitle'), e?.message ?? t('beacons:detail.alert.approveFail'));
+    } finally {
+      setSubmitting(false);
+    }
+  }, [detail, reload]);
 
-  const primaryDisabled = ended || (!isOpen && reqStatus === 'pending');
+  const rejectRequest = useCallback(async (requestId: number) => {
+    try {
+      setSubmitting(true);
+      const { error } = await supabase.rpc('reject_beacon_join_v2', {
+        p_request_id: requestId,
+        p_reason: null,
+      });
+      if (error) throw error;
+      await reload('refresh');
+    } catch (e: any) {
+      Alert.alert(t('beacons:detail.alert.rejectFailTitle'), e?.message ?? t('beacons:detail.alert.rejectFail'));
+    } finally {
+      setSubmitting(false);
+    }
+  }, [reload]);
 
-  // ===== 렌더링 =====
-  if (loading) {
+  const closeBeacon = useCallback(() => {
+    if (!detail) return;
+    Alert.alert(t('beacons:detail.alert.closeTitle'), t('beacons:detail.alert.closeDesc'), [
+      { text: t('common:cancel'), style: 'cancel' },
+      {
+        text: t('beacons:detail.alert.closeAction'),
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            setSubmitting(true);
+            const { error } = await supabase.rpc('close_beacon_v2', {
+              p_beacon_id: detail.beacon_id,
+              p_reason: 'host_closed',
+            });
+            if (error) throw error;
+            Alert.alert(t('beacons:detail.alert.closeDoneTitle'), t('beacons:detail.alert.closeDoneDesc'), [
+              { text: t('common:ok'), onPress: () => navigation.goBack() },
+            ]);
+          } catch (e: any) {
+            Alert.alert(t('beacons:detail.alert.closeFailTitle'), e?.message ?? t('beacons:detail.alert.closeFail'));
+          } finally {
+            setSubmitting(false);
+          }
+        },
+      },
+    ]);
+  }, [detail, navigation]);
+
+  if (loading && !detail) {
     return (
-      <SafeAreaView style={styles.flex}>
-        <LinearGradient colors={['#833ab4', '#fd1d1d', '#fcb045']} start={{x:0,y:0}} end={{x:1,y:1}} style={styles.bg}/>
-        <View style={styles.center}>
-          <ActivityIndicator />
-          <Text style={styles.loadingTxt}>불러오는 중...</Text>
+      <SafeScreen
+        backgroundColor={C.background}
+        includeTopInset
+        includeBottomInset
+        style={styles.rootWrap}
+        contentStyle={styles.safeContent}
+      >
+        <StatusBar backgroundColor={C.background} barStyle={C.statusBarStyle} translucent={false} />
+        <View style={styles.centerWrap}>
+          <ActivityIndicator size="small" color={C.icon} />
         </View>
-      </SafeAreaView>
+      </SafeScreen>
     );
   }
-  if (!beacon) {
+
+  if (!detail) {
     return (
-      <SafeAreaView style={styles.flex}>
-        <LinearGradient colors={['#833ab4', '#fd1d1d', '#fcb045']} start={{x:0,y:0}} end={{x:1,y:1}} style={styles.bg}/>
-        <View style={styles.center}>
-          <Text style={styles.errorTxt}>비콘 정보를 찾을 수 없습니다.</Text>
+      <SafeScreen
+        backgroundColor={C.background}
+        includeTopInset
+        includeBottomInset
+        style={styles.rootWrap}
+        contentStyle={styles.safeContent}
+      >
+        <StatusBar backgroundColor={C.background} barStyle={C.statusBarStyle} translucent={false} />
+        <View style={styles.centerWrap}>
+          <Text style={styles.errorTitle}>{t('beacons:detail.empty.deleted')}</Text>
+          <Pressable style={styles.fallbackButton} onPress={() => navigation.goBack()}>
+            <Text style={styles.fallbackButtonText}>{t('beacons:detail.empty.back')}</Text>
+          </Pressable>
         </View>
-      </SafeAreaView>
+      </SafeScreen>
     );
   }
 
   return (
-    <SafeAreaView style={styles.flex}>
-      {/* 로그인 배경 느낌의 그라데이션 */}
-      <LinearGradient
-        colors={['#833ab4', '#fd1d1d', '#fcb045']}
-        start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-        style={styles.bg}
-      />
+    <SafeScreen
+      backgroundColor={C.background}
+      includeTopInset
+      includeBottomInset
+      style={styles.rootWrap}
+      contentStyle={styles.safeContent}
+    >
+      <StatusBar backgroundColor={C.background} barStyle={C.statusBarStyle} translucent={false} />
 
-      <ScrollView contentContainerStyle={styles.scrollBody} keyboardShouldPersistTaps="handled">
-        <View style={styles.card}>
-          {/* 상단 칩들 */}
-          <View style={styles.chipsRow}>
-            <View style={styles.chip}><Text style={styles.chipTxt}>
-              {VIS_LABEL[String(beacon.visibility)] ?? String(beacon.visibility)}
-            </Text></View>
-            <View style={styles.chip}><Text style={styles.chipTxt}>
-              {minutesLeft(beacon.expires_at)}분 남음
-            </Text></View>
-            {beacon.require_approval ? (
-              <View style={[styles.chip, styles.chipWarn]}><Text style={[styles.chipTxt, styles.chipTxtDark]}>승인 필요</Text></View>
-            ) : (
-              <View style={[styles.chip, styles.chipOk]}><Text style={[styles.chipTxt, styles.chipTxtDark]}>바로 입장</Text></View>
-            )}
-            {/* ✅ 요청 상태 칩 */}
-            {reqStatus === 'pending' && (
-              <View style={[styles.chip, { backgroundColor: 'rgba(59,130,246,0.9)'}]}>
-                <Text style={[styles.chipTxt, { color: '#fff'}]}>승인 대기중</Text>
-              </View>
-            )}
-            {reqStatus === 'rejected' && (
-              <View style={[styles.chip, { backgroundColor: 'rgba(239,68,68,0.9)'}]}>
-                <Text style={[styles.chipTxt, { color: '#fff'}]}>거절됨</Text>
+      <View style={styles.header}>
+        <Pressable hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }} onPress={() => navigation.goBack()} style={styles.headerBtn}>
+          <Text style={styles.headerBackIcon}>‹</Text>
+        </Pressable>
+        {/* 네비게이션 헤더는 레이아웃 보호를 위해 1줄 유지 */}
+        <Text style={styles.headerTitle} numberOfLines={1}>{t('beacons:detail_title')}</Text>
+        <View style={styles.headerBtn} />
+      </View>
+
+      <ScrollView
+        style={styles.flex}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 }]}
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void reload('refresh')} tintColor={C.primary} />}
+      >
+        <View style={styles.heroSection}>
+          <View style={styles.heroMetaRow}>
+            <View style={styles.badgeWrap}>
+              {detail.request_status === 'pending' && <View style={[styles.badge, styles.badgeOutline]}><Text style={styles.badgeOutlineText}>{t('beacons:detail.badge.pending')}</Text></View>}
+              {detail.request_status === 'rejected' && <View style={[styles.badge, styles.badgeDim]}><Text style={styles.badgeDimText}>{t('beacons:detail.badge.rejected')}</Text></View>}
+              {detail.require_approval ? (
+                <View style={styles.badge}><Text style={styles.badgeText}>{t('beacons:detail.badge.approval')}</Text></View>
+              ) : (
+                <View style={styles.badge}><Text style={styles.badgeText}>{t('beacons:detail.badge.free')}</Text></View>
+              )}
+            </View>
+          </View>
+          
+          {/* 말줄임 없이 전부 노출 */}
+          <Text style={styles.heroTitle}>{detail.title ?? t('beacons:detail.fallbackTitle')}</Text>
+          {!!detail.description && <Text style={styles.heroDescription}>{detail.description}</Text>}
+        </View>
+
+        <View style={styles.infoSection}>
+          <View style={styles.infoGrid}>
+            <View style={styles.infoCol}>
+              <Text style={styles.infoLabel}>{t('beacons:detail.info.status')}</Text>
+              <Text style={[styles.infoValue, { color: remainText === t('beacons:time.remainEnded') ? C.textMuted : C.text }]}>{remainText}</Text>
+            </View>
+            <View style={styles.infoCol}>
+              <Text style={styles.infoLabel}>{t('beacons:detail.info.capacity')}</Text>
+              <Text style={styles.infoValue}>{t('beacons:unit.peopleCount', { count: detail.current_member_count })} / {detail.max_members ? t('beacons:unit.peopleCount', { count: detail.max_members }) : t('beacons:common.unlimited')}</Text>
+            </View>
+            <View style={styles.infoCol}>
+              <Text style={styles.infoLabel}>{t('beacons:detail.info.audience')}</Text>
+              <Text style={styles.infoValue}>
+                {getVisibilityLabel(detail.visibility)}
+                {detail.visibility === 'public' && detail.public_exclude_friends ? ` (${t('beacons:visibilityLabel.publicExcludeFriends')})` : ''}
+              </Text>
+            </View>
+            {detail.request_status === 'rejected' && (
+              <View style={styles.infoCol}>
+                <Text style={styles.infoLabel}>{t('beacons:detail.info.retry')}</Text>
+                <Text style={styles.infoValue}>{t('beacons:unit.retryLeft', { count: detail.retry_remaining })}</Text>
               </View>
             )}
           </View>
-
-          <Text style={styles.title}>{beacon.title ?? '만남 제안'}</Text>
-
-          {lines.map((t, i) => (
-            <Text key={i} style={styles.sub}>{t}</Text>
-          ))}
-
-          {/* 주 버튼 */}
-          <Pressable
-            style={[styles.btn, primaryDisabled && { opacity: 0.6 }]}
-            onPress={handleEnter}
-            disabled={primaryDisabled}
-          >
-            <Text style={styles.btnTxt}>{primaryLabel}</Text>
-          </Pressable>
-
-          {/* 보조 버튼 */}
-          <Pressable
-            style={styles.btnSecondary}
-            onPress={() => {
-              navigation.navigate('MainTabs', {
-                screen: 'MapStack',
-                params: { highlightBeaconId: beacon.id },
-              });
-            }}
-          >
-            <Text style={styles.btnSecondaryTxt}>지도에서 보기</Text>
-          </Pressable>
         </View>
+
+        <View style={styles.contentBlock}>
+          <View style={styles.blockHeader}>
+            <Text style={styles.blockTitle}>{t('beacons:detail.location.title')}</Text>
+          </View>
+          {detail.show_location ? (
+            <View style={styles.blockBody}>
+              <Text style={styles.blockText}>{t('beacons:detail.location.visible')}</Text>
+              <Pressable style={({ pressed }) => [styles.textLinkBtn, pressed && styles.pressedOpacity]} onPress={openMap}>
+                <Text style={styles.textLink}>{t('beacons:detail.location.openMap')}</Text>
+              </Pressable>
+            </View>
+          ) : (
+            <Text style={styles.blockText}>{t('beacons:detail.location.hidden')}</Text>
+          )}
+        </View>
+
+        {detail.is_host && (
+          <View style={styles.hostSection}>
+            <View style={styles.blockHeader}>
+              <Text style={styles.blockTitle}>{t('beacons:owner_tools')}</Text>
+            </View>
+            <View style={styles.actionMenu}>
+              <Pressable style={({ pressed }) => [styles.actionBtnRow, pressed && styles.pressedScale]} onPress={openEdit}>
+                <View style={styles.actionBtnContent}>
+                  <Text style={styles.actionBtnTitle}>{t('beacons:detail.host.settings')}</Text>
+                  {/* 말줄임 해제 */}
+                  <Text style={styles.actionBtnSub}>{t('beacons:detail.host.settingsDesc')}</Text>
+                </View>
+                {/* 셰브론(›) 모양으로 교체 */}
+                <Text style={styles.actionArrow}>›</Text>
+              </Pressable>
+              
+              <Pressable style={({ pressed }) => [styles.actionBtnRow, pressed && styles.pressedScale]} onPress={openMembers}>
+                <View style={styles.actionBtnContent}>
+                  <Text style={styles.actionBtnTitle}>{t('beacons:detail.host.members')}</Text>
+                  <Text style={styles.actionBtnSub}>{t('beacons:detail.host.membersDesc')}</Text>
+                </View>
+                <Text style={styles.actionArrow}>›</Text>
+              </Pressable>
+              
+              <Pressable style={({ pressed }) => [styles.actionBtnRow, styles.dangerBlock, pressed && styles.pressedScale]} onPress={closeBeacon}>
+                <View style={styles.actionBtnContent}>
+                  <Text style={[styles.actionBtnTitle, styles.dangerText]}>{t('beacons:detail.host.close')}</Text>
+                  <Text style={[styles.actionBtnSub, styles.dangerText]}>{t('beacons:detail.host.closeDesc')}</Text>
+                </View>
+              </Pressable>
+            </View>
+          </View>
+        )}
+
+        {detail.is_host && (
+          <View style={styles.requestSection}>
+            <View style={styles.blockHeader}>
+              <Text style={styles.blockTitle}>{t('beacons:detail.requests.title')}</Text>
+              <View style={styles.countBadge}>
+                <Text style={styles.countBadgeText}>{requests.length}</Text>
+              </View>
+            </View>
+
+            {requests.length === 0 ? (
+              <Text style={styles.emptyText}>{t('beacons:detail.requests.empty')}</Text>
+            ) : (
+              <View style={styles.requestList}>
+                {requests.map((req) => {
+                  const profile = req.requester_profile ?? {};
+                  const nickname = profile.nickname || t('beacons:common.anonymous');
+                  const metaInfo = [
+                    profile.status_message || null,
+                    profile.friend_code ? t('beacons:detail.requests.code', { code: profile.friend_code }) : null,
+                    typeof profile.temp === 'number' ? t('beacons:detail.requests.temperature', { temp: profile.temp }) : null,
+                    req.rejection_count > 0 ? t('beacons:detail.requests.rejectionCount', { count: req.rejection_count }) : null,
+                  ].filter(Boolean).join(' · ');
+
+                  return (
+                    <View key={req.request_id} style={styles.requestItem}>
+                      <View style={styles.reqTopRow}>
+                        <View style={styles.reqAvatar}>
+                          <Text style={styles.reqAvatarText}>{nickname.slice(0, 1)}</Text>
+                        </View>
+                        <View style={styles.reqUserInfo}>
+                          <Text style={styles.reqName}>{nickname}</Text>
+                          {!!metaInfo && <Text style={styles.reqMeta}>{metaInfo}</Text>}
+                        </View>
+                      </View>
+                      
+                      {!!req.message && (
+                        <View style={styles.reqMessageBubble}>
+                          <Text style={styles.reqMessageText}>{req.message}</Text>
+                        </View>
+                      )}
+                      
+                      <View style={styles.reqActions}>
+                        <Pressable style={({ pressed }) => [styles.btnMuted, pressed && styles.pressedOpacity]} onPress={() => void rejectRequest(req.request_id)} disabled={submitting}>
+                          <Text style={styles.btnMutedText}>{t('beacons:common.reject')}</Text>
+                        </Pressable>
+                        <Pressable style={({ pressed }) => [styles.btnDark, pressed && styles.pressedOpacity]} onPress={() => void approveRequest(req.request_id)} disabled={submitting}>
+                          <Text style={styles.btnDarkText}>{t('beacons:common.approve')}</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+                  );
+                })}
+              </View>
+            )}
+          </View>
+        )}
       </ScrollView>
 
-      {/* 승인 요청 모달 */}
-      <Modal visible={reqOpen} transparent animationType="fade" onRequestClose={() => setReqOpen(false)}>
-        <Pressable style={styles.backdrop} onPress={() => setReqOpen(false)} />
-        <View style={styles.sheet}>
-          <Text style={styles.sheetTitle}>방장에게 입장 승인 요청</Text>
-          <Text style={styles.sheetSub}>메시지를 남겨주세요 (선택)</Text>
-          <TextInput
-            placeholder="예) 근처에 있어요. 같이 커피 할래요?"
-            value={reqMsg}
-            onChangeText={setReqMsg}
-            multiline
-            style={styles.input}
-          />
-          <View style={styles.row}>
-            <Pressable
-              style={[styles.btn, styles.flex1, sending && { opacity: 0.6 }]}
-              onPress={sendJoinRequest}
-              disabled={sending}
-            >
-              <Text style={styles.btnTxt}>{sending ? '보내는 중...' : '요청 보내기'}</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.btnGhost, styles.flex1]}
-              onPress={() => setReqOpen(false)}
-              disabled={sending}
-            >
-              <Text style={styles.btnGhostTxt}>취소</Text>
-            </Pressable>
+      <View style={[styles.floatingActionArea, { paddingBottom: Math.max(insets.bottom + 12, 24) }]}>
+        <Pressable
+          style={({ pressed }) => [
+            styles.megaActionBtn,
+            primaryDisabled && styles.disabledOpacity,
+            pressed && !primaryDisabled && styles.pressedScale
+          ]}
+          disabled={primaryDisabled}
+          onPress={() => void handlePrimary()}
+        >
+          <Text style={styles.megaActionBtnText}>{primaryLabel}</Text>
+        </Pressable>
+      </View>
+
+      <Modal visible={requestModalOpen} transparent animationType="fade" statusBarTranslucent navigationBarTranslucent onRequestClose={() => setRequestModalOpen(false)}>
+        <KeyboardAvoidingView
+          style={styles.modalKeyboardWrap}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={0}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={[styles.modalContent, { paddingBottom: Math.max(insets.bottom + 24, Platform.OS === 'ios' ? 48 : 32) }]}>
+            <Text style={styles.modalHeadline}>{t('beacons:detail.requests.messageTitle')}</Text>
+            <Text style={styles.modalSubtext}>{t('beacons:detail.requests.messageDesc')}</Text>
+            <TextInput
+              style={styles.modalTextInput}
+              multiline
+              placeholder={t('beacons:detail.requests.placeholder')}
+              placeholderTextColor={C.textMuted}
+              value={requestMessage}
+              onChangeText={setRequestMessage}
+              textAlignVertical="top"
+              scrollEnabled
+              maxLength={200}
+            />
+            <View style={styles.modalBtnRow}>
+              <Pressable style={({ pressed }) => [styles.modalBtnCancel, pressed && styles.pressedOpacity]} disabled={submitting} onPress={() => setRequestModalOpen(false)}>
+                <Text style={styles.modalBtnCancelText}>취소</Text>
+              </Pressable>
+              <Pressable style={({ pressed }) => [styles.modalBtnConfirm, submitting && styles.disabledOpacity, pressed && !submitting && styles.pressedScale]} disabled={submitting} onPress={() => void sendJoinRequest()}>
+                <Text style={styles.modalBtnConfirmText}>{submitting ? t('beacons:detail.requests.sending') : t('beacons:detail.requests.send')}</Text>
+              </Pressable>
+            </View>
+            </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
-    </SafeAreaView>
+    </SafeScreen>
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  bg: { ...StyleSheet.absoluteFillObject },
-  scrollBody: {
-    flexGrow: 1,
-    paddingHorizontal: 18,
-    paddingTop: 40,
-    paddingBottom: 28,
-    justifyContent: 'center',
-  },
-  btnGhost: {
-    backgroundColor: 'transparent',
-    paddingVertical: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(17,24,39,0.12)',
-  },
-  btnGhostTxt: {
-    color: '#111827',
-    fontWeight: '800',
-    fontSize: 15,
-  },
-
-  // 카드: 떠있는 느낌(살짝 투명+하얀 보더)
-  card: {
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.65)',
-    padding: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 4,
-  },
-
-  chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 10 },
-  chip: {
-    paddingHorizontal: 10,
-    paddingVertical: Platform.OS === 'ios' ? 6 : 4,
-    backgroundColor: 'rgba(255,255,255,0.8)',
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: 'rgba(17,24,39,0.08)',
-  },
-  chipWarn: { backgroundColor: 'rgba(255, 221, 87, 0.9)' },
-  chipOk: { backgroundColor: 'rgba(110, 231, 183, 0.95)' },
-  chipTxt: { fontWeight: '800', color: '#111827', fontSize: 12 },
-  chipTxtDark: { color: '#0f172a' },
-
-  title: { fontSize: 22, fontWeight: '800', marginBottom: 6, color: '#0f172a' },
-  sub: { color: '#475569', marginBottom: 6, fontSize: 14 },
-
-  btn: {
-    backgroundColor: '#111827',
-    paddingVertical: 13,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  btnTxt: { color: '#fff', fontWeight: '800', fontSize: 16 },
-
-  btnSecondary: {
-    marginTop: 10,
-    backgroundColor: 'rgba(17,24,39,0.08)',
-    paddingVertical: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(17,24,39,0.12)',
-  },
-  btnSecondaryTxt: { color: '#111827', fontWeight: '800', fontSize: 15 },
-
-  // 모달
-  backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.25)' },
-  sheet: {
-    position: 'absolute',
-    left: 18,
-    right: 18,
-    top: '18%',
-    bottom: '18%',
-    backgroundColor: 'rgba(255,255,255,0.98)',
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(17,24,39,0.08)',
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 18,
-    elevation: 5,
-  },
-  sheetTitle: { fontSize: 18, fontWeight: '900', color: '#0f172a', marginBottom: 4 },
-  sheetSub: { color: '#6b7280', marginBottom: 10 },
-  input: {
-    minHeight: 120,
-    textAlignVertical: 'top',
-    borderWidth: 1,
-    borderColor: 'rgba(17,24,39,0.12)',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    backgroundColor: '#fff',
-    lineHeight: 20,
-  },
-
-  // 공통
-  row: { flexDirection: 'row', gap: 10, marginTop: 14 },
-  flex1: { flex: 1 },
-
-  // 로딩/에러
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  loadingTxt: { marginTop: 10, color: '#f8fafc', fontWeight: '700' },
-  errorTxt: { color: '#fff', fontWeight: '800' },
-});

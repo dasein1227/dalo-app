@@ -1,0 +1,133 @@
+{
+  "view_title": "프로필",
+  "edit_title": "프로필 수정",
+  "nickname": "닉네임",
+  "handle": "핸들",
+  "status_message": "상태메시지",
+  "public_default": "프로필 기본 공개",
+  "save_done": "저장되었습니다.",
+  "no_name": "이름 없음",
+  "no_id": "ID 미설정",
+  "follow": "팔로우",
+  "following": "팔로우 중",
+  "stat_posts": "게시물",
+  "stat_followers": "팔로워",
+  "stat_following": "팔로잉",
+  "empty_posts": "게시물 없음",
+  "empty_posts_tab": "게시물 없음",
+  "swipe": {
+    "new_post": "＋ 새 게시물",
+    "chat_1on1": "1:1 채팅",
+    "chat_me": "나와의 채팅",
+    "call": "통화",
+    "more": "더보기 →"
+  },
+  "alert": {
+    "setting_soon": "준비 중입니다.",
+    "call_friend_only_title": "통화 불가",
+    "call_friend_only_desc": "친구에게만 제공됩니다.",
+    "call_feature_soon": "준비 중입니다.",
+    "unfollow_title": "팔로우 취소",
+    "unfollow_desc": "팔로우를 취소할까요?",
+    "keep": "유지",
+    "follow_fail": "팔로우하지 못했습니다.",
+    "unfollow_fail": "취소하지 못했습니다.",
+    "self_chat_fail": "채팅을 시작하지 못했습니다."
+  },
+  "edit": {
+    "error_permission": "본인 프로필만 수정할 수 있습니다.",
+    "revert_title": "변경 취소",
+    "revert_msg": "변경 내용을 취소할까요?",
+    "revert_action": "취소",
+    "revert": "변경 취소",
+    "error_add_tab": "탭을 추가하지 못했습니다.",
+    "confirm_delete_tab": "\"{{name}}\" 탭을 삭제할까요?",
+    "error_save": "저장하지 못했습니다.",
+    "change_cover": "배경 변경",
+    "status_placeholder": "상태 메시지를 입력하세요",
+    "section_theme": "스타일",
+    "theme_color": "테마 색상",
+    "font_color": "폰트 색상",
+    "statusbar": "상단바",
+    "text_white": "흰색 텍스트",
+    "text_black": "검은색 텍스트",
+    "section_tabs": "탭 관리",
+    "tab_all": "전체",
+    "tab_input_placeholder": "+ 새 탭",
+    "hue": "색상 (Hue)",
+    "brightness": "밝기 (Brightness)",
+    "apply": "적용",
+    "setting_tab": "\"{{name}}\" 설정",
+    "move_up": "위로 이동",
+    "move_down": "아래로 이동",
+    "visibility": "공개 범위",
+    "current_vis": "현재: {{val}}",
+    "vis_public": "전체",
+    "vis_private": "나만",
+    "vis_custom": "선택",
+    "vis_friends": "친구",
+    "vis_followers": "팔로워",
+    "picker_avatar": "프로필 사진 선택",
+    "picker_cover": "배경 사진 선택"
+  },
+  "menu": {
+    "settings": "설정",
+    "message": "메시지",
+    "unfollow": "팔로우 취소",
+    "hide": "숨기기",
+    "hide_confirm": "이 사용자를 숨길까요?",
+    "block": "차단",
+    "block_confirm": "이 사용자를 차단할까요?",
+    "report": "신고"
+  },
+  "followList": {
+    "title": "팔로우",
+    "searchPlaceholder": "닉네임 또는 ID 검색",
+    "searchHint": "검색어 입력",
+    "searchEmpty": "검색 결과 없음",
+    "retry": "다시 불러오기",
+    "unfollowTitle": "팔로우 취소",
+    "unfollowMessage": "{{name}}님을 취소할까요?",
+    "unfollowAction": "취소",
+    "tab": {
+      "following": "팔로잉",
+      "followers": "팔로워",
+      "requests": "요청"
+    },
+    "list": {
+      "following": "팔로잉 목록",
+      "followers": "팔로워 목록",
+      "requests": "팔로우 요청"
+    },
+    "section": {
+      "outgoing": "보낸 요청",
+      "incoming": "받은 요청"
+    },
+    "badge": {
+      "follower": "팔로워",
+      "pending": "요청 중"
+    },
+    "action": {
+      "accept": "수락",
+      "decline": "거절"
+    },
+    "empty": {
+      "followingTitle": "팔로잉 없음",
+      "followersTitle": "팔로워 없음",
+      "requestsTitle": "요청 없음",
+      "followingDesc": "관심 있는 사람을 팔로우해 보세요.",
+      "followersDesc": "프로필을 공유해 보세요.",
+      "requestsDesc": "요청을 보내거나 수락해 보세요."
+    },
+    "error": {
+      "loadFollowing": "팔로잉을 불러오지 못했습니다.",
+      "loadFollowers": "팔로워를 불러오지 못했습니다.",
+      "loadRequests": "요청을 불러오지 못했습니다.",
+      "loadList": "목록을 불러오지 못했습니다.",
+      "unfollow": "취소하지 못했습니다.",
+      "cancelRequest": "요청을 취소하지 못했습니다.",
+      "acceptRequest": "요청을 수락하지 못했습니다.",
+      "rejectRequest": "요청을 거절하지 못했습니다."
+    }
+  }
+}

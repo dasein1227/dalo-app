@@ -1,38 +1,103 @@
 // src/screens/business/BusinessUnregister.tsx
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Alert,
   ActivityIndicator,
+  Pressable,
   ScrollView,
-  StatusBar,
-  Platform,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
-import {
-  SafeAreaView,
-} from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { ChevronLeft, AlertTriangle } from 'lucide-react-native';
+import { AlertTriangle, CheckCircle2, ChevronLeft, XCircle } from 'lucide-react-native';
+
 import { supabase } from '@/lib/supabase';
+import { useAppTheme } from '@/theme/useAppTheme';
+import { useTranslation } from 'react-i18next';
+import { createBusinessOwnerTheme, type BusinessOwnerTheme } from './BusinessOwner.theme';
+import { GlobalHeader, HeaderIconButton } from '@/components/GlobalHeader';
+import SafeScreen from '@/components/layout/SafeScreen';
+import CoonnAlert, { type CoonnAlertVariant } from '@/components/CoonnAlert';
+import CoonnFloatingToast from '@/components/feedback/CoonnFloatingToast';
+import { useCoonnFloatingToast } from '@/components/feedback/useCoonnFloatingToast';
 
-const BG = '#F7F8FA';
-const CARD_BG = '#FFFFFF';
-const TEXT_MAIN = '#111827';
-const TEXT_MUTED = '#6B7280';
-const ACCENT = '#FF5A7A';
-const HAIRLINE = '#ECEFF4';
+type UnregisterAlertState = {
+  visible: boolean;
+  title: string;
+  message?: string;
+  variant: CoonnAlertVariant;
+  singleButton: boolean;
+  confirmText: string;
+  cancelText: string;
+  onConfirm?: () => void | Promise<void>;
+};
 
-type ProfileRow = {
-  id: string;
-  is_business?: boolean | null;
+const EMPTY_UNREGISTER_ALERT: UnregisterAlertState = {
+  visible: false,
+  title: '',
+  message: undefined,
+  variant: 'default',
+  singleButton: true,
+  confirmText: '',
+  cancelText: '',
 };
 
 export default function BusinessUnregister() {
   const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
+  const appTheme = useAppTheme();
+  const ui = useMemo(() => createBusinessOwnerTheme(appTheme), [appTheme]);
+  const styles = useMemo(() => createStyles(ui), [ui]);
+  const { t } = useTranslation();
+  const { toast, showToast, hideToast } = useCoonnFloatingToast();
+  const [unregisterAlert, setUnregisterAlert] = useState<UnregisterAlertState>(EMPTY_UNREGISTER_ALERT);
+
+  const alertThemeName = useMemo<'coonn_light' | 'coonn_dark'>(
+    () => ((appTheme as any)?.isDark ? 'coonn_dark' : 'coonn_light'),
+    [appTheme],
+  );
+
+  const showUnregisterToast = useCallback(
+    (message: string, tone: 'default' | 'success' | 'warning' | 'danger' = 'default', showMark = false) => {
+      const trimmed = String(message || '').trim();
+      if (!trimmed) return;
+      showToast({ message: trimmed, tone, showMark });
+    },
+    [showToast],
+  );
+
+  const closeUnregisterAlert = useCallback(() => {
+    setUnregisterAlert((prev) => ({ ...prev, visible: false, onConfirm: undefined }));
+  }, [showUnregisterToast, t]);
+
+  const showUnregisterAlert = useCallback((params: {
+    title: string;
+    message?: string;
+    variant?: CoonnAlertVariant;
+    singleButton?: boolean;
+    confirmText?: string;
+    cancelText?: string;
+    onConfirm?: () => void | Promise<void>;
+  }) => {
+    setUnregisterAlert({
+      visible: true,
+      title: params.title,
+      message: params.message,
+      variant: params.variant ?? 'default',
+      singleButton: params.singleButton ?? true,
+      confirmText: params.confirmText ?? t('business:common.confirm'),
+      cancelText: params.cancelText ?? t('business:common.cancel'),
+      onConfirm: params.onConfirm,
+    });
+  }, [t]);
+
+  const handleUnregisterAlertConfirm = useCallback(async () => {
+    const action = unregisterAlert.onConfirm;
+    closeUnregisterAlert();
+    await action?.();
+  }, [closeUnregisterAlert, unregisterAlert.onConfirm]);
 
   const [meId, setMeId] = useState<string>('');
   const [isBusiness, setIsBusiness] = useState<boolean>(false);
@@ -45,26 +110,16 @@ export default function BusinessUnregister() {
 
       const {
         data: { user },
-        error: authErr,
+        error,
       } = await supabase.auth.getUser();
 
-      if (authErr || !user) {
-        throw new Error('로그인이 필요합니다.');
-      }
+      if (error || !user) throw new Error(t('business:register.loginRequired'));
+
       setMeId(user.id);
-
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, is_business')
-        .eq('id', user.id)
-        .maybeSingle();
-
-      if (error) throw error;
-
-      const row = (data ?? null) as ProfileRow | null;
-      setIsBusiness(row?.is_business ?? false);
+      const { data } = await supabase.from('profiles').select('is_business').eq('id', user.id).maybeSingle();
+      setIsBusiness(data?.is_business ?? false);
     } catch (e: any) {
-      Alert.alert('오류', e?.message ?? String(e));
+      showUnregisterToast(e?.message ?? t('business:unregister.loadFail'), 'danger');
     } finally {
       setLoading(false);
     }
@@ -74,291 +129,338 @@ export default function BusinessUnregister() {
     load();
   }, [load]);
 
-  const confirmUnregister = () => {
-    if (!meId) {
-      Alert.alert('오류', '유저 정보를 불러오지 못했습니다.');
-      return;
-    }
-
-    Alert.alert(
-      '사업자 등록 해지',
-      '정말 사업자 등록을 해지하시겠어요?\n\n비즈니스 전용 기능과 비콘 노출이 제한될 수 있습니다.',
-      [
-        { text: '취소', style: 'cancel' },
-        {
-          text: '해지하기',
-          style: 'destructive',
-          onPress: doUnregister,
-        },
-      ],
-    );
-  };
-
-  const doUnregister = async () => {
+  const submitUnregister = useCallback(async () => {
     try {
       setSubmitting(true);
-
-      const { error } = await supabase
-        .from('profiles')
-        .update({ is_business: false })
-        .eq('id', meId);
-
+      const { error } = await supabase.from('profiles').update({ is_business: false }).eq('id', meId);
       if (error) throw error;
 
       setIsBusiness(false);
-
-      Alert.alert('해지 완료', '사업자 등록이 해지되었습니다.', [
-        {
-          text: '확인',
-          onPress: () => navigation.goBack(),
-        },
-      ]);
+      showUnregisterAlert({
+        title: t('business:unregister.successTitle'),
+        message: t('business:unregister.successDesc'),
+        singleButton: true,
+        onConfirm: () => navigation.goBack(),
+      });
     } catch (e: any) {
-      Alert.alert('오류', e?.message ?? String(e));
+      showUnregisterToast(e?.message ?? t('business:unregister.submitFail'), 'danger');
     } finally {
       setSubmitting(false);
     }
-  };
+  }, [meId, navigation, showUnregisterAlert, showUnregisterToast, t]);
 
-  const disabled = !isBusiness || submitting;
+  const handleUnregister = useCallback(() => {
+    showUnregisterAlert({
+      title: t('business:unregister.confirmTitle'),
+      message: t('business:unregister.confirmDesc'),
+      variant: 'danger',
+      singleButton: false,
+      confirmText: t('business:unregister.action'),
+      cancelText: t('business:common.cancel'),
+      onConfirm: submitUnregister,
+    });
+  }, [showUnregisterAlert, submitUnregister, t]);
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safeArea}>
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor="#ffffff"
-          translucent={false}
+      <SafeScreen
+        backgroundColor={ui.background}
+        includeTopInset={false}
+        includeBottomInset
+        contentStyle={{ paddingLeft: insets.left, paddingRight: insets.right }}
+      >
+        <GlobalHeader
+          style={{
+            backgroundColor: ui.headerBg,
+            borderBottomColor: ui.headerBorder,
+          }}
+          titleComponent={
+            <View style={styles.headerTitleRow}>
+              <HeaderIconButton onPress={() => navigation.goBack()}>
+                <ChevronLeft size={22} color={ui.headerIcon} strokeWidth={2.1} />
+              </HeaderIconButton>
+              <Text style={styles.headerTitle}>{t('business:unregister.title')}</Text>
+            </View>
+          }
         />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator />
-          <Text style={styles.loadingText}>불러오는 중…</Text>
+        <View style={styles.center}>
+          <ActivityIndicator color={ui.textPrimary} />
         </View>
-      </SafeAreaView>
+      </SafeScreen>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="#ffffff"
-        translucent={false}
+    <SafeScreen
+      backgroundColor={ui.background}
+      includeTopInset={false}
+      includeBottomInset
+      contentStyle={{ paddingLeft: insets.left, paddingRight: insets.right }}
+    >
+      <GlobalHeader
+        style={{
+          backgroundColor: ui.headerBg,
+          borderBottomColor: ui.headerBorder,
+        }}
+        titleComponent={
+          <View style={styles.headerTitleRow}>
+            <HeaderIconButton onPress={() => navigation.goBack()}>
+              <ChevronLeft size={22} color={ui.headerIcon} strokeWidth={2.1} />
+            </HeaderIconButton>
+            <Text style={styles.headerTitle}>{t('business:unregister.title')}</Text>
+          </View>
+        }
       />
 
-      {/* 헤더 */}
-      <View style={styles.header}>
-        <Pressable
-          style={styles.headerLeft}
-          hitSlop={8}
-          onPress={() => navigation.goBack()}
-        >
-          <ChevronLeft size={22} color={TEXT_MAIN} />
-        </Pressable>
-
-        <Text style={styles.headerTitle}>사업자 등록 해지</Text>
-
-        <View style={styles.headerRight} />
-      </View>
-
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        {/* 경고 카드 */}
-        <View style={styles.card}>
-          <View style={styles.warningRow}>
-            <View style={styles.warningIconWrap}>
-              <AlertTriangle size={20} color={ACCENT} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.cardTitle}>해지 전에 꼭 확인해 주세요</Text>
-              <Text style={styles.cardSubtitle}>
-                사업자 등록을 해지하면 CO·ONN 비즈니스 기능 이용에 제한이 생길 수 있어요.
-              </Text>
-            </View>
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: Math.max(insets.bottom, 10) + 28 }]} showsVerticalScrollIndicator={false}>
+        <View style={styles.statusCard}>
+          <Text style={styles.cardLabel}>{t('business:unregister.accountState')}</Text>
+          <View style={styles.statusRow}>
+            {isBusiness ? (
+              <>
+                <CheckCircle2 size={20} color={ui.success} strokeWidth={2} />
+                <Text style={styles.statusTextActive}>{t('business:status.verifiedBusiness')}</Text>
+              </>
+            ) : (
+              <>
+                <XCircle size={20} color={ui.iconMuted} strokeWidth={2} />
+                <Text style={styles.statusTextInactive}>{t('business:status.normalAccount')}</Text>
+              </>
+            )}
           </View>
-
-          <View style={styles.bulletBox}>
-            <Text style={styles.bullet}>
-              • 비즈니스 비콘 생성 및 관리가 제한됩니다.
-            </Text>
-            <Text style={styles.bullet}>
-              • 추후 다시 사업자 등록을 통해 재신청할 수 있습니다.
-            </Text>
-            <Text style={styles.bullet}>
-              • 이미 노출된 콘텐츠는 서비스 정책에 따라 유지되거나 숨김 처리될 수 있습니다.
-            </Text>
-          </View>
-        </View>
-
-        {/* 상태 안내 */}
-        <View style={styles.card}>
-          <Text style={styles.label}>현재 상태</Text>
-          <Text style={styles.statusText}>
-            {isBusiness
-              ? '현재 사업자 회원으로 등록된 계정입니다.'
-              : '현재 사업자 회원이 아닌 계정입니다.'}
+          <Text style={styles.statusDescription}>
+            {isBusiness ? t('business:unregister.activeDesc') : t('business:unregister.inactiveDesc')}
           </Text>
-          {!isBusiness && (
-            <Text style={styles.statusSub}>
-              이미 사업자 해지가 되었거나, 아직 사업자 등록을 하지 않은 계정입니다.
-            </Text>
-          )}
         </View>
 
-        {/* 해지 버튼 */}
-        <Pressable
-          style={[
-            styles.unregButton,
-            disabled && styles.unregButtonDisabled,
-          ]}
-          disabled={disabled}
-          onPress={confirmUnregister}
-        >
-          {submitting ? (
-            <ActivityIndicator color="#ffffff" />
-          ) : (
-            <Text style={styles.unregButtonText}>
-              {isBusiness ? '사업자 등록 해지하기' : '사업자 회원이 아닙니다'}
-            </Text>
-          )}
-        </Pressable>
+        {isBusiness ? (
+          <>
+            <View style={styles.warningBox}>
+              <View style={styles.warningHeader}>
+                <View style={styles.warningIconBox}>
+                  <AlertTriangle size={22} color={ui.danger} strokeWidth={2} />
+                </View>
+                <View style={styles.warningTitleBox}>
+                  <Text style={styles.warningTitle}>{t('business:unregister.warningTitle')}</Text>
+                  <Text style={styles.warningSubtitle}>{t('business:unregister.warningDesc')}</Text>
+                </View>
+              </View>
+
+              <View style={styles.bulletList}>
+                <Text style={styles.bulletItem}>• {t('business:unregister.bulletBeacon')}</Text>
+                <Text style={styles.bulletItem}>• {t('business:unregister.bulletTools')}</Text>
+                <Text style={styles.bulletItem}>• {t('business:unregister.bulletData')}</Text>
+              </View>
+            </View>
+
+            <Pressable style={({ pressed }) => [styles.dangerButton, submitting && styles.disabledButton, pressed && !submitting && styles.pressed]} onPress={handleUnregister} disabled={submitting}>
+              {submitting ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.dangerButtonText}>{t('business:unregister.action')}</Text>}
+            </Pressable>
+          </>
+        ) : (
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyTitle}>{t('business:unregister.emptyTitle')}</Text>
+            <Text style={styles.emptyDescription}>{t('business:unregister.emptyDesc')}</Text>
+            <Pressable style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]} onPress={() => navigation.goBack()}>
+              <Text style={styles.secondaryButtonText}>{t('business:unregister.back')}</Text>
+            </Pressable>
+          </View>
+        )}
       </ScrollView>
-    </SafeAreaView>
+
+      <CoonnAlert
+        visible={unregisterAlert.visible}
+        theme={alertThemeName}
+        variant={unregisterAlert.variant}
+        title={unregisterAlert.title}
+        message={unregisterAlert.message}
+        confirmText={unregisterAlert.confirmText}
+        cancelText={unregisterAlert.cancelText}
+        singleButton={unregisterAlert.singleButton}
+        onConfirm={handleUnregisterAlertConfirm}
+        onCancel={closeUnregisterAlert}
+        dismissOnBackdrop={false}
+      />
+
+      <CoonnFloatingToast
+        visible={toast.visible}
+        message={toast.message}
+        tone={toast.tone}
+        showMark={toast.showMark}
+        bottomOffset={Math.max(insets.bottom + 28, 36)}
+        onHidden={hideToast}
+      />
+    </SafeScreen>
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
-
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: BG,
-  },
-  loadingText: {
-    marginTop: 8,
-    fontSize: 13,
-    color: TEXT_MUTED,
-  },
-
-  header: {
-    height: 54,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: HAIRLINE,
-    paddingHorizontal: 14,
-    paddingLeft: 5,
-    paddingTop: Platform.select({ ios: 8, android: 4 }),
-    paddingBottom: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  headerLeft: {
-    width: 34,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: 17,
-    fontWeight: '700',
-    color: TEXT_MAIN,
-  },
-  headerRight: {
-    width: 34,
-  },
-
-  scroll: {
-    flex: 1,
-    backgroundColor: BG,
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 40,
-  },
-
-  card: {
-    backgroundColor: CARD_BG,
-    borderRadius: 14,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: HAIRLINE,
-    padding: 16,
-    marginBottom: 14,
-  },
-
-  warningRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  warningIconWrap: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#FEF2F2',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  cardTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: TEXT_MAIN,
-  },
-  cardSubtitle: {
-    marginTop: 4,
-    fontSize: 12,
-    color: TEXT_MUTED,
-  },
-
-  bulletBox: {
-    marginTop: 12,
-  },
-  bullet: {
-    fontSize: 13,
-    color: TEXT_MAIN,
-    marginBottom: 4,
-  },
-
-  label: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: TEXT_MAIN,
-    marginBottom: 6,
-  },
-  statusText: {
-    fontSize: 14,
-    color: TEXT_MAIN,
-    marginBottom: 4,
-  },
-  statusSub: {
-    fontSize: 12,
-    color: TEXT_MUTED,
-  },
-
-  unregButton: {
-    marginTop: 20,
-    paddingVertical: 14,
-    borderRadius: 999,
-    backgroundColor: '#DC2626',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  unregButtonDisabled: {
-    backgroundColor: '#FECACA',
-  },
-  unregButtonText: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#ffffff',
-  },
-});
+function createStyles(ui: BusinessOwnerTheme) {
+  return StyleSheet.create({
+    pressed: { opacity: ui.pressedOpacity },
+    container: { flex: 1, backgroundColor: ui.background },
+    center: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: ui.background,
+    },
+    headerTitleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      minWidth: 0,
+      flex: 1,
+    },
+    headerTitle: {
+      fontSize: 17,
+      fontWeight: '700',
+      color: ui.textPrimary,
+      letterSpacing: -0.2,
+    },
+    content: {
+      paddingHorizontal: 16,
+      paddingTop: 18,
+    },
+    statusCard: {
+      padding: 18,
+      borderRadius: ui.radius.container,
+      backgroundColor: ui.surface,
+      borderWidth: ui.hairline,
+      borderColor: ui.border,
+      marginBottom: 14,
+      ...ui.shadowSoft,
+    },
+    cardLabel: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: ui.textSecondary,
+      marginBottom: 8,
+    },
+    statusRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    statusTextActive: {
+      fontSize: 19,
+      fontWeight: '800',
+      color: ui.textPrimary,
+      letterSpacing: -0.4,
+    },
+    statusTextInactive: {
+      fontSize: 19,
+      fontWeight: '800',
+      color: ui.textSecondary,
+      letterSpacing: -0.4,
+    },
+    statusDescription: {
+      marginTop: 10,
+      fontSize: 13,
+      lineHeight: 19,
+      fontWeight: '500',
+      color: ui.textSecondary,
+    },
+    warningBox: {
+      padding: 18,
+      borderRadius: ui.radius.container,
+      backgroundColor: ui.dangerSoft,
+      borderWidth: ui.hairline,
+      borderColor: ui.isDark ? 'rgba(239, 68, 68, 0.28)' : '#FECACA',
+      marginBottom: 18,
+    },
+    warningHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    warningIconBox: {
+      width: 42,
+      height: 42,
+      borderRadius: 21,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: ui.isDark ? 'rgba(239, 68, 68, 0.10)' : '#FFFFFF',
+      borderWidth: ui.hairline,
+      borderColor: ui.isDark ? 'rgba(239, 68, 68, 0.22)' : '#FECACA',
+      marginRight: 12,
+    },
+    warningTitleBox: { flex: 1 },
+    warningTitle: {
+      fontSize: 17,
+      fontWeight: '800',
+      color: ui.textPrimary,
+      letterSpacing: -0.3,
+    },
+    warningSubtitle: {
+      marginTop: 3,
+      fontSize: 12,
+      fontWeight: '600',
+      color: ui.textSecondary,
+    },
+    bulletList: {
+      padding: 14,
+      borderRadius: ui.radius.md,
+      backgroundColor: ui.isDark ? 'rgba(0, 0, 0, 0.18)' : 'rgba(255, 255, 255, 0.62)',
+      borderWidth: ui.hairline,
+      borderColor: ui.isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(239, 68, 68, 0.12)',
+      gap: 7,
+    },
+    bulletItem: {
+      fontSize: 13,
+      lineHeight: 19,
+      fontWeight: '500',
+      color: ui.textSecondary,
+    },
+    dangerButton: {
+      height: 54,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: ui.radius.container,
+      backgroundColor: ui.danger,
+    },
+    disabledButton: { opacity: 0.72 },
+    dangerButtonText: {
+      fontSize: 16,
+      fontWeight: '800',
+      color: '#FFFFFF',
+      letterSpacing: -0.2,
+    },
+    emptyCard: {
+      alignItems: 'center',
+      padding: 22,
+      borderRadius: ui.radius.container,
+      backgroundColor: ui.surface,
+      borderWidth: ui.hairline,
+      borderColor: ui.border,
+    },
+    emptyTitle: {
+      fontSize: 18,
+      fontWeight: '800',
+      color: ui.textPrimary,
+      marginBottom: 8,
+      letterSpacing: -0.3,
+    },
+    emptyDescription: {
+      fontSize: 13,
+      lineHeight: 20,
+      fontWeight: '500',
+      textAlign: 'center',
+      color: ui.textSecondary,
+      marginBottom: 18,
+    },
+    secondaryButton: {
+      height: 44,
+      paddingHorizontal: 18,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: ui.radius.md,
+      backgroundColor: ui.control,
+      borderWidth: ui.hairline,
+      borderColor: ui.border,
+    },
+    secondaryButtonText: {
+      fontSize: 14,
+      fontWeight: '700',
+      color: ui.textPrimary,
+    },
+  });
+}

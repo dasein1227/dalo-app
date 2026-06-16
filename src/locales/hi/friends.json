@@ -1,0 +1,253 @@
+{
+  "title": "मित्र",
+  "requests": "मित्र अनुरोध",
+  "requests_empty": "कोई नया मित्र अनुरोध नहीं है.",
+  "requests_received": "प्राप्त अनुरोध",
+  "requests_sent": "भेजे गए अनुरोध",
+  "add_friend": "मित्र जोड़ें",
+  "send_request": "मित्र अनुरोध भेजें",
+  "request_sent": "मित्र अनुरोध भेजा गया.",
+  "request_send_failed": "मित्र अनुरोध नहीं भेज सके.",
+  "request_cancel": "अनुरोध रद्द करें",
+  "request_canceled": "मित्र अनुरोध रद्द किया गया.",
+  "request_cancel_failed": "मित्र अनुरोध रद्द नहीं कर सके.",
+  "accept": "स्वीकार",
+  "decline": "अस्वीकार",
+  "accepted": "मित्र अनुरोध स्वीकार किया गया.",
+  "declined": "मित्र अनुरोध अस्वीकार किया गया.",
+  "accept_failed": "मित्र अनुरोध स्वीकार नहीं कर सके.",
+  "decline_failed": "मित्र अनुरोध अस्वीकार नहीं कर सके.",
+  "remove_friend": "मित्र हटाएँ",
+  "remove_friend_confirm": "इस मित्र को हटाएँ?",
+  "remove_friend_done": "मित्र हटा दिया गया.",
+  "remove_friend_failed": "मित्र हटाने में विफल.",
+  "blocked": "ब्लॉक किया गया",
+  "block": "ब्लॉक",
+  "unblock": "अनब्लॉक",
+  "block_done": "ब्लॉक किया गया.",
+  "unblock_done": "ब्लॉक हटाया गया.",
+  "search_placeholder": "निकनेम, ID, मित्र कोड खोजें",
+  "code_placeholder": "मित्र कोड दर्ज करें",
+  "already_friends": "आप पहले से मित्र हैं.",
+  "already_requested": "मित्र अनुरोध पहले ही भेजा गया है.",
+  "self_not_allowed": "खुद को मित्र अनुरोध नहीं भेज सकते.",
+  "hidden": "छिपाया गया",
+  "favorite": "पसंदीदा",
+  "memo": "मेमो",
+  "alias": "उपनाम",
+  "group": {
+    "title": "समूह",
+    "manageTitle": "मित्र समूह",
+    "createTitle": "नया समूह",
+    "createDesc": "समूह का नाम दर्ज करें.",
+    "createPlaceholder": "जैसे: सहकर्मी, पड़ोस, स्टडी",
+    "createAction": "बनाएँ",
+    "createFail": "बनाने में विफल",
+    "editTitle": "समूह नाम संपादित करें",
+    "editDesc": "नया नाम दर्ज करें.",
+    "editPlaceholder": "समूह नाम",
+    "saveAction": "सेव",
+    "renameFail": "संपादन विफल",
+    "nameRequired": "समूह नाम दर्ज करें.",
+    "deleteTitle": "समूह हटाएँ",
+    "deleteMessage": "\"{{name}}\" समूह हटाएँ?",
+    "emptyTitle": "कोई समूह नहीं",
+    "emptyDesc": "नया समूह बनाएँ.",
+    "memberEmpty": "समूह में कोई सदस्य नहीं.",
+    "addTitle": "मित्र जोड़ें",
+    "addSuccess": "जोड़ा गया.",
+    "addFail": "जोड़ने में विफल",
+    "addEmpty": "जोड़ने के लिए कोई मित्र नहीं.",
+    "removeSuccess": "हटा दिया गया.",
+    "removeFail": "हटाने में विफल",
+    "memberCount": "{{count}} लोग"
+  },
+  "userFallback": "उपयोगकर्ता",
+  "list": {
+    "favoriteFriendsCount": "पसंदीदा {{count}}",
+    "friendsCount": "मित्र {{count}}"
+  },
+  "tabs": {
+    "friends": "मित्र",
+    "groups": "समूह"
+  },
+  "search": {
+    "placeholder": "खोज शब्द दर्ज करें",
+    "friendPlaceholder": "मित्र नाम, ID खोजें",
+    "groupPlaceholder": "समूह, सदस्य खोजें",
+    "namePlaceholder": "नाम खोजें",
+    "friendPickerPlaceholder": "मित्र खोजें",
+    "contactsPlaceholder": "नाम या नंबर खोजें",
+    "waitTitle": "इनपुट प्रतीक्षा",
+    "waitCaption": "जानकारी दर्ज करके खोजें.",
+    "emptyTitle": "कोई परिणाम नहीं",
+    "emptyCaption": "कोई मेल खाता उपयोगकर्ता नहीं.",
+    "contactEmptyTitle": "कोई संपर्क नहीं",
+    "contactEmptyCaption": "मेल खाते संपर्क नहीं हैं.",
+    "groupNamePlaceholder": "समूह खोजें"
+  },
+  "action": {
+    "favoriteAdd": "पसंदीदा",
+    "favoriteRemove": "हटाएँ",
+    "manageFriend": "मित्र प्रबंधन",
+    "manageGroup": "समूह प्रबंधन",
+    "contact": "संपर्क करें",
+    "create": "बनाएँ",
+    "save": "सेव",
+    "add": "जोड़ें",
+    "remove": "हटाएँ",
+    "select": "चुनें",
+    "search": "खोजें",
+    "processing": "प्रोसेस हो रहा है",
+    "saving": "सेव हो रहा है"
+  },
+  "alert": {
+    "notice": "सूचना",
+    "fail": "विफल",
+    "loadFail": "लोड विफल",
+    "deleteFail": "हटाना विफल",
+    "profileRouteMissing": "प्रोफ़ाइल स्क्रीन नहीं मिली.",
+    "chatRouteMissing": "चैट स्क्रीन नहीं मिली.",
+    "phoneMissing": "फोन नंबर नहीं है.",
+    "phoneOpenFail": "फोन ऐप नहीं खोल सके.",
+    "removeFriendTitle": "मित्र हटाएँ",
+    "removeFriendMessage": "{{name}} को हटाएँ?",
+    "blockTitle": "ब्लॉक",
+    "blockMessage": "{{name}} को ब्लॉक करें?",
+    "blockFail": "ब्लॉक विफल",
+    "friendEditRouteMissing": "मित्र प्रबंधन स्क्रीन नहीं मिली."
+  },
+  "add": {
+    "title": "मित्र जोड़ें",
+    "loginRequired": "लॉगिन आवश्यक है.",
+    "contactSearch": "संपर्क खोजें",
+    "userFallback": "उपयोगकर्ता {{id}}",
+    "noName": "नाम नहीं",
+    "myProfile": "मेरी प्रोफ़ाइल",
+    "notSet": "सेट नहीं",
+    "friendCodeLabel": "मित्र कोड",
+    "qrOfflineHint": "QR कोड से तुरंत जुड़ सकते हैं.",
+    "shareLink": "लिंक साझा करें",
+    "scanQr": "QR स्कैन",
+    "qrTitle": "मेरा कनेक्शन कोड",
+    "qrDesc": "दूसरा व्यक्ति स्कैन करे तो\nसीधे जुड़ जाएगा.",
+    "scanGuide": "दूसरे व्यक्ति का QR स्कैन करें.",
+    "contactsTitle": "संपर्कों से खोजें",
+    "contactsDesc": "फोनबुक से चुनकर खोजें.",
+    "mode": {
+      "coonnIdTitle": "CO·ONN ID",
+      "coonnIdHint": "दूसरे व्यक्ति का सार्वजनिक ID दर्ज करें.",
+      "coonnIdPlaceholder": "ID दर्ज करें",
+      "friendCodeTitle": "मित्र कोड",
+      "friendCodeHint": "मित्र कोड दर्ज करें.",
+      "friendCodePlaceholder": "मित्र कोड दर्ज करें",
+      "phoneTitle": "संपर्क",
+      "phoneHint": "मोबाइल नंबर से खोजें.",
+      "phonePlaceholder": "नंबर दर्ज करें"
+    },
+    "result": {
+      "noPublicId": "सार्वजनिक ID नहीं",
+      "friendCodeVerified": "मित्र कोड सत्यापित",
+      "friendCodeMatched": "मित्र कोड मिला",
+      "contact": "संपर्क · {{phone}}",
+      "added": "जोड़ा गया",
+      "limited": "सीमित",
+      "add": "जोड़ें"
+    },
+    "share": {
+      "myId": "मेरा ID",
+      "friendCode": "मित्र कोड",
+      "title": "CO·ONN लिंक साझा करें",
+      "message": "[CO·ONN] मुझसे जुड़ें.{{idText}}{{codeText}}\n\nनीचे दिए लिंक से मित्र जोड़ने की स्क्रीन खोल सकते हैं.\n{{url}}"
+    },
+    "toast": {
+      "added": "मित्र के रूप में जोड़ा गया."
+    },
+    "alert": {
+      "permissionRequired": "अनुमति आवश्यक",
+      "cameraPermissionRequired": "कैमरा अनुमति आवश्यक है.",
+      "contactsPermissionRequired": "संपर्क अनुमति आवश्यक है.",
+      "contactsLoadFail": "संपर्क लोड विफल",
+      "searchFail": "खोज विफल",
+      "addFail": "जोड़ना विफल"
+    },
+    "error": {
+      "invalidUser": "अमान्य उपयोगकर्ता.",
+      "selfQr": "यह मेरा QR है.",
+      "userNotFound": "उपयोगकर्ता नहीं मिला.",
+      "invalidQr": "अमान्य कोड.",
+      "minLength": "कम से कम {{count}} अक्षर दर्ज करें."
+    },
+    "findTitle": "नए मित्र खोजें",
+    "card": {
+      "idTitle": "ID से खोजें",
+      "idDesc": "CO·ONN ID खोज",
+      "codeTitle": "कोड से खोजें",
+      "codeDesc": "मित्र कोड खोज",
+      "contactsTitle": "संपर्क",
+      "contactsDesc": "फोनबुक आधारित"
+    },
+    "digitalCardTitle": "मेरा कार्ड"
+  },
+  "communication": {
+    "noPhone": "फोन नंबर नहीं",
+    "phoneCall": "सामान्य कॉल",
+    "voiceCall": "वॉयस कॉल",
+    "comingSoon": "तैयार हो रहा है"
+  },
+  "edit": {
+    "title": "मित्र सेटिंग",
+    "unknownUser": "अज्ञात",
+    "none": "कोई नहीं",
+    "field": {
+      "name": "नाम"
+    },
+    "placeholder": {
+      "alias": "उपनाम दर्ज करें",
+      "memo": "मेमो दर्ज करें"
+    },
+    "helper": {
+      "friendName": "मित्र नाम · {{name}}",
+      "privateMemo": "केवल आपको दिखेगा."
+    },
+    "section": {
+      "groups": "समूह",
+      "security": "सुरक्षा"
+    },
+    "state": {
+      "on": "चालू",
+      "off": "बंद",
+      "hidden": "छिपा",
+      "visible": "दिख रहा है",
+      "blocked": "ब्लॉक",
+      "unblocked": "ब्लॉक नहीं"
+    },
+    "toast": {
+      "saved": "सेव किया गया."
+    },
+    "alert": {
+      "loadFail": "लोड विफल",
+      "saveFail": "सेव विफल",
+      "removeFail": "हटाना विफल",
+      "userLoadFail": "उपयोगकर्ता लोड नहीं कर सके.",
+      "blockedByPeer": "दूसरे व्यक्ति ने आपको ब्लॉक किया है."
+    },
+    "remove": {
+      "title": "मित्र हटाएँ",
+      "message": "{{name}} को हटाएँ?"
+    },
+    "unsaved": {
+      "title": "बदलाव",
+      "message": "कुछ बदलाव हैं.",
+      "discard": "सेव न करें"
+    },
+    "groups": {
+      "title": "समूह प्रबंधन",
+      "subtitle": "शामिल करने वाले समूह चुनें.",
+      "selectedCount": "चयन {{count}}",
+      "inGroup": "अभी शामिल",
+      "addHint": "जोड़ने के लिए टैप करें",
+      "emptySearch": "दूसरे नाम से खोजें."
+    }
+  }
+}

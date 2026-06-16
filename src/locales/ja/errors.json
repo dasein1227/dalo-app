@@ -1,0 +1,16 @@
+{
+  "common": "エラー",
+  "auth": {
+    "loginRequired": "ログインが必要です。"
+  },
+  "unknown": "エラーが発生しました。",
+  "network": "ネットワーク接続を確認してください。",
+  "invalid_credentials": "メールアドレスまたはパスワードが正しくありません。",
+  "oauth_cancelled": "ログインをキャンセルしました。",
+  "provider_config": "認証プロバイダー設定を確認してください。",
+  "redirect_config": "リダイレクトURL設定を確認してください。",
+  "session_check_failed": "セッションを確認できませんでした。",
+  "sms_required": "認証番号を入力してください。",
+  "phone_format": "電話番号は国際形式（+8210…）で入力してください。",
+  "email_format": "正しいメールアドレス形式ではありません。"
+}

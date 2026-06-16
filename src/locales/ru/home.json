@@ -1,0 +1,183 @@
+{
+  "briefing_title": "Сегодня",
+  "briefing_toggle_show": "Показать",
+  "briefing_toggle_hide": "Скрыть",
+  "briefing_unread_chat": "Непрочитанные чаты",
+  "briefing_nearby_beacon": "Биконы рядом",
+  "briefing_new_friend_post": "Посты друзей",
+  "briefing_new_follower": "Новые подписчики",
+  "briefing_count_unit": "",
+  "briefing_people_unit": "",
+  "tabs": {
+    "friends": "Друзья",
+    "following": "Подписки",
+    "local": "Локальное"
+  },
+  "banner_headerTitle": "Рядом",
+  "banner_fallback_title": "Рекомендации рядом",
+  "banner_fallback_desc": "Ищем места рядом",
+  "banner_default_headline": "Место дня",
+  "banner_unknown_place": "Неизвестное место",
+  "banner_status_open": "Открыть",
+  "banner_status_closed": "Закрыто",
+  "banner_tag_fallback": "Рекомендовано",
+  "empty_feed": "Нет ленты для показа.",
+  "scroll_top": "Наверх",
+  "briefing_nearby_beacon_title": "Биконы рядом",
+  "briefing_today_schedule_title": "Расписание",
+  "briefing_continue_chat_title": "Продолжить чат",
+  "briefing_near_news_title": "Новости рядом",
+  "unknown_user": "Неизвестно",
+  "near_news": {
+    "filters": {
+      "all": "Все",
+      "post": "Лента",
+      "event": "Событие",
+      "notice": "Объявление"
+    },
+    "kind": {
+      "post": "Лента",
+      "event": "Событие",
+      "notice": "Объявление"
+    },
+    "kind_en": {
+      "post": "FEED",
+      "event": "EVENT",
+      "notice": "ОБЪЯВЛЕНИЯ"
+    },
+    "masthead_overline": "CO·ONN LOCAL JOURNAL",
+    "masthead_title": "NEARBY NEWS",
+    "edition_line": "МЕСТНЫЙ ВЫПУСК · {{distance}}",
+    "count_line": "FEED {{post}} · EVENT {{event}} · NOTICE {{notice}}",
+    "self": "Я",
+    "unknown_user": "Неизвестно",
+    "unknown_place": "Место рядом",
+    "distance_pending": "Проверка расстояния",
+    "just_now": "Только что",
+    "minutes_ago": "{{value}} мин назад",
+    "hours_ago": "{{value}} ч назад",
+    "days_ago": "{{value}} дн. назад",
+    "always": "Всегда",
+    "until": "До {{date}}",
+    "ongoing": "Идёт",
+    "category": {
+      "restaurant": "Ресторан",
+      "cafe": "Кафе",
+      "bakery": "Пекарня",
+      "market": "Маркет",
+      "drink": "Паб",
+      "store": "Магазин"
+    },
+    "place": "Место",
+    "nearby_place": "Место рядом",
+    "nearby_feed": "Лента рядом",
+    "event_title": "Событие",
+    "notice_title": "Объявление",
+    "event_body": "Доступно новое событие.",
+    "notice_body": "Опубликовано новое объявление.",
+    "load_error": "Не удалось загрузить новости рядом.",
+    "collection_title": "Новости рядом",
+    "media_title": "Новости рядом",
+    "empty_title": "Нет новостей",
+    "empty_desc": "Здесь появятся посты и обновления мест рядом.",
+    "editing": "Подготовка страницы",
+    "load_failed": "Не удалось загрузить",
+    "retry": "Повторить",
+    "local_note": "LOCAL NOTE",
+    "by_prefix": "ОТ "
+  },
+  "schedule_sheet": {
+    "weekdays": {
+      "sun": "Вс",
+      "mon": "Пн",
+      "tue": "Вт",
+      "wed": "Ср",
+      "thu": "Чт",
+      "fri": "Пт",
+      "sat": "Сб"
+    },
+    "date_title": "{{day}}.{{month}} ({{weekday}})",
+    "period": {
+      "am": "AM",
+      "pm": "PM"
+    },
+    "time_range_cross_day": "{{start}} - {{date}} {{end}}",
+    "default_room_title": "Чат",
+    "participation": {
+      "joined": "Участвует",
+      "pending": "Не участвует"
+    },
+    "search_placeholder": {
+      "joined": "Поиск расписаний с участием",
+      "pending": "Поиск доступных расписаний"
+    },
+    "load_error": "Не удалось загрузить расписание.",
+    "people_count": "{{value}} чел.",
+    "default_title": "Расписание",
+    "time_unknown": "Время не указано",
+    "today_title": "Расписание",
+    "today_empty": "Сегодня нет расписания",
+    "count": "{{value}}",
+    "header_title": "Расписание",
+    "empty": {
+      "load_failed_title": "Не удалось загрузить",
+      "load_failed_desc": "Проверьте позже.",
+      "joined_title": "Нет участий",
+      "joined_desc": "Расписания с вашим участием появятся здесь.",
+      "pending_title": "Нет доступных расписаний",
+      "pending_desc": "Доступные расписания появятся здесь."
+    }
+  },
+  "notifications": {
+    "header_title": "Уведомления",
+    "mark_all_read": "Прочитать всё",
+    "follow_back": "Подписаться в ответ",
+    "following": "Подписки",
+    "retry": "Перезагрузить",
+    "empty_title": "Нет уведомлений",
+    "empty_desc": "Здесь появятся новые события.",
+    "fallback_actor": "Кто-то",
+    "fallback_schedule": "Расписание",
+    "fallback_beacon": "Бикон",
+    "fallback_room": "Чат",
+    "fallback_notification": "Новое уведомление",
+    "sections": {
+      "today": "Сегодня",
+      "recent": "Недавние",
+      "unread": "Непрочитанные",
+      "earlier": "Ранее",
+      "this_week": "На этой неделе",
+      "older": "Ранее",
+      "thisWeek": "На этой неделе"
+    },
+    "time": {
+      "just_now": "Только что",
+      "minutes": "{{value}} мин",
+      "hours": "{{value}} ч",
+      "days": "{{value}} д",
+      "weeks": "{{value}} нед",
+      "months": "{{value}} мес",
+      "years": "{{value}} г"
+    },
+    "copy": {
+      "others": " и ещё {{value}}",
+      "follow_created": "{{name}} подписался(ась) на вас",
+      "chat_reply_created": "{{name}} ответил(а)",
+      "chat_mention_created": "{{name}} упомянул(а) вас",
+      "beacon_join_request_created": "{{name}} хочет присоединиться к бикону",
+      "beacon_join_approved": "Заявка на бикон одобрена",
+      "beacon_friend_created": "{{name}} создал(а) новый бикон",
+      "schedule_created": "{{room}} · {{target}} добавлено",
+      "schedule_updated": "{{room}} · {{target}} изменено",
+      "schedule_cancelled": "{{room}} · {{target}} отменено",
+      "post_like_grouped": "{{name}}{{others}} понравился ваш пост",
+      "post_comment_grouped": "{{name}}{{others}} оставил(а) комментарий",
+      "post_reply_grouped": "{{name}}{{others}} ответил(а) на ваш комментарий",
+      "post_mention_grouped": "{{name}}{{others}} упомянул(а) вас"
+    },
+    "error": {
+      "load_failed": "Не удалось загрузить уведомления."
+    },
+    "loading_short": "…"
+  }
+}

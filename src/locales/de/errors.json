@@ -1,0 +1,16 @@
+{
+  "common": "Fehler",
+  "auth": {
+    "loginRequired": "Anmeldung erforderlich."
+  },
+  "unknown": "Ein Fehler ist aufgetreten.",
+  "network": "Prüfe deine Netzwerkverbindung.",
+  "invalid_credentials": "E-Mail oder Passwort ist falsch.",
+  "oauth_cancelled": "Anmeldung abgebrochen.",
+  "provider_config": "Prüfe die Konfiguration des Auth-Anbieters.",
+  "redirect_config": "Prüfe die Redirect-URL-Konfiguration.",
+  "session_check_failed": "Sitzung konnte nicht geprüft werden.",
+  "sms_required": "Gib den Bestätigungscode ein.",
+  "phone_format": "Gib die Telefonnummer im internationalen Format ein (+8210…).",
+  "email_format": "Keine gültige E-Mail-Adresse."
+}

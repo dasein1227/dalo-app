@@ -1,9 +1,10 @@
-﻿// src/screens/chat/Members.tsx
+// src/screens/chat/Members.tsx
 import React, { useEffect, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, Text, FlatList, Pressable, StyleSheet, ActivityIndicator, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeScreen } from '../../components/layout';
 import { useRoute } from '@react-navigation/native';
-import AppHeader from '@/components/AppHeader';
+import DetailHeader from '@/components/header/DetailHeader';
 import { supabase } from '@/lib/supabase';
 
 type Member = {
@@ -15,6 +16,7 @@ type Member = {
 };
 
 export default function Members() {
+  const { t } = useTranslation();
   const route = useRoute<any>();
   const roomId = route.params?.roomId as string;
 
@@ -34,13 +36,13 @@ export default function Members() {
       const parsed = (data ?? []).map((r: any) => ({
         id: r.id,
         user_id: r.user_id,
-        nickname: r.profiles?.nickname ?? '이름 없음',
+        nickname: r.profiles?.nickname ?? t('chat:membersScreen.noName'),
         avatar_url: r.profiles?.avatar_url ?? null,
         role: r.role ?? 'member',
       }));
       setMembers(parsed);
     } catch (e: any) {
-      Alert.alert('불러오기 실패', e?.message ?? String(e));
+      Alert.alert(t('chat:membersScreen.loadFail'), e?.message ?? String(e));
     } finally {
       setLoading(false);
     }
@@ -51,17 +53,23 @@ export default function Members() {
   }, [load]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <AppHeader title="참여자 목록" showBack />
+    <SafeScreen
+      backgroundColor="#fff"
+      includeTopInset={false}
+      includeBottomInset
+      style={styles.screen}
+      contentStyle={styles.safeContent}
+    >
+      <DetailHeader title={t('chat:membersScreen.title')} showBack />
       <View style={styles.container}>
         {loading ? (
           <View style={styles.center}>
             <ActivityIndicator />
-            <Text style={styles.loadingTxt}>불러오는 중...</Text>
+            <Text style={styles.loadingTxt}>{t('chat:membersScreen.loading')}</Text>
           </View>
         ) : members.length === 0 ? (
           <View style={styles.center}>
-            <Text style={styles.emptyTxt}>아직 참여자가 없습니다.</Text>
+            <Text style={styles.emptyTxt}>{t('chat:membersScreen.empty')}</Text>
           </View>
         ) : (
           <FlatList
@@ -98,15 +106,15 @@ export default function Members() {
 
                 <View style={{ flex: 1 }}>
                   <Text style={styles.name}>{item.nickname}</Text>
-                  <Text style={styles.sub}>{item.role === 'owner' ? '방장' : '참여자'}</Text>
+                  <Text style={styles.sub}>{item.role === 'owner' ? t('chat:membersScreen.owner') : t('chat:membersScreen.participant')}</Text>
                 </View>
 
                 {item.role !== 'owner' && (
                   <Pressable
                     style={styles.removeBtn}
-                    onPress={() => Alert.alert('제거', `${item.nickname}님을 제거하시겠습니까?`)}
+                    onPress={() => Alert.alert(t('chat:membersScreen.removeTitle'), t('chat:membersScreen.removeMessage', { name: item.nickname }))}
                   >
-                    <Text style={styles.removeTxt}>제거</Text>
+                    <Text style={styles.removeTxt}>{t('chat:membersScreen.remove')}</Text>
                   </Pressable>
                 )}
               </View>
@@ -114,11 +122,13 @@ export default function Members() {
           />
         )}
       </View>
-    </SafeAreaView>
+    </SafeScreen>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: '#fff' },
+  safeContent: { flex: 1 },
   container: { flex: 1, padding: 16 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   loadingTxt: { color: '#6b7280', marginTop: 8 },

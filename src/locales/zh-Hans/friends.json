@@ -1,0 +1,253 @@
+{
+  "title": "好友",
+  "requests": "好友请求",
+  "requests_empty": "暂无新的好友请求。",
+  "requests_received": "收到的请求",
+  "requests_sent": "发出的请求",
+  "add_friend": "添加好友",
+  "send_request": "发送好友请求",
+  "request_sent": "好友请求已发送。",
+  "request_send_failed": "好友请求发送失败。",
+  "request_cancel": "取消请求",
+  "request_canceled": "好友请求已取消。",
+  "request_cancel_failed": "好友请求取消失败。",
+  "accept": "接受",
+  "decline": "拒绝",
+  "accepted": "好友请求已接受。",
+  "declined": "好友请求已拒绝。",
+  "accept_failed": "好友请求接受失败。",
+  "decline_failed": "好友请求拒绝失败。",
+  "remove_friend": "删除好友",
+  "remove_friend_confirm": "要删除这位好友吗？",
+  "remove_friend_done": "好友已删除。",
+  "remove_friend_failed": "好友删除失败。",
+  "blocked": "已屏蔽",
+  "block": "屏蔽",
+  "unblock": "解除屏蔽",
+  "block_done": "已屏蔽。",
+  "unblock_done": "已解除屏蔽。",
+  "search_placeholder": "搜索昵称、ID、好友码",
+  "code_placeholder": "输入好友码",
+  "already_friends": "已是好友。",
+  "already_requested": "已发送好友请求。",
+  "self_not_allowed": "无法向自己发送好友请求。",
+  "hidden": "隐藏",
+  "favorite": "收藏",
+  "memo": "备注",
+  "alias": "别名",
+  "group": {
+    "title": "分组",
+    "manageTitle": "好友分组",
+    "createTitle": "新建分组",
+    "createDesc": "请输入分组名称。",
+    "createPlaceholder": "例：同事、附近好友、学习小组",
+    "createAction": "创建",
+    "createFail": "创建失败",
+    "editTitle": "编辑分组名称",
+    "editDesc": "请输入新名称。",
+    "editPlaceholder": "分组名称",
+    "saveAction": "保存",
+    "renameFail": "修改失败",
+    "nameRequired": "请输入分组名称。",
+    "deleteTitle": "删除分组",
+    "deleteMessage": "要删除“{{name}}”分组吗？",
+    "emptyTitle": "暂无分组",
+    "emptyDesc": "创建新的分组。",
+    "memberEmpty": "暂无分组成员。",
+    "addTitle": "添加好友",
+    "addSuccess": "已添加。",
+    "addFail": "添加失败",
+    "addEmpty": "没有可添加的好友。",
+    "removeSuccess": "已移除。",
+    "removeFail": "移除失败",
+    "memberCount": "{{count}} 人"
+  },
+  "userFallback": "用户",
+  "list": {
+    "favoriteFriendsCount": "收藏 {{count}}",
+    "friendsCount": "好友 {{count}}"
+  },
+  "tabs": {
+    "friends": "好友",
+    "groups": "分组"
+  },
+  "search": {
+    "placeholder": "输入搜索词",
+    "friendPlaceholder": "搜索好友名称、ID",
+    "groupPlaceholder": "搜索分组、成员",
+    "namePlaceholder": "搜索姓名",
+    "friendPickerPlaceholder": "搜索好友",
+    "contactsPlaceholder": "搜索姓名或号码",
+    "waitTitle": "等待输入",
+    "waitCaption": "输入信息后搜索。",
+    "emptyTitle": "无结果",
+    "emptyCaption": "没有匹配的用户。",
+    "contactEmptyTitle": "无联系人",
+    "contactEmptyCaption": "没有符合条件的联系人。",
+    "groupNamePlaceholder": "搜索分组"
+  },
+  "action": {
+    "favoriteAdd": "收藏",
+    "favoriteRemove": "取消",
+    "manageFriend": "好友管理",
+    "manageGroup": "分组管理",
+    "contact": "联系",
+    "create": "创建",
+    "save": "保存",
+    "add": "添加",
+    "remove": "移除",
+    "select": "选择",
+    "search": "搜索",
+    "processing": "处理中",
+    "saving": "保存中"
+  },
+  "alert": {
+    "notice": "提示",
+    "fail": "失败",
+    "loadFail": "加载失败",
+    "deleteFail": "删除失败",
+    "profileRouteMissing": "找不到个人资料页面。",
+    "chatRouteMissing": "找不到聊天页面。",
+    "phoneMissing": "没有电话号码。",
+    "phoneOpenFail": "无法打开电话应用。",
+    "removeFriendTitle": "删除好友",
+    "removeFriendMessage": "要删除 {{name}} 吗？",
+    "blockTitle": "屏蔽",
+    "blockMessage": "要屏蔽 {{name}} 吗？",
+    "blockFail": "屏蔽失败",
+    "friendEditRouteMissing": "找不到好友管理页面。"
+  },
+  "add": {
+    "title": "添加好友",
+    "loginRequired": "需要登录。",
+    "contactSearch": "查找联系人",
+    "userFallback": "用户 {{id}}",
+    "noName": "无名称",
+    "myProfile": "我的资料",
+    "notSet": "未设置",
+    "friendCodeLabel": "好友码",
+    "qrOfflineHint": "可通过 QR 码直接连接。",
+    "shareLink": "分享链接",
+    "scanQr": "扫描 QR",
+    "qrTitle": "我的连接码",
+    "qrDesc": "对方扫描后\n即可连接。",
+    "scanGuide": "请扫描对方的 QR。",
+    "contactsTitle": "通过联系人查找",
+    "contactsDesc": "从通讯录选择并搜索。",
+    "mode": {
+      "coonnIdTitle": "CO·ONN ID",
+      "coonnIdHint": "输入对方公开 ID。",
+      "coonnIdPlaceholder": "输入 ID",
+      "friendCodeTitle": "好友码",
+      "friendCodeHint": "输入好友码。",
+      "friendCodePlaceholder": "输入好友码",
+      "phoneTitle": "联系人",
+      "phoneHint": "通过手机号查找。",
+      "phonePlaceholder": "输入号码"
+    },
+    "result": {
+      "noPublicId": "无公开 ID",
+      "friendCodeVerified": "好友码已确认",
+      "friendCodeMatched": "好友码匹配",
+      "contact": "联系人 · {{phone}}",
+      "added": "已添加",
+      "limited": "受限",
+      "add": "添加"
+    },
+    "share": {
+      "myId": "我的 ID",
+      "friendCode": "好友码",
+      "title": "分享 CO·ONN 链接",
+      "message": "[CO·ONN] 和我连接吧。{{idText}}{{codeText}}\n\n通过下方链接可打开添加好友页面。\n{{url}}"
+    },
+    "toast": {
+      "added": "已添加为好友。"
+    },
+    "alert": {
+      "permissionRequired": "需要权限",
+      "cameraPermissionRequired": "需要相机权限。",
+      "contactsPermissionRequired": "需要联系人权限。",
+      "contactsLoadFail": "联系人加载失败",
+      "searchFail": "搜索失败",
+      "addFail": "添加失败"
+    },
+    "error": {
+      "invalidUser": "无效用户。",
+      "selfQr": "这是你的 QR。",
+      "userNotFound": "找不到用户。",
+      "invalidQr": "无效代码。",
+      "minLength": "请输入至少 {{count}} 个字符。"
+    },
+    "findTitle": "查找新好友",
+    "card": {
+      "idTitle": "通过 ID 查找",
+      "idDesc": "搜索 CO·ONN ID",
+      "codeTitle": "通过代码查找",
+      "codeDesc": "搜索好友码",
+      "contactsTitle": "联系人",
+      "contactsDesc": "基于通讯录"
+    },
+    "digitalCardTitle": "我的名片"
+  },
+  "communication": {
+    "noPhone": "无电话号码",
+    "phoneCall": "普通通话",
+    "voiceCall": "语音通话",
+    "comingSoon": "准备中"
+  },
+  "edit": {
+    "title": "好友设置",
+    "unknownUser": "未知",
+    "none": "无",
+    "field": {
+      "name": "姓名"
+    },
+    "placeholder": {
+      "alias": "输入别名",
+      "memo": "输入备注"
+    },
+    "helper": {
+      "friendName": "好友名称 · {{name}}",
+      "privateMemo": "仅对自己显示。"
+    },
+    "section": {
+      "groups": "分组",
+      "security": "安全"
+    },
+    "state": {
+      "on": "开启",
+      "off": "关闭",
+      "hidden": "隐藏",
+      "visible": "显示中",
+      "blocked": "已屏蔽",
+      "unblocked": "未屏蔽"
+    },
+    "toast": {
+      "saved": "已保存。"
+    },
+    "alert": {
+      "loadFail": "加载失败",
+      "saveFail": "保存失败",
+      "removeFail": "删除失败",
+      "userLoadFail": "无法加载用户。",
+      "blockedByPeer": "对方已屏蔽你。"
+    },
+    "remove": {
+      "title": "删除好友",
+      "message": "要删除 {{name}} 吗？"
+    },
+    "unsaved": {
+      "title": "更改",
+      "message": "有未保存的更改。",
+      "discard": "不保存"
+    },
+    "groups": {
+      "title": "分组管理",
+      "subtitle": "选择要加入的分组。",
+      "selectedCount": "已选 {{count}}",
+      "inGroup": "当前已加入",
+      "addHint": "点按添加",
+      "emptySearch": "试试其他名称。"
+    }
+  }
+}

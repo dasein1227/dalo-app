@@ -1,0 +1,14 @@
+{
+  "recent": "Terbaru",
+  "select_photo": "Pilih foto",
+  "max_select": "Maks. {{count}} foto",
+  "processing_error": "Gagal diproses.",
+  "select_to_edit": "Pilih foto untuk diedit.",
+  "video_edit_warning": "Video tidak dapat diedit.",
+  "bundle_photos": "Kirim bersamaan",
+  "quality_settings": "Kualitas",
+  "quality_original": "Asli",
+  "quality_standard": "Standar",
+  "quality_low": "Hemat data",
+  "quality_high": "Kualitas tinggi"
+}

@@ -1,0 +1,253 @@
+{
+  "title": "เพื่อน",
+  "requests": "คำขอเป็นเพื่อน",
+  "requests_empty": "ไม่มีคำขอเป็นเพื่อนใหม่",
+  "requests_received": "คำขอที่ได้รับ",
+  "requests_sent": "คำขอที่ส่ง",
+  "add_friend": "เพิ่มเพื่อน",
+  "send_request": "ส่งคำขอเป็นเพื่อน",
+  "request_sent": "ส่งคำขอเป็นเพื่อนแล้ว",
+  "request_send_failed": "ส่งคำขอเป็นเพื่อนไม่สำเร็จ",
+  "request_cancel": "ยกเลิกคำขอ",
+  "request_canceled": "ยกเลิกคำขอเป็นเพื่อนแล้ว",
+  "request_cancel_failed": "ยกเลิกคำขอเป็นเพื่อนไม่สำเร็จ",
+  "accept": "ยอมรับ",
+  "decline": "ปฏิเสธ",
+  "accepted": "ยอมรับคำขอเป็นเพื่อนแล้ว",
+  "declined": "ปฏิเสธคำขอเป็นเพื่อนแล้ว",
+  "accept_failed": "ยอมรับคำขอเป็นเพื่อนไม่สำเร็จ",
+  "decline_failed": "ปฏิเสธคำขอเป็นเพื่อนไม่สำเร็จ",
+  "remove_friend": "ลบเพื่อน",
+  "remove_friend_confirm": "ลบเพื่อนคนนี้หรือไม่",
+  "remove_friend_done": "ลบเพื่อนแล้ว",
+  "remove_friend_failed": "ลบเพื่อนไม่สำเร็จ",
+  "blocked": "ถูกบล็อก",
+  "block": "บล็อก",
+  "unblock": "เลิกบล็อก",
+  "block_done": "บล็อกแล้ว",
+  "unblock_done": "เลิกบล็อกแล้ว",
+  "search_placeholder": "ค้นหาชื่อเล่น ID หรือรหัสเพื่อน",
+  "code_placeholder": "กรอกรหัสเพื่อน",
+  "already_friends": "เป็นเพื่อนกันแล้ว",
+  "already_requested": "ส่งคำขอเป็นเพื่อนไปแล้ว",
+  "self_not_allowed": "ส่งคำขอเป็นเพื่อนถึงตัวเองไม่ได้",
+  "hidden": "ซ่อน",
+  "favorite": "รายการโปรด",
+  "memo": "บันทึก",
+  "alias": "ชื่อเรียก",
+  "group": {
+    "title": "กลุ่ม",
+    "manageTitle": "กลุ่มเพื่อน",
+    "createTitle": "กลุ่มใหม่",
+    "createDesc": "กรอกชื่อกลุ่ม",
+    "createPlaceholder": "เช่น เพื่อนร่วมงาน เพื่อนในย่าน กลุ่มเรียน",
+    "createAction": "สร้าง",
+    "createFail": "สร้างไม่สำเร็จ",
+    "editTitle": "แก้ไขชื่อกลุ่ม",
+    "editDesc": "กรอกชื่อใหม่",
+    "editPlaceholder": "ชื่อกลุ่ม",
+    "saveAction": "บันทึก",
+    "renameFail": "แก้ไขไม่สำเร็จ",
+    "nameRequired": "กรอกชื่อกลุ่ม",
+    "deleteTitle": "ลบกลุ่ม",
+    "deleteMessage": "ลบกลุ่ม “{{name}}” หรือไม่",
+    "emptyTitle": "ไม่มีกลุ่ม",
+    "emptyDesc": "สร้างกลุ่มใหม่ได้เลย",
+    "memberEmpty": "ยังไม่มีสมาชิกในกลุ่ม",
+    "addTitle": "เพิ่มเพื่อน",
+    "addSuccess": "เพิ่มแล้ว",
+    "addFail": "เพิ่มไม่สำเร็จ",
+    "addEmpty": "ไม่มีเพื่อนให้เพิ่ม",
+    "removeSuccess": "นำออกแล้ว",
+    "removeFail": "นำออกไม่สำเร็จ",
+    "memberCount": "{{count}} คน"
+  },
+  "userFallback": "ผู้ใช้",
+  "list": {
+    "favoriteFriendsCount": "รายการโปรด {{count}}",
+    "friendsCount": "เพื่อน {{count}}"
+  },
+  "tabs": {
+    "friends": "เพื่อน",
+    "groups": "กลุ่ม"
+  },
+  "search": {
+    "placeholder": "กรอกคำค้น",
+    "friendPlaceholder": "ค้นหาชื่อเพื่อนหรือ ID",
+    "groupPlaceholder": "ค้นหากลุ่มหรือสมาชิก",
+    "namePlaceholder": "ค้นหาชื่อ",
+    "friendPickerPlaceholder": "ค้นหาเพื่อน",
+    "contactsPlaceholder": "ค้นหาชื่อหรือเบอร์",
+    "waitTitle": "รอการกรอกข้อมูล",
+    "waitCaption": "กรอกข้อมูลแล้วค้นหา",
+    "emptyTitle": "ไม่พบผลลัพธ์",
+    "emptyCaption": "ไม่พบผู้ใช้ที่ตรงกัน",
+    "contactEmptyTitle": "ไม่มีรายชื่อ",
+    "contactEmptyCaption": "ไม่พบรายชื่อที่ตรงเงื่อนไข",
+    "groupNamePlaceholder": "ค้นหากลุ่ม"
+  },
+  "action": {
+    "favoriteAdd": "เพิ่มโปรด",
+    "favoriteRemove": "นำออก",
+    "manageFriend": "จัดการเพื่อน",
+    "manageGroup": "จัดการกลุ่ม",
+    "contact": "ติดต่อ",
+    "create": "สร้าง",
+    "save": "บันทึก",
+    "add": "เพิ่ม",
+    "remove": "นำออก",
+    "select": "เลือก",
+    "search": "ค้นหา",
+    "processing": "กำลังดำเนินการ",
+    "saving": "กำลังบันทึก"
+  },
+  "alert": {
+    "notice": "แจ้งเตือน",
+    "fail": "ไม่สำเร็จ",
+    "loadFail": "โหลดไม่สำเร็จ",
+    "deleteFail": "ลบไม่สำเร็จ",
+    "profileRouteMissing": "ไม่พบหน้ารายละเอียดโปรไฟล์",
+    "chatRouteMissing": "ไม่พบหน้ารายละเอียดแชท",
+    "phoneMissing": "ไม่มีเบอร์โทรศัพท์",
+    "phoneOpenFail": "เปิดแอปโทรศัพท์ไม่ได้",
+    "removeFriendTitle": "ลบเพื่อน",
+    "removeFriendMessage": "ลบ {{name}} หรือไม่",
+    "blockTitle": "บล็อก",
+    "blockMessage": "บล็อก {{name}} หรือไม่",
+    "blockFail": "บล็อกไม่สำเร็จ",
+    "friendEditRouteMissing": "ไม่พบหน้าจัดการเพื่อน"
+  },
+  "add": {
+    "title": "เพิ่มเพื่อน",
+    "loginRequired": "ต้องเข้าสู่ระบบ",
+    "contactSearch": "ค้นหาจากรายชื่อ",
+    "userFallback": "ผู้ใช้ {{id}}",
+    "noName": "ไม่มีชื่อ",
+    "myProfile": "โปรไฟล์ของฉัน",
+    "notSet": "ยังไม่ตั้งค่า",
+    "friendCodeLabel": "รหัสเพื่อน",
+    "qrOfflineHint": "เชื่อมต่อได้ทันทีด้วย QR",
+    "shareLink": "แชร์ลิงก์",
+    "scanQr": "สแกน QR",
+    "qrTitle": "รหัสเชื่อมต่อของฉัน",
+    "qrDesc": "ให้อีกฝ่ายสแกน\nเพื่อเชื่อมต่อทันที",
+    "scanGuide": "สแกน QR ของอีกฝ่าย",
+    "contactsTitle": "ค้นหาจากรายชื่อ",
+    "contactsDesc": "เลือกจากสมุดรายชื่อเพื่อค้นหา",
+    "mode": {
+      "coonnIdTitle": "CO·ONN ID",
+      "coonnIdHint": "กรอก ID สาธารณะของอีกฝ่าย",
+      "coonnIdPlaceholder": "กรอก ID",
+      "friendCodeTitle": "รหัสเพื่อน",
+      "friendCodeHint": "กรอกรหัสเพื่อน",
+      "friendCodePlaceholder": "กรอกรหัสเพื่อน",
+      "phoneTitle": "รายชื่อ",
+      "phoneHint": "ค้นหาด้วยเบอร์มือถือ",
+      "phonePlaceholder": "กรอกเบอร์"
+    },
+    "result": {
+      "noPublicId": "ไม่มี ID สาธารณะ",
+      "friendCodeVerified": "ยืนยันรหัสเพื่อนแล้ว",
+      "friendCodeMatched": "รหัสเพื่อนตรงกัน",
+      "contact": "รายชื่อ · {{phone}}",
+      "added": "เพิ่มแล้ว",
+      "limited": "จำกัด",
+      "add": "เพิ่ม"
+    },
+    "share": {
+      "myId": "ID ของฉัน",
+      "friendCode": "รหัสเพื่อน",
+      "title": "แชร์ลิงก์ CO·ONN",
+      "message": "[CO·ONN] มาเชื่อมต่อกับฉัน{{idText}}{{codeText}}\n\nเปิดหน้าเพิ่มเพื่อนผ่านลิงก์ด้านล่าง\n{{url}}"
+    },
+    "toast": {
+      "added": "เพิ่มเป็นเพื่อนแล้ว"
+    },
+    "alert": {
+      "permissionRequired": "ต้องการสิทธิ์",
+      "cameraPermissionRequired": "ต้องการสิทธิ์กล้อง",
+      "contactsPermissionRequired": "ต้องการสิทธิ์รายชื่อ",
+      "contactsLoadFail": "โหลดรายชื่อไม่สำเร็จ",
+      "searchFail": "ค้นหาไม่สำเร็จ",
+      "addFail": "เพิ่มไม่สำเร็จ"
+    },
+    "error": {
+      "invalidUser": "ผู้ใช้ไม่ถูกต้อง",
+      "selfQr": "นี่คือ QR ของฉัน",
+      "userNotFound": "ไม่พบผู้ใช้",
+      "invalidQr": "รหัสไม่ถูกต้อง",
+      "minLength": "กรอกอย่างน้อย {{count}} ตัวอักษร"
+    },
+    "findTitle": "ค้นหาเพื่อนใหม่",
+    "card": {
+      "idTitle": "ค้นหาด้วย ID",
+      "idDesc": "ค้นหา CO·ONN ID",
+      "codeTitle": "ค้นหาด้วยรหัส",
+      "codeDesc": "ค้นหารหัสเพื่อน",
+      "contactsTitle": "รายชื่อ",
+      "contactsDesc": "อ้างอิงจากสมุดรายชื่อ"
+    },
+    "digitalCardTitle": "นามบัตรของฉัน"
+  },
+  "communication": {
+    "noPhone": "ไม่มีเบอร์โทรศัพท์",
+    "phoneCall": "โทรปกติ",
+    "voiceCall": "โทรเสียง",
+    "comingSoon": "เร็ว ๆ นี้"
+  },
+  "edit": {
+    "title": "ตั้งค่าเพื่อน",
+    "unknownUser": "ไม่ทราบ",
+    "none": "ไม่มี",
+    "field": {
+      "name": "ชื่อ"
+    },
+    "placeholder": {
+      "alias": "กรอกชื่อเรียก",
+      "memo": "กรอกบันทึก"
+    },
+    "helper": {
+      "friendName": "ชื่อเพื่อน · {{name}}",
+      "privateMemo": "แสดงเฉพาะคุณ"
+    },
+    "section": {
+      "groups": "กลุ่ม",
+      "security": "ความปลอดภัย"
+    },
+    "state": {
+      "on": "เปิด",
+      "off": "ปิด",
+      "hidden": "ซ่อน",
+      "visible": "กำลังแสดง",
+      "blocked": "ถูกบล็อก",
+      "unblocked": "ไม่ถูกบล็อก"
+    },
+    "toast": {
+      "saved": "บันทึกแล้ว"
+    },
+    "alert": {
+      "loadFail": "โหลดไม่สำเร็จ",
+      "saveFail": "บันทึกไม่สำเร็จ",
+      "removeFail": "ลบไม่สำเร็จ",
+      "userLoadFail": "โหลดผู้ใช้ไม่ได้",
+      "blockedByPeer": "อีกฝ่ายบล็อกคุณ"
+    },
+    "remove": {
+      "title": "ลบเพื่อน",
+      "message": "ลบ {{name}} หรือไม่"
+    },
+    "unsaved": {
+      "title": "การเปลี่ยนแปลง",
+      "message": "มีรายการที่เปลี่ยนแปลง",
+      "discard": "ไม่บันทึก"
+    },
+    "groups": {
+      "title": "จัดการกลุ่ม",
+      "subtitle": "เลือกกลุ่มที่จะรวมไว้",
+      "selectedCount": "เลือก {{count}}",
+      "inGroup": "อยู่ในกลุ่มแล้ว",
+      "addHint": "แตะเพื่อเพิ่ม",
+      "emptySearch": "ลองค้นหาด้วยชื่ออื่น"
+    }
+  }
+}

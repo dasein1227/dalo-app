@@ -1,0 +1,16 @@
+{
+  "common": "Erreur",
+  "auth": {
+    "loginRequired": "Connexion requise."
+  },
+  "unknown": "Une erreur est survenue.",
+  "network": "Vérifiez votre connexion réseau.",
+  "invalid_credentials": "Adresse e-mail ou mot de passe incorrect.",
+  "oauth_cancelled": "Connexion annulée.",
+  "provider_config": "Vérifiez la configuration du fournisseur d’authentification.",
+  "redirect_config": "Vérifiez la configuration de l’URL de redirection.",
+  "session_check_failed": "Impossible de vérifier la session.",
+  "sms_required": "Saisissez le code de vérification.",
+  "phone_format": "Saisissez le numéro au format international (+8210…).",
+  "email_format": "Adresse e-mail invalide."
+}

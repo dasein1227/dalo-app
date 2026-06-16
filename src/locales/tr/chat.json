@@ -1,0 +1,1293 @@
+{
+  "title": "Sohbet",
+  "send": "Gönder",
+  "attach": "Dosya",
+  "gallery": "Galeri",
+  "invite": "Davet et",
+  "manage": "Yönet",
+  "members": "Üyeler",
+  "placeholder": "Mesaj yazın…",
+  "date": {
+    "today": "Bugün",
+    "yesterday": "Dün",
+    "separatorLabel": "{{day}} {{month}} {{year}} {{weekday}}",
+    "floatingLabel": "{{day}} {{month}} {{year}} · {{weekday}}"
+  },
+  "all": "Tümü",
+  "and_others_n": "+ N",
+  "others_suffix": "diğer",
+  "anonymous": "Anonim",
+  "message": "Mesaj",
+  "message_search": "Mesajlarda ara",
+  "message_send": "Mesaj gönder",
+  "message_send_failed": "Mesaj gönderilemedi",
+  "message_delete_failed": "Mesaj silinemedi.",
+  "message_deleted": "Mesaj silindi.",
+  "new_message_one": "1 yeni mesaj",
+  "new_messages_count": "{{count}} yeni mesaj",
+  "chat_with_me": "Kendimle sohbet",
+  "self_badge": "Ben",
+  "chat_room_title": "Sohbet odası",
+  "one_to_one_chat": "1:1 sohbet",
+  "group_chat_title": "Grup sohbeti",
+  "open_chat_title": "Açık sohbet",
+  "beacon_chat_title": "Beacon sohbeti",
+  "room_not_found": "Oda bilgisi yok.",
+  "chat_room_not_found": "Sohbet odası bulunamadı.",
+  "conversation_partner": "Sohbet partneri",
+  "audio_send_failed": "Ses gönderilemedi",
+  "video": "Video",
+  "photo": "Fotoğraf",
+  "file_label": "Dosya",
+  "open_file": "Dosyayı aç",
+  "play_video": "Videoyu oynat",
+  "voice_message": "Sesli mesaj",
+  "share_location": "Konum paylaş",
+  "map_location_shared_title": "Konum paylaşıldı",
+  "map_tap_to_open": "Haritayı açmak için dokunun.",
+  "cannot_open_map": "Harita açılamadı.",
+  "no_coordinate_info": "Koordinat yok",
+  "send_failed": "Gönderilemedi",
+  "share": "Paylaş",
+  "share_failed": "Paylaşılamadı",
+  "delete_failed": "Silinemedi",
+  "upload_failed": "Yüklenemedi",
+  "selection_mode": "Seçim modu",
+  "selection_mode_hint": "Silmek için mesajları seçin.",
+  "selection_clear": "Seçimi temizle",
+  "delete_dialog_title": "Mesajı sil",
+  "delete_dialog_desc": "Silme yöntemini seçin.",
+  "delete_for_everyone": "Herkesten sil",
+  "delete_hide_for_everyone": "Herkesten gizle",
+  "delete_for_me": "Benden sil",
+  "delete_for_me_hint": "Seçili mesajlar yalnızca sizden silinebilir.",
+  "reply": "Yanıtla",
+  "reply_to_me": "Mesajıma yanıtla",
+  "reply_to_user": "{{nickname}} kişisine yanıtla",
+  "msg_deleted_by_user": "{{nickname}} bir mesajı sildi.",
+  "notice": "Duyuru",
+  "notice_coming_soon": "Yakında.",
+  "korean_label": "Korece",
+  "auto_translate_paid_only": "Otomatik çeviri Standard veya Premium ile kullanılabilir.",
+  "translation_paid_only": "Çeviri yalnızca ücretli üyeler içindir.",
+  "premium_only": "Yalnızca Premium",
+  "premium_only_feature_hint": "Premium ile kullanılabilir.",
+  "tone_neutral": "Nötr",
+  "tone_casual": "Samimi",
+  "tone_formal": "Resmî",
+  "tone_business": "İşletme",
+  "tone_playful": "Eğlenceli",
+  "tone_change_premium_only": "Ton ayarı Premium ile kullanılabilir.",
+  "tone_premium_only_hint": "Premium çeviriyle kullanılabilir.",
+  "login_required": "Giriş gerekli.",
+  "no_permission_send_rls": "Mesaj gönderme izniniz yok. (RLS)\n",
+  "rls_help_chat_members": "→ chat_members içinde yer aldığınızı ve chat_messages politikalarını kontrol edin.",
+  "search_placeholder": "Arama terimi girin",
+  "search_result_count": "{{count}} sonuç",
+  "show_original": "Orijinali göster",
+  "show_translation": "Çeviriyi göster",
+  "translating": "Çevriliyor…",
+  "input": {
+    "placeholder": "Mesaj gönder",
+    "placeholderLong": "Mesaj yazın…"
+  },
+  "hold_to_unlock": "Girişi açmak için basılı tutun",
+  "error": {
+    "loginRequired": "Giriş gerekli.",
+    "roomNotFound": "Sohbet odası bulunamadı.",
+    "createRoomTitle": "Sohbet odası açılamadı.",
+    "createRoomMessage": "Lütfen daha sonra tekrar deneyin."
+  },
+  "sheet": {
+    "moreActions": "Diğer işlemler",
+    "media": "Fotoğraflar/Videolar",
+    "file": "Dosya",
+    "location": "Konum paylaş",
+    "inviteFriend": "Arkadaş davet et",
+    "inviteLink": "Davet bağlantısı",
+    "translate": "Çevir"
+  },
+  "translate": {
+    "title": "Çevir",
+    "current_lang_prefix": "Geçerli: {{code}}",
+    "tone_label": "Ton",
+    "toneNeutral": "Nötr",
+    "toneNeutralDesc": "Doğal varsayılan çeviri",
+    "toneCasual": "Samimi",
+    "toneCasualDesc": "Arkadaş sohbetleri için",
+    "toneFormal": "Resmî",
+    "toneFormalDesc": "Kibar ve saygılı",
+    "toneBusiness": "İşletme",
+    "toneBusinessDesc": "İş, e-posta ve raporlar için",
+    "tonePlayful": "Eğlenceli",
+    "tonePlayfulDesc": "Hafif şakalar ve memler için"
+  },
+  "unknown": "Bilinmiyor",
+  "voice": "Ses",
+  "list": {
+    "tab": {
+      "chat": "Sohbet",
+      "open": "Aç",
+      "beacon": "Beacon",
+      "business": "İşletme"
+    },
+    "empty": {
+      "chatTitle": "Sohbet yok",
+      "chatSub": "Bir arkadaşınızla sohbet başlatın.",
+      "openTitle": "Açık sohbet yok",
+      "openSub": "İlginizi çeken konuları bulun.",
+      "beaconTitle": "Katıldığınız beacon yok",
+      "beaconSub": "Yakındaki beacon’ları keşfedin.",
+      "businessTitle": "İşletme sohbeti yok",
+      "businessSub": "Danışma geçmişi burada görünür."
+    },
+    "leaveConfirmTitle": "Sohbetten çıkılsın mı?",
+    "leaveConfirmMessage": "Bu sohbet listenizden kaybolur.",
+    "leaveConfirmAction": "Çık"
+  },
+  "menu": {
+    "title": "Sohbet menüsü",
+    "joinedDate": "{{date}} katıldı",
+    "media": "Fotoğraflar/Videolar",
+    "mediaEmpty": "Son medyalar burada görünür.",
+    "noticeSchedule": "Duyurular ve planlar",
+    "me": "Ben"
+  },
+  "membersScreen": {
+    "title": "Üyeler",
+    "loading": "Yükleniyor…",
+    "empty": "Üye yok",
+    "owner": "Ev sahibi",
+    "participant": "Katılımcı",
+    "remove": "Kaldır",
+    "removeTitle": "Kaldır",
+    "removeMessage": "{{name}} kaldırılsın mı?",
+    "loadFail": "Yüklenemedi",
+    "noName": "İsim yok"
+  },
+  "inviteScreen": {
+    "title": "Arkadaşları davet et",
+    "roomMissingTitle": "Oda bilgisi eksik",
+    "roomMissingMessage": "Tekrar girip deneyin.",
+    "tryAgain": "Lütfen daha sonra tekrar deneyin.",
+    "loadFailTitle": "Arkadaşlar yüklenemedi.",
+    "selectFriend": "Bir arkadaş seçin.",
+    "selectForAdd": "Eklenecek arkadaşları seçin.",
+    "selectForNewGroup": "Katılacak arkadaşları seçin.",
+    "addSuccessTitle": "Arkadaşlar eklendi.",
+    "addSuccessMessage": "{{count}} kişi eklendi.",
+    "addFailTitle": "Arkadaşlar eklenemedi.",
+    "createFailTitle": "Grup sohbeti oluşturulamadı.",
+    "friendRowAdd": "Bu gruba ekle",
+    "friendRowNewGroup": "Yeni gruba ekle",
+    "groupAddTitle": "Gruba arkadaş ekle",
+    "newGroupTitle": "Yeni grup sohbeti",
+    "groupAddDesc": "Seçili arkadaşları bu gruba ekleyin.",
+    "newGroupDesc": "Seçili arkadaşlarla yeni grup oluşturun.",
+    "loading": "Arkadaşlar yükleniyor",
+    "emptyTitle": "Davet edilecek arkadaş yok",
+    "emptyDesc": "Odada olan arkadaşlar hariç tutulur.",
+    "addCount": "{{count}} ekle",
+    "makeGroupCount": "{{count}} kişiyle grup oluştur",
+    "noName": "İsim yok",
+    "groupFallbackTitle": "Grup sohbeti",
+    "groupTitleWithOthers": "{{names}} + {{count}} kişi"
+  },
+  "roomEdit": {
+    "title": "Sohbet odası bilgisi",
+    "nameLabel": "Sohbet odası adı",
+    "hidePhoto": "Fotoğrafı gizle",
+    "hidePhotoDesc": "Listelerde varsayılan görsel gösterilir.",
+    "helperLine1": "Ayarladığınız fotoğraf ve ad yalnızca size görünür.",
+    "helperLine2": "Karşı tarafı etkilemez.",
+    "alertTitle": "Duyuru",
+    "unhideBeforeChange": "Değiştirmeden önce Fotoğrafı gizle’yi kapatın.",
+    "saveFail": "Kaydedilemedi"
+  },
+  "roomData": {
+    "title": "Veri yönetimi",
+    "ratioTitle": "Türe göre veri",
+    "noMedia": "Kayıtlı medya yok",
+    "savedCount": "{{value}} kayıtlı",
+    "deleteAllWithSize": "Tüm medyayı sil ({{size}})",
+    "photoData": "Fotoğraf verisi",
+    "videoData": "Video verisi",
+    "audioData": "Ses verisi",
+    "fileData": "Dosya verisi",
+    "storageCenter": "CO·ONN Depolama",
+    "loadFail": "Veri bilgisi yüklenemedi.",
+    "actionFail": "İşlem tamamlanamadı.",
+    "clear": {
+      "photoTitle": "Fotoğraf verisini sil",
+      "photoMessage": "Bu cihazdaki fotoğraf verilerini siler. Mesajlar ve galeri öğeleri korunur.",
+      "photoSuccess": "Fotoğraf verisi silindi.",
+      "videoTitle": "Video verisini sil",
+      "videoMessage": "Bu cihazdaki video verilerini siler. Mesajlar ve galeri öğeleri korunur.",
+      "videoSuccess": "Video verisi silindi.",
+      "audioTitle": "Ses verisini sil",
+      "audioMessage": "Bu cihazdaki ses verilerini siler. Mesajlar korunur.",
+      "audioSuccess": "Ses verisi silindi.",
+      "fileTitle": "Dosya verisini sil",
+      "fileMessage": "Bu cihazdaki dosya verilerini siler. Mesajlar korunur.",
+      "fileSuccess": "Dosya verisi silindi.",
+      "allTitle": "Tüm medyayı sil",
+      "allMessage": "Bu cihazdaki fotoğraf, video, ses ve dosyaları siler. Mesajlar ve galeri öğeleri korunur.",
+      "allSuccess": "Medya verisi silindi."
+    }
+  },
+  "collection": {
+    "title": "Koleksiyon",
+    "count": "{{count}}",
+    "total": "Toplam {{value}}",
+    "tabs": {
+      "links": "Bağlantılar",
+      "schedules": "Planlar",
+      "bookmarks": "Yer imleri"
+    },
+    "empty": {
+      "media": "Fotoğraf veya video yok",
+      "files": "Dosya yok",
+      "links": "Bağlantı yok",
+      "notices": "Duyuru yok",
+      "schedules": "Plan yok",
+      "bookmarks": "Yer imi yok"
+    },
+    "noDate": "Tarih yok",
+    "tapToView": "Görmek için dokunun",
+    "bookmarkMissingMessage": "yer imi bulunamadı",
+    "scheduleEmptyBody": "Plan detayı yok.",
+    "secureRecovery": {
+      "completedBody": "Geçmiş güvenlik anahtarları alındı.",
+      "rejectedBody": "Geçmiş güvenlik anahtarı isteği reddedildi."
+    },
+    "scheduleStatus": {
+      "cancelled": "Plan",
+      "completed": "Tamamlandı",
+      "joined": "Katıldı",
+      "joinedOngoing": "Katıldı"
+    },
+    "section": {
+      "latestNotice": "Son duyuru",
+      "previousNotice": "Önceki duyurular",
+      "activeSchedules": "Aktif / açık",
+      "closedSchedules": "Kapalı"
+    }
+  },
+  "settings": {
+    "title": "Sohbet ayarlar",
+    "memberCount": "{{count}} üye",
+    "startedAt": "Başlangıç {{date}}",
+    "inputLock": "Giriş kilidi",
+    "theme": {
+      "title": "Sohbet ayarlar",
+      "default": "Varsayılan",
+      "byRoomType": "Oda türüne göre"
+    },
+    "themePreview": {
+      "other": "İyi",
+      "mine": "Anladım"
+    },
+    "translation": {
+      "title": "Sohbet ayarlar"
+    },
+    "sound": {
+      "title": "Sohbet ayarlar",
+      "default": "Varsayılan",
+      "clear": "Ayarlar",
+      "calm": "Ayarlar",
+      "short": "Sohbet ayarlar",
+      "soft": "Ayarlar",
+      "quiet": "Ayarlar",
+      "deep": "Ayarlar",
+      "light": "Açık",
+      "mute": "Sessiz"
+    },
+    "data": {
+      "section": "Veri",
+      "manage": "Verileri yönet"
+    },
+    "export": {
+      "title": "Sohbeti dışa aktar",
+      "message": "Sohbet ayarlar",
+      "saveFile": "Dosyayı kaydet",
+      "share": "Paylaş",
+      "saveSuccess": "Dosya olarak kaydedildi.",
+      "shareSuccess": "Paylaş",
+      "saveCancelled": "Kaydetme iptal edildi.",
+      "fail": "Dışa aktarılamadı.",
+      "deletedMessage": "[Silinen mesaj]",
+      "secureExcluded": "[Güvenli mesaj - hariç]",
+      "imageLabel": "[Görsel]",
+      "videoLabel": "[Video]",
+      "audioLabel": "Ayarlar ses",
+      "fileLabel": "[Dosya]",
+      "unknownSender": "Bilinmiyor",
+      "meSender": "Ben",
+      "userSender": "Kullanıcı",
+      "fileTitle": "CO·ONN sohbet dışa aktarımı",
+      "roomLine": "Sohbet: {{roomTitle}}",
+      "exportedAtLine": "Dışa aktarma: {{exportedAt}}",
+      "noteLocal": "※ Bu dosya bu cihazda kayıtlı sohbetlere dayanır.",
+      "noteText": "Ayarlar",
+      "noteSecure": "※ Güvenli mesaj içerikleri ve anahtar verileri dışa aktarılmaz.",
+      "noteGallery": "※ Galeriye kaydedilen dosyalar uygulama önbelleğinden ayrı yönetilir.",
+      "attachmentLine": "- Ek: {{type}}{{fileNamePart}}{{mimePart}}",
+      "shareDialogTitle": "Sohbeti paylaş"
+    },
+    "leave": {
+      "title": "Sohbet ayarlar",
+      "action": "Ayrıl",
+      "rejectInvite": "Daveti reddet ve ayrıl",
+      "reportAndLeave": "Şikâyet et ve ayrıl",
+      "groupMessage": "Ayarlar",
+      "reportMessage": "Ayarlar",
+      "defaultMessage": "Ayarlar",
+      "fail": "ayarlar yapılamadı",
+      "selfBlocked": "Ben"
+    },
+    "secure": {
+      "section": "Güvenlik anahtarları",
+      "me": "Ben",
+      "peer": "Karşı taraf",
+      "authCancelled": "Güvenlik anahtarı",
+      "decline": "Reddet",
+      "newKey": "Yeni güvenlik anahtarı oluştur",
+      "newKeyDesc": "Güvenlik anahtarı",
+      "newKeyConfirmTitle": "Yeni güvenlik anahtarı oluşturulsun mu?",
+      "newKeyConfirmMessage": "Güvenlik anahtarı",
+      "create": "Oluştur",
+      "newKeySuccessTitle": "Yeni güvenlik anahtarı oluşturuldu",
+      "newKeySuccessMessage": "Yeni mesajlar epoch {{epoch}} anahtarıyla şifrelenecek.",
+      "newKeyFailTitle": "güvenlik anahtarı başarısız",
+      "newKeyFail": "güvenlik anahtarı yapılamadı",
+      "historyRequest": "Güvenlik anahtarı",
+      "historyRequestDesc": "Güvenlik anahtarı",
+      "historyRequestConfirmTitle": "güvenlik anahtarı yapılsın mı?",
+      "historyRequestConfirmMessage": "Güvenlik anahtarı",
+      "request": "İste",
+      "historyRequestSuccessTitle": "İstek gönderildi",
+      "historyRequestSuccessMessage": "{{count}} kişiye istek gönderildi.",
+      "historyRequestEmpty": "güvenlik anahtarı yok",
+      "historyRequestFailTitle": "İstek başarısız",
+      "historyRequestFail": "güvenlik anahtarı yapılamadı",
+      "claimApproved": "Güvenlik anahtarı",
+      "claimApprovedDesc": "Güvenlik anahtarı",
+      "claimSuccessTitle": "Güvenlik anahtarları alındı",
+      "claimSuccessMessage": "Kaydedilen {{imported}} · mevcut {{skipped}}{{conflictText}}",
+      "claimFailTitle": "İçe aktarma başarısız",
+      "claimFail": "Onaylanan güvenlik anahtarları alınamadı.",
+      "incomingRequestTitle": "{{name}} geçmiş güvenlik anahtarlarını istiyor",
+      "shareApprovedDesc": "Güvenlik anahtarı",
+      "historyShareConfirmTitle": "güvenlik anahtarı yapılsın mı?",
+      "historyShareConfirmMessage": "Geçmiş güvenlik anahtarları {{name}} ile paylaşılsın mı?",
+      "historyShareSuccessTitle": "Paylaşıldı",
+      "historyShareSuccessMessage": "{{name}} ile paylaşıldı.",
+      "historyShareFailTitle": "Paylaşılamadı",
+      "historyShareFail": "güvenlik anahtarı yapılamadı",
+      "historyRejectConfirmTitle": "İstek reddedilsin mi?",
+      "historyRejectConfirmMessage": "{{name}} kişisinin isteği reddedilsin mi?",
+      "rejectSuccessTitle": "Reddedildi",
+      "rejectSuccessMessage": "{{name}} kişisinin isteği reddedildi.",
+      "rejectFailTitle": "Reddedilemedi",
+      "rejectFail": "güvenlik anahtarı yapılamadı",
+      "backupSection": "Güvenlik anahtarı yedeği",
+      "backup": "Güvenlik anahtarı",
+      "backupSummary": "Yedeklendi · {{rooms}} oda · {{keys}} anahtar",
+      "noBackup": "Yedek yok",
+      "backupConfirmTitle": "Güvenlik anahtarları yedeklensin mi?",
+      "backupCreateMessage": "Güvenlik anahtarı",
+      "backupReplaceMessage": "Güvenlik anahtarı",
+      "backupAction": "Yedekle",
+      "backupFailTitle": "Yedekleme başarısız",
+      "backupCreateFail": "Güvenlik anahtarı yedeği oluşturulamadı.",
+      "restore": "Güvenlik anahtarı",
+      "restoreDesc": "Güvenlik anahtarı",
+      "restoreMessage": "Yedek oluştururken aldığınız kurtarma kodunu girin.",
+      "restoreAction": "Geri yükle",
+      "restoreCodeRequired": "Kurtarma kodunu girin.",
+      "restoreSuccessTitle": "Güvenlik anahtarı",
+      "restoreSuccessMessage": "İçe aktarılan {{imported}} · mevcut {{skipped}}{{conflictText}}",
+      "restoreFail": "Güvenlik anahtarı yedeği geri yüklenemedi.",
+      "conflictText": " · çakışma {{conflicts}}\nÇakışan anahtarlarda mevcut yerel anahtarlar korundu.",
+      "conflictShort": " · çakışma {{conflicts}}",
+      "recoveryCodeTitle": "Güvenlik anahtarı kurtarma kodu",
+      "recoveryCodeMessage": "Güvenlik anahtarı",
+      "copyRecoveryCode": "Kurtarma kodunu kopyala",
+      "codeStored": "Kurtarma kodu kaydedildi.",
+      "codeCopied": "Kurtarma kodu kopyalandı.",
+      "codeCopyFail": "Kopyalanamadı.",
+      "codeConfirmRequired": "Kurtarma kodunu kopyalayın veya kaydettiğinizi onaylayın.",
+      "deleteServerBackup": "Sunucu yedeğini sil",
+      "deleteServerBackupDesc": "Güvenlik anahtarı",
+      "backupDeleteConfirmTitle": "Güvenlik anahtarı yedeği silinsin mi?",
+      "backupDeleteConfirmMessage": "Güvenlik anahtarı",
+      "backupDeleteSuccessTitle": "Yedek silindi",
+      "backupDeleteSuccessMessage": "Güvenlik anahtarı",
+      "backupDeleteFailTitle": "Yedek silinemedi",
+      "backupDeleteFail": "Güvenlik anahtarı yedeği silinemedi."
+    },
+    "openProfileEditAccessibility": "Açık profil"
+  },
+  "me": "Ben",
+  "noticePromote": {
+    "unsupported": "yükselt yapılamadı",
+    "ownerOnly": "Yalnızca oda sahibi duyuruya çıkarabilir.",
+    "noPermission": "Yükselt hayır izin",
+    "secureBlocked": "Yükselt",
+    "systemBlocked": "Yükselt",
+    "deletedBlocked": "Yükselt",
+    "missingMessage": "Mesaj doğrulanamadı."
+  },
+  "secure": {
+    "promptAuth": "Güvenli mesaj göndermek için kimlik doğrulayın.",
+    "on": "Güvenli mod açık",
+    "off": "Güvenli mod kapalı",
+    "readyFail": "Güvenli mod hazırlanamadı",
+    "sendReadyFail": "Güvenli gönderim hazırlanamadı",
+    "mediaUnsupported": "Güvenli modda şu anda desteklenmiyor.",
+    "fileUnsupported": "Dosya",
+    "content": {
+      "image": "🔐 Şifreli görsel",
+      "video": "🔐 Şifreli video",
+      "audio": "🔐 Şifreli ses",
+      "location": "🔐 Şifreli konum"
+    },
+    "enabled": "Güvenli mod açık",
+    "disabled": "Güvenli mod kapalı",
+    "lockedLabel": "🔐 Şifreli mesaj",
+    "prompt": {
+      "keyUse": "Güvenli mesaj anahtarlarını kullanmak için kimlik doğrulayın.",
+      "deviceRegister": "Kayıt",
+      "backupCreate": "Güvenlik anahtarlarını yedeklemek için kimlik doğrulayın.",
+      "backupRestore": "Güvenlik anahtarlarını geri yüklemek için kimlik doğrulayın.",
+      "newRoomKey": "Yeni güvenlik anahtarı oluşturmak için kimlik doğrulayın.",
+      "historyRequest": "Istek",
+      "historyShare": "Paylaş",
+      "historyReject": "Geçmiş anahtar isteğini reddetmek için kimlik doğrulayın.",
+      "historyClaim": "Onaylanan geçmiş anahtarları almak için kimlik doğrulayın.",
+      "decrypt": "Güvenli mesajı görüntülemek için kimlik doğrulayın."
+    },
+    "error": {
+      "loginRequired": "Giriş gerekli.",
+      "backupEmpty": "sohbet yok",
+      "backupMissing": "öğe yok",
+      "backupWrongAccount": "Bu güvenlik anahtarı yedeği bu hesaba ait değil.",
+      "requesterDeviceMissing": "öğe yapılamadı",
+      "noHistoryKeyToShare": "paylaş yok",
+      "parcelCreateFailed": "Paylaşılacak güvenlik anahtarı verisi oluşturulamadı."
+    }
+  },
+  "jump": {
+    "newMessage": "Yeni mesaj",
+    "newMessageAccessibility": "Yeni mesaja git",
+    "latestAccessibility": "Son mesaja git"
+  },
+  "permission": {
+    "cameraTitle": "sohbet izin kamera gerekli",
+    "cameraMessage": "Kamera erişimi gerekli.",
+    "contactsTitle": "sohbet izin gerekli",
+    "contactsMessage": "Kişilere erişim gerekli."
+  },
+  "filePick": {
+    "failTitle": "Dosya seçilemedi",
+    "failMessage": "Dosya seçilemedi."
+  },
+  "newChat": {
+    "title": "Yeni sohbet",
+    "create": "Oluştur",
+    "start": "Başlat",
+    "noName": "İsim yok",
+    "selectPartnerRequired": "Sohbet partneri seçin.",
+    "openTitleRequired": "Açık sohbet adı girin.",
+    "modeNormal": "Normal",
+    "modeOpen": "Aç",
+    "openSectionTitle": "Açık sohbet oluştur",
+    "openNamePlaceholder": "Açık sohbet adı",
+    "openHelper": "Sohbet açık",
+    "partnerSectionTitle": "Sohbet partneri seç",
+    "groupTitlePlaceholder": "Grup sohbeti adı",
+    "searchNamePlaceholder": "İsim ara",
+    "emptyFriends": "Arkadaş yok",
+    "userFallback": "Kullanıcı",
+    "privateChatTitle": "Özel sohbet",
+    "groupChatTitle": "Grup sohbeti",
+    "openChatTitle": "Açık sohbet",
+    "coverPhoto": "Kapak fotoğrafı",
+    "selectPhoto": "Fotoğraf seç",
+    "openDescriptionPlaceholder": "Oda açıklaması",
+    "openTagsPlaceholder": "örn. mahalle, kahve, koşu",
+    "searchVisible": "Sohbet arama görünür",
+    "searchVisibleDesc": "Sohbet arama görünür",
+    "groupModeTitle": "Grup sohbeti",
+    "groupModeAutoDesc": "2 veya daha fazla kişi seçilirse grup oluşturulur.",
+    "groupModeSingleDesc": "Bir kişi seçerek de grup oluşturabilirsiniz."
+  },
+  "menuModal": {
+    "markRead": "Okundu yap",
+    "roomInfo": "Sohbet odası bilgisi",
+    "pin": "Sohbet menü",
+    "unpin": "Sabitlemeyi kaldır",
+    "mute": "Sessiz",
+    "unmute": "Sohbet menü",
+    "leave": "Ayrıl",
+    "selfRoomTitle": "Menü ben oda"
+  },
+  "roomCard": {
+    "pending": "Oda kart beklemede",
+    "emptyMessage": "Mesaj yok",
+    "messageFallback": "Mesaj",
+    "am": "ÖÖ",
+    "pm": "ÖS",
+    "date": "{{day}}.{{month}}",
+    "preview": {
+      "image": "[Fotoğraf]",
+      "video": "[Video]",
+      "audio": "[Ses]",
+      "file": "[Dosya]",
+      "map": "[Konum]",
+      "notice": "[Duyuru]"
+    }
+  },
+  "searchModal": {
+    "rooms": "Sohbet arama",
+    "messages": "Mesajlar",
+    "placeholder": "Ara",
+    "emptyTitle": "Ara",
+    "emptyDesc": "Sohbet arama",
+    "noResultTitle": "Sonuç yok",
+    "noResultDesc": "Başka bir kelime deneyin.",
+    "roomPrefix": "Sohbet odası",
+    "visibleName": "Arama görünür",
+    "messageSender": "Gönderen",
+    "filterNormal": "Normal",
+    "filterOpen": "Aç",
+    "filterBeacon": "Beacon",
+    "filterBusiness": "İşletme",
+    "dateAll": "Tümü",
+    "dateToday": "Bugün",
+    "date7d": "Sohbet arama",
+    "date30d": "Sohbet arama",
+    "tabChat": "Sohbet",
+    "tabParticipant": "Üyeler",
+    "tabOpen": "Arama sekme açık",
+    "participants": "Üyeler",
+    "openRooms": "Arama açık",
+    "participantEmptyTitle": "Sohbet arama",
+    "participantEmptyDesc": "Sohbet arama",
+    "participantNoResultTitle": "Üye yok",
+    "participantNoResultDesc": "Başka bir isim deneyin.",
+    "openEmptyTitle": "Açık sohbet ara",
+    "openEmptyDesc": "Sohbet arama açık",
+    "openNoResultTitle": "Açık sohbet yok",
+    "openNoResultDesc": "Başka bir kelime deneyin.",
+    "typeFilter": "Tür",
+    "dateFilter": "Tarih",
+    "openJoined": "Katıldı",
+    "openPublic": "Açık sohbet",
+    "participatingRoom": "Katıldığınız oda"
+  },
+  "location": {
+    "fallbackTitle": "Konum",
+    "selectMapApp": "seç harita seçin",
+    "openMapHint": "Açık harita"
+  },
+  "translationPanel": {
+    "title": "Sohbet",
+    "subtitle": "Yalnızca bu oda için geçerlidir.",
+    "autoTranslate": {
+      "title": "Otomatik çeviri",
+      "desc": "Gelen mesajları seçtiğiniz dilde gösterir."
+    },
+    "showTranslatedOnly": {
+      "title": "Yalnızca çeviri",
+      "desc": "Göster çeviri"
+    },
+    "tier": {
+      "title": "Plan",
+      "desc": "Çeviri kalitesini seçin.",
+      "upgrade": "Yükselt",
+      "options": {
+        "free": {
+          "label": "Basic",
+          "desc": "Temel çeviri"
+        },
+        "mid": {
+          "label": "Standard",
+          "desc": "Doğal sohbet çevirisi"
+        },
+        "high": {
+          "label": "Premium",
+          "desc": "Bağlam ve ton uyumlu"
+        }
+      }
+    },
+    "tone": {
+      "title": "Ton",
+      "desc": "Premium ton ayarları",
+      "disabled": "Premium ile kullanılabilir.",
+      "options": {
+        "business": {
+          "label": "İşletme",
+          "desc": "Işletme"
+        },
+        "polite": {
+          "label": "Kibar",
+          "desc": "Yumuşak ve saygılı"
+        },
+        "casual": {
+          "label": "Samimi",
+          "desc": "Doğal günlük dil"
+        },
+        "neutral": {
+          "label": "Nötr",
+          "desc": "Önce anlam netliği"
+        },
+        "creative": {
+          "label": "Yaratıcı",
+          "desc": "Daha zengin ifade"
+        }
+      }
+    },
+    "sendLang": {
+      "title": "Gönderim dili",
+      "desc": "Otomatik, alıcının alım dilini izler.",
+      "auto": "Otomatik",
+      "autoDesc": "Karşı tarafın diline otomatik uyar.",
+      "autoPeerDesc": "Geçerli karşı taraf: {{label}} ({{code}})",
+      "peerBase": "Karşı taraf",
+      "peerDefault": "Karşı taraf"
+    },
+    "receiveLang": {
+      "title": "Alım dili",
+      "desc": "Gelen mesajları bu dilde gösterir."
+    },
+    "status": {
+      "off": "Kapalı",
+      "on": "AÇIK",
+      "auto": "Otomatik",
+      "receive": "Al",
+      "send": "Gönder",
+      "translatedOnly": "Yalnızca çeviri"
+    },
+    "language": {
+      "EN": "İngilizce",
+      "ES": "İspanyolca",
+      "FR": "Fransızca",
+      "DE": "Almanca",
+      "IT": "İtalyanca",
+      "PT": "Portekizce",
+      "NL": "Felemenkçe",
+      "PL": "Lehçe",
+      "RU": "Rusça",
+      "JA": "Japonca",
+      "KO": "Korece",
+      "ZH": "Çince",
+      "TR": "Türkçe",
+      "SV": "İsveççe",
+      "ID": "Endonezce",
+      "TH": "Tayca",
+      "UK": "Ukraynaca",
+      "RO": "Romence",
+      "CS": "Çekçe",
+      "DA": "Danca",
+      "EL": "Yunanca",
+      "FI": "Fince",
+      "HU": "Macarca",
+      "SK": "Slovakça",
+      "SL": "Slovence",
+      "BG": "Bulgarca",
+      "ET": "Estonca",
+      "LT": "Litvanca",
+      "LV": "Letonca",
+      "AR": "Arapça",
+      "ZH_HANS": "Basitleştirilmiş Çince",
+      "ZH_HANT": "Geleneksel Çince",
+      "VI": "Vietnamca",
+      "HI": "Hintçe",
+      "HE": "İbranice"
+    }
+  },
+  "header": {
+    "searchPlaceholder": "Sohbet arama",
+    "advanced": "Gelişmiş",
+    "sender": "Gönderen",
+    "date": "Tarih"
+  },
+  "attachment": {
+    "photo": "Fotoğraf",
+    "camera": "Sohbet kamera",
+    "call": "Ara",
+    "pay": "Sohbet ödeme",
+    "map": "Harita",
+    "music": "Sohbet müzik",
+    "file": "Dosya",
+    "cloud": "Sohbet bulut",
+    "contact": "İletişim",
+    "recentPhotos": "Son",
+    "send": "Gönder",
+    "photoPermissionRequired": "Fotoğraf erişimi gerekli.",
+    "openSettings": "Açık ayarlar",
+    "callUnavailable": "arama yapılamadı",
+    "phoneMissing": "telefon yok",
+    "phoneOpenFail": "telefon açık yapılamadı",
+    "voiceCallUnavailable": "arama yakında hazır",
+    "contactEmpty": "sohbet yok",
+    "contactShareTitle": "İletişim",
+    "contactName": "Ad",
+    "contactPhone": "Telefon",
+    "contactShareFail": "paylaş yapılamadı",
+    "voiceMessage": "Ses",
+    "capture": "Sohbet yakalama",
+    "schedule": "Plan"
+  },
+  "accessibility": {
+    "attachmentClose": "Sohbet",
+    "attachmentOpen": "Sohbet açık",
+    "messageInput": "Sohbet",
+    "sendMessage": "Mesaj gönder",
+    "voiceMessage": "Sesli mesaj"
+  },
+  "replyPreview": {
+    "peer": "Karşı taraf",
+    "replyTo": "{{name}} kişisine yanıtla",
+    "cancel": "Yanıt"
+  },
+  "mediaKind": {
+    "image": "Fotoğraf",
+    "video": "Video",
+    "audio": "Sesli mesaj",
+    "file": "Dosya",
+    "map": "Konum",
+    "notice": "Duyuru",
+    "text": "Sohbet"
+  },
+  "deleteModal": {
+    "title": "Sil",
+    "mine": "Benden sil",
+    "all": "Herkesten sil",
+    "moment": "Sohbet",
+    "sectionTitle": "Sohbet",
+    "selectTime": "seç saat seçin",
+    "readBased": "Okunduktan sonra sil",
+    "readAfterWithDelay": "Okunduktan sonra +{{delay}}",
+    "afterDelete": "{{delay}} sonra sil",
+    "unit": {
+      "hour": "sa",
+      "minute": "dk",
+      "second": "sn"
+    },
+    "cancelTitle": "sohbet yapılsın mı?",
+    "cancelDesc": "sohbet kaydedildi",
+    "keepEditing": "Düzenlemeye devam et",
+    "discard": "İptal"
+  },
+  "messageAction": {
+    "copy": "Kopyala",
+    "selectCopy": "sohbet seç seçin",
+    "reply": "Yanıtla",
+    "share": "Paylaş",
+    "toMe": "Sohbet",
+    "notice": "Duyuru",
+    "highlight": "Sohbet",
+    "capture": "Sohbet yakalama",
+    "delete": "Sil",
+    "cancelMoment": "Silme ayarını iptal et",
+    "viewOriginalTranslation": "Orijinal/Çeviri",
+    "translateOther": "Başka dile çevir",
+    "reactors": "Sohbet",
+    "shareToMe": "Paylaş",
+    "unhighlight": "Sohbet"
+  },
+  "moment": {
+    "title": "Sohbet",
+    "cancel": "Silme ayarını iptal et",
+    "expiredMessage": "Süresi dolmuş mesaj"
+  },
+  "noticeBanner": {
+    "open": "Açık",
+    "close": "Duyuruyu kapat"
+  },
+  "newMessagePill": {
+    "label": "{{count}} yeni mesaj",
+    "accessibility": "{{count}} yeni mesajı göster"
+  },
+  "search": {
+    "sender": "Gönderen",
+    "senderFilter": "Arama gönderen filtre",
+    "dateFilter": "Arama tarih filtre",
+    "prevResult": "Önceki sonuç",
+    "nextResult": "Sonraki sonuç",
+    "close": "Aramayı kapat",
+    "clearSender": "Gönderen filtresini temizle",
+    "placeholder": "Ara",
+    "inputAccessibility": "Arama girişi",
+    "clearKeyword": "Arama",
+    "bookmarkFilter": "Yer imi filtresi"
+  },
+  "datePicker": {
+    "title": "sohbet tarih seçici seçin",
+    "clear": "Tarih seçici",
+    "prevMonth": "Önceki ay",
+    "nextMonth": "Sonraki ay",
+    "monthTitle": "{{month}} {{year}}",
+    "weekday": {
+      "sun": "Paz",
+      "mon": "Pzt",
+      "tue": "Sal",
+      "wed": "Çar",
+      "thu": "Per",
+      "fri": "Cum",
+      "sat": "Cmt"
+    },
+    "dayAccessibility": "{{day}}. gün",
+    "selected": "Seçili",
+    "none": "Yok"
+  },
+  "selection": {
+    "title": "Sil",
+    "selectAll": "Tümünü seç",
+    "deleteCount": "{{count}} sil"
+  },
+  "noticeModel": {
+    "fallback": "Lütfen mesajı kontrol edin.",
+    "scheduleTitle": "Plan",
+    "media": {
+      "image": "Fotoğraf",
+      "video": "Video",
+      "audio": "Sesli mesaj",
+      "file": "Dosya",
+      "map": "Konum"
+    },
+    "secureRecovery": {
+      "requestCreated": {
+        "title": "Istek",
+        "body": "Istek"
+      },
+      "approved": {
+        "title": "Geçmiş anahtar onaylandı",
+        "body": "Onaylanan geçmiş anahtarları alabilirsiniz."
+      },
+      "completed": {
+        "title": "Geçmiş anahtarlar geri yüklendi",
+        "body": "Geçmiş mesajları yeniden açabilirsiniz."
+      },
+      "rejected": {
+        "title": "Geçmiş anahtar isteği reddedildi",
+        "body": "Bu istek geçmiş mesajları açamaz."
+      }
+    },
+    "scheduleTitleWithPrefix": "[Plan] Plan",
+    "weekday": {
+      "sun": "Paz",
+      "mon": "Pzt",
+      "tue": "Sal",
+      "wed": "Çar",
+      "thu": "Per",
+      "fri": "Cum",
+      "sat": "Cmt"
+    }
+  },
+  "messageItem": {
+    "noticeFallback": "Sohbet",
+    "secureLinkFallback": "Bağlantı",
+    "mapAddressFallback": "Konum bilgisi",
+    "secure": {
+      "genericTitle": "Güvenlik isteği",
+      "genericBody": "Güvenlik isteği durumu güncellendi.",
+      "fileFallback": "Güvenli dosya"
+    },
+    "tombstone": {
+      "deleted": "öğe silindi",
+      "expired": "Bu mesajın süresi doldu."
+    },
+    "longMessage": {
+      "viewAll": "Tümünü gör"
+    },
+    "action": {
+      "confirm": "Sohbet"
+    }
+  },
+  "linkPreview": {
+    "link": "Bağlantı",
+    "web": "Web",
+    "searchTitle": "{{query}} ara",
+    "searchTitleWithProvider": "{{query}} · {{provider}} ara",
+    "searchResult": "{{query}} arama sonucu",
+    "searchResultWithProvider": "{{query}} · {{provider}} arama sonucu",
+    "provider": {
+      "naver": "Naver",
+      "google": "Google",
+      "daum": "Daum"
+    }
+  },
+  "messageMeta": {
+    "deleteSuffix": "sil",
+    "cancelMoment": "Zamanlı silmeyi iptal et"
+  },
+  "messageBody": {
+    "link": "Bağlantı",
+    "secureMessage": "Şifreli mesaj",
+    "file": "Dosya",
+    "tapToOpen": "Açmak için dokun",
+    "locationInfo": "Konum bilgisi",
+    "secureFile": "Güvenli dosya"
+  },
+  "replyBlock": {
+    "peer": "Karşı taraf",
+    "replyTo": "{{name}} kişisine yanıtla"
+  },
+  "voiceRecorder": {
+    "totalDuration": "Toplam {{duration}}"
+  },
+  "actions": {
+    "momentCancelFailTitle": "öğe yapılamadı",
+    "tryAgain": "Lütfen daha sonra tekrar deneyin.",
+    "deleteFailTitle": "Silinemedi",
+    "missingServerMessage": "öğe yapılamadı",
+    "deleteNetworkFail": "Ağ hatası nedeniyle mesaj silinemedi.",
+    "momentSetFailTitle": "öğe başarısız",
+    "momentSetNetworkFail": "öğe yapılamadı",
+    "uploadFailTitle": "Yüklenemedi",
+    "imageUploadFail": "yükle yapılamadı",
+    "errorTitle": "Hata",
+    "mediaSendFail": "Medya gönderilirken bir sorun oluştu.",
+    "voiceUploadFail": "yükle başarısız",
+    "fileUploadFail": "Dosya yüklenemedi."
+  },
+  "bridge": {
+    "messageNotFound": "öğe yapılamadı",
+    "editedImageSent": "Düzenlenen görsel gönderildi.",
+    "editedImageSendFail": "Düzenlenen görsel gönderilemedi."
+  },
+  "capture": {
+    "title": "sohbet yakalama seçin",
+    "desc": "Mesaj aralığı seçin",
+    "exit": "Yakalamadan çık",
+    "clear": "Sohbet yakalama",
+    "share": "Paylaş",
+    "save": "Kaydet",
+    "shareCapture": "Yakalamayı paylaş",
+    "saveCapture": "Yakalamayı kaydet",
+    "anonymousOn": "Yakalama anonim açık",
+    "anonymousOff": "Yakalama anonim kapalı",
+    "anonymousUser": "Kullanıcı {{index}}",
+    "error": {
+      "secureBlocked": "Güvenli sohbetler yakalanamaz.",
+      "messageNotFound": "Mesaj bulunamadı.",
+      "areaNotFound": "Yakalama alanı bulunamadı.",
+      "selectedAreaNotFound": "Seçili alan bulunamadı.",
+      "areaCalcFailed": "Alan hesaplanamadı.",
+      "outOfView": "Seçili aralık ekran dışında.",
+      "imageCreateFailed": "Yakalama görseli oluşturulamadı.",
+      "emptySelection": "Mesaj seçilmedi.",
+      "permissionRequired": "yakalama izin gerekli",
+      "saveFailed": "Kaydedilemedi.",
+      "shareUnavailable": "Yakalama paylaş",
+      "shareFailed": "Paylaşılamadı."
+    },
+    "success": {
+      "saved": "Yakalama kaydedildi.",
+      "savedPartial": "Kısmi aralık kaydedildi.",
+      "savedVisibleOnly": "Görünür"
+    },
+    "anonymousInitial": "K"
+  },
+  "schedule": {
+    "common": {
+      "title": "Plan",
+      "fallbackTitle": "Başlıksız",
+      "roomFallback": "Sohbet odası",
+      "participantFallback": "Katılımcı",
+      "confirm": "Plan",
+      "cancel": "İptal",
+      "close": "Kapat",
+      "delete": "Sil",
+      "done": "Bitti",
+      "save": "Kaydet",
+      "saving": "Kaydediliyor",
+      "select": "Seç",
+      "weekdays": {
+        "sun": "Paz",
+        "mon": "Pzt",
+        "tue": "Sal",
+        "wed": "Çar",
+        "thu": "Per",
+        "fri": "Cum",
+        "sat": "Cmt"
+      },
+      "period": {
+        "am": "ÖÖ",
+        "pm": "ÖS"
+      },
+      "date": "{{day}}.{{month}} ({{weekday}})",
+      "compactDate": "{{day}}.{{month}} {{weekday}}",
+      "timeWithPeriod": "{{period}} {{hour}}:{{minute}}",
+      "participantCount": "{{count}} katılımcı",
+      "participantCountShort": "Katılım {{count}}",
+      "participantCountCompact": "Katılım {{count}}",
+      "openDetail": "{{title}} detayını aç"
+    },
+    "reminder": {
+      "off": "Kapalı",
+      "before30m": "Plan",
+      "before1h": "Plan",
+      "before3h": "Plan",
+      "before1d": "Plan",
+      "afterJoin": "Plan"
+    },
+    "api": {
+      "messageTitle": "Plan · {{title}}",
+      "calendarDefaultTitle": "CO·ONN Planı",
+      "calendarPlace": "Yer: {{place}}",
+      "calendarAddress": "Adres: {{address}}",
+      "calendarNoteFooter": "CO·ONN Planı",
+      "notificationChannel": "Planlar",
+      "reminderTimeBody": "Plan {{time}} saatinde başlıyor.",
+      "reminderSoonBody": "plan yakında hazır",
+      "reminderTitle": "Plan"
+    },
+    "detail": {
+      "notFound": "plan bulunamadı",
+      "cancelled": "Plan",
+      "completed": "Plan",
+      "directions": "Yol tarifi",
+      "notification": "Bildirim",
+      "appPush": "Uygulama bildirimi",
+      "calendar": "Takvim",
+      "syncCalendar": "Takvimime eşitle",
+      "synced": "Eşitlendi",
+      "notSynced": "Eşitlenmedi",
+      "join": "Katıl",
+      "leave": "İptal",
+      "noticeBadge": "Duyuru",
+      "noParticipants": "Henüz katılımcı yok.",
+      "moveToChat": "Plan",
+      "menu": {
+        "edit": "Plan",
+        "cancel": "Plan",
+        "complete": "Tamamla"
+      },
+      "alert": {
+        "processFailTitle": "plan yapılamadı",
+        "joinChangeFail": "plan yapılamadı",
+        "participantSettingTitle": "Plan",
+        "promoteNotice": "Plan",
+        "removeNotice": "Plan",
+        "promoteNoticeMessage": "{{name}} öne çıkan katılımcı olarak işaretlensin mi?",
+        "removeNoticeMessage": "{{name}} için öne çıkarma kaldırılsın mı?",
+        "settingFailTitle": "plan başarısız",
+        "participantSettingFail": "plan yapılamadı",
+        "reminderFailTitle": "Hatırlatıcı ayarlanamadı",
+        "calendarReminderFailTitle": "Takvim hatırlatıcısı başarısız",
+        "calendarSyncFailTitle": "Takvim eşitlemesi başarısız",
+        "calendarDeleteFailTitle": "Takvim silinemedi",
+        "cancelTitle": "Planı iptal et",
+        "cancelMessage": "Bu plan iptal edilsin mi?\nKatılımcılar iptal edildi olarak görecek.",
+        "cancelAction": "Planı iptal et",
+        "cancelFailTitle": "plan başarısız",
+        "cancelFail": "Plan iptal edilemedi.",
+        "completeTitle": "Plan",
+        "completeMessage": "Plan",
+        "completeFailTitle": "Tamamlanamadı",
+        "completeFail": "Plan tamamlanamadı.",
+        "calendarRemoveTitle": "Plan",
+        "calendarRemoveMessage": "Eşitlenen plan cihaz takviminden kaldırılsın mı?"
+      },
+      "error": {
+        "calendarPermissionDenied": "Takvim izni gerekli.",
+        "calendarNotFound": "plan yok",
+        "invalidScheduleTime": "Plan zamanı doğrulanamadı.",
+        "calendarApiUnavailable": "Plan",
+        "calendarDefault": "Takvim işlemi tamamlanamadı.",
+        "notificationPermissionDenied": "Bildirim izni gerekli.",
+        "reminderTimePast": "Hatırlatma zamanı geçti.",
+        "reminderDefault": "Hatırlatıcı ayarlanamadı."
+      }
+    },
+    "editor": {
+      "createTitle": "Plan",
+      "editTitle": "Plan",
+      "titlePlaceholder": "Başlık",
+      "allDay": "Tüm gün",
+      "startDate": "Başlangıç tarihi",
+      "endDate": "Bitiş tarihi",
+      "place": "Yer",
+      "map": "Harita",
+      "placeNamePlaceholder": "Yer adı",
+      "memoPlaceholder": "Not girin",
+      "cancelledLocked": "İptal edilen planlar düzenlenemez.",
+      "locationPickerTitle": "plan seçin",
+      "locationPickerHelper": "Plan",
+      "validation": {
+        "titleRequired": "Başlık girin.",
+        "startInvalid": "Plan",
+        "endInvalid": "Plan",
+        "endBeforeStart": "Bitiş saati başlangıçtan önce.",
+        "roomMissing": "plan bulunamadı"
+      }
+    },
+    "listScreen": {
+      "loadFail": "Planlar yüklenemedi.",
+      "roomMissing": "plan bulunamadı",
+      "createAccessibility": "Plan oluştur",
+      "retry": "Tekrar dene",
+      "activeCount": "{{count}} aktif",
+      "summary": "Bu sohbet odasında birlikte yönetilen planlar.",
+      "emptyTitle": "Henüz plan yok",
+      "emptyDesc": "Paylaşmak için plan oluşturun.",
+      "beaconUnavailableTitle": "Plan",
+      "beaconUnavailableDesc": "Plan",
+      "create": "Plan",
+      "joined": "Katıldı",
+      "notJoined": "Katılmadı",
+      "cancelled": "Plan",
+      "completed": "Tamamlandı",
+      "past": "Plan"
+    },
+    "messageCard": {
+      "cancelled": "Plan",
+      "completed": "Tamamlandı"
+    }
+  },
+  "openProfile": {
+    "common": {
+      "confirm": "Açık profil",
+      "cancel": "İptal",
+      "save": "Kaydet",
+      "delete": "Sil",
+      "default": "Varsayılan",
+      "user": "Kullanıcı",
+      "openChat": "Açık sohbet",
+      "business": "İşletme",
+      "openTalk": "Açık sohbet",
+      "fallbackName": "Açık profil",
+      "statusEmpty": "Durum mesajı yok",
+      "selectPhoto": "açık profil seçin",
+      "photoApplied": "Fotoğraf uygulandı.",
+      "saved": "Kaydedildi.",
+      "deleted": "Silindi.",
+      "tryAgain": "Lütfen daha sonra tekrar deneyin.",
+      "notice": "Duyuru",
+      "actionFailed": "açık profil yapılamadı",
+      "saveFailed": "Kaydedilemedi.",
+      "profileSaveFailed": "Profil kaydedilemedi."
+    },
+    "list": {
+      "title": "Açık profil",
+      "loadFailed": "Açık profiller yüklenemedi.",
+      "nicknameRequired": "Takma ad girin.",
+      "createSuccess": "Açık profil oluşturuldu.",
+      "createFailed": "Oluşturulamadı",
+      "saveFailed": "Kaydedilemedi",
+      "deleteFailed": "Silinemedi",
+      "deleteTitle": "Açık profil silinsin mi?",
+      "deleteDescInUse": "Açık sohbet odalarındaki mevcut profiller korunur.",
+      "deleteDescDefault": "Silinen profiller tekrar kullanılamaz.",
+      "editAccessibility": "Açık profili düzenle",
+      "usedRoomsCount": "Kullanılan açık sohbet: {{count}}",
+      "usedRoomsEmpty": "açık profil yok",
+      "emptyTitle": "açık profil yok",
+      "emptyDesc": "Açık profil"
+    },
+    "viewer": {
+      "action": {
+        "transferOwner": "Oda sahibini devret",
+        "promoteManager": "Açık profil",
+        "demoteManager": "Yöneticiyi kaldır",
+        "kick": "Çıkar",
+        "block": "Engelle",
+        "unblock": "Engeli kaldır",
+        "release": "Kaldır",
+        "delegate": "Açık profil",
+        "appoint": "Ata",
+        "changePhoto": "Açık profil",
+        "showPhoto": "Açık profil"
+      },
+      "confirm": {
+        "blockMessage": "açık profil yapılsın mı?",
+        "unblockMessage": "Bu kullanıcının mesajları tekrar gösterilsin mi?",
+        "transferOwnerMessage": "Oda sahibi {{name}} olarak devredilsin mi?",
+        "promoteManagerMessage": "{{name}} yönetici yapılsın mı?",
+        "demoteManagerMessage": "{{name}} yöneticilikten çıkarılsın mı?",
+        "kickMessage": "{{name}} çıkarılsın mı? Çıkarılan kullanıcı tekrar giremez."
+      },
+      "accessibility": {
+        "save": "Kaydet"
+      },
+      "placeholder": {
+        "status": "Durum mesajı"
+      }
+    },
+    "edit": {
+      "loadFailed": "Açık sohbet bilgisi yüklenemedi.",
+      "titleRequired": "Oda adı girin.",
+      "saveFailed": "açık profil yapılamadı",
+      "categoryFallback": "Açık sohbet",
+      "titlePlaceholder": "Açık sohbet adı",
+      "changePhoto": "Açık profil",
+      "descriptionPlaceholder": "Açık profil",
+      "tagsPlaceholder": "açık profil girin",
+      "publicTitle": "Herkese açık",
+      "publicDesc": "Açık profil",
+      "selectCover": "açık profil seçin"
+    },
+    "gate": {
+      "loadFailed": "Bilgi yüklenemedi.",
+      "joinFailed": "Açık profil ile girilemedi. Lütfen tekrar deneyin.",
+      "enterChat": "açık profil girin",
+      "startConsult": "Açık profil",
+      "selectProfileEnter": "açık profil seçin",
+      "joinOpenChat": "Açık sohbete katıl",
+      "openNow": "Aç",
+      "closed": "Kapalı",
+      "participants": "{{count}} katılımcı",
+      "participantsWithMax": "{{count}}/{{max}} katılımcı",
+      "createdAt": "Oluşturulma {{date}}",
+      "host": "Ev sahibi",
+      "introEmpty": "açık profil yok"
+    }
+  },
+  "userFallback": "Kullanıcı",
+  "room": {
+    "deletedReadonly": "Oda",
+    "leftReadonly": "Oda",
+    "kickedTitle": "Çıkarıldınız.",
+    "kickedMessage": "Sohbet oda"
+  },
+  "toast": {
+    "selectCopySecureBlocked": "Seç",
+    "selectCopyUnsupported": "Seç",
+    "shareToSelfSuccess": "Ben",
+    "shareSecureBlocked": "Güvenli mesajlar paylaşılamaz.",
+    "shareUnsupported": "Bu mesaj paylaşılamaz.",
+    "shareSelfRoomUnavailable": "ben oda yapılamadı",
+    "shareFailed": "Paylaşılamadı.",
+    "noticeNoPermission": "Hayır izin",
+    "copied": "Kopyalandı."
+  },
+  "longMessage": {
+    "message": "Mesaj",
+    "translation": "Çeviri",
+    "original": "Orijinal"
+  },
+  "selectCopy": {
+    "titleFallback": "Mesaj",
+    "translated": "Çeviri",
+    "original": "Orijinal",
+    "hint": "Sohbet seç",
+    "copied": "Kopyalandı",
+    "copyAll": "Sohbet seç",
+    "empty": "Seçilecek metin yok"
+  },
+  "system": {
+    "notice": "Sohbet güncellendi",
+    "memberJoined": "{{name}} katıldı.",
+    "memberLeft": "{{name}} ayrıldı.",
+    "memberKicked": "{{name}} çıkarıldı.",
+    "managerPromoted": "{{name}} artık yönetici.",
+    "managerDemoted": "{{name}} artık yönetici değil.",
+    "ownerTransferred": "{{name}} artık oda sahibi.",
+    "roomDeleted": "Bu oda silindi."
+  },
+  "cancel": "İptal"
+}

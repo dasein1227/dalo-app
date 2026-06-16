@@ -1,0 +1,10 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "COONN",
+    "NSPhotoLibraryUsageDescription": "Fotoğraf erişimi profil, gönderi ve sohbet görsellerini seçmek için kullanılır.",
+    "NSPhotoLibraryAddUsageDescription": "Fotoğraf arşivi erişimi görselleri ve medyayı cihaza kaydetmek için kullanılır.",
+    "NSLocationWhenInUseUsageDescription": "Konum, yakındaki gönderiler, beacon’lar ve mesafe tabanlı özellikler için kullanılır.",
+    "NSCameraUsageDescription": "Kamera profil, gönderi ve sohbet fotoğrafları çekmek için kullanılır.",
+    "NSMicrophoneUsageDescription": "Video kaydı sırasında mikrofon kullanılır."
+  }
+}

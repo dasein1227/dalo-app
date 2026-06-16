@@ -1,0 +1,35 @@
+{
+  "title": "Permissions",
+  "subtitle": "Allow the permissions needed.",
+  "location_title": "Location",
+  "location_desc": "Needed to show nearby beacons and maps.",
+  "notifications_title": "Notifications (optional)",
+  "notifications_desc": "Receive beacon invites, chats, and alerts.",
+  "allow_now": "Allow now",
+  "allowed": "Allowed",
+  "open_settings": "Open settings",
+  "continue_without_location": "Continue without location",
+  "background_location_title": "Background location (optional)",
+  "background_location_desc": "Receive nearby beacon and location-based alerts even when the app is closed.",
+  "background_location_hint": "Battery use may increase. You can change this anytime in Settings.",
+  "gallery": {
+    "title": "Photo access required",
+    "description": "Photo access is required to choose photos."
+  },
+  "camera": {
+    "title": "Camera access required",
+    "description": "Camera access is required to take photos."
+  },
+  "location": {
+    "title": "Location access required",
+    "description": "Location permission is required to check your current location."
+  },
+  "notification": {
+    "title": "Notifications",
+    "description": "Notification permission is required to receive alerts."
+  },
+  "action": {
+    "openSettings": "Open settings",
+    "notNow": "Not now"
+  }
+}

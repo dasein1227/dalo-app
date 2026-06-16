@@ -5,6 +5,7 @@
     "cancel": "취소",
     "close": "닫기",
     "save": "저장",
+    "done": "완료",
     "edit": "수정",
     "delete": "삭제",
     "next": "다음",
@@ -14,9 +15,47 @@
     "loading": "불러오는 중…",
     "required": "필수 항목입니다。",
     "copied": "복사되었습니다。",
-    "manage": "관리"
+    "manage": "관리",
+    "share": "공유",
+    "notice": "알림",
+    "error": "오류",
+    "success": "성공",
+    "fail": "실패",
+    "preparing": "준비 중",
+    "feature_coming_soon": "기능 준비 중입니다."
   },
-
+  "imageEditor": {
+    "title": "이미지 편집",
+    "ratio_original": "원본",
+    "ratio_free": "자유",
+    "rotate": "회전",
+    "ratio": "비율",
+    "invert": "가로/세로",
+    "orientation": "가로/세로",
+    "reset": "초기화",
+    "error_load_title": "오류",
+    "error_load_msg": "이미지를 불러올 수 없습니다.",
+    "error_save_title": "저장 실패",
+    "error_save_msg": "잠시 후 다시 시도해 주세요."
+  },
+  "media": {
+    "recent": "최근 항목",
+    "select_photo": "사진 선택",
+    "max_select": "최대 {{count}}장까지 선택할 수 있습니다.",
+    "processing_error": "이미지 처리 중 문제가 발생했습니다.",
+    "select_to_edit": "편집할 사진을 선택해주세요.",
+    "video_edit_warning": "동영상은 편집할 수 없습니다.",
+    "bundle_photos": "사진 묶어보내기",
+    "quality_settings": "화질 설정",
+    "quality_original": "원본",
+    "quality_standard": "일반 화질",
+    "quality_low": "저용량",
+    "quality_high": "고화질"
+  },
+  "permission": {
+    "required": "권한 필요",
+    "gallery_desc": "사진을 업로드하려면 갤러리 접근 권한을 허용해주세요."
+  },
   "errors": {
     "common": "오류",
     "auth": {
@@ -33,36 +72,38 @@
     "phone_format": "전화번호는 국제형식(+8210…)으로 입력해 주세요.",
     "email_format": "올바른 이메일 형식이 아닙니다."
   },
-
   "auth": {
-    "title": "로그인",
-    "subtitle": "원하는 방법으로 빠르게 시작하세요",
-    "login": "로그인",
-    "signup": "가입",
-    "signup_done_title": "가입 완료",
-    "signup_done_desc": "이메일 인증 후 로그인해 주세요.",
-    "email_placeholder": "you@example.com",
-    "password_placeholder": "비밀번호 (8자 이상 추천)",
-    "phone_hint": "예: +821012345678",
-    "phone_placeholder": "+821012345678",
-    "otp_placeholder": "인증번호(가입 시 한 번 입력)",
-    "open_email_form": "이메일로 계속",
-    "open_phone_form": "휴대폰으로 계속",
-    "have_account": "이미 계정이 있나요? 로그인",
-    "new_here": "처음이신가요? 가입",
-    "with_email_title": "이메일 {{mode}}",
-    "with_phone_title": "휴대폰 {{mode}}",
-    "mode_login": "로그인",
-    "mode_signup": "가입",
-    "signup_send_code": "가입(코드 발송)",
-    "verify_code": "코드 인증",
+    "start_easy": "간편하게 시작하기",
+    "continue_google": "Google로 시작하기",
+    "continue_apple": "Apple로 시작하기",
+    "or_login": "다른 방법으로 로그인",
+    "back": "뒤로 가기",
+    "email_title": "이메일로 시작하기",
+    "email_placeholder": "이메일 주소",
+    "password_placeholder": "비밀번호",
+    "login_btn": "로그인",
+    "signup_link": "아직 계정이 없으신가요? 회원가입",
+    "phone_title": "전화번호로 시작하기",
+    "phone_placeholder": "전화번호 (예: 01012345678)",
+    "send_otp": "인증번호 전송",
+    "otp_sent_desc": "{{phone}}으로 전송된 인증번호를 입력하세요.",
+    "otp_placeholder": "인증번호 6자리",
+    "verify_otp": "인증번호 확인",
+    "oauth_url_missing": "인증 URL을 찾을 수 없습니다.",
+    "error_login": "로그인 중 오류가 발생했습니다.",
+    "alert_notice": "알림",
+    "alert_input_email_pass": "이메일과 비밀번호를 입력해주세요.",
+    "alert_login_fail": "로그인 실패",
+    "alert_signup_fail": "회원가입 실패",
+    "alert_signup_email_sent": "회원가입 확인 메일을 전송했습니다.",
+    "alert_input_phone": "전화번호를 입력해주세요.",
+    "alert_send_fail": "전송 실패",
+    "alert_otp_sent": "인증번호가 전송되었습니다.",
+    "alert_verify_fail": "인증 실패",
     "apple_only_ios": "iOS에서만 지원합니다.",
-    "error_during_login": "로그인 처리 중 오류가 발생했습니다.",
-    "oauth_url_missing": "OAuth URL을 받지 못했습니다.",
     "oauth_invalid_client": "Supabase → 인증 제공자(Client ID/Secret) 설정을 확인하세요.",
-    "oauth_redirect_missing": "Supabase Redirect URLs에 dalo://auth 와 https://auth.expo.io/@youngjin1/dalo 를 등록하세요."
+    "oauth_redirect_missing": "Supabase Redirect URLs 설정을 확인하세요."
   },
-
   "phone": {
     "title": "전화번호 인증",
     "subtitle": "CO·ONN에서 친구와 안전하게 연결되고 통화 기능을 사용하려면\n본인 휴대폰 번호를 한 번만 인증해 주세요.",
@@ -89,7 +130,6 @@
     "verify_success": "전화번호 인증이 완료되었습니다.",
     "verify_failed": "인증번호 확인 중 문제가 발생했습니다.\n번호와 코드를 다시 확인해 주세요."
   },
-
   "legal": {
     "title": "약관 및 개인정보 동의",
     "tos_required": "[필수] 서비스 이용약관 동의",
@@ -103,7 +143,6 @@
     "privacy_title": "개인정보 처리방침",
     "privacy_content": "회사는 이용자의 개인정보를 중요하게 생각하며, 『개인정보 보호법』 등 관련 법령을 준수합니다. 서비스 제공을 위해 필요한 최소한의 개인정보만을 수집하며, 명시된 목적 외에는 이용하지 않습니다. 회사는 이용자의 동의 없이 개인정보를 제3자에게 제공하지 않으며, 이용자의 개인정보를 안전하게 보호하기 위해 기술적·관리적 조치를 취합니다. 이용자는 언제든지 자신의 개인정보 열람, 수정, 삭제를 요청할 수 있습니다."
   },
-
   "permissions": {
     "title": "권한 설정",
     "subtitle": "원활한 사용을 위해 아래 권한을 허용해 주세요.",
@@ -119,7 +158,6 @@
     "background_location_desc": "앱을 열지 않아도 주변 비콘/위치 기반 알림을 받을 수 있어요.",
     "background_location_hint": "배터리 사용량이 증가할 수 있습니다. 설정에서 언제든 변경할 수 있어요."
   },
-
   "map": {
     "title": "지도",
     "refresh": "새로고침",
@@ -127,7 +165,6 @@
     "create_beacon": "비콘 만들기",
     "no_location_permission": "위치 권한이 없어 지도를 표시할 수 없습니다."
   },
-
   "beacons": {
     "create_title": "비콘 생성",
     "edit_title": "비콘 수정",
@@ -145,7 +182,112 @@
     "memo": "메모",
     "time_left": "남은 시간"
   },
-
+  "post": {
+    "tab_all": "전체",
+    "tab_default": "게시물",
+    "loading": "추억 불러오는 중...",
+    "not_found": "게시물을 찾을 수 없습니다.",
+    "no_image": "이미지 없음",
+    "view_all_comments": "댓글 {{count}}개 모두 보기",
+    "delete_confirm_title": "삭제",
+    "delete_confirm_message": "정말 삭제할까요?",
+    "delete_success": "삭제되었습니다.",
+    "delete_fail": "삭제 실패",
+    "save_feature_title": "저장",
+    "save_feature_desc": "기능 준비 중",
+    "pin_feature_desc": "고정 기능은 준비 중입니다.",
+    "report_feature_desc": "신고 기능은 준비 중입니다.",
+    "block_feature_desc": "차단 기능은 준비 중입니다.",
+    "create": {
+      "title": "새 게시물",
+      "min_image_alert": "사진을 최소 1장 선택해주세요.",
+      "reorder_title": "순서 변경",
+      "reorder_guide": "순서를 바꿀 다른 사진을 탭하세요.",
+      "reorder_help": "사진을 길게 눌러 순서를 변경하세요.",
+      "add_photo": "사진 추가",
+      "caption_placeholder": "문구를 입력하세요...",
+      "tag_people": "사람 태그하기",
+      "people_count_suffix": "명 선택됨",
+      "add_location": "위치 추가",
+      "business_partner": "비즈니스 파트너",
+      "select_tab": "탭 선택",
+      "visibility_label": "공개 범위 (중복 선택 가능)",
+      "disable_comments": "댓글 기능 해제",
+      "disable_share": "공유 기능 해제",
+      "search_person": "사람 검색",
+      "search_business": "비즈니스 검색",
+      "upload_error": "업로드 중 오류가 발생했습니다."
+    },
+    "upload": {
+      "progress": "추억을 남기는 중...",
+      "success": "소중한 순간이 기록되었습니다.",
+      "fail": "기록을 남기지 못했어요.",
+      "share_action": "공유하기"
+    },
+    "menu": {
+      "pin": "게시물 고정",
+      "edit": "수정",
+      "delete": "삭제",
+      "report": "신고",
+      "block": "차단"
+    },
+    "likes": {
+      "title": "좋아요",
+      "empty": "아직 좋아요가 없습니다.",
+      "follow": "팔로우",
+      "follow_chat_soon": "팔로우 / 1:1 채팅은 나중에 연결합니다."
+    },
+    "comment": {
+      "title": "댓글",
+      "placeholder": "댓글 달기...",
+      "submit": "게시",
+      "view_replies": "답글 {{count}}개 보기",
+      "reply_action": "답글 달기",
+      "replying_to": "{{name}}님에게 답글 쓰는 중",
+      "delete_title": "댓글 삭제",
+      "delete_message": "이 댓글을 삭제할까요?",
+      "delete_fail": "댓글 삭제에 실패했습니다."
+    }
+  },
+  "friends": {
+    "title": "친구",
+    "requests": "친구 요청",
+    "requests_empty": "새로운 친구 요청이 없습니다.",
+    "requests_received": "받은 요청",
+    "requests_sent": "보낸 요청",
+    "add_friend": "친구 추가",
+    "send_request": "친구 요청 보내기",
+    "request_sent": "친구 요청을 보냈습니다.",
+    "request_send_failed": "친구 요청 전송에 실패했습니다.",
+    "request_cancel": "요청 취소",
+    "request_canceled": "친구 요청을 취소했습니다.",
+    "request_cancel_failed": "친구 요청 취소에 실패했습니다.",
+    "accept": "수락",
+    "decline": "거절",
+    "accepted": "친구 요청을 수락했습니다.",
+    "declined": "친구 요청을 거절했습니다.",
+    "accept_failed": "친구 요청 수락에 실패했습니다.",
+    "decline_failed": "친구 요청 거절에 실패했습니다.",
+    "remove_friend": "친구 삭제",
+    "remove_friend_confirm": "이 친구를 삭제할까요?",
+    "remove_friend_done": "친구가 삭제되었습니다.",
+    "remove_friend_failed": "친구 삭제에 실패했습니다.",
+    "blocked": "차단됨",
+    "block": "차단",
+    "unblock": "차단 해제",
+    "block_done": "차단되었습니다.",
+    "unblock_done": "차단이 해제되었습니다.",
+    "search_placeholder": "닉네임, 아이디, 친구 코드 검색",
+    "code_placeholder": "친구 코드 입력",
+    "already_friends": "이미 친구입니다.",
+    "already_requested": "이미 친구 요청을 보냈습니다.",
+    "self_not_allowed": "자기 자신에게는 친구 요청을 보낼 수 없습니다.",
+    "hidden": "숨김",
+    "favorite": "즐겨찾기",
+    "memo": "메모",
+    "alias": "별칭",
+    "group": "그룹"
+  },
   "chat": {
     "title": "채팅",
     "send": "전송",
@@ -155,12 +297,14 @@
     "manage": "관리",
     "members": "멤버",
     "placeholder": "메시지를 입력하세요…",
-
+    "date": {
+      "today": "오늘",
+      "yesterday": "어제"
+    },
     "all": "전체",
     "and_others_n": "외 N",
     "others_suffix": "외",
     "anonymous": "익명",
-
     "message": "메시지",
     "message_search": "메시지 검색",
     "message_send": "메시지 보내기",
@@ -169,7 +313,6 @@
     "message_deleted": "메시지가 삭제되었습니다.",
     "new_message_one": "새 메시지 1개",
     "new_messages_count": "새 메시지 {{count}}개",
-
     "chat_with_me": "나와의 채팅",
     "chat_room_title": "채팅방",
     "one_to_one_chat": "1:1 채팅",
@@ -179,7 +322,6 @@
     "room_not_found": "방 정보가 없습니다.",
     "chat_room_not_found": "채팅방을 찾을 수 없습니다.",
     "conversation_partner": "대화상대",
-
     "audio_send_failed": "오디오 전송 실패",
     "video": "동영상",
     "photo": "사진",
@@ -187,45 +329,36 @@
     "open_file": "파일 열기",
     "play_video": "영상 재생",
     "voice_message": "음성메시지",
-
     "share_location": "위치 공유",
     "map_location_shared_title": "위치 공유",
     "map_tap_to_open": "지도를 열려면 탭하세요.",
     "cannot_open_map": "지도를 열 수 없습니다.",
     "no_coordinate_info": "좌표 정보 없음",
-
     "send_failed": "전송 실패",
     "share": "공유",
     "share_failed": "공유 실패",
     "delete_failed": "삭제 실패",
     "upload_failed": "업로드 실패",
-
     "selection_mode": "선택 모드",
     "selection_mode_hint": "삭제할 메시지를 눌러 선택하세요.",
     "selection_clear": "선택 해제",
-
     "delete_dialog_title": "메시지 삭제",
     "delete_dialog_desc": "삭제 방법을 선택하세요.",
     "delete_for_everyone": "모두에게서 삭제",
     "delete_hide_for_everyone": "메시지 가리기 (모두에게서 숨기기)",
     "delete_for_me": "나에게서만 삭제",
     "delete_for_me_hint": "선택한 메시지는 나에게서만 삭제할 수 있습니다.",
-
     "reply": "답장",
     "reply_to_me": "내 메시지에 답장",
     "reply_to_user": "{{nickname}}에게 답장",
     "msg_deleted_by_user": "{{nickname}}님이 메시지를 삭제했습니다.",
-
     "notice": "공지",
     "notice_coming_soon": "공지 기능은 추후 구현 예정입니다.",
-
     "korean_label": "한국어",
-
     "auto_translate_paid_only": "중간/고급 번역 플랜에서만 자동 번역을 사용할 수 있습니다.",
     "translation_paid_only": "번역은 유료 회원 전용입니다.",
     "premium_only": "프리미엄 전용",
     "premium_only_feature_hint": "프리미엄 회원부터 사용 가능한 기능입니다.",
-
     "tone_neutral": "중립",
     "tone_casual": "친근하게",
     "tone_formal": "격식 있게",
@@ -233,28 +366,22 @@
     "tone_playful": "재미있게",
     "tone_change_premium_only": "번역 톤 변경은 고급(프리미엄) 번역 회원부터 사용할 수 있습니다.",
     "tone_premium_only_hint": "고급 번역(프리미엄)에서만 적용됩니다.",
-
     "login_required": "로그인이 필요합니다.",
     "no_permission_send_rls": "메시지를 보낼 권한이 없습니다. (RLS)\n",
     "rls_help_chat_members": "→ chat_members에 내가 포함되어 있는지, chat_messages 정책을 확인하세요.",
-
     "search_placeholder": "검색어를 입력하세요",
     "search_result_count": "결과 {{count}}개",
-
     "show_original": "원문 보기",
     "show_translation": "번역 보기",
-
     "translating": "번역 중…",
-
     "input": {
       "placeholder": "메시지 보내기"
     },
-
+    "hold_to_unlock": "꾹 눌러서 입력 잠금 해제",
     "error": {
       "loginRequired": "로그인이 필요합니다.",
       "roomNotFound": "채팅방을 찾을 수 없습니다."
     },
-
     "sheet": {
       "moreActions": "추가 동작",
       "media": "사진/영상",
@@ -264,7 +391,6 @@
       "inviteLink": "초대링크",
       "translate": "번역"
     },
-
     "translate": {
       "title": "번역",
       "current_lang_prefix": "현재: {{code}}",
@@ -279,9 +405,66 @@
       "toneBusinessDesc": "메일/보고서/업무용",
       "tonePlayful": "재미있게",
       "tonePlayfulDesc": "밈/가벼운 농담 등"
+    },
+    "roomCard": {
+      "preview": {
+        "image": "[사진]",
+        "video": "[동영상]",
+        "audio": "[음성]",
+        "file": "[파일]",
+        "map": "[위치]",
+        "notice": "[알림]"
+      }
     }
   },
-
+  "push": {
+    "channel": {
+      "social_name": "소셜",
+      "social_description": "친구 및 소셜 알림",
+      "chat_name": "채팅",
+      "chat_description": "채팅 메시지 및 대화 알림"
+    },
+    "summary": {
+      "social_title": "CO·ONN",
+      "social_body": "새 소셜 알림",
+      "chat_title": "CO·ONN",
+      "chat_body": "새 채팅 알림"
+    },
+    "actions": {
+      "read": "읽음",
+      "reply": "답장"
+    },
+    "common": {
+      "someone": "누군가",
+      "new_notification": "새 알림",
+      "new_notification_body": "새 알림이 도착했습니다.",
+      "new_message": "새 메시지"
+    },
+    "friend": {
+      "request_received_title": "친구 요청",
+      "request_received_subtitle": "{{actor}}",
+      "request_received_body": "{{actor}}님이 친구 요청을 보냈습니다"
+    },
+    "chat": {
+      "dm_title": "{{sender}}",
+      "dm_subtitle": "",
+      "dm_body_text": "{{message}}",
+      "dm_body_image": "사진을 보냈습니다",
+      "dm_body_video": "동영상을 보냈습니다",
+      "dm_body_audio": "음성메시지를 보냈습니다",
+      "dm_body_file": "파일을 보냈습니다",
+      "dm_body_map": "위치를 공유했습니다",
+      "group_title": "{{room}}",
+      "group_subtitle": "{{sender}}",
+      "group_body_text": "{{sender}}: {{message}}",
+      "group_body_image": "{{sender}}님이 사진을 보냈습니다",
+      "group_body_video": "{{sender}}님이 동영상을 보냈습니다",
+      "group_body_audio": "{{sender}}님이 음성메시지를 보냈습니다",
+      "group_body_file": "{{sender}}님이 파일을 보냈습니다",
+      "group_body_map": "{{sender}}님이 위치를 공유했습니다",
+      "reply_placeholder": "답장 입력…"
+    }
+  },
   "profile": {
     "view_title": "프로필",
     "edit_title": "프로필 수정",
@@ -289,9 +472,72 @@
     "handle": "핸들",
     "status_message": "상태메시지",
     "public_default": "프로필 기본 공개",
-    "save_done": "프로필이 저장되었습니다."
+    "save_done": "프로필이 저장되었습니다.",
+    "no_name": "이름 없음",
+    "no_id": "ID 미설정",
+    "follow": "팔로우",
+    "following": "팔로우 중",
+    "stat_posts": "게시물",
+    "stat_followers": "팔로워",
+    "stat_following": "팔로잉",
+    "empty_posts": "아직 게시물이 없습니다.",
+    "empty_posts_tab": "이 탭에는 게시물이 없습니다.",
+    "swipe": {
+      "new_post": "＋ 새 게시물",
+      "chat_1on1": "1:1 채팅",
+      "chat_me": "나와의 채팅",
+      "call": "통화",
+      "more": "더보기 →"
+    },
+    "alert": {
+      "setting_soon": "프로필 설정 화면은 준비 중입니다.",
+      "call_friend_only_title": "통화 불가",
+      "call_friend_only_desc": "통화는 친구에게만 제공됩니다.",
+      "call_feature_soon": "전화번호 / 보이스콜 기능은 추후 연결 예정입니다.",
+      "unfollow_title": "팔로우 취소",
+      "unfollow_desc": "팔로우를 취소하시겠습니까?",
+      "keep": "유지",
+      "follow_fail": "팔로우에 실패했습니다. 잠시 후 다시 시도해주세요.",
+      "unfollow_fail": "팔로우를 취소하지 못했습니다. 잠시 후 다시 시도해주세요.",
+      "self_chat_fail": "나와의 채팅을 시작할 수 없습니다."
+    },
+    "edit": {
+      "error_permission": "본인 프로필만 수정할 수 있습니다.",
+      "revert_title": "설정 되돌리기",
+      "revert_msg": "저장하지 않은 변경 사항을 모두 취소하고 원래대로 되돌릴까요?",
+      "revert_action": "되돌리기",
+      "revert": "설정 되돌리기",
+      "error_add_tab": "탭 추가 실패",
+      "confirm_delete_tab": "\"{{name}}\" 탭을 삭제하시겠습니까?",
+      "error_save": "저장에 실패했습니다.",
+      "change_cover": "배경 변경",
+      "status_placeholder": "상태 메시지를 입력하세요",
+      "section_theme": "테마 및 스타일",
+      "theme_color": "테마 색상",
+      "font_color": "폰트 색상",
+      "statusbar": "상단바 스타일",
+      "text_white": "흰색 텍스트",
+      "text_black": "검은색 텍스트",
+      "section_tabs": "탭 관리",
+      "tab_all": "전체 (기본)",
+      "tab_input_placeholder": "+ 새 탭 이름 입력",
+      "hue": "색상 (Hue)",
+      "brightness": "밝기 (Brightness)",
+      "apply": "적용",
+      "setting_tab": "\"{{name}}\" 설정",
+      "move_up": "위로 이동",
+      "move_down": "아래로 이동",
+      "visibility": "공개 범위 설정",
+      "current_vis": "현재: {{val}}",
+      "vis_public": "전체 공개",
+      "vis_private": "나만 보기",
+      "vis_custom": "일부 공개",
+      "vis_friends": "친구",
+      "vis_followers": "팔로워",
+      "picker_avatar": "프로필 사진 선택",
+      "picker_cover": "배경 사진 선택"
+    }
   },
-
   "settings": {
     "home_title": "설정",
     "title": "설정",
@@ -301,72 +547,168 @@
     "run": "실행",
     "logout": "로그아웃",
     "logoutDone": "로그아웃되었습니다.",
-
+    "sections": {
+      "communication": "커뮤니케이션",
+      "general": "기본 설정",
+      "advanced": "고급",
+      "service_info": "서비스 정보"
+    },
+    "menus": {
+      "call": "통화",
+      "etc": "기타",
+      "app_manage": "앱 관리"
+    },
+    "alerts": {
+      "logout_title": "로그아웃",
+      "logout_desc": "정말 로그아웃 하시겠습니까?",
+      "language_change_error": "언어 변경 중 문제가 발생했습니다."
+    },
     "search": {
       "title": "설정 검색",
       "soon": "설정 검색 기능은 곧 제공될 예정입니다."
     },
-
     "me": {
       "noName": "(이름 없음)",
       "profileManage": "프로필 관리"
     },
-
     "account": {
-      "title": "개인 / 보안",
+      "title": "계정 관리",
       "editProfile": "프로필 편집",
       "profilePublicDefault": "비콘에서 내 프로필 기본 공개",
-      "profilePublicHint": "비콘 생성 시 기본값으로 사용됩니다. 개별 비콘에서 변경 가능."
+      "profilePublicHint": "비콘 생성 시 기본값으로 사용됩니다. 개별 비콘에서 변경 가능.",
+      "header_title": "내 정보 관리",
+      "section": {
+        "contact": "연락처 정보",
+        "identity": "식별 설정",
+        "visibility": "공개 범위"
+      },
+      "field": {
+        "phone": "전화번호",
+        "email": "이메일",
+        "id_label": "CO·ONN 아이디",
+        "friend_code": "친구 코드",
+        "show_nickname": "친구에게 닉네임 표시"
+      },
+      "value": {
+        "not_registered": "미등록"
+      },
+      "badge": {
+        "verified": "인증됨",
+        "verify": "인증하기"
+      },
+      "placeholder": {
+        "id": "아이디 입력",
+        "friend_code": "코드 입력"
+      },
+      "help": {
+        "id_desc": "사용자를 검색할 때 사용되는 고유 ID입니다.",
+        "show_nickname_desc": "비활성 시 아이디로만 표시됩니다."
+      },
+      "error": {
+        "check_duplication": "중복된 항목을 확인해주세요.",
+        "id_taken": "이미 사용 중인 아이디입니다.",
+        "code_taken": "이미 사용 중인 코드입니다."
+      },
+      "alert": {
+        "check_required": "확인 필요",
+        "save_success_title": "저장 완료",
+        "save_success_desc": "내 정보가 업데이트되었습니다.",
+        "save_fail_title": "저장 실패"
+      },
+      "action": {
+        "save": "저장하기"
+      }
     },
-
+    "privacy": {
+      "title": "사생활 보호",
+      "header_title": "사생활 보호",
+      "section": {
+        "profile": "프로필 및 검색",
+        "friend_req": "친구 요청 정책",
+        "activity": "활동 정보"
+      },
+      "field": {
+        "public_profile": "내 프로필 공개",
+        "allow_search": "검색 허용",
+        "show_nickname": "친구에게 닉네임 표시",
+        "show_location": "위치 표시",
+        "last_active": "마지막 활동 시간"
+      },
+      "help": {
+        "public_profile": "다른 사용자가 내 프로필을 볼 수 있음",
+        "allow_search": "닉네임/핸들로 나를 검색할 수 있음",
+        "show_nickname": "실명 대신 닉네임을 우선 표시",
+        "show_location": "내 활동 비콘에서 위치를 노출",
+        "last_active": "프로필에 최근 접속 시간 표시"
+      },
+      "option": {
+        "all": "모두 허용",
+        "all_desc": "누구나 친구 요청 가능",
+        "friends": "친구의 친구만",
+        "friends_desc": "내 친구와 연결된 사람만 요청 가능",
+        "none": "모두 차단",
+        "none_desc": "모든 친구 요청 거절"
+      },
+      "alert": {
+        "save_success": "설정이 저장되었습니다.",
+        "save_fail": "저장에 실패했습니다."
+      }
+    },
+    "radius": {
+      "title": "내 동네 범위 설정",
+      "current": "현재",
+      "desc": "설정한 거리 내의 소식만 받아봅니다."
+    },
     "friends": {
       "title": "친구",
       "manage": "친구 관리",
       "caption": "차단, 추천 친구, 공개 범위",
       "soon": "친구 설정 화면은 추후 제공될 예정입니다."
     },
-
     "notification": {
       "title": "알림",
       "manage": "알림 설정",
       "caption": "푸시, 소리, 진동",
       "soon": "알림 설정 화면은 추후 연결될 예정입니다."
     },
-
     "display": {
       "title": "화면 및 언어"
     },
-
     "language": {
       "title": "언어",
       "select": "언어 선택",
       "inUse": "(사용 중)"
     },
-
     "theme": {
       "title": "테마",
       "caption": "라이트 / 다크 모드",
-      "soon": "테마 설정 화면은 추후 제공될 예정입니다."
+      "soon": "테마 설정 화면은 추후 제공될 예정입니다.",
+      "header_title": "테마 설정",
+      "section_style": "화면 스타일",
+      "mode": {
+        "system": "시스템 설정 모드",
+        "system_desc": "기기 설정에 따라 자동으로 변경됩니다.",
+        "light": "라이트 모드",
+        "light_desc": "밝고 깨끗한 화면입니다.",
+        "dark": "다크 모드",
+        "dark_desc": "눈이 편안한 어두운 화면입니다."
+      }
     },
-
     "chat": {
       "title": "채팅"
     },
-
     "translate": {
       "autoDefault": "메시지 자동 번역",
       "autoDefaultHint": "새 채팅의 기본값으로 사용됩니다.",
       "showOriginal": "번역과 함께 원문 표시",
       "showOriginalHint": "켜 두면 번역 메시지 아래에 원문이 함께 표시됩니다."
     },
-
     "storage": {
       "title": "데이터 및 저장공간",
       "clearCache": "캐시 정리",
       "clearCacheHint": "임시파일 삭제",
       "soon": "캐시 삭제 로직은 아직 연결되지 않았습니다. 추후 업데이트될 예정입니다."
     },
-
     "support": {
       "title": "고객지원",
       "cs": "고객센터 / 운영정책",
@@ -374,35 +716,102 @@
       "guide": "앱 안내 가이드",
       "soon": "해당 화면은 추후 연결될 예정입니다."
     },
-
     "labs": {
       "title": "실험실",
       "features": "실험실 기능",
       "caption": "새로운 기능을 먼저 사용해 보세요.",
       "soon": "실험실 기능 화면은 준비 중입니다."
     },
-
     "admin": {
       "title": "관리자",
       "console": "관리자 콘솔"
     }
   },
-
+  "home": {
+    "briefing_title": "오늘의 브리핑",
+    "briefing_toggle_show": "요약 보기",
+    "briefing_toggle_hide": "요약 접기",
+    "briefing_unread_chat": "안 읽은 채팅",
+    "briefing_nearby_beacon": "주변 비콘",
+    "briefing_new_friend_post": "친구 새 게시물",
+    "briefing_new_follower": "새 팔로워",
+    "briefing_count_unit": "개",
+    "briefing_people_unit": "명",
+    "tabs": {
+      "friends": "친구",
+      "following": "팔로잉",
+      "local": "로컬"
+    },
+    "banner_headerTitle": "내 주변",
+    "banner_fallback_title": "주변을 살피고 있어요",
+    "banner_fallback_desc": "가까운 곳들을 모으는 중",
+    "empty_feed": "아직 표시할 피드가 없습니다.",
+    "scroll_top": "맨 위로"
+  },
   "system": {
     "splash_loading": "시작 준비 중…",
     "offline": "오프라인입니다. 네트워크를 확인하세요.",
     "not_found": "페이지를 찾을 수 없습니다."
   },
-
   "placeholders": {
     "search": "검색",
     "write_something": "무엇을 보내시겠어요?"
   },
-
   "tabs": {
     "map": "지도",
     "chat": "채팅",
     "friends": "친구",
     "explore": "탐색"
+  },
+  "location": {
+    "title": "위치 전송",
+    "search_placeholder": "장소명, 주소 검색",
+    "loading_current": "현재 위치 확인 중...",
+    "moving_tooltip": "이동 중...",
+    "address_label": "지도 위치 주소",
+    "status_moving": "위치 이동 중...",
+    "status_checking": "위치를 확인하는 중...",
+    "status_loading": "위치 로딩 중...",
+    "detail_placeholder": "상세 주소 입력 (선택)",
+    "btn_fixing": "위치 고정 중...",
+    "btn_send": "이 위치 보내기",
+    "error_no_result": "검색 결과가 없습니다.",
+    "error_search_failed": "검색 중 문제가 발생했습니다.",
+    "error_wait_fix": "위치 고정이 완료된 후 선택해주세요."
+  },
+  "mediaViewer": {
+    "header_default": "사진",
+    "empty": "미디어가 없습니다.",
+    "video_open_external": "▶ 동영상 열기",
+    "video_no_expo_av": "expo-av 미설치 환경",
+    "alert_save_success": "저장 완료",
+    "alert_save_msg_single": "사진을 갤러리에 저장했어요.",
+    "alert_save_msg_multiple": "{{count}}장의 사진을 갤러리에 저장했어요.",
+    "alert_save_fail_title": "저장 실패",
+    "alert_save_fail_msg": "사진을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.",
+    "alert_share_empty": "공유할 사진이 없습니다.",
+    "alert_share_bundle_info": "알림",
+    "alert_share_bundle_msg": "여러 장 동시 공유는 아직 준비 중이라, 첫 번째 사진만 공유됩니다.",
+    "alert_share_fail_title": "공유 실패",
+    "alert_share_fail_load": "이미지를 불러오지 못했어요.",
+    "alert_share_fail_msg": "이미지를 공유하지 못했어요.",
+    "modal_info": "사진 정보",
+    "modal_save": "사진 저장",
+    "modal_share": "사진 공유",
+    "modal_delete": "사진 삭제",
+    "info_date": "전송 시각",
+    "info_type": "타입",
+    "info_location": "위치",
+    "label_save_option": "저장 방법을 선택하세요.",
+    "label_save_current": "이 사진만 저장",
+    "label_save_all": "묶음사진 전체 저장 ({{count}}장)",
+    "label_share_option": "공유 방법을 선택하세요.",
+    "label_share_current": "이 사진만 공유",
+    "label_share_all": "묶음사진 전체 공유",
+    "confirm_delete": "선택한 사진을 삭제하시겠습니까?",
+    "confirm_delete_bundle_hint": "묶음 사진은 모두 함께 삭제됩니다.",
+    "state_deleting": "삭제중…",
+    "state_saving": "저장중…",
+    "state_sharing": "공유중…"
   }
 }

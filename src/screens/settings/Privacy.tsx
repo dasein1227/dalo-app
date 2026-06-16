@@ -1,200 +1,466 @@
-﻿// src/screens/Privacy.tsx
-import React, { useCallback, useEffect, useState } from 'react';
+// src/screens/settings/Privacy.tsx
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import {
-  View, Text, StyleSheet, Switch, Pressable, ActivityIndicator, Alert, ScrollView, Platform,
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Animated,
+  ScrollView,
+  ActivityIndicator,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import AppHeader from '@/components/AppHeader';
-import { supabase } from '../../lib/supabase';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import { ChevronLeft } from 'lucide-react-native';
+import { supabase } from '@/lib/supabase';
 
-type PrivacyRow = {
-  user_id: string;
-  profile_visible: boolean;
-  searchable: boolean;
-  friend_request_policy: 'allow_all' | 'friends_only' | 'reject_all';
-  location_visible: boolean;
-  last_seen_visible: boolean;
-  updated_at?: string | null;
+import { useAppTheme } from '@/theme/useAppTheme';
+import { GlobalHeader, HeaderIconButton } from '@/components/GlobalHeader';
+import SafeScreen from '@/components/layout/SafeScreen';
+import CoonnAlert, { type CoonnAlertVariant } from '@/components/CoonnAlert';
+import CoonnFloatingToast from '@/components/feedback/CoonnFloatingToast';
+import { createCoonnFloatingToastTheme } from '@/components/feedback/CoonnFloatingToast.theme';
+import { useCoonnFloatingToast } from '@/components/feedback/useCoonnFloatingToast';
+import { createPrivacySettingsTheme } from './Privacy.theme';
+
+/* ==================== UI 컴포넌트 ==================== */
+
+const BouncyPressable = ({ onPress, style, children, disabled }: any) => {
+  const scaleValue = useRef(new Animated.Value(1)).current;
+  const onPressIn = () => Animated.spring(scaleValue, { toValue: 0.98, useNativeDriver: true, speed: 20, bounciness: 6 }).start();
+  const onPressOut = () => Animated.spring(scaleValue, { toValue: 1, useNativeDriver: true, speed: 20, bounciness: 6 }).start();
+
+  return (
+    <Pressable onPress={onPress} onPressIn={disabled ? undefined : onPressIn} onPressOut={disabled ? undefined : onPressOut} disabled={disabled} style={{ width: '100%' }}>
+      <Animated.View style={[style, { transform: [{ scale: scaleValue }] }]}>{children}</Animated.View>
+    </Pressable>
+  );
 };
 
-const HAIRLINE = '#ECEFF4';
-const ACCENT = '#111827';
 
-export default function Privacy() {
-  const [me, setMe] = useState<string>('');
-  const [row, setRow] = useState<PrivacyRow | null>(null);
-  const [saving, setSaving] = useState(false);
+const CoonnSwitch = ({
+  value,
+  onValueChange,
+  colors,
+}: {
+  value: boolean;
+  onValueChange: (next: boolean) => void;
+  colors: any;
+}) => {
+  const trackBg = value ? colors.switchTrackOn : colors.switchTrackOff;
+  const trackBorder = value ? colors.switchTrackOnBorder : colors.switchTrackOffBorder;
+  const thumbBg = value ? colors.switchThumbOn : colors.switchThumbOff;
+
+  return (
+    <Pressable
+      accessibilityRole="switch"
+      accessibilityState={{ checked: value }}
+      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+      onPress={() => onValueChange(!value)}
+      style={[
+        styles.coonnSwitchTrack,
+        {
+          backgroundColor: trackBg,
+          borderColor: trackBorder,
+        },
+      ]}
+    >
+      <View
+        style={[
+          styles.coonnSwitchThumb,
+          value && styles.coonnSwitchThumbOn,
+          { backgroundColor: thumbBg },
+        ]}
+      />
+    </Pressable>
+  );
+};
+
+const ToggleRow = ({ label, subLabel, value, onValueChange, colors, isLast }: any) => (
+  <View
+    style={[
+      styles.toggleRow,
+      {
+        backgroundColor: colors.card,
+        borderBottomColor: colors.divider,
+      },
+      isLast && { borderBottomWidth: 0 },
+    ]}
+  >
+    <View style={styles.textContainer}>
+      <Text style={[styles.optionTitle, { color: colors.textPrimary }]}>{label}</Text>
+      {subLabel && <Text style={[styles.optionDesc, { color: colors.textSecondary }]}>{subLabel}</Text>}
+    </View>
+    <CoonnSwitch
+      value={value}
+      onValueChange={onValueChange}
+      colors={colors}
+    />
+  </View>
+);
+
+
+type PrivacyAlertState = {
+  visible: boolean;
+  title: string;
+  message?: string;
+  variant: CoonnAlertVariant;
+};
+
+const PRIVACY_PROFILE_COLUMNS =
+  'is_public, allow_search, show_location, show_last_active, show_nickname_to_friends';
+
+const emptyAlertState: PrivacyAlertState = {
+  visible: false,
+  title: '',
+  message: undefined,
+  variant: 'default',
+};
+
+
+/* ==================== 메인 화면 ==================== */
+export default function SettingsPrivacy() {
+  const { t } = useTranslation(); // ✅ 다국어 훅 사용
+  const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
+  
+  const appTheme = useAppTheme();
+  const colors = createPrivacySettingsTheme(appTheme);
+
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [alertState, setAlertState] = useState<PrivacyAlertState>(emptyAlertState);
+  const { toast, showToast, hideToast } = useCoonnFloatingToast();
 
-  const [profileVisible, setProfileVisible] = useState(true);
-  const [searchable, setSearchable] = useState(true);
-  const [friendPolicy, setFriendPolicy] = useState<'allow_all'|'friends_only'|'reject_all'>('allow_all');
-  const [locationVisible, setLocationVisible] = useState(true);
-  const [lastSeenVisible, setLastSeenVisible] = useState(true);
+  // --- 상태 관리 ---
+  const [publicProfile, setPublicProfile] = useState(true);
+  const [allowSearch, setAllowSearch] = useState(true);
+  const [showNickname, setShowNickname] = useState(true);
 
-  const load = useCallback(async () => {
+  const [showLocation, setShowLocation] = useState(true);
+  const [showLastActive, setShowLastActive] = useState(true);
+
+  const isDark = Boolean((appTheme as any)?.isDark);
+  const alertTheme = isDark ? 'coonn_dark' : 'coonn_light';
+  const toastTheme = createCoonnFloatingToastTheme(
+    {
+      isDark,
+      surface: (colors as any).toastBg ?? colors.card,
+      textPrimary: (colors as any).toastText ?? colors.textPrimary,
+      border: (colors as any).toastBorder ?? colors.border,
+      accentColor: colors.saveBg,
+      dangerColor: (colors as any).danger ?? undefined,
+      shadowColor: colors.saveBg,
+    },
+    toast.tone,
+  );
+
+  const showAlert = useCallback((next: Omit<PrivacyAlertState, 'visible'>) => {
+    setAlertState({
+      visible: true,
+      title: next.title,
+      message: next.message,
+      variant: next.variant,
+    });
+  }, []);
+
+  const closeAlert = useCallback(() => {
+    setAlertState((prev) => ({ ...prev, visible: false }));
+  }, []);
+
+  // ✅ 데이터 로드
+  const loadSettings = useCallback(async () => {
     try {
       setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('로그인이 필요합니다.');
-      setMe(user.id);
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!user) return;
 
       const { data, error } = await supabase
-        .from('user_privacy_settings')
-        .select('*')
+        .from('profiles')
+        .select(PRIVACY_PROFILE_COLUMNS)
         .eq('user_id', user.id)
         .maybeSingle();
-      if (error && error.code !== '42P01') throw error;
 
-      const initial: PrivacyRow = data ?? {
-        user_id: user.id,
-        profile_visible: true,
-        searchable: true,
-        friend_request_policy: 'allow_all',
-        location_visible: true,
-        last_seen_visible: true,
-      };
+      if (error) throw error;
 
-      setRow(initial);
-      setProfileVisible(initial.profile_visible);
-      setSearchable(initial.searchable);
-      setFriendPolicy(initial.friend_request_policy);
-      setLocationVisible(initial.location_visible);
-      setLastSeenVisible(initial.last_seen_visible);
-    } catch (e: any) {
-      if (e?.code === '42P01') {
-        Alert.alert('설정 테이블 없음', 'SQL Editor에서 user_privacy_settings를 먼저 생성해주세요.');
-      } else {
-        Alert.alert('불러오기 실패', e?.message ?? String(e));
+      if (data) {
+        setPublicProfile(data.is_public ?? true);
+        setAllowSearch(data.allow_search ?? true);
+        setShowLocation(data.show_location ?? true);
+        setShowLastActive(data.show_last_active ?? true);
+        setShowNickname(data.show_nickname_to_friends ?? true);
       }
+    } catch (e) {
+      console.warn('[settings/privacy] load failed', e);
+      showAlert({
+        title: t('common:error'),
+        message: t('settings:privacy.alert.load_fail'),
+        variant: 'default',
+      });
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [showAlert, t]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { loadSettings(); }, [loadSettings]);
 
-  const save = useCallback(async () => {
-    if (!me) return;
+  // ✅ 저장 로직
+  const handleSave = useCallback(async () => {
+    if (saving) return;
+
     try {
       setSaving(true);
-      const payload: Omit<PrivacyRow, 'user_id'> = {
-        profile_visible: profileVisible,
-        searchable,
-        friend_request_policy: friendPolicy,
-        location_visible: locationVisible,
-        last_seen_visible: lastSeenVisible,
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+
+      if (!user) {
+        showAlert({
+          title: t('common:error'),
+          message: t('settings:privacy.alert.login_required'),
+          variant: 'default',
+        });
+        return;
+      }
+
+      const payload = {
+        is_public: publicProfile,
+        allow_search: allowSearch,
+        show_location: showLocation,
+        show_last_active: showLastActive,
+        show_nickname_to_friends: showNickname,
+        updated_at: new Date().toISOString(),
       };
-      const { error } = await supabase
-        .from('user_privacy_settings')
-        .upsert({ user_id: me, ...payload }, { onConflict: 'user_id' });
-      if (error) throw error;
-      Alert.alert('저장됨', '개인정보 설정이 저장되었습니다.');
-    } catch (e: any) {
-      Alert.alert('저장 실패', e?.message ?? String(e));
+
+      const primary = await supabase
+        .from('profiles')
+        .update(payload)
+        .eq('user_id', user.id)
+        .select('user_id')
+        .maybeSingle();
+
+      if (primary.error) throw primary.error;
+
+      if (!primary.data) {
+        const inserted = await supabase
+          .from('profiles')
+          .insert({
+            user_id: user.id,
+            id: user.id,
+            ...payload,
+          })
+          .select('user_id')
+          .maybeSingle();
+
+        if (inserted.error) throw inserted.error;
+        if (!inserted.data) throw new Error('profile row was not saved');
+      }
+
+      showToast({
+        message: t('settings:privacy.alert.save_success'),
+        tone: 'success',
+        showMark: false,
+      });
+    } catch (e) {
+      console.warn('[settings/privacy] save failed', e);
+      showAlert({
+        title: t('common:error'),
+        message: t('settings:privacy.alert.save_fail'),
+        variant: 'danger',
+      });
     } finally {
       setSaving(false);
     }
-  }, [me, profileVisible, searchable, friendPolicy, locationVisible, lastSeenVisible]);
-
-  const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <View style={s.section}>
-      <Text style={s.sectionTitle}>{title}</Text>
-      <View style={s.card}>{children}</View>
-    </View>
-  );
+  }, [
+    allowSearch,
+    publicProfile,
+    saving,
+    showAlert,
+    showLastActive,
+    showLocation,
+    showNickname,
+    showToast,
+    t,
+  ]);
 
   if (loading) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-        <AppHeader title="Privacy" showBack />
-        <View style={s.center}>
-          <ActivityIndicator />
-          <Text style={s.loadingTxt}>불러오는 중…</Text>
-        </View>
-      </SafeAreaView>
+      <View style={[styles.center, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.loading} />
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <AppHeader title="Privacy" showBack />
-      <ScrollView contentContainerStyle={{ paddingBottom: 18 }}>
-        {/* 프로필 공개 범위 */}
-        <Section title="프로필 및 검색">
-          <Row title="내 프로필 공개" caption="다른 사용자가 내 프로필을 볼 수 있음" right={<Switch value={profileVisible} onValueChange={setProfileVisible} />} />
-          <Row title="검색 허용" caption="닉네임/핸들로 나를 검색할 수 있음" last right={<Switch value={searchable} onValueChange={setSearchable} />} />
-        </Section>
+    <SafeScreen
+      backgroundColor={colors.background}
+      includeTopInset={false}
+      includeBottomInset
+      contentStyle={{ paddingLeft: insets.left, paddingRight: insets.right }}
+    >
+      
+      <GlobalHeader
+        style={{
+          backgroundColor: colors.headerBg,
+          borderBottomColor: colors.headerBorder,
+        }}
+        titleComponent={
+          <View style={styles.headerTitleRow}>
+            <HeaderIconButton onPress={() => navigation.goBack()}>
+              <ChevronLeft size={22} color={colors.headerIcon} strokeWidth={1.9} />
+            </HeaderIconButton>
+            <Text style={[styles.privacyHeaderTitle, { color: colors.headerText }]}>
+              {t('settings:privacy.header_title')}
+            </Text>
+          </View>
+        }
+      />
 
-        {/* 친구 요청 정책 */}
-        <Section title="친구 요청 정책">
-          <Pressable onPress={() => setFriendPolicy('allow_all')}>
-            <Row title="모두 허용" caption="누구나 친구 요청 가능" right={<Radio checked={friendPolicy === 'allow_all'} />} />
-          </Pressable>
-          <Pressable onPress={() => setFriendPolicy('friends_only')}>
-            <Row title="친구의 친구만" caption="내 친구와 연결된 사람만 요청 가능" right={<Radio checked={friendPolicy === 'friends_only'} />} />
-          </Pressable>
-          <Pressable onPress={() => setFriendPolicy('reject_all')}>
-            <Row title="모두 차단" caption="모든 친구 요청 거절" last right={<Radio checked={friendPolicy === 'reject_all'} />} />
-          </Pressable>
-        </Section>
-
-        {/* 위치/활동 */}
-        <Section title="활동 정보">
-          <Row title="위치 표시" caption="내 활동 비콘에서 위치를 노출" right={<Switch value={locationVisible} onValueChange={setLocationVisible} />} />
-          <Row title="마지막 활동 시간" caption="프로필에 최근 접속 시간 표시" last right={<Switch value={lastSeenVisible} onValueChange={setLastSeenVisible} />} />
-        </Section>
-
-        <View style={{ paddingHorizontal: 16, marginTop: 8 }}>
-          <Pressable style={[s.btn, s.btnPrimary, saving && { opacity: 0.6 }]} onPress={save} disabled={saving}>
-            {saving ? <ActivityIndicator color="#fff" /> : <Text style={s.btnPrimaryTxt}>저장</Text>}
-          </Pressable>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        
+        {/* SECTION 1: 프로필 및 검색 */}
+        {/* ⚡️ i18n 적용: 섹션 제목 */}
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{t('settings:privacy.section.profile')}</Text>
+        <View style={[styles.sectionCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <ToggleRow 
+            label={t('settings:privacy.field.public_profile')} // "내 프로필 공개"
+            subLabel={t('settings:privacy.help.public_profile')} // "다른 사용자가..."
+            value={publicProfile} 
+            onValueChange={setPublicProfile}
+            colors={colors}
+          />
+          <ToggleRow 
+            label={t('settings:privacy.field.allow_search')} // "검색 허용"
+            subLabel={t('settings:privacy.help.allow_search')} // "닉네임/핸들로..."
+            value={allowSearch} 
+            onValueChange={setAllowSearch}
+            colors={colors}
+          />
+          <ToggleRow 
+            label={t('settings:privacy.field.show_nickname')} // "친구에게 닉네임 표시"
+            subLabel={t('settings:privacy.help.show_nickname')} // "실명 대신..."
+            value={showNickname} 
+            onValueChange={setShowNickname}
+            colors={colors}
+            isLast
+          />
         </View>
+
+        {/* SECTION 2: 활동 정보 */}
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 24 }]}>{t('settings:privacy.section.activity')}</Text>
+        <View style={[styles.sectionCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <ToggleRow 
+            label={t('settings:privacy.field.show_location')} // "위치 표시"
+            subLabel={t('settings:privacy.help.show_location')}
+            value={showLocation} 
+            onValueChange={setShowLocation}
+            colors={colors}
+          />
+          <ToggleRow 
+            label={t('settings:privacy.field.last_active')} // "마지막 활동 시간"
+            subLabel={t('settings:privacy.help.last_active')}
+            value={showLastActive} 
+            onValueChange={setShowLastActive}
+            colors={colors}
+            isLast
+          />
+        </View>
+
       </ScrollView>
-    </SafeAreaView>
-  );
-}
 
-/* ───────── Components ───────── */
-function Row({ title, caption, right, last }: { title: string; caption?: string; right?: React.ReactNode; last?: boolean }) {
-  return (
-    <View style={[s.row, !last && s.rowDivider]}>
-      <View style={{ flex: 1 }}>
-        <Text style={s.rowTitle}>{title}</Text>
-        {!!caption && <Text style={s.rowCaption}>{caption}</Text>}
+      {/* 하단 저장 버튼 */}
+      <View style={[styles.footer, { paddingBottom: 10, backgroundColor: colors.footerBg, borderTopColor: colors.footerBorder }]}>
+        <BouncyPressable onPress={handleSave} disabled={saving}>
+          <View style={[styles.saveBtn, { backgroundColor: colors.saveBg }]}>
+            {saving ? (
+              <ActivityIndicator color={colors.saveText} />
+            ) : (
+              // ⚡️ i18n 적용: "저장"
+              <Text style={[styles.saveBtnText, { color: colors.saveText }]}>{t('common:save')}</Text>
+            )}
+          </View>
+        </BouncyPressable>
       </View>
-      {right}
-    </View>
+
+      <CoonnFloatingToast
+        visible={toast.visible}
+        message={toast.message}
+        tone={toast.tone}
+        showMark={toast.showMark}
+        theme={toastTheme}
+        bottomOffset={Math.max(insets.bottom, 10) + 82}
+        onHidden={hideToast}
+      />
+
+      <CoonnAlert
+        visible={alertState.visible}
+        theme={alertTheme}
+        variant={alertState.variant}
+        title={alertState.title}
+        message={alertState.message}
+        confirmText={t('common:ok')}
+        singleButton
+        dismissOnBackdrop
+        dismissOnBackButton
+        onConfirm={closeAlert}
+        onCancel={closeAlert}
+      />
+
+    </SafeScreen>
   );
 }
 
-function Radio({ checked }: { checked: boolean }) {
-  return (
-    <View style={[s.radioOuter, checked && s.radioOuterActive]}>
-      {checked && <View style={s.radioInner} />}
-    </View>
-  );
-}
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 
-/* ───────── Styles ───────── */
-const s = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  loadingTxt: { marginTop: 8, color: '#6b7280' },
+  headerTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  privacyHeaderTitle: { fontSize: 21, lineHeight: 27, fontWeight: '600' },
 
-  section: { paddingTop: 12 },
-  sectionTitle: { paddingHorizontal: 16, paddingVertical: 8, color: '#9AA1AB', fontWeight: '800', fontSize: 12 },
-  card: { backgroundColor: '#fff', borderTopWidth: StyleSheet.hairlineWidth, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: HAIRLINE },
+  scrollContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 100 },
 
-  row: { minHeight: 56, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  rowDivider: { borderBottomWidth: StyleSheet.hairlineWidth, borderColor: HAIRLINE },
-  rowTitle: { fontSize: 15, fontWeight: '700', color: '#111827' },
-  rowCaption: { marginTop: 2, color: '#6b7280' },
+  sectionTitle: { fontSize: 12, lineHeight: 16, fontWeight: '500', marginBottom: 8, marginLeft: 4, letterSpacing: 0.05 },
+  sectionCard: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    borderWidth: StyleSheet.hairlineWidth,
+  },
 
-  radioOuter: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: '#d1d5db', alignItems: 'center', justifyContent: 'center' },
-  radioOuterActive: { borderColor: ACCENT },
-  radioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: ACCENT },
+  // 행 스타일
+  toggleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 68, paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: StyleSheet.hairlineWidth },
 
-  btn: { height: 44, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  btnPrimary: { backgroundColor: ACCENT },
-  btnPrimaryTxt: { color: '#fff', fontWeight: '800' },
+  textContainer: { flex: 1, paddingRight: 16 },
+  optionTitle: { fontSize: 15, lineHeight: 20, fontWeight: '500', marginBottom: 2 },
+  optionDesc: { fontSize: 12, lineHeight: 17, fontWeight: '400' },
+
+
+  footer: { paddingHorizontal: 16, paddingTop: 10, borderTopWidth: StyleSheet.hairlineWidth },
+  saveBtn: { height: 52, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  saveBtnText: { fontSize: 15, lineHeight: 20, fontWeight: '600' },
+
+
+  coonnSwitchTrack: {
+    width: 44,
+    height: 26,
+    borderRadius: 13,
+    padding: 3,
+    borderWidth: StyleSheet.hairlineWidth,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
+  coonnSwitchThumb: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.14,
+    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
+  },
+  coonnSwitchThumbOn: {
+    alignSelf: 'flex-end',
+  },
+
 });

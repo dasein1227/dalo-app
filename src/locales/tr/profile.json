@@ -1,0 +1,133 @@
+{
+  "view_title": "Profil",
+  "edit_title": "Profili düzenle",
+  "nickname": "Takma ad",
+  "handle": "Kullanıcı adı",
+  "status_message": "Durum mesajı",
+  "public_default": "Varsayılan profil görünürlüğü",
+  "save_done": "Kaydedildi.",
+  "no_name": "Adsız",
+  "no_id": "ID ayarlı değil",
+  "follow": "Takip et",
+  "following": "Takip ediliyor",
+  "stat_posts": "Gönderi",
+  "stat_followers": "Takipçi",
+  "stat_following": "Takip",
+  "empty_posts": "Gönderi yok",
+  "empty_posts_tab": "Gönderi yok",
+  "swipe": {
+    "new_post": "＋ Yeni gönderi",
+    "chat_1on1": "1:1 sohbet",
+    "chat_me": "Kendimle sohbet",
+    "call": "Ara",
+    "more": "Daha fazla →"
+  },
+  "alert": {
+    "setting_soon": "Yakında.",
+    "call_friend_only_title": "Arama kullanılamaz",
+    "call_friend_only_desc": "Yalnızca arkadaşlara sunulur.",
+    "call_feature_soon": "Yakında.",
+    "unfollow_title": "Takibi bırak",
+    "unfollow_desc": "Takibi bırakmak istiyor musunuz?",
+    "keep": "Koru",
+    "follow_fail": "Takip edilemedi.",
+    "unfollow_fail": "İptal edilemedi.",
+    "self_chat_fail": "Sohbet başlatılamadı."
+  },
+  "edit": {
+    "error_permission": "Yalnızca kendi profilinizi düzenleyebilirsiniz.",
+    "revert_title": "Değişiklikleri iptal et",
+    "revert_msg": "Değişiklikler iptal edilsin mi?",
+    "revert_action": "İptal et",
+    "revert": "Değişiklikleri iptal et",
+    "error_add_tab": "Sekme eklenemedi.",
+    "confirm_delete_tab": "“{{name}}” sekmesi silinsin mi?",
+    "error_save": "Kaydedilemedi.",
+    "change_cover": "Arka planı değiştir",
+    "status_placeholder": "Durum mesajı girin",
+    "section_theme": "Stil",
+    "theme_color": "Tema rengi",
+    "font_color": "Yazı rengi",
+    "statusbar": "Üst çubuk",
+    "text_white": "Beyaz metin",
+    "text_black": "Siyah metin",
+    "section_tabs": "Sekmeleri yönet",
+    "tab_all": "Tümü",
+    "tab_input_placeholder": "+ Yeni sekme",
+    "hue": "Renk tonu (Hue)",
+    "brightness": "Parlaklık (Brightness)",
+    "apply": "Uygula",
+    "setting_tab": "“{{name}}” ayarları",
+    "move_up": "Yukarı taşı",
+    "move_down": "Aşağı taşı",
+    "visibility": "Görünürlük",
+    "current_vis": "Mevcut: {{val}}",
+    "vis_public": "Herkes",
+    "vis_private": "Sadece ben",
+    "vis_custom": "Seçili",
+    "vis_friends": "Arkadaşlar",
+    "vis_followers": "Takipçiler",
+    "picker_avatar": "Profil fotoğrafı seç",
+    "picker_cover": "Arka plan fotoğrafı seç"
+  },
+  "menu": {
+    "settings": "Ayarlar",
+    "message": "Mesaj",
+    "unfollow": "Takibi bırak",
+    "hide": "Gizle",
+    "hide_confirm": "Bu kullanıcı gizlensin mi?",
+    "block": "Engelle",
+    "block_confirm": "Bu kullanıcı engellensin mi?",
+    "report": "Bildir"
+  },
+  "followList": {
+    "title": "Takip",
+    "searchPlaceholder": "Takma ad veya ID ara",
+    "searchHint": "Arama terimi gir",
+    "searchEmpty": "Sonuç yok",
+    "retry": "Tekrar yükle",
+    "unfollowTitle": "Takibi bırak",
+    "unfollowMessage": "{{name}} için takip bırakılsın mı?",
+    "unfollowAction": "Bırak",
+    "tab": {
+      "following": "Takip",
+      "followers": "Takipçiler",
+      "requests": "İstekler"
+    },
+    "list": {
+      "following": "Takip listesi",
+      "followers": "Takipçi listesi",
+      "requests": "Takip istekleri"
+    },
+    "section": {
+      "outgoing": "Gönderilen istekler",
+      "incoming": "Gelen istekler"
+    },
+    "badge": {
+      "follower": "Takipçi",
+      "pending": "Bekliyor"
+    },
+    "action": {
+      "accept": "Kabul et",
+      "decline": "Reddet"
+    },
+    "empty": {
+      "followingTitle": "Takip yok",
+      "followersTitle": "Takipçi yok",
+      "requestsTitle": "İstek yok",
+      "followingDesc": "İlgilendiğiniz kişileri takip edin.",
+      "followersDesc": "Profilinizi paylaşın.",
+      "requestsDesc": "İstek gönderin veya kabul edin."
+    },
+    "error": {
+      "loadFollowing": "Takip listesi yüklenemedi.",
+      "loadFollowers": "Takipçiler yüklenemedi.",
+      "loadRequests": "İstekler yüklenemedi.",
+      "loadList": "Liste yüklenemedi.",
+      "unfollow": "Takip bırakılamadı.",
+      "cancelRequest": "İstek iptal edilemedi.",
+      "acceptRequest": "İstek kabul edilemedi.",
+      "rejectRequest": "İstek reddedilemedi."
+    }
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "briefing_title": "Today",
+  "briefing_toggle_show": "Show",
+  "briefing_toggle_hide": "Hide",
+  "briefing_unread_chat": "Unread chats",
+  "briefing_nearby_beacon": "Nearby beacons",
+  "briefing_new_friend_post": "Friend posts",
+  "briefing_new_follower": "New followers",
+  "briefing_count_unit": "",
+  "briefing_people_unit": "",
+  "tabs": {
+    "friends": "Friends",
+    "following": "Following",
+    "local": "Local"
+  },
+  "banner_headerTitle": "Nearby",
+  "banner_fallback_title": "Nearby picks",
+  "banner_fallback_desc": "Finding places near you",
+  "banner_default_headline": "Today’s place",
+  "banner_unknown_place": "Unknown place",
+  "banner_status_open": "Open",
+  "banner_status_closed": "Closed",
+  "banner_tag_fallback": "Recommended",
+  "empty_feed": "No feed to show.",
+  "scroll_top": "Top",
+  "briefing_nearby_beacon_title": "Nearby beacons",
+  "briefing_today_schedule_title": "Schedule",
+  "briefing_continue_chat_title": "Continue chat",
+  "briefing_near_news_title": "Nearby news",
+  "unknown_user": "Unknown",
+  "near_news": {
+    "filters": {
+      "all": "All",
+      "post": "Feed",
+      "event": "Event",
+      "notice": "Notice"
+    },
+    "kind": {
+      "post": "Feed",
+      "event": "Event",
+      "notice": "Notice"
+    },
+    "kind_en": {
+      "post": "FEED",
+      "event": "EVENT",
+      "notice": "NOTICE"
+    },
+    "masthead_overline": "CO·ONN LOCAL JOURNAL",
+    "masthead_title": "NEARBY NEWS",
+    "edition_line": "LOCAL EDITION · {{distance}}",
+    "count_line": "FEED {{post}} · EVENT {{event}} · NOTICE {{notice}}",
+    "self": "Me",
+    "unknown_user": "Unknown",
+    "unknown_place": "Nearby place",
+    "distance_pending": "Checking distance",
+    "just_now": "Just now",
+    "minutes_ago": "{{value}}m ago",
+    "hours_ago": "{{value}}h ago",
+    "days_ago": "{{value}}d ago",
+    "always": "Always",
+    "until": "Until {{date}}",
+    "ongoing": "Ongoing",
+    "category": {
+      "restaurant": "Restaurant",
+      "cafe": "Cafe",
+      "bakery": "Bakery",
+      "market": "Market",
+      "drink": "Pub",
+      "store": "Shop"
+    },
+    "place": "Place",
+    "nearby_place": "Nearby place",
+    "nearby_feed": "Nearby feed",
+    "event_title": "Event",
+    "notice_title": "Notice",
+    "event_body": "A new event is available.",
+    "notice_body": "A new notice has been posted.",
+    "load_error": "Could not load nearby news.",
+    "collection_title": "Nearby news",
+    "media_title": "Nearby news",
+    "empty_title": "No news",
+    "empty_desc": "Nearby posts and place updates will appear here.",
+    "editing": "Preparing the page",
+    "load_failed": "Could not load",
+    "retry": "Retry",
+    "local_note": "LOCAL NOTE",
+    "by_prefix": "BY "
+  },
+  "schedule_sheet": {
+    "weekdays": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    },
+    "date_title": "{{month}}/{{day}} ({{weekday}})",
+    "period": {
+      "am": "AM",
+      "pm": "PM"
+    },
+    "time_range_cross_day": "{{start}} - {{date}} {{end}}",
+    "default_room_title": "Chat room",
+    "participation": {
+      "joined": "Joined",
+      "pending": "Not joined"
+    },
+    "search_placeholder": {
+      "joined": "Search joined schedules",
+      "pending": "Search available schedules"
+    },
+    "load_error": "Could not load schedules.",
+    "people_count": "{{value}} people",
+    "default_title": "Schedule",
+    "time_unknown": "Time TBD",
+    "today_title": "Schedule",
+    "today_empty": "No schedule today",
+    "count": "{{value}}",
+    "header_title": "Schedule",
+    "empty": {
+      "load_failed_title": "Could not load",
+      "load_failed_desc": "Please check again later.",
+      "joined_title": "No joined schedules",
+      "joined_desc": "Schedules you join will appear here.",
+      "pending_title": "No open schedules",
+      "pending_desc": "Available schedules will appear here."
+    }
+  },
+  "notifications": {
+    "header_title": "Notifications",
+    "mark_all_read": "Mark all read",
+    "follow_back": "Follow back",
+    "following": "Following",
+    "retry": "Reload",
+    "empty_title": "No notifications",
+    "empty_desc": "New updates will appear here.",
+    "fallback_actor": "Someone",
+    "fallback_schedule": "Schedule",
+    "fallback_beacon": "Beacon",
+    "fallback_room": "Chat room",
+    "fallback_notification": "New notification",
+    "sections": {
+      "today": "Today",
+      "recent": "Recent",
+      "unread": "Unread",
+      "earlier": "Earlier",
+      "this_week": "This week",
+      "older": "Earlier",
+      "thisWeek": "This week"
+    },
+    "time": {
+      "just_now": "Just now",
+      "minutes": "{{value}}m",
+      "hours": "{{value}}h",
+      "days": "{{value}}d",
+      "weeks": "{{value}}w",
+      "months": "{{value}}mo",
+      "years": "{{value}}y"
+    },
+    "copy": {
+      "others": " and {{value}} others",
+      "follow_created": "{{name}} followed you",
+      "chat_reply_created": "{{name}} replied",
+      "chat_mention_created": "{{name}} mentioned you",
+      "beacon_join_request_created": "{{name}} requested to join your beacon",
+      "beacon_join_approved": "Beacon request approved",
+      "beacon_friend_created": "{{name}} created a new beacon",
+      "schedule_created": "{{room}} · {{target}} added",
+      "schedule_updated": "{{room}} · {{target}} updated",
+      "schedule_cancelled": "{{room}} · {{target}} canceled",
+      "post_like_grouped": "{{name}}{{others}} liked your post",
+      "post_comment_grouped": "{{name}}{{others}} commented",
+      "post_reply_grouped": "{{name}}{{others}} replied to your comment",
+      "post_mention_grouped": "{{name}}{{others}} mentioned you"
+    },
+    "error": {
+      "load_failed": "Couldn’t load notifications."
+    },
+    "loading_short": "…"
+  }
+}

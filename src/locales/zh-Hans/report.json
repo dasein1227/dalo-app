@@ -1,0 +1,28 @@
+{
+  "common": {
+    "title": "举报"
+  },
+  "reasonList": {
+    "title": "选择举报原因",
+    "guide": "使用指南"
+  },
+  "reasonDetail": {
+    "submit": "提交",
+    "more": "查看详情",
+    "empty": "无法加载举报信息。"
+  },
+  "guide": {
+    "title": "指南",
+    "empty": "无法加载指南。"
+  },
+  "done": {
+    "title": "举报已提交。",
+    "body": "我们会审核并采取必要措施。"
+  },
+  "alert": {
+    "loadFail": "加载失败",
+    "info": "提示",
+    "linkOpenFail": "无法打开链接。",
+    "submitFail": "提交失败"
+  }
+}

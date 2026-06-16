@@ -1,0 +1,133 @@
+{
+  "view_title": "プロフィール",
+  "edit_title": "プロフィール編集",
+  "nickname": "ニックネーム",
+  "handle": "ハンドル",
+  "status_message": "ステータスメッセージ",
+  "public_default": "プロフィールの既定公開",
+  "save_done": "保存しました。",
+  "no_name": "名前なし",
+  "no_id": "ID未設定",
+  "follow": "フォロー",
+  "following": "フォロー中",
+  "stat_posts": "投稿",
+  "stat_followers": "フォロワー",
+  "stat_following": "フォロー中",
+  "empty_posts": "投稿なし",
+  "empty_posts_tab": "投稿なし",
+  "swipe": {
+    "new_post": "＋ 新規投稿",
+    "chat_1on1": "1:1チャット",
+    "chat_me": "自分用チャット",
+    "call": "通話",
+    "more": "もっと見る →"
+  },
+  "alert": {
+    "setting_soon": "準備中です。",
+    "call_friend_only_title": "通話不可",
+    "call_friend_only_desc": "友だちのみ利用できます。",
+    "call_feature_soon": "準備中です。",
+    "unfollow_title": "フォロー解除",
+    "unfollow_desc": "フォローを解除しますか？",
+    "keep": "維持",
+    "follow_fail": "フォローできませんでした。",
+    "unfollow_fail": "解除できませんでした。",
+    "self_chat_fail": "チャットを開始できませんでした。"
+  },
+  "edit": {
+    "error_permission": "自分のプロフィールのみ編集できます。",
+    "revert_title": "変更を取り消す",
+    "revert_msg": "変更内容を取り消しますか？",
+    "revert_action": "取消",
+    "revert": "変更を取消",
+    "error_add_tab": "タブを追加できませんでした。",
+    "confirm_delete_tab": "「{{name}}」タブを削除しますか？",
+    "error_save": "保存できませんでした。",
+    "change_cover": "背景を変更",
+    "status_placeholder": "ステータスメッセージを入力",
+    "section_theme": "スタイル",
+    "theme_color": "テーマカラー",
+    "font_color": "文字色",
+    "statusbar": "上部バー",
+    "text_white": "白いテキスト",
+    "text_black": "黒いテキスト",
+    "section_tabs": "タブ管理",
+    "tab_all": "すべて",
+    "tab_input_placeholder": "+ 新規タブ",
+    "hue": "色相（Hue）",
+    "brightness": "明るさ（Brightness）",
+    "apply": "適用",
+    "setting_tab": "「{{name}}」設定",
+    "move_up": "上へ移動",
+    "move_down": "下へ移動",
+    "visibility": "公開範囲",
+    "current_vis": "現在: {{val}}",
+    "vis_public": "全体",
+    "vis_private": "自分のみ",
+    "vis_custom": "選択",
+    "vis_friends": "友だち",
+    "vis_followers": "フォロワー",
+    "picker_avatar": "プロフィール写真を選択",
+    "picker_cover": "背景写真を選択"
+  },
+  "menu": {
+    "settings": "設定",
+    "message": "メッセージ",
+    "unfollow": "フォロー解除",
+    "hide": "非表示",
+    "hide_confirm": "このユーザーを非表示にしますか？",
+    "block": "ブロック",
+    "block_confirm": "このユーザーをブロックしますか？",
+    "report": "通報"
+  },
+  "followList": {
+    "title": "フォロー",
+    "searchPlaceholder": "ニックネームまたはIDを検索",
+    "searchHint": "検索語を入力",
+    "searchEmpty": "検索結果なし",
+    "retry": "再読み込み",
+    "unfollowTitle": "フォロー解除",
+    "unfollowMessage": "{{name}}さんを解除しますか？",
+    "unfollowAction": "解除",
+    "tab": {
+      "following": "フォロー中",
+      "followers": "フォロワー",
+      "requests": "リクエスト"
+    },
+    "list": {
+      "following": "フォロー中リスト",
+      "followers": "フォロワーリスト",
+      "requests": "フォローリクエスト"
+    },
+    "section": {
+      "outgoing": "送信したリクエスト",
+      "incoming": "受信したリクエスト"
+    },
+    "badge": {
+      "follower": "フォロワー",
+      "pending": "リクエスト中"
+    },
+    "action": {
+      "accept": "承認",
+      "decline": "拒否"
+    },
+    "empty": {
+      "followingTitle": "フォロー中なし",
+      "followersTitle": "フォロワーなし",
+      "requestsTitle": "リクエストなし",
+      "followingDesc": "気になる人をフォローしましょう。",
+      "followersDesc": "プロフィールを共有しましょう。",
+      "requestsDesc": "リクエストを送信または承認しましょう。"
+    },
+    "error": {
+      "loadFollowing": "フォロー中を読み込めませんでした。",
+      "loadFollowers": "フォロワーを読み込めませんでした。",
+      "loadRequests": "リクエストを読み込めませんでした。",
+      "loadList": "リストを読み込めませんでした。",
+      "unfollow": "解除できませんでした。",
+      "cancelRequest": "リクエストを取り消せませんでした。",
+      "acceptRequest": "リクエストを承認できませんでした。",
+      "rejectRequest": "リクエストを拒否できませんでした。"
+    }
+  }
+}

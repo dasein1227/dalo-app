@@ -1,0 +1,16 @@
+{
+  "common": "Errore",
+  "auth": {
+    "loginRequired": "Accesso richiesto."
+  },
+  "unknown": "Si è verificato un errore.",
+  "network": "Controlla la connessione di rete.",
+  "invalid_credentials": "Email o password non corretti.",
+  "oauth_cancelled": "Accesso annullato.",
+  "provider_config": "Controlla le impostazioni del provider di accesso.",
+  "redirect_config": "Controlla le impostazioni Redirect URL.",
+  "session_check_failed": "Impossibile verificare la sessione.",
+  "sms_required": "Inserisci il codice di verifica.",
+  "phone_format": "Inserisci il numero in formato internazionale (+8210…).",
+  "email_format": "Formato email non valido."
+}

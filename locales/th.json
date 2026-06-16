@@ -1,0 +1,10 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "COONN",
+    "NSPhotoLibraryUsageDescription": "ใช้การเข้าถึงรูปภาพเพื่อเลือกรูปโปรไฟล์ โพสต์ และรูปภาพแชท",
+    "NSPhotoLibraryAddUsageDescription": "ใช้การเข้าถึงคลังรูปภาพเพื่อบันทึกรูปภาพและสื่อไปยังอุปกรณ์",
+    "NSLocationWhenInUseUsageDescription": "ใช้ตำแหน่งสำหรับโพสต์ใกล้เคียง บีคอน และฟีเจอร์ตามระยะทาง",
+    "NSCameraUsageDescription": "ใช้กล้องเพื่อถ่ายรูปโปรไฟล์ โพสต์ และรูปภาพแชท",
+    "NSMicrophoneUsageDescription": "ใช้ไมโครโฟนเมื่อบันทึกวิดีโอ"
+  }
+}

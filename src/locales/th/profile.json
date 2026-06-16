@@ -1,0 +1,133 @@
+{
+  "view_title": "โปรไฟล์",
+  "edit_title": "แก้ไขโปรไฟล์",
+  "nickname": "ชื่อเล่น",
+  "handle": "แฮนเดิล",
+  "status_message": "สถานะ",
+  "public_default": "เปิดโปรไฟล์เป็นค่าเริ่มต้น",
+  "save_done": "บันทึกแล้ว",
+  "no_name": "ไม่มีชื่อ",
+  "no_id": "ยังไม่ได้ตั้ง ID",
+  "follow": "ติดตาม",
+  "following": "กำลังติดตาม",
+  "stat_posts": "โพสต์",
+  "stat_followers": "ผู้ติดตาม",
+  "stat_following": "กำลังติดตาม",
+  "empty_posts": "ไม่มีโพสต์",
+  "empty_posts_tab": "ไม่มีโพสต์",
+  "swipe": {
+    "new_post": "＋ โพสต์ใหม่",
+    "chat_1on1": "แชท 1:1",
+    "chat_me": "แชทกับตัวเอง",
+    "call": "โทร",
+    "more": "เพิ่มเติม →"
+  },
+  "alert": {
+    "setting_soon": "เร็ว ๆ นี้",
+    "call_friend_only_title": "โทรไม่ได้",
+    "call_friend_only_desc": "ใช้ได้เฉพาะกับเพื่อน",
+    "call_feature_soon": "เร็ว ๆ นี้",
+    "unfollow_title": "เลิกติดตาม",
+    "unfollow_desc": "เลิกติดตามหรือไม่",
+    "keep": "คงไว้",
+    "follow_fail": "ติดตามไม่สำเร็จ",
+    "unfollow_fail": "ยกเลิกไม่สำเร็จ",
+    "self_chat_fail": "เริ่มแชทไม่สำเร็จ"
+  },
+  "edit": {
+    "error_permission": "แก้ไขได้เฉพาะโปรไฟล์ของตนเอง",
+    "revert_title": "ยกเลิกการเปลี่ยนแปลง",
+    "revert_msg": "ยกเลิกการเปลี่ยนแปลงหรือไม่",
+    "revert_action": "ยกเลิก",
+    "revert": "ยกเลิกการเปลี่ยนแปลง",
+    "error_add_tab": "เพิ่มแท็บไม่สำเร็จ",
+    "confirm_delete_tab": "ลบแท็บ “{{name}}” หรือไม่",
+    "error_save": "บันทึกไม่สำเร็จ",
+    "change_cover": "เปลี่ยนพื้นหลัง",
+    "status_placeholder": "กรอกสถานะ",
+    "section_theme": "สไตล์",
+    "theme_color": "สีธีม",
+    "font_color": "สีตัวอักษร",
+    "statusbar": "แถบบน",
+    "text_white": "ข้อความสีขาว",
+    "text_black": "ข้อความสีดำ",
+    "section_tabs": "จัดการแท็บ",
+    "tab_all": "ทั้งหมด",
+    "tab_input_placeholder": "+ แท็บใหม่",
+    "hue": "สี (Hue)",
+    "brightness": "ความสว่าง (Brightness)",
+    "apply": "ใช้",
+    "setting_tab": "ตั้งค่า “{{name}}”",
+    "move_up": "ย้ายขึ้น",
+    "move_down": "ย้ายลง",
+    "visibility": "การมองเห็น",
+    "current_vis": "ปัจจุบัน: {{val}}",
+    "vis_public": "ทั้งหมด",
+    "vis_private": "เฉพาะฉัน",
+    "vis_custom": "เลือก",
+    "vis_friends": "เพื่อน",
+    "vis_followers": "ผู้ติดตาม",
+    "picker_avatar": "เลือกรูปโปรไฟล์",
+    "picker_cover": "เลือกรูปพื้นหลัง"
+  },
+  "menu": {
+    "settings": "ตั้งค่า",
+    "message": "ข้อความ",
+    "unfollow": "เลิกติดตาม",
+    "hide": "ซ่อน",
+    "hide_confirm": "ซ่อนผู้ใช้นี้หรือไม่",
+    "block": "บล็อก",
+    "block_confirm": "บล็อกผู้ใช้นี้หรือไม่",
+    "report": "รายงาน"
+  },
+  "followList": {
+    "title": "ติดตาม",
+    "searchPlaceholder": "ค้นหาชื่อเล่นหรือ ID",
+    "searchHint": "กรอกคำค้น",
+    "searchEmpty": "ไม่พบผลลัพธ์",
+    "retry": "โหลดอีกครั้ง",
+    "unfollowTitle": "เลิกติดตาม",
+    "unfollowMessage": "เลิกติดตาม {{name}} หรือไม่",
+    "unfollowAction": "ยกเลิก",
+    "tab": {
+      "following": "กำลังติดตาม",
+      "followers": "ผู้ติดตาม",
+      "requests": "คำขอ"
+    },
+    "list": {
+      "following": "รายชื่อที่ติดตาม",
+      "followers": "รายชื่อผู้ติดตาม",
+      "requests": "คำขอติดตาม"
+    },
+    "section": {
+      "outgoing": "คำขอที่ส่ง",
+      "incoming": "คำขอที่ได้รับ"
+    },
+    "badge": {
+      "follower": "ผู้ติดตาม",
+      "pending": "รอดำเนินการ"
+    },
+    "action": {
+      "accept": "ยอมรับ",
+      "decline": "ปฏิเสธ"
+    },
+    "empty": {
+      "followingTitle": "ยังไม่ได้ติดตาม",
+      "followersTitle": "ยังไม่มีผู้ติดตาม",
+      "requestsTitle": "ไม่มีคำขอ",
+      "followingDesc": "ลองติดตามคนที่สนใจ",
+      "followersDesc": "ลองแชร์โปรไฟล์ของคุณ",
+      "requestsDesc": "ส่งหรือยอมรับคำขอได้เลย"
+    },
+    "error": {
+      "loadFollowing": "โหลดรายชื่อที่ติดตามไม่สำเร็จ",
+      "loadFollowers": "โหลดผู้ติดตามไม่สำเร็จ",
+      "loadRequests": "โหลดคำขอไม่สำเร็จ",
+      "loadList": "โหลดรายการไม่สำเร็จ",
+      "unfollow": "ยกเลิกไม่สำเร็จ",
+      "cancelRequest": "ยกเลิกคำขอไม่สำเร็จ",
+      "acceptRequest": "ยอมรับคำขอไม่สำเร็จ",
+      "rejectRequest": "ปฏิเสธคำขอไม่สำเร็จ"
+    }
+  }
+}

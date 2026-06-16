@@ -1,0 +1,16 @@
+{
+  "common": "Hata",
+  "auth": {
+    "loginRequired": "Giriş gerekli."
+  },
+  "unknown": "Bir hata oluştu.",
+  "network": "Ağ bağlantınızı kontrol edin.",
+  "invalid_credentials": "E-posta veya şifre hatalı.",
+  "oauth_cancelled": "Giriş iptal edildi.",
+  "provider_config": "Kimlik sağlayıcı ayarlarını kontrol edin.",
+  "redirect_config": "Redirect URL ayarlarını kontrol edin.",
+  "session_check_failed": "Oturum kontrol edilemedi.",
+  "sms_required": "Doğrulama kodunu girin.",
+  "phone_format": "Telefon numarasını uluslararası biçimde girin (+8210…).",
+  "email_format": "Geçerli bir e-posta adresi girin."
+}

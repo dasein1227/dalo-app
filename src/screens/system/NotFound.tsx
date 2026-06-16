@@ -1,17 +1,18 @@
-﻿// src/screens/NotFound.tsx
+// src/screens/system/NotFound.tsx
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import AppHeader from '@/components/AppHeader';
+import { useTranslation } from 'react-i18next';
+import DetailHeader from '@/components/header/DetailHeader';
 import { LinearGradient } from 'expo-linear-gradient';
-import { StatusBar } from 'expo-status-bar';
 
 type RetryRoute = { name: string; params?: Record<string, any> } | null;
 
 export default function NotFound() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
+  const { t } = useTranslation('system');
 
   // 선택 파라미터: { reason?: string, retryRoute?: { name, params } }
   const reason: string | undefined = route?.params?.reason;
@@ -19,8 +20,8 @@ export default function NotFound() {
 
   const desc = useMemo(() => {
     if (reason?.trim()) return reason.trim();
-    return '요청하신 화면을 찾을 수 없어요. 경로나 파라미터가 올바른지 확인해 주세요.';
-  }, [reason]);
+    return t('notFound.desc');
+  }, [reason, t]);
 
   const canGoBack = navigation.canGoBack?.() ?? false;
 
@@ -47,9 +48,6 @@ export default function NotFound() {
 
   return (
     <View style={styles.root}>
-      {/* ✅ SplashGate/Login과 동일: StatusBar 투명 */}
-      <StatusBar translucent backgroundColor="transparent" style="light" />
-
       {/* ✅ 동일 톤의 그라데이션 배경 */}
       <LinearGradient
         colors={['#833ab4', '#fd1d1d', '#fcb045']}
@@ -61,11 +59,11 @@ export default function NotFound() {
       <SafeAreaView style={styles.safe}>
         {/* 헤더가 흰 배경 전제일 수 있어 대비 보강 */}
         <View style={styles.headerBg}>
-          <AppHeader title="Not Found" showBack />
+          <DetailHeader title={t('notFound.header')} showBack />
         </View>
 
         <View style={s.wrap}>
-          <Text style={s.title}>페이지를 찾을 수 없어요</Text>
+          <Text style={s.title}>{t('notFound.title')}</Text>
           <Text style={s.sub} numberOfLines={3}>
             {desc}
           </Text>
@@ -74,23 +72,23 @@ export default function NotFound() {
 
           <Pressable style={[s.btn, s.primary]} onPress={onRetry}>
             <Text style={s.primaryTxt}>
-              {retryRoute?.name ? '다시 시도' : '홈으로 이동'}
+              {retryRoute?.name ? t('notFound.retry') : t('notFound.home')}
             </Text>
           </Pressable>
 
           <View style={{ height: 8 }} />
 
           <Pressable style={[s.btn, s.ghost]} onPress={goBackSafe}>
-            <Text style={s.ghostTxt}>{canGoBack ? '이전으로' : '홈으로'}</Text>
+            <Text style={s.ghostTxt}>{canGoBack ? t('notFound.previous') : t('notFound.homeShort')}</Text>
           </Pressable>
 
           {/* (선택) 빠른 이동 단축키들 */}
           <View style={s.quickRow}>
             <Pressable style={s.quick} onPress={() => navigation.navigate('Friends' as any)}>
-              <Text style={s.quickTxt}>친구</Text>
+              <Text style={s.quickTxt}>{t('notFound.quick.friends')}</Text>
             </Pressable>
             <Pressable style={s.quick} onPress={() => navigation.navigate('MeStack' as any)}>
-              <Text style={s.quickTxt}>설정</Text>
+              <Text style={s.quickTxt}>{t('notFound.quick.settings')}</Text>
             </Pressable>
           </View>
 

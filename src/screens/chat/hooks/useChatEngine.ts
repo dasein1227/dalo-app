@@ -36,6 +36,7 @@ export function useChatEngine({ roomId, meId }: EngineOptions) {
     if (!roomId) return;
 
     let cancelled = false;
+    setInitialized(false);
 
     (async () => {
       try {
@@ -55,37 +56,43 @@ export function useChatEngine({ roomId, meId }: EngineOptions) {
   }, [roomId]);
 
   // ---------------------------------------
-  // 과거 메시지 더 불러오기
+  // 과거 메시지 더 불러오기 (상용화 성능 튜닝 완료)
   // ---------------------------------------
   const loadMore = useCallback(async () => {
     if (!roomId) return;
     if (refreshing) return;
     if (!items.length) return;
+    if (!hasMore) return; // 이미 끝에 도달했다면 불필요한 서버 요청 방지
 
     setRefreshing(true);
     try {
-      // items 는 separator 포함이니, 가장 오래된 message 타입을 찾는다.
-      const reversed = [...items].reverse();
-      const oldest = reversed.find((it) => it.type === 'message');
+      // 🔥 치명적 버그 수정 및 성능 최적화:
+      // items는 이미 과거->최신(ASC) 정렬이므로, 앞에서부터 찾으면 가장 오래된 메시지입니다.
+      // 무거운 [...items].reverse() 배열 복사 연산을 제거하고 O(1)으로 즉시 찾습니다.
+      const oldest = items.find((it) => it.type === 'message');
 
-      if (!oldest || oldest.type !== 'message') {
+      if (!oldest || oldest.type !== 'message' || !oldest.data?.createdAt) {
         setHasMore(false);
         return;
       }
 
       const before = oldest.data.createdAt;
-      await syncOlderForRoom(roomId, before);
+      const fetchedCount = await syncOlderForRoom(roomId, before);
+      
+      // 만약 더 이상 과거 메시지가 없다면 hasMore를 false로 만들어 불필요한 호출 차단
+      if (typeof fetchedCount === 'number' && fetchedCount === 0) {
+        setHasMore(false);
+      }
       // 새로 내려온 건 로컬 DB → useChatMessages 구독으로 자동 반영
     } catch (e) {
       console.warn('[useChatEngine] loadMore error', e);
     } finally {
       setRefreshing(false);
     }
-  }, [roomId, items, refreshing]);
+  }, [roomId, items, refreshing, hasMore]);
 
   // ---------------------------------------
   // 메시지 전송 (LocalDB → Supabase)
-  //   - original / content 모두 채워넣기
   // ---------------------------------------
   const sendMessage = useCallback(
     async (text: string) => {

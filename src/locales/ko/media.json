@@ -1,0 +1,14 @@
+{
+  "recent": "최근 항목",
+  "select_photo": "사진 선택",
+  "max_select": "최대 {{count}}장",
+  "processing_error": "처리하지 못했습니다.",
+  "select_to_edit": "편집할 사진을 선택해 주세요.",
+  "video_edit_warning": "동영상은 편집할 수 없습니다.",
+  "bundle_photos": "묶어 보내기",
+  "quality_settings": "화질",
+  "quality_original": "원본",
+  "quality_standard": "일반",
+  "quality_low": "저용량",
+  "quality_high": "고화질"
+}

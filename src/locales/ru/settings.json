@@ -1,0 +1,525 @@
+{
+  "home_title": "Настройки",
+  "title": "Настройки",
+  "version": "Версия приложения",
+  "open": "Открыть",
+  "change": "Изменить",
+  "run": "Запустить",
+  "logout": "Выйти",
+  "logoutDone": "Вы вышли.",
+  "sections": {
+    "communication": "Общение",
+    "general": "Основное",
+    "advanced": "Расширенное",
+    "service_info": "Сервис",
+    "account": "Аккаунт",
+    "notification": "Уведомления",
+    "display_language": "Экран и язык",
+    "location": "Местоположение",
+    "data": "Данные",
+    "support": "Поддержка",
+    "info": "Инфо"
+  },
+  "menus": {
+    "call": "Звонок",
+    "etc": "Другое",
+    "app_manage": "Управление приложением",
+    "version": "Версия приложения"
+  },
+  "alerts": {
+    "logout_title": "Выйти",
+    "logout_desc": "Выйти из аккаунта?",
+    "language_change_error": "Не удалось изменить язык.",
+    "logout_fail": "Не удалось выйти."
+  },
+  "search": {
+    "title": "Поиск настроек",
+    "soon": "Поиск настроек скоро будет доступен."
+  },
+  "me": {
+    "noName": "Без имени",
+    "profileManage": "Управление профилем",
+    "loadingAccount": "Проверка аккаунта"
+  },
+  "account": {
+    "title": "Аккаунт",
+    "editProfile": "Изменить профиль",
+    "profilePublicDefault": "Показывать мой профиль в биконах по умолчанию",
+    "profilePublicHint": "Используется по умолчанию при создании бикона. Можно изменить для каждого бикона.",
+    "header_title": "Аккаунт",
+    "section": {
+      "contact": "Контакт",
+      "identity": "Идентификация",
+      "visibility": "Видимость",
+      "profile": "Профиль",
+      "account_management": "Аккаунт"
+    },
+    "field": {
+      "phone": "Телефон",
+      "email": "Эл. почта",
+      "id_label": "CO·ONN ID",
+      "friend_code": "Код друга",
+      "show_nickname": "Показывать никнейм",
+      "profile_photo": "Фото профиля",
+      "nickname": "Никнейм"
+    },
+    "value": {
+      "not_registered": "Не указано"
+    },
+    "badge": {
+      "verified": "Подтверждено",
+      "verify": "Подтвердить"
+    },
+    "placeholder": {
+      "id": "ID",
+      "friend_code": "Код друга",
+      "nickname": "Никнейм"
+    },
+    "help": {
+      "id_desc": "Уникальный ID для поиска.",
+      "show_nickname_desc": "Показывать никнейм друзьям."
+    },
+    "error": {
+      "check_duplication": "Нужно проверить дубликат.",
+      "id_taken": "Уже используется.",
+      "code_taken": "Уже используется.",
+      "check_failed": "Не удалось выполнить действие.",
+      "invalid_id": "2–30 строчных букв, цифр или подчёркиваний",
+      "invalid_friend_code": "2–30 строчных букв, цифр или подчёркиваний",
+      "duplicate_exists": "Это значение уже используется.",
+      "duplicate_check_required": "Проверьте дубликат перед сохранением.",
+      "duplicate_check_retry": "Повторить",
+      "duplicate_value_retry": "Уже используется. Проверьте снова.",
+      "nickname_required": "Введите никнейм.",
+      "nickname_too_long": "Никнейм может содержать до 30 символов."
+    },
+    "alert": {
+      "check_required": "Нужна проверка",
+      "save_success_title": "Сохранено",
+      "save_success_desc": "Настройки аккаунта сохранены.",
+      "save_fail_title": "Не удалось сохранить"
+    },
+    "action": {
+      "save": "Сохранить",
+      "check_duplicate_short": "Проверить",
+      "checking_short": "…",
+      "change_photo": "Изменить фото",
+      "remove_photo": "Удалить фото"
+    },
+    "status": {
+      "available_short": "Доступно",
+      "duplicate_short": "Дубликат"
+    },
+    "picker": {
+      "profile_photo": "Выбрать фото"
+    },
+    "withdrawal": {
+      "entryTitle": "Удалить аккаунт",
+      "entryDescription": "Удалить аккаунт и личные данные.",
+      "noticeTitle": "Проверьте эти пункты перед продолжением.",
+      "noticeMessage": "Профиль, друзья и настройки будут удалены.",
+      "noticeItemProfile": "Часть истории чатов может остаться у других участников и отображаться как удаленный пользователь.",
+      "noticeItemChat": "Вы не сможете снова зарегистрироваться с тем же аккаунтом 7 дней.",
+      "noticeItemRejoin": "CO·ONN ID и код друга нельзя будет использовать 30 дней.",
+      "noticeItemIdentifier": "Я все проверил и хочу продолжить.",
+      "noticeAcknowledge": "Далее",
+      "continue": "Отмена",
+      "cancel": "Расскажите, почему вы уходите",
+      "surveyTitle": "Ваш отзыв поможет улучшить CO·ONN.",
+      "surveyMessage": "Продолжить",
+      "surveyAction": "Введите причину.",
+      "otherPlaceholder": "Выберите причину.",
+      "reasonRequired": "Введите причину.",
+      "otherRequired": "Загрузка причин.",
+      "reasonsLoading": "Не удалось загрузить причины.",
+      "reasonsEmpty": "Последнее подтверждение",
+      "confirmTitle": "Доступ к аккаунту будет немедленно остановлен.",
+      "confirmMessage": "Введите «{{keyword}}» ниже.",
+      "confirmInstruction": "УДАЛИТЬ",
+      "confirmKeyword": "УДАЛИТЬ",
+      "confirmPlaceholder": "Удалить",
+      "confirmAction": "Запрос на удаление отправлен.",
+      "completed": "Не удалось удалить аккаунт."
+    }
+  },
+  "privacy": {
+    "title": "Конфиденциальность",
+    "header_title": "Конфиденциальность",
+    "section": {
+      "profile": "Профиль",
+      "friend_req": "Запросы в друзья",
+      "activity": "Активность"
+    },
+    "field": {
+      "public_profile": "Публичный профиль",
+      "allow_search": "Разрешить поиск",
+      "show_nickname": "Показывать никнейм",
+      "show_location": "Показывать местоположение",
+      "last_active": "Показывать последний вход"
+    },
+    "help": {
+      "public_profile": "Другие пользователи могут видеть ваш профиль.",
+      "allow_search": "Поиск",
+      "show_nickname": "Показывать никнейм друзьям.",
+      "show_location": "Показывать место активности.",
+      "last_active": "Показывать время последнего входа."
+    },
+    "option": {
+      "all": "Все",
+      "all_desc": "Любой может отправить запрос",
+      "friends": "Друзья друзей",
+      "friends_desc": "Только связанные пользователи могут отправлять запросы",
+      "none": "Нет данных",
+      "none_desc": "Запросы в друзья заблокированы"
+    },
+    "alert": {
+      "save_success": "Сохранено.",
+      "save_fail": "Не удалось сохранить.",
+      "load_fail": "Не удалось загрузить.",
+      "login_required": "Требуется вход."
+    }
+  },
+  "radius": {
+    "title": "Радиус района",
+    "current": "Текущий",
+    "desc": "Показываются только обновления в этом радиусе.",
+    "save_error": "Не удалось сохранить радиус района."
+  },
+  "friends": {
+    "title": "Друзья",
+    "manage": "Управление друзьями",
+    "caption": "Блокировки, рекомендации, видимость",
+    "soon": "Скоро."
+  },
+  "notification": {
+    "title": "Уведомления",
+    "manage": "Уведомления",
+    "caption": "Push, уведомления в приложении, звук",
+    "soon": "Скоро.",
+    "section": {
+      "defaults": "Основное",
+      "types": "Типы",
+      "quiet": "Тихие часы",
+      "push_types": "Типы push",
+      "in_app": "Уведомления в приложении"
+    },
+    "field": {
+      "push": "Push-уведомления",
+      "preview": "Предпросмотр",
+      "sound": "Звук",
+      "vibrate": "Вибрация",
+      "chat": "Чат",
+      "system": "Сервис и система",
+      "marketing": "Маркетинг"
+    },
+    "help": {
+      "push": "Все push-уведомления",
+      "preview": "Показывать текст на экране блокировки",
+      "chat_push": "Push для сообщений чата",
+      "system_push": "Сервисные сообщения и важные новости",
+      "marketing_push": "События и акции"
+    },
+    "action": {
+      "save": "Сохранить",
+      "open_system": "Системные настройки",
+      "cancel": "Отмена",
+      "done": "Готово"
+    },
+    "time": {
+      "start": "Начало",
+      "end": "Конец",
+      "hour": "ч",
+      "minute": "мин",
+      "close": "Закрыть выбор времени",
+      "select": "Выбрать {{label}} {{value}}",
+      "start_time": "Время начала",
+      "end_time": "Время окончания"
+    },
+    "alert": {
+      "table_missing_title": "Нет таблицы настроек",
+      "table_missing_message": "Создайте user_notification_settings.",
+      "load_fail": "Не удалось загрузить",
+      "time_invalid_title": "Проверьте время",
+      "time_invalid_message": "Выберите вариант.",
+      "save_success": "Сохранено.",
+      "save_fail": "Не удалось сохранить",
+      "open_settings_fail_title": "Не удалось открыть",
+      "open_settings_fail_message": "Не удалось открыть системные настройки.",
+      "login_required": "Требуется вход."
+    },
+    "in_app": {
+      "master": "Уведомления в приложении",
+      "master_help": "Показывать в центре уведомлений приложения",
+      "group": {
+        "social": "Социальное",
+        "chat": "Чат",
+        "beacon": "Биконы",
+        "schedule": "Расписания",
+        "post": "Посты"
+      },
+      "follow_created": "Новый подписчик",
+      "follow_created_help": "Когда кто-то подписался на вас",
+      "chat_reply": "Ответы",
+      "chat_reply_help": "Когда отвечают на ваше сообщение",
+      "chat_mention": "Упоминания",
+      "chat_mention_help": "Когда вас упоминают",
+      "beacon_join_request": "Запросы на вход",
+      "beacon_join_request_help": "Когда приходит запрос на вход в beacon",
+      "beacon_join_approved": "Вход одобрен",
+      "beacon_join_approved_help": "Когда ваш вход в beacon одобрен",
+      "beacon_friend_created": "Биконы друзей",
+      "beacon_friend_created_help": "Когда друг создаёт beacon",
+      "schedule_created": "Новое событие",
+      "schedule_created_help": "Когда событие добавлено в комнату",
+      "schedule_updated": "Изменения событий",
+      "schedule_updated_help": "Когда изменилось событие, где вы участвуете",
+      "schedule_cancelled": "Отменённые события",
+      "schedule_cancelled_help": "Когда событие, где вы участвуете, отменено",
+      "post_like": "Лайки",
+      "post_like_help": "Когда ваш пост получает лайки",
+      "post_comment": "Комментарии",
+      "post_comment_help": "Когда комментируют ваш пост",
+      "post_reply": "Ответы",
+      "post_reply_help": "Когда отвечают на ваш комментарий",
+      "post_mention": "Упоминания в постах",
+      "post_mention_help": "Когда вас упоминают в посте или комментарии"
+    }
+  },
+  "display": {
+    "title": "Экран и язык"
+  },
+  "language": {
+    "title": "Язык",
+    "select": "Выбор языка",
+    "inUse": "(Используется)"
+  },
+  "theme": {
+    "title": "Тема",
+    "caption": "Светлая / тёмная",
+    "soon": "Скоро.",
+    "header_title": "Тема",
+    "section_style": "Режим",
+    "mode": {
+      "system": "Система",
+      "system_desc": "По настройкам устройства",
+      "light": "Светлая",
+      "light_desc": "Светлый интерфейс",
+      "dark": "Тёмная",
+      "dark_desc": "Тёмный интерфейс"
+    }
+  },
+  "chat": {
+    "title": "Чат"
+  },
+  "translate": {
+    "autoDefault": "По умолчанию",
+    "autoDefaultHint": "Используется по умолчанию для новых чатов.",
+    "showOriginal": "Показывать оригинал с переводом",
+    "showOriginalHint": "Если включено, оригинал будет показан под переводом."
+  },
+  "storage": {
+    "title": "Данные и хранилище",
+    "clearCache": "Очистить кэш",
+    "clearCacheHint": "Удалить временные файлы",
+    "soon": "Скоро.",
+    "section": {
+      "ratio": "Соотношение данных",
+      "rooms": "Данные по чатам"
+    },
+    "summary": {
+      "total_media": "Все медиа",
+      "saved_count": "Сохранено: {{count}}"
+    },
+    "legend": {
+      "photo": "Фото",
+      "video": "Видео",
+      "audio": "Аудио",
+      "file": "Файлы",
+      "other": "Другое"
+    },
+    "action": {
+      "delete_all": "Удалить всё",
+      "delete_all_with_size": "Удалить всё ({{size}})",
+      "delete_room": "Удалить",
+      "scroll_top": "Наверх"
+    },
+    "empty": {
+      "title": "Нет сохранённых медиа",
+      "desc": "Просмотренные медиа появятся здесь."
+    },
+    "alert": {
+      "load_fail": "Не удалось загрузить.",
+      "delete_fail": "Не удалось выполнить действие.",
+      "delete_all_title": "Удалить все медиа",
+      "delete_all_message": "Сообщение",
+      "delete_room_title": "Название {{room}}",
+      "delete_room_message": "Сообщение",
+      "delete_all_success": "Удалено.",
+      "delete_room_success": "Данные {{room}} удалены."
+    },
+    "room": {
+      "fallback_title": "Чат {{id}}",
+      "delete_accessibility": "Удалить данные {{room}}"
+    }
+  },
+  "support": {
+    "title": "Поддержка",
+    "cs": "Центр помощи",
+    "notice": {
+      "title": "Объявления",
+      "eyebrow": "ОБЪЯВЛЕНИЯ",
+      "sectionTitle": "Уведомления · {{category}}",
+      "markAll": "Прочитать всё",
+      "markAllDone": "Отмечено как прочитанное.",
+      "loadFail": "Не удалось загрузить объявления.",
+      "readFail": "Не удалось отметить прочитанным.",
+      "markAllFail": "Не удалось отметить прочитанным.",
+      "emptyTitle": "Нет объявлений",
+      "emptyDesc": "Новые объявления появятся здесь.",
+      "category": {
+        "normal": "Основное",
+        "important": "Важное",
+        "legal": "Правовое",
+        "security": "Безопасность"
+      }
+    },
+    "guide": "Руководство",
+    "soon": "Скоро.",
+    "loading": "Загрузка…",
+    "action": {
+      "ok": "ОК"
+    },
+    "alert": {
+      "notice": "Объявление",
+      "error": "Ошибка"
+    },
+    "center": {
+      "title": "Центр помощи",
+      "hero": "Чем помочь?",
+      "searchPlaceholder": "Поиск",
+      "faq": "FAQ",
+      "categories": "Помощь",
+      "contactTitle": "Нужна помощь?",
+      "emailDesc": "Ответим по электронной почте.",
+      "aiTitle": "AI-поддержка",
+      "aiDesc": "Поддержка 24/7",
+      "policies": "Условия и политики"
+    },
+    "contact": {
+      "title": "Личный запрос",
+      "guide": "Руководство",
+      "category": "Категория",
+      "categoryLoading": "Загрузка…",
+      "categoryPlaceholder": "Выбрать категорию",
+      "categorySelect": "Категория",
+      "email": "Email для ответа",
+      "emailPlaceholder": "Адрес email",
+      "content": "Сообщение",
+      "contentPlaceholder": "Введите данные.",
+      "submit": "Отправить",
+      "required": "Введите данные.",
+      "categoryRequired": "Выберите категорию.",
+      "loadFail": "Не удалось загрузить экран.",
+      "submitFail": "Не удалось отправить.",
+      "successTitle": "Отправлено",
+      "successDesc": "Запрос отправлен."
+    },
+    "list": {
+      "all": "Все",
+      "common": "Основное",
+      "result": "Результат",
+      "empty": "Нет результатов."
+    },
+    "policy": {
+      "title": "Условия и политики",
+      "effectiveDate": "Дата вступления",
+      "summary": "Сводка",
+      "download": "Скачать",
+      "downloadStart": "Скачивание началось.",
+      "empty": "Не удалось загрузить содержимое.",
+      "versions": "Предыдущие версии",
+      "behaviorInfoTitle": "Сбор и использование поведенческих данных",
+      "behaviorInfoDesc": "Мы собираем минимум данных для улучшения сервиса.",
+      "userControlTitle": "Выбор пользователя",
+      "userControlDesc": "Настройки персонализированной рекламы можно изменить в приложении.",
+      "version": "Версия",
+      "language": "Язык",
+      "loadFail": "Не удалось выполнить действие.",
+      "summaryEmpty": "Нет данных.",
+      "downloadCancelledTitle": "Скачивание отменено",
+      "downloadCancelled": "Место сохранения не выбрано.",
+      "downloadSuccessTitle": "Скачано",
+      "downloadSuccess": "Документ политики сохранён.",
+      "downloadFailTitle": "Не удалось скачать",
+      "downloadFail": "Не удалось сохранить документ политики.",
+      "privacyTitle": "Политика конфиденциальности",
+      "termsTitle": "Условия использования CO·ONN",
+      "marketingTitle": "Согласие на маркетинг"
+    },
+    "company": {
+      "ceo": "Директор",
+      "regNum": "Регистрационный номер",
+      "businessNum": "Номер онлайн-торговли",
+      "address": "Адрес",
+      "cs": "Поддержка",
+      "host": "Хостинг-провайдер"
+    }
+  },
+  "labs": {
+    "title": "Лаборатория",
+    "features": "Экспериментальные функции",
+    "caption": "Попробуйте новые функции раньше.",
+    "soon": "Лаборатория скоро будет доступно.",
+    "subtitle": "Попробуйте новые функции раньше.",
+    "empty_title": "Нет данных",
+    "empty_desc": "Новые функции сначала появятся здесь.",
+    "note": "Функции могут измениться до официального релиза."
+  },
+  "admin": {
+    "title": "Админ",
+    "console": "Админ-консоль"
+  },
+  "open_profiles": {
+    "title": "Открытые профили",
+    "subtitle": "Управляйте профилями для открытых чатов.",
+    "header_title": "Открытые профили",
+    "fallback_name": "Открытый профиль",
+    "default_badge": "По умолчанию",
+    "status_empty": "Нет данных",
+    "room": {
+      "fallback_title": "Открытый чат",
+      "used_count": "Используется в открытых чатах: {{count}}",
+      "empty": "Нет данных"
+    },
+    "empty": {
+      "title": "Нет открытых профилей",
+      "desc": "Создайте профиль для открытых чатов."
+    },
+    "form": {
+      "create_title": "Создать открытый профиль",
+      "edit_title": "Изменить открытый профиль",
+      "nickname": "Никнейм",
+      "status_message": "Статус",
+      "status_placeholder": "Введите текст",
+      "default_profile": "Профиль по умолчанию",
+      "delete": "Удалить открытый профиль",
+      "pick_avatar": "Выбрать фото профиля"
+    },
+    "alert": {
+      "load_fail": "Не удалось загрузить открытые профили.",
+      "nickname_required": "Введите никнейм.",
+      "create_fail": "Не удалось создать",
+      "save_fail": "Не удалось сохранить",
+      "delete_title": "Удалить открытый профиль?",
+      "delete_used_desc": "Профили в используемых открытых чатах сохранятся.",
+      "delete_desc": "Удалённый профиль восстановить нельзя.",
+      "delete_fail": "Не удалось удалить"
+    },
+    "toast": {
+      "created": "Открытый профиль создан.",
+      "saved": "Сохранено.",
+      "deleted": "Удалено.",
+      "photo_applied": "Фото применено."
+    }
+  }
+}

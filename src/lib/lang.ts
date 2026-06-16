@@ -1,99 +1,208 @@
 // src/lib/lang.ts
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import i18n from './i18n'; // ← 반드시 존재해야 함 (resources 등록은 i18n.ts에서)
- 
-/** 앱이 지원하는 언어 코드 */
+
+import { changeAppLanguage, initializeI18n } from '@/i18n';
+
+/**
+ * App language policy:
+ * 1. User-selected language saved in APP_LANG
+ * 2. Device language if it is one of CO·ONN's supported languages
+ * 3. Fallback language
+ *
+ * profiles.preferred_lang is only a server mirror/default value.
+ */
 export type AppLang =
-  | 'ar' | 'de' | 'en' | 'es' | 'fr' | 'hi'
-  | 'id' | 'ja' | 'ko' | 'pt' | 'ru' | 'zh';
+  | 'en'
+  | 'ko'
+  | 'ja'
+  | 'zh-Hans'
+  | 'zh-Hant'
+  | 'es'
+  | 'pt'
+  | 'fr'
+  | 'de'
+  | 'id'
+  | 'hi'
+  | 'ru'
+  | 'ar'
+  | 'vi'
+  | 'tr'
+  | 'th'
+  | 'it';
+
+export type AppLanguageOption = {
+  code: AppLang;
+  native: string;
+};
 
 const KEY = 'APP_LANG';
+const FALLBACK_APP_LANG: AppLang = 'en';
 
-/** 설정 화면 등에서 쓸 언어 목록 */
-export const LANGS: { code: AppLang; native: string }[] = [
-  { code: 'ar', native: 'العربية' },
-  { code: 'de', native: 'Deutsch' },
+/**
+ * Full CO·ONN language list.
+ * Chinese is separated by script to avoid country-based labeling.
+ */
+export const LANGS: AppLanguageOption[] = [
   { code: 'en', native: 'English' },
-  { code: 'es', native: 'Español' },
-  { code: 'fr', native: 'Français' },
-  { code: 'hi', native: 'हिन्दी' },
-  { code: 'id', native: 'Bahasa Indonesia' },
-  { code: 'ja', native: '日本語' },
   { code: 'ko', native: '한국어' },
+  { code: 'ja', native: '日本語' },
+  { code: 'zh-Hans', native: '简体中文' },
+  { code: 'zh-Hant', native: '繁體中文' },
+  { code: 'es', native: 'Español' },
   { code: 'pt', native: 'Português' },
+  { code: 'fr', native: 'Français' },
+  { code: 'de', native: 'Deutsch' },
+  { code: 'id', native: 'Bahasa Indonesia' },
+  { code: 'hi', native: 'हिन्दी' },
   { code: 'ru', native: 'Русский' },
-  { code: 'zh', native: '中文' },
+  { code: 'ar', native: 'العربية' },
+  { code: 'vi', native: 'Tiếng Việt' },
+  { code: 'tr', native: 'Türkçe' },
+  { code: 'th', native: 'ไทย' },
+  { code: 'it', native: 'Italiano' },
 ];
 
-/** 메모리 캐시 (동기 접근용) */
-let currentLang: AppLang = 'en';
-export function getLangMemory(): AppLang { return currentLang; }
-export function setLangMemory(code: AppLang) { currentLang = code; }
+const SUPPORTED_APP_LANGS = new Set<AppLang>(LANGS.map((item) => item.code));
 
-/** 디바이스 기본 언어 감지 → 지원 안 하면 en */
+function isAppLang(value: unknown): value is AppLang {
+  return typeof value === 'string' && SUPPORTED_APP_LANGS.has(value as AppLang);
+}
+
+function normalizeChineseLang(value: string): AppLang | null {
+  const normalized = value.trim().replace(/_/g, '-');
+  const lower = normalized.toLowerCase();
+
+  if (!lower) return null;
+
+  // Legacy saved value and generic device language default to Simplified Chinese.
+  if (lower === 'zh') return 'zh-Hans';
+
+  // Simplified Chinese regions / script.
+  if (
+    lower === 'zh-hans' ||
+    lower === 'zh-cn' ||
+    lower === 'zh-sg' ||
+    lower === 'zh-my' ||
+    lower.startsWith('zh-hans-')
+  ) {
+    return 'zh-Hans';
+  }
+
+  // Traditional Chinese regions / script.
+  if (
+    lower === 'zh-hant' ||
+    lower === 'zh-tw' ||
+    lower === 'zh-hk' ||
+    lower === 'zh-mo' ||
+    lower.startsWith('zh-hant-')
+  ) {
+    return 'zh-Hant';
+  }
+
+  return null;
+}
+
+function normalizeAppLang(value: unknown): AppLang | null {
+  if (typeof value !== 'string') return null;
+
+  const normalized = value.trim().replace(/_/g, '-');
+  if (!normalized) return null;
+
+  const chinese = normalizeChineseLang(normalized);
+  if (chinese) return chinese;
+
+  const primary = normalized.split('-')[0]?.toLowerCase();
+  return isAppLang(primary) ? primary : null;
+}
+
+/** Memory cache for synchronous access. */
+let currentLang: AppLang = FALLBACK_APP_LANG;
+
+export function getLangMemory(): AppLang {
+  return currentLang;
+}
+
+export function setLangMemory(code: AppLang) {
+  currentLang = normalizeAppLang(code) ?? FALLBACK_APP_LANG;
+}
+
+/** Device language -> CO·ONN supported language. */
 function detectDeviceLang(): AppLang {
   try {
-    const lc = Intl.DateTimeFormat().resolvedOptions().locale || 'en';
-    const base = lc.split('-')[0] as AppLang;
-    const supported = LANGS.map(l => l.code);
-    return (supported as string[]).includes(base) ? (base as AppLang) : 'en';
+    const locale = Intl.DateTimeFormat().resolvedOptions().locale || FALLBACK_APP_LANG;
+    return normalizeAppLang(locale) ?? FALLBACK_APP_LANG;
   } catch {
-    return 'en';
+    return FALLBACK_APP_LANG;
   }
 }
 
-/** 저장된 언어코드 불러오기 (없으면 디바이스 기본값) */
+/** Load saved language. If not found, use device language, then fallback. */
 export async function getInitialLang(): Promise<AppLang> {
   try {
     const saved = await AsyncStorage.getItem(KEY);
-    if (saved && (LANGS as any[]).some(l => l.code === saved)) {
-      return saved as AppLang;
+    const savedLang = normalizeAppLang(saved);
+
+    if (savedLang) {
+      // Migrate legacy / region-specific values into CO·ONN's canonical language codes.
+      if (saved !== savedLang) {
+        await AsyncStorage.setItem(KEY, savedLang).catch(() => {});
+      }
+      return savedLang;
     }
+
+    if (saved) {
+      await AsyncStorage.removeItem(KEY).catch(() => {});
+    }
+
     return detectDeviceLang();
   } catch {
     return detectDeviceLang();
   }
 }
 
-/** 언어 저장만(변경은 안 함) */
+/** Save language only. */
 export async function saveLang(code: AppLang) {
+  const nextLang = normalizeAppLang(code) ?? FALLBACK_APP_LANG;
+
   try {
-    await AsyncStorage.setItem(KEY, code);
+    await AsyncStorage.setItem(KEY, nextLang);
   } catch (e) {
     console.warn('saveLang error', e);
   }
 }
 
-/** i18n까지 적용(저장 + 메모리 캐시 + i18n 변경) */
-export async function applyLanguage(code: AppLang) {
-  await saveLang(code);
-  setLangMemory(code);
-  // i18n 리소스가 로드되어 있다면 즉시 반영
+/** Save + memory cache + i18n change. */
+export async function applyLanguage(code: AppLang): Promise<AppLang> {
+  const nextLang = normalizeAppLang(code) ?? FALLBACK_APP_LANG;
+
+  await saveLang(nextLang);
+  setLangMemory(nextLang);
+
   try {
-    if (i18n.isInitialized) await i18n.changeLanguage(code);
+    await changeAppLanguage(nextLang);
   } catch (e) {
     console.warn('changeLanguage error', e);
   }
+
+  return nextLang;
 }
 
-/**
- * 앱 시작 시 한 번 호출해서 언어 적용
- * - App.tsx에서 i18n.ts import 후, useEffect로 initLanguage() 한 번만 호출 추천
- */
-export async function initLanguage() {
+/** Apply saved language on app start. */
+export async function initLanguage(): Promise<AppLang> {
   const initial = await getInitialLang();
   setLangMemory(initial);
+
   try {
-    if (i18n.isInitialized) {
-      await i18n.changeLanguage(initial);
-    } else {
-      // i18n.ts가 늦게 초기화되는 경우 대비: 다음 틱에 적용
-      setTimeout(() => i18n.changeLanguage(initial).catch(() => {}), 0);
-    }
-  } catch {}
+    await initializeI18n({ initialLanguage: initial });
+    await changeAppLanguage(initial);
+  } catch (e) {
+    console.warn('initLanguage error', e);
+  }
+
+  return initial;
 }
 
-/** 설정 화면에서 현재 언어가 목록 몇 번째인지 필요할 때 */
+/** Current language index for settings UI. */
 export function getCurrentLangIndex(): number {
-  return Math.max(0, LANGS.findIndex(l => l.code === currentLang));
+  return Math.max(0, LANGS.findIndex((item) => item.code === currentLang));
 }

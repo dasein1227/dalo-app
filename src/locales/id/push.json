@@ -1,0 +1,48 @@
+{
+  "channel": {
+    "social_name": "Sosial",
+    "social_description": "Notifikasi teman dan sosial",
+    "chat_name": "Chat",
+    "chat_description": "Pesan chat dan notifikasi percakapan"
+  },
+  "summary": {
+    "social_title": "CO·ONN",
+    "social_body": "Notifikasi sosial baru",
+    "chat_title": "CO·ONN",
+    "chat_body": "Notifikasi chat baru"
+  },
+  "actions": {
+    "read": "Dibaca",
+    "reply": "Balas"
+  },
+  "common": {
+    "someone": "Seseorang",
+    "new_notification": "Notifikasi baru",
+    "new_notification_body": "Ada notifikasi baru.",
+    "new_message": "Pesan baru"
+  },
+  "friend": {
+    "request_received_title": "Permintaan teman",
+    "request_received_subtitle": "{{actor}}",
+    "request_received_body": "{{actor}} mengirim permintaan teman"
+  },
+  "chat": {
+    "dm_title": "{{sender}}",
+    "dm_subtitle": "",
+    "dm_body_text": "{{message}}",
+    "dm_body_image": "Mengirim foto",
+    "dm_body_video": "Mengirim video",
+    "dm_body_audio": "Mengirim pesan suara",
+    "dm_body_file": "Mengirim file",
+    "dm_body_map": "Membagikan lokasi",
+    "group_title": "{{room}}",
+    "group_subtitle": "{{sender}}",
+    "group_body_text": "{{sender}}: {{message}}",
+    "group_body_image": "{{sender}} mengirim foto",
+    "group_body_video": "{{sender}} mengirim video",
+    "group_body_audio": "{{sender}} mengirim pesan suara",
+    "group_body_file": "{{sender}} mengirim file",
+    "group_body_map": "{{sender}} membagikan lokasi",
+    "reply_placeholder": "Tulis balasan…"
+  }
+}

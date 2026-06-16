@@ -1,0 +1,133 @@
+{
+  "view_title": "الملف الشخصي",
+  "edit_title": "تعديل الملف الشخصي",
+  "nickname": "الاسم المستعار",
+  "handle": "المعرّف",
+  "status_message": "رسالة الحالة",
+  "public_default": "إظهار الملف افتراضيًا",
+  "save_done": "تم الحفظ.",
+  "no_name": "بدون اسم",
+  "no_id": "ID غير محدد",
+  "follow": "متابعة",
+  "following": "متابَع",
+  "stat_posts": "المنشورات",
+  "stat_followers": "المتابعون",
+  "stat_following": "المتابَعون",
+  "empty_posts": "لا توجد منشورات",
+  "empty_posts_tab": "لا توجد منشورات",
+  "swipe": {
+    "new_post": "＋ منشور جديد",
+    "chat_1on1": "دردشة 1:1",
+    "chat_me": "دردشة معي",
+    "call": "مكالمة",
+    "more": "المزيد →"
+  },
+  "alert": {
+    "setting_soon": "قيد التحضير.",
+    "call_friend_only_title": "المكالمة غير متاحة",
+    "call_friend_only_desc": "متاحة للأصدقاء فقط.",
+    "call_feature_soon": "قيد التحضير.",
+    "unfollow_title": "إلغاء المتابعة",
+    "unfollow_desc": "هل تريد إلغاء المتابعة؟",
+    "keep": "إبقاء",
+    "follow_fail": "تعذرت المتابعة.",
+    "unfollow_fail": "تعذر الإلغاء.",
+    "self_chat_fail": "تعذر بدء الدردشة."
+  },
+  "edit": {
+    "error_permission": "يمكنك تعديل ملفك الشخصي فقط.",
+    "revert_title": "إلغاء التغييرات",
+    "revert_msg": "هل تريد إلغاء التغييرات؟",
+    "revert_action": "إلغاء",
+    "revert": "إلغاء التغييرات",
+    "error_add_tab": "تعذر إضافة التبويب.",
+    "confirm_delete_tab": "هل تريد حذف تبويب \"{{name}}\"؟",
+    "error_save": "تعذر الحفظ.",
+    "change_cover": "تغيير الخلفية",
+    "status_placeholder": "أدخل رسالة الحالة",
+    "section_theme": "النمط",
+    "theme_color": "لون السمة",
+    "font_color": "لون الخط",
+    "statusbar": "الشريط العلوي",
+    "text_white": "نص أبيض",
+    "text_black": "نص أسود",
+    "section_tabs": "إدارة التبويبات",
+    "tab_all": "الكل",
+    "tab_input_placeholder": "+ تبويب جديد",
+    "hue": "اللون (Hue)",
+    "brightness": "السطوع (Brightness)",
+    "apply": "تطبيق",
+    "setting_tab": "إعداد \"{{name}}\"",
+    "move_up": "نقل للأعلى",
+    "move_down": "نقل للأسفل",
+    "visibility": "نطاق الظهور",
+    "current_vis": "الحالي: {{val}}",
+    "vis_public": "الكل",
+    "vis_private": "أنا فقط",
+    "vis_custom": "محدد",
+    "vis_friends": "الأصدقاء",
+    "vis_followers": "المتابعون",
+    "picker_avatar": "اختيار صورة الملف",
+    "picker_cover": "اختيار صورة الخلفية"
+  },
+  "menu": {
+    "settings": "الإعدادات",
+    "message": "رسالة",
+    "unfollow": "إلغاء المتابعة",
+    "hide": "إخفاء",
+    "hide_confirm": "هل تريد إخفاء هذا المستخدم؟",
+    "block": "حظر",
+    "block_confirm": "هل تريد حظر هذا المستخدم؟",
+    "report": "إبلاغ"
+  },
+  "followList": {
+    "title": "المتابعة",
+    "searchPlaceholder": "ابحث بالاسم أو ID",
+    "searchHint": "أدخل كلمة بحث",
+    "searchEmpty": "لا توجد نتائج",
+    "retry": "إعادة التحميل",
+    "unfollowTitle": "إلغاء المتابعة",
+    "unfollowMessage": "هل تريد إلغاء متابعة {{name}}؟",
+    "unfollowAction": "إلغاء",
+    "tab": {
+      "following": "المتابَعون",
+      "followers": "المتابعون",
+      "requests": "الطلبات"
+    },
+    "list": {
+      "following": "قائمة المتابَعين",
+      "followers": "قائمة المتابعين",
+      "requests": "طلبات المتابعة"
+    },
+    "section": {
+      "outgoing": "الطلبات المرسلة",
+      "incoming": "الطلبات الواردة"
+    },
+    "badge": {
+      "follower": "متابع",
+      "pending": "قيد الانتظار"
+    },
+    "action": {
+      "accept": "قبول",
+      "decline": "رفض"
+    },
+    "empty": {
+      "followingTitle": "لا تتابع أحدًا",
+      "followersTitle": "لا يوجد متابعون",
+      "requestsTitle": "لا توجد طلبات",
+      "followingDesc": "تابع الأشخاص الذين تهتم بهم.",
+      "followersDesc": "شارك ملفك الشخصي.",
+      "requestsDesc": "أرسل الطلبات أو اقبلها."
+    },
+    "error": {
+      "loadFollowing": "تعذر تحميل المتابَعين.",
+      "loadFollowers": "تعذر تحميل المتابعين.",
+      "loadRequests": "تعذر تحميل الطلبات.",
+      "loadList": "تعذر تحميل القائمة.",
+      "unfollow": "تعذر الإلغاء.",
+      "cancelRequest": "تعذر إلغاء الطلب.",
+      "acceptRequest": "تعذر قبول الطلب.",
+      "rejectRequest": "تعذر رفض الطلب."
+    }
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "briefing_title": "Hôm nay",
+  "briefing_toggle_show": "Hiện",
+  "briefing_toggle_hide": "Ẩn",
+  "briefing_unread_chat": "Chat chưa đọc",
+  "briefing_nearby_beacon": "Beacon gần bạn",
+  "briefing_new_friend_post": "Bài viết bạn bè",
+  "briefing_new_follower": "Người theo dõi mới",
+  "briefing_count_unit": "",
+  "briefing_people_unit": "",
+  "tabs": {
+    "friends": "Bạn bè",
+    "following": "Đang theo dõi",
+    "local": "Địa phương"
+  },
+  "banner_headerTitle": "Gần bạn",
+  "banner_fallback_title": "Gợi ý gần bạn",
+  "banner_fallback_desc": "Đang tìm địa điểm gần bạn",
+  "banner_default_headline": "Địa điểm hôm nay",
+  "banner_unknown_place": "Địa điểm không rõ",
+  "banner_status_open": "Mở",
+  "banner_status_closed": "Đã đóng",
+  "banner_tag_fallback": "Đề xuất",
+  "empty_feed": "Không có feed để hiển thị.",
+  "scroll_top": "Đầu trang",
+  "briefing_nearby_beacon_title": "Beacon gần bạn",
+  "briefing_today_schedule_title": "Lịch",
+  "briefing_continue_chat_title": "Tiếp tục chat",
+  "briefing_near_news_title": "Tin gần bạn",
+  "unknown_user": "Không rõ",
+  "near_news": {
+    "filters": {
+      "all": "Tất cả",
+      "post": "Feed",
+      "event": "Sự kiện",
+      "notice": "Thông báo"
+    },
+    "kind": {
+      "post": "Feed",
+      "event": "Sự kiện",
+      "notice": "Thông báo"
+    },
+    "kind_en": {
+      "post": "FEED",
+      "event": "EVENT",
+      "notice": "NOTICE"
+    },
+    "masthead_overline": "CO·ONN LOCAL JOURNAL",
+    "masthead_title": "NEARBY NEWS",
+    "edition_line": "LOCAL EDITION · {{distance}}",
+    "count_line": "FEED {{post}} · EVENT {{event}} · NOTICE {{notice}}",
+    "self": "Tôi",
+    "unknown_user": "Không rõ",
+    "unknown_place": "Địa điểm gần bạn",
+    "distance_pending": "Đang kiểm tra khoảng cách",
+    "just_now": "Vừa xong",
+    "minutes_ago": "{{value}} phút trước",
+    "hours_ago": "{{value}} giờ trước",
+    "days_ago": "{{value}} ngày trước",
+    "always": "Luôn mở",
+    "until": "Đến {{date}}",
+    "ongoing": "Đang diễn ra",
+    "category": {
+      "restaurant": "Nhà hàng",
+      "cafe": "Cafe",
+      "bakery": "Tiệm bánh",
+      "market": "Chợ",
+      "drink": "Pub",
+      "store": "Cửa hàng"
+    },
+    "place": "Địa điểm",
+    "nearby_place": "Địa điểm gần bạn",
+    "nearby_feed": "Feed gần bạn",
+    "event_title": "Sự kiện",
+    "notice_title": "Thông báo",
+    "event_body": "Có sự kiện mới.",
+    "notice_body": "Có thông báo mới.",
+    "load_error": "Không thể tải tin gần bạn.",
+    "collection_title": "Tin gần bạn",
+    "media_title": "Tin gần bạn",
+    "empty_title": "Chưa có tin",
+    "empty_desc": "Bài viết và cập nhật gần bạn sẽ hiện ở đây.",
+    "editing": "Đang sắp trang",
+    "load_failed": "Không thể tải.",
+    "retry": "Thử lại",
+    "local_note": "LOCAL NOTE",
+    "by_prefix": "BY "
+  },
+  "schedule_sheet": {
+    "weekdays": {
+      "sun": "CN",
+      "mon": "T2",
+      "tue": "T3",
+      "wed": "T4",
+      "thu": "T5",
+      "fri": "T6",
+      "sat": "T7"
+    },
+    "date_title": "{{day}}/{{month}} ({{weekday}})",
+    "period": {
+      "am": "SA",
+      "pm": "CH"
+    },
+    "time_range_cross_day": "{{start}} - {{date}} {{end}}",
+    "default_room_title": "Phòng chat",
+    "participation": {
+      "joined": "Đã tham gia",
+      "pending": "Chưa tham gia"
+    },
+    "search_placeholder": {
+      "joined": "Tìm lịch đã tham gia",
+      "pending": "Lịch"
+    },
+    "load_error": "Không thể tải lịch.",
+    "people_count": "{{value}} người",
+    "default_title": "Lịch",
+    "time_unknown": "Lịch",
+    "today_title": "Lịch",
+    "today_empty": "Hôm nay chưa có lịch",
+    "count": "{{value}}",
+    "header_title": "Lịch",
+    "empty": {
+      "load_failed_title": "Không thể tải",
+      "load_failed_desc": "Lịch",
+      "joined_title": "Chưa có lịch.",
+      "joined_desc": "Lịch",
+      "pending_title": "Chưa có lịch.",
+      "pending_desc": "Lịch có thể tham gia sẽ hiện ở đây."
+    }
+  },
+  "notifications": {
+    "header_title": "Thông báo",
+    "mark_all_read": "Đánh dấu tất cả đã đọc",
+    "follow_back": "Theo dõi lại",
+    "following": "Đang theo dõi",
+    "retry": "Tải lại",
+    "empty_title": "Chưa có thông báo",
+    "empty_desc": "Cập nhật mới sẽ hiện ở đây.",
+    "fallback_actor": "Ai đó",
+    "fallback_schedule": "Lịch",
+    "fallback_beacon": "Beacon",
+    "fallback_room": "Phòng chat",
+    "fallback_notification": "Thông báo mới",
+    "sections": {
+      "today": "Hôm nay",
+      "recent": "Gần đây",
+      "unread": "Chưa đọc",
+      "earlier": "Trước đó",
+      "this_week": "Tuần này",
+      "older": "Trước đó",
+      "thisWeek": "Tuần này"
+    },
+    "time": {
+      "just_now": "Vừa xong",
+      "minutes": "{{value}} phút",
+      "hours": "{{value}} giờ",
+      "days": "{{value}} ngày",
+      "weeks": "{{value}} tuần",
+      "months": "{{value}} tháng",
+      "years": "{{value}} năm"
+    },
+    "copy": {
+      "others": " và {{value}} người khác",
+      "follow_created": "{{name}} đã theo dõi bạn",
+      "chat_reply_created": "{{name}} đã trả lời",
+      "chat_mention_created": "{{name}} đã nhắc đến bạn",
+      "beacon_join_request_created": "{{name}} yêu cầu tham gia beacon",
+      "beacon_join_approved": "Yêu cầu tham gia beacon đã được duyệt",
+      "beacon_friend_created": "{{name}} đã tạo beacon mới",
+      "schedule_created": "{{room}} · Đã tạo lịch {{target}}",
+      "schedule_updated": "{{room}} · Đã cập nhật lịch {{target}}",
+      "schedule_cancelled": "{{room}} · Đã hủy lịch {{target}}",
+      "post_like_grouped": "{{name}}{{others}} thích bài viết của bạn",
+      "post_comment_grouped": "{{name}}{{others}} đã bình luận",
+      "post_reply_grouped": "{{name}}{{others}} đã trả lời bình luận của bạn",
+      "post_mention_grouped": "{{name}}{{others}} đã nhắc đến bạn"
+    },
+    "error": {
+      "load_failed": "Không thể tải thông báo."
+    },
+    "loading_short": "…"
+  }
+}

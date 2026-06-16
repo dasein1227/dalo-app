@@ -1,0 +1,48 @@
+{
+  "channel": {
+    "social_name": "Social",
+    "social_description": "Freunde und Social-Benachrichtigungen",
+    "chat_name": "Chats",
+    "chat_description": "Chatnachrichten und Gesprächshinweise"
+  },
+  "summary": {
+    "social_title": "CO·ONN",
+    "social_body": "Neue Social-Benachrichtigung",
+    "chat_title": "CO·ONN",
+    "chat_body": "Neue Chat-Benachrichtigung"
+  },
+  "actions": {
+    "read": "Gelesen",
+    "reply": "Antworten"
+  },
+  "common": {
+    "someone": "Jemand",
+    "new_notification": "Neue Benachrichtigung",
+    "new_notification_body": "Du hast eine neue Benachrichtigung.",
+    "new_message": "Neue Nachricht"
+  },
+  "friend": {
+    "request_received_title": "Freundschaftsanfrage",
+    "request_received_subtitle": "{{actor}}",
+    "request_received_body": "{{actor}} hat dir eine Freundschaftsanfrage gesendet"
+  },
+  "chat": {
+    "dm_title": "{{sender}}",
+    "dm_subtitle": "",
+    "dm_body_text": "{{message}}",
+    "dm_body_image": "Hat ein Foto gesendet",
+    "dm_body_video": "Hat ein Video gesendet",
+    "dm_body_audio": "Hat eine Sprachnachricht gesendet",
+    "dm_body_file": "Hat eine Datei gesendet",
+    "dm_body_map": "Hat einen Standort geteilt",
+    "group_title": "{{room}}",
+    "group_subtitle": "{{sender}}",
+    "group_body_text": "{{sender}}: {{message}}",
+    "group_body_image": "{{sender}} hat ein Foto gesendet",
+    "group_body_video": "{{sender}} hat ein Video gesendet",
+    "group_body_audio": "{{sender}} hat eine Sprachnachricht gesendet",
+    "group_body_file": "{{sender}} hat eine Datei gesendet",
+    "group_body_map": "{{sender}} hat einen Standort geteilt",
+    "reply_placeholder": "Antwort eingeben…"
+  }
+}

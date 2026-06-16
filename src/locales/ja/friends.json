@@ -1,0 +1,253 @@
+{
+  "title": "友だち",
+  "requests": "友だちリクエスト",
+  "requests_empty": "新しい友だちリクエストはありません。",
+  "requests_received": "受信したリクエスト",
+  "requests_sent": "送信したリクエスト",
+  "add_friend": "友だち追加",
+  "send_request": "リクエストを送信",
+  "request_sent": "リクエストを送信しました。",
+  "request_send_failed": "リクエストを送信できませんでした。",
+  "request_cancel": "リクエストを取消",
+  "request_canceled": "リクエストを取り消しました。",
+  "request_cancel_failed": "リクエストを取り消せませんでした。",
+  "accept": "承認",
+  "decline": "拒否",
+  "accepted": "リクエストを承認しました。",
+  "declined": "リクエストを拒否しました。",
+  "accept_failed": "リクエストを承認できませんでした。",
+  "decline_failed": "リクエストを拒否できませんでした。",
+  "remove_friend": "友だち削除",
+  "remove_friend_confirm": "この友だちを削除しますか？",
+  "remove_friend_done": "友だちを削除しました。",
+  "remove_friend_failed": "友だちを削除できませんでした。",
+  "blocked": "ブロック済み",
+  "block": "ブロック",
+  "unblock": "ブロック解除",
+  "block_done": "ブロックしました。",
+  "unblock_done": "ブロックを解除しました。",
+  "search_placeholder": "ニックネーム、ID、友だちコードを検索",
+  "code_placeholder": "友だちコードを入力",
+  "already_friends": "すでに友だちです。",
+  "already_requested": "すでにリクエストを送信済みです。",
+  "self_not_allowed": "自分にはリクエストを送れません。",
+  "hidden": "非表示",
+  "favorite": "お気に入り",
+  "memo": "メモ",
+  "alias": "別名",
+  "group": {
+    "title": "グループ",
+    "manageTitle": "友だちグループ",
+    "createTitle": "新規グループ",
+    "createDesc": "グループ名を入力してください。",
+    "createPlaceholder": "例：会社の同僚、近所の友だち、勉強会",
+    "createAction": "作成",
+    "createFail": "作成失敗",
+    "editTitle": "グループ名を編集",
+    "editDesc": "新しい名前を入力してください。",
+    "editPlaceholder": "グループ名",
+    "saveAction": "保存",
+    "renameFail": "編集失敗",
+    "nameRequired": "グループ名を入力してください。",
+    "deleteTitle": "グループ削除",
+    "deleteMessage": "「{{name}}」グループを削除しますか？",
+    "emptyTitle": "グループなし",
+    "emptyDesc": "新しいグループを作成しましょう。",
+    "memberEmpty": "グループメンバーはいません。",
+    "addTitle": "友だち追加",
+    "addSuccess": "追加しました。",
+    "addFail": "追加失敗",
+    "addEmpty": "追加できる友だちはいません。",
+    "removeSuccess": "除外しました。",
+    "removeFail": "除外失敗",
+    "memberCount": "{{count}}人"
+  },
+  "userFallback": "ユーザー",
+  "list": {
+    "favoriteFriendsCount": "お気に入り {{count}}",
+    "friendsCount": "友だち {{count}}"
+  },
+  "tabs": {
+    "friends": "友だち",
+    "groups": "グループ"
+  },
+  "search": {
+    "placeholder": "検索語を入力",
+    "friendPlaceholder": "友だちの名前、IDを検索",
+    "groupPlaceholder": "グループ、参加者を検索",
+    "namePlaceholder": "名前を検索",
+    "friendPickerPlaceholder": "友だちを検索",
+    "contactsPlaceholder": "名前または番号を検索",
+    "waitTitle": "入力待ち",
+    "waitCaption": "情報を入力して検索してください。",
+    "emptyTitle": "結果なし",
+    "emptyCaption": "一致するユーザーはいません。",
+    "contactEmptyTitle": "連絡先なし",
+    "contactEmptyCaption": "条件に合う連絡先はありません。",
+    "groupNamePlaceholder": "グループを検索"
+  },
+  "action": {
+    "favoriteAdd": "お気に入り",
+    "favoriteRemove": "解除",
+    "manageFriend": "友だち管理",
+    "manageGroup": "グループ管理",
+    "contact": "連絡する",
+    "create": "作成",
+    "save": "保存",
+    "add": "追加",
+    "remove": "除外",
+    "select": "選択",
+    "search": "検索",
+    "processing": "処理中",
+    "saving": "保存中"
+  },
+  "alert": {
+    "notice": "案内",
+    "fail": "失敗",
+    "loadFail": "読み込み失敗",
+    "deleteFail": "削除失敗",
+    "profileRouteMissing": "プロフィール画面が見つかりません。",
+    "chatRouteMissing": "チャット画面が見つかりません。",
+    "phoneMissing": "電話番号がありません。",
+    "phoneOpenFail": "電話アプリを開けません。",
+    "removeFriendTitle": "友だち削除",
+    "removeFriendMessage": "{{name}}さんを削除しますか？",
+    "blockTitle": "ブロック",
+    "blockMessage": "{{name}}さんをブロックしますか？",
+    "blockFail": "ブロック失敗",
+    "friendEditRouteMissing": "友だち管理画面が見つかりません。"
+  },
+  "add": {
+    "title": "友だち追加",
+    "loginRequired": "ログインが必要です。",
+    "contactSearch": "連絡先を探す",
+    "userFallback": "ユーザー {{id}}",
+    "noName": "名前なし",
+    "myProfile": "自分のプロフィール",
+    "notSet": "未設定",
+    "friendCodeLabel": "友だちコード",
+    "qrOfflineHint": "QRコードですぐにつながれます。",
+    "shareLink": "リンク共有",
+    "scanQr": "QRスキャン",
+    "qrTitle": "自分の接続コード",
+    "qrDesc": "相手がスキャンすると\nすぐにつながれます。",
+    "scanGuide": "相手のQRをスキャンしてください。",
+    "contactsTitle": "連絡先で探す",
+    "contactsDesc": "アドレス帳から選んで検索します。",
+    "mode": {
+      "coonnIdTitle": "CO·ONN ID",
+      "coonnIdHint": "相手の公開IDを入力してください。",
+      "coonnIdPlaceholder": "IDを入力",
+      "friendCodeTitle": "友だちコード",
+      "friendCodeHint": "友だちコードを入力してください。",
+      "friendCodePlaceholder": "友だちコードを入力",
+      "phoneTitle": "連絡先",
+      "phoneHint": "携帯番号で探します。",
+      "phonePlaceholder": "番号を入力"
+    },
+    "result": {
+      "noPublicId": "公開IDなし",
+      "friendCodeVerified": "友だちコード確認済み",
+      "friendCodeMatched": "友だちコード一致",
+      "contact": "連絡先 · {{phone}}",
+      "added": "追加済み",
+      "limited": "制限中",
+      "add": "追加"
+    },
+    "share": {
+      "myId": "自分のID",
+      "friendCode": "友だちコード",
+      "title": "CO·ONNリンク共有",
+      "message": "[CO·ONN] 私とつながりましょう。{{idText}}{{codeText}}\n\n下のリンクから友だち追加画面を開けます。\n{{url}}"
+    },
+    "toast": {
+      "added": "友だちに追加しました。"
+    },
+    "alert": {
+      "permissionRequired": "権限が必要です",
+      "cameraPermissionRequired": "カメラ権限が必要です。",
+      "contactsPermissionRequired": "連絡先の権限が必要です。",
+      "contactsLoadFail": "連絡先を読み込めませんでした",
+      "searchFail": "検索失敗",
+      "addFail": "追加失敗"
+    },
+    "error": {
+      "invalidUser": "無効なユーザーです。",
+      "selfQr": "自分のQRです。",
+      "userNotFound": "ユーザーが見つかりません。",
+      "invalidQr": "無効なコードです。",
+      "minLength": "{{count}}文字以上入力してください。"
+    },
+    "findTitle": "新しい友だちを探す",
+    "card": {
+      "idTitle": "IDで探す",
+      "idDesc": "CO·ONN ID検索",
+      "codeTitle": "コードで探す",
+      "codeDesc": "友だちコード検索",
+      "contactsTitle": "連絡先",
+      "contactsDesc": "アドレス帳ベース"
+    },
+    "digitalCardTitle": "自分のカード"
+  },
+  "communication": {
+    "noPhone": "電話番号なし",
+    "phoneCall": "通常通話",
+    "voiceCall": "ボイス通話",
+    "comingSoon": "準備中"
+  },
+  "edit": {
+    "title": "友だち設定",
+    "unknownUser": "不明",
+    "none": "なし",
+    "field": {
+      "name": "名前"
+    },
+    "placeholder": {
+      "alias": "別名を入力",
+      "memo": "メモを入力"
+    },
+    "helper": {
+      "friendName": "友だちの名前 · {{name}}",
+      "privateMemo": "自分にだけ表示されます。"
+    },
+    "section": {
+      "groups": "グループ",
+      "security": "セキュリティ"
+    },
+    "state": {
+      "on": "オン",
+      "off": "オフ",
+      "hidden": "非表示",
+      "visible": "表示中",
+      "blocked": "ブロック済み",
+      "unblocked": "未ブロック"
+    },
+    "toast": {
+      "saved": "保存しました。"
+    },
+    "alert": {
+      "loadFail": "読み込み失敗",
+      "saveFail": "保存失敗",
+      "removeFail": "削除失敗",
+      "userLoadFail": "ユーザーを読み込めません。",
+      "blockedByPeer": "相手があなたをブロックしています。"
+    },
+    "remove": {
+      "title": "友だち削除",
+      "message": "{{name}}さんを削除しますか？"
+    },
+    "unsaved": {
+      "title": "変更内容",
+      "message": "未保存の変更があります。",
+      "discard": "保存しない"
+    },
+    "groups": {
+      "title": "グループ管理",
+      "subtitle": "含めるグループを選択してください。",
+      "selectedCount": "選択 {{count}}",
+      "inGroup": "参加中",
+      "addHint": "タップして追加",
+      "emptySearch": "別の名前で検索してください。"
+    }
+  }
+}

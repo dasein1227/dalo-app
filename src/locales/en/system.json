@@ -1,0 +1,27 @@
+{
+  "splash_loading": "Preparing…",
+  "offline": "You’re offline. Check your network.",
+  "not_found": "Page not found.",
+  "notFound": {
+    "header": "Not found",
+    "title": "Page not found",
+    "desc": "The requested screen could not be found. Check the route or information.",
+    "retry": "Retry",
+    "home": "Go home",
+    "homeShort": "Home",
+    "previous": "Back",
+    "quick": {
+      "friends": "Friends",
+      "settings": "Settings"
+    }
+  },
+  "offlineScreen": {
+    "header": "Offline",
+    "title": "You’re offline",
+    "desc": "Check your network connection.\nWi-Fi or mobile data may be off.",
+    "retry": "Retry",
+    "check": "Check connection",
+    "openSettings": "Open settings",
+    "home": "Home"
+  }
+}

@@ -1,0 +1,1293 @@
+{
+  "title": "채팅",
+  "send": "전송",
+  "attach": "파일",
+  "gallery": "갤러리",
+  "invite": "초대",
+  "manage": "관리",
+  "members": "멤버",
+  "placeholder": "메시지를 입력하세요…",
+  "date": {
+    "today": "오늘",
+    "yesterday": "어제",
+    "separatorLabel": "{{year}}년 {{month}}월 {{day}}일 {{weekday}}요일",
+    "floatingLabel": "{{year}}. {{month}}. {{day}} {{weekday}}"
+  },
+  "all": "전체",
+  "and_others_n": "외 N",
+  "others_suffix": "외",
+  "anonymous": "익명",
+  "message": "메시지",
+  "message_search": "메시지 검색",
+  "message_send": "메시지 보내기",
+  "message_send_failed": "메시지 전송 실패",
+  "message_delete_failed": "메시지 삭제에 실패했습니다.",
+  "message_deleted": "메시지가 삭제되었습니다.",
+  "new_message_one": "새 메시지 1개",
+  "new_messages_count": "새 메시지 {{count}}개",
+  "chat_with_me": "나와의 채팅",
+  "self_badge": "나",
+  "chat_room_title": "채팅방",
+  "one_to_one_chat": "1:1 채팅",
+  "group_chat_title": "그룹채팅",
+  "open_chat_title": "오픈채팅",
+  "beacon_chat_title": "비콘채팅",
+  "room_not_found": "방 정보가 없습니다.",
+  "chat_room_not_found": "채팅방을 찾을 수 없습니다.",
+  "conversation_partner": "대화상대",
+  "audio_send_failed": "오디오 전송 실패",
+  "video": "동영상",
+  "photo": "사진",
+  "file_label": "파일",
+  "open_file": "파일 열기",
+  "play_video": "영상 재생",
+  "voice_message": "음성메시지",
+  "share_location": "위치 공유",
+  "map_location_shared_title": "위치 공유",
+  "map_tap_to_open": "지도를 열려면 탭하세요.",
+  "cannot_open_map": "지도를 열 수 없습니다.",
+  "no_coordinate_info": "좌표 정보 없음",
+  "send_failed": "전송 실패",
+  "share": "공유",
+  "share_failed": "공유 실패",
+  "delete_failed": "삭제 실패",
+  "upload_failed": "업로드 실패",
+  "selection_mode": "선택 모드",
+  "selection_mode_hint": "삭제할 메시지를 눌러 선택하세요.",
+  "selection_clear": "선택 해제",
+  "delete_dialog_title": "메시지 삭제",
+  "delete_dialog_desc": "삭제 방법을 선택하세요.",
+  "delete_for_everyone": "모두에게서 삭제",
+  "delete_hide_for_everyone": "모두에게서 숨기기",
+  "delete_for_me": "나에게서만 삭제",
+  "delete_for_me_hint": "선택한 메시지는 나에게서만 삭제할 수 있습니다.",
+  "reply": "답장",
+  "reply_to_me": "내 메시지에 답장",
+  "reply_to_user": "{{nickname}}에게 답장",
+  "msg_deleted_by_user": "{{nickname}}님이 메시지를 삭제했습니다.",
+  "notice": "공지",
+  "notice_coming_soon": "준비 중입니다.",
+  "korean_label": "한국어",
+  "auto_translate_paid_only": "중간/고급 번역 플랜에서만 자동 번역을 사용할 수 있습니다.",
+  "translation_paid_only": "번역은 유료 회원 전용입니다.",
+  "premium_only": "프리미엄 전용",
+  "premium_only_feature_hint": "프리미엄 회원부터 사용 가능한 기능입니다.",
+  "tone_neutral": "중립",
+  "tone_casual": "친근하게",
+  "tone_formal": "격식 있게",
+  "tone_business": "비즈니스",
+  "tone_playful": "재미있게",
+  "tone_change_premium_only": "번역 톤 변경은 고급(프리미엄) 번역 회원부터 사용할 수 있습니다.",
+  "tone_premium_only_hint": "고급 번역(프리미엄)에서만 적용됩니다.",
+  "login_required": "로그인이 필요합니다.",
+  "no_permission_send_rls": "메시지를 보낼 권한이 없습니다. (RLS)\n",
+  "rls_help_chat_members": "→ chat_members에 내가 포함되어 있는지, chat_messages 정책을 확인하세요.",
+  "search_placeholder": "검색어를 입력하세요",
+  "search_result_count": "결과 {{count}}개",
+  "show_original": "원문 보기",
+  "show_translation": "번역 보기",
+  "translating": "번역 중…",
+  "input": {
+    "placeholder": "메시지 보내기",
+    "placeholderLong": "메시지 입력…"
+  },
+  "hold_to_unlock": "꾹 눌러서 입력 잠금 해제",
+  "error": {
+    "loginRequired": "로그인이 필요합니다.",
+    "roomNotFound": "채팅방을 찾을 수 없습니다.",
+    "createRoomTitle": "채팅방을 열 수 없습니다.",
+    "createRoomMessage": "잠시 후 다시 시도해 주세요."
+  },
+  "sheet": {
+    "moreActions": "추가 동작",
+    "media": "사진/영상",
+    "file": "파일",
+    "location": "위치공유",
+    "inviteFriend": "친구초대",
+    "inviteLink": "초대링크",
+    "translate": "번역"
+  },
+  "translate": {
+    "title": "번역",
+    "current_lang_prefix": "현재: {{code}}",
+    "tone_label": "번역 톤",
+    "toneNeutral": "중립",
+    "toneNeutralDesc": "기본 자연스러운 번역",
+    "toneCasual": "친근하게",
+    "toneCasualDesc": "카톡/친구 대화용",
+    "toneFormal": "격식 있게",
+    "toneFormalDesc": "존댓말/공손한 표현",
+    "toneBusiness": "비즈니스",
+    "toneBusinessDesc": "메일/보고서/업무용",
+    "tonePlayful": "재미있게",
+    "tonePlayfulDesc": "밈/가벼운 농담 등"
+  },
+  "unknown": "알 수 없음",
+  "voice": "음성",
+  "list": {
+    "tab": {
+      "chat": "채팅",
+      "open": "오픈",
+      "beacon": "비콘",
+      "business": "비즈니스"
+    },
+    "empty": {
+      "chatTitle": "채팅 없음",
+      "chatSub": "친구에게 말을 걸어보세요.",
+      "openTitle": "오픈 채팅 없음",
+      "openSub": "관심 주제를 찾아보세요.",
+      "beaconTitle": "참여 중인 비콘 없음",
+      "beaconSub": "주변 비콘을 찾아보세요.",
+      "businessTitle": "비즈니스 채팅 없음",
+      "businessSub": "상담 내역이 표시됩니다."
+    },
+    "leaveConfirmTitle": "채팅방에서 나가시겠어요?",
+    "leaveConfirmMessage": "나가면 이 채팅방이 목록에서 사라집니다.",
+    "leaveConfirmAction": "나가기"
+  },
+  "menu": {
+    "title": "채팅방 서랍",
+    "joinedDate": "{{date}} 참여",
+    "media": "사진/동영상",
+    "mediaEmpty": "최근 미디어가 표시됩니다.",
+    "noticeSchedule": "공지와 일정",
+    "me": "나"
+  },
+  "membersScreen": {
+    "title": "참여자",
+    "loading": "불러오는 중…",
+    "empty": "참여자 없음",
+    "owner": "방장",
+    "participant": "참여자",
+    "remove": "제거",
+    "removeTitle": "제거",
+    "removeMessage": "{{name}}님을 제거할까요?",
+    "loadFail": "불러오기 실패",
+    "noName": "이름 없음"
+  },
+  "inviteScreen": {
+    "title": "친구 초대",
+    "roomMissingTitle": "방 정보 없음",
+    "roomMissingMessage": "다시 들어온 뒤 시도해 주세요.",
+    "tryAgain": "잠시 후 다시 시도해 주세요.",
+    "loadFailTitle": "친구 목록을 불러오지 못했습니다.",
+    "selectFriend": "친구를 선택해 주세요.",
+    "selectForAdd": "추가할 친구를 선택해 주세요.",
+    "selectForNewGroup": "함께할 친구를 선택해 주세요.",
+    "addSuccessTitle": "친구를 추가했습니다.",
+    "addSuccessMessage": "{{count}}명이 추가되었습니다.",
+    "addFailTitle": "친구를 추가하지 못했습니다.",
+    "createFailTitle": "그룹 채팅을 만들지 못했습니다.",
+    "friendRowAdd": "현재 그룹에 추가",
+    "friendRowNewGroup": "새 그룹에 포함",
+    "groupAddTitle": "그룹에 친구 추가",
+    "newGroupTitle": "새 그룹 채팅",
+    "groupAddDesc": "선택한 친구를 현재 그룹에 추가합니다.",
+    "newGroupDesc": "선택한 친구와 새 그룹을 만듭니다.",
+    "loading": "친구 목록 불러오는 중",
+    "emptyTitle": "초대 가능한 친구 없음",
+    "emptyDesc": "이미 참여 중인 친구는 제외됩니다.",
+    "addCount": "{{count}}명 추가",
+    "makeGroupCount": "{{count}}명과 그룹 만들기",
+    "noName": "이름 없음",
+    "groupFallbackTitle": "그룹 채팅",
+    "groupTitleWithOthers": "{{names}} 외 {{count}}명"
+  },
+  "roomEdit": {
+    "title": "채팅방 정보",
+    "nameLabel": "채팅방 이름",
+    "hidePhoto": "사진 가리기",
+    "hidePhotoDesc": "목록에서 기본 이미지로 표시합니다.",
+    "helperLine1": "내가 설정한 사진과 이름은 나에게만 보입니다.",
+    "helperLine2": "상대방에게는 영향을 주지 않습니다.",
+    "alertTitle": "알림",
+    "unhideBeforeChange": "사진 가리기를 해제한 후 변경할 수 있습니다.",
+    "saveFail": "저장 실패"
+  },
+  "roomData": {
+    "title": "데이터 관리",
+    "ratioTitle": "항목별 데이터",
+    "noMedia": "저장된 미디어 없음",
+    "savedCount": "{{value}} 저장됨",
+    "deleteAllWithSize": "모든 미디어 삭제 ({{size}})",
+    "photoData": "사진 데이터",
+    "videoData": "동영상 데이터",
+    "audioData": "음성 데이터",
+    "fileData": "파일 데이터",
+    "storageCenter": "CO·ONN 저장공간 관리",
+    "loadFail": "데이터 정보를 불러오지 못했습니다.",
+    "actionFail": "작업을 완료하지 못했습니다.",
+    "clear": {
+      "photoTitle": "사진 데이터 삭제",
+      "photoMessage": "기기에 저장된 사진 데이터를 삭제합니다. 메시지와 사진첩은 유지됩니다.",
+      "photoSuccess": "사진 데이터를 삭제했습니다.",
+      "videoTitle": "동영상 데이터 삭제",
+      "videoMessage": "기기에 저장된 동영상 데이터를 삭제합니다. 메시지와 갤러리는 유지됩니다.",
+      "videoSuccess": "동영상 데이터를 삭제했습니다.",
+      "audioTitle": "음성 데이터 삭제",
+      "audioMessage": "기기에 저장된 음성 데이터를 삭제합니다. 메시지는 유지됩니다.",
+      "audioSuccess": "음성 데이터를 삭제했습니다.",
+      "fileTitle": "파일 데이터 삭제",
+      "fileMessage": "기기에 저장된 파일 데이터를 삭제합니다. 메시지는 유지됩니다.",
+      "fileSuccess": "파일 데이터를 삭제했습니다.",
+      "allTitle": "모든 미디어 삭제",
+      "allMessage": "기기에 저장된 사진, 동영상, 음성, 파일을 삭제합니다. 메시지와 갤러리는 유지됩니다.",
+      "allSuccess": "미디어 데이터를 삭제했습니다."
+    }
+  },
+  "collection": {
+    "title": "모아보기",
+    "count": "{{count}}개",
+    "total": "총 {{value}}",
+    "tabs": {
+      "links": "링크",
+      "schedules": "일정",
+      "bookmarks": "책갈피"
+    },
+    "empty": {
+      "media": "사진과 동영상 없음",
+      "files": "파일 없음",
+      "links": "링크 없음",
+      "notices": "공지 없음",
+      "schedules": "일정 없음",
+      "bookmarks": "책갈피 없음"
+    },
+    "noDate": "날짜 없음",
+    "tapToView": "탭해서 확인",
+    "bookmarkMissingMessage": "이 기기에서 메시지를 찾지 못했습니다.",
+    "scheduleEmptyBody": "일정 내용이 없습니다.",
+    "secureRecovery": {
+      "completedBody": "과거 보안키를 가져왔습니다.",
+      "rejectedBody": "과거 보안키 요청이 거절되었습니다."
+    },
+    "scheduleStatus": {
+      "cancelled": "취소",
+      "completed": "완료",
+      "joined": "참여",
+      "joinedOngoing": "참여중"
+    },
+    "section": {
+      "latestNotice": "최근 공지",
+      "previousNotice": "이전 공지",
+      "activeSchedules": "진행/모집중",
+      "closedSchedules": "완료/취소"
+    }
+  },
+  "settings": {
+    "title": "채팅방 설정",
+    "memberCount": "{{count}}명",
+    "startedAt": "대화 시작 {{date}}",
+    "inputLock": "입력창 잠금",
+    "theme": {
+      "title": "채팅방 테마",
+      "default": "기본",
+      "byRoomType": "방 타입 기준"
+    },
+    "themePreview": {
+      "other": "좋아",
+      "mine": "확인했어"
+    },
+    "translation": {
+      "title": "번역 설정"
+    },
+    "sound": {
+      "title": "알림음",
+      "default": "기본음",
+      "clear": "맑은 알림",
+      "calm": "잔잔한 알림",
+      "short": "짧은 알림",
+      "soft": "부드러운 알림",
+      "quiet": "조용한 알림",
+      "deep": "깊은 알림",
+      "light": "가벼운 알림",
+      "mute": "무음"
+    },
+    "data": {
+      "section": "데이터",
+      "manage": "데이터 관리"
+    },
+    "export": {
+      "title": "대화 내보내기",
+      "message": "기기에 저장된 대화를 텍스트 파일로 내보냅니다.",
+      "saveFile": "파일 저장",
+      "share": "공유",
+      "saveSuccess": "파일로 저장했습니다.",
+      "shareSuccess": "공유 화면을 열었습니다.",
+      "saveCancelled": "저장을 취소했습니다.",
+      "fail": "내보내지 못했습니다.",
+      "deletedMessage": "[삭제된 메시지]",
+      "secureExcluded": "[보안 메시지 - 제외]",
+      "imageLabel": "[이미지]",
+      "videoLabel": "[동영상]",
+      "audioLabel": "[음성]",
+      "fileLabel": "[파일]",
+      "unknownSender": "알 수 없음",
+      "meSender": "나",
+      "userSender": "사용자",
+      "fileTitle": "CO·ONN 대화 내보내기",
+      "roomLine": "채팅방: {{roomTitle}}",
+      "exportedAtLine": "내보낸 시각: {{exportedAt}}",
+      "noteLocal": "※ 이 파일은 현재 기기에 저장된 대화 기준입니다.",
+      "noteText": "※ 내 메시지는 원문 기준, 상대방 메시지는 현재 표시 본문 기준으로 내보냅니다.",
+      "noteSecure": "※ 보안모드 메시지 본문과 키 정보는 내보내지 않습니다.",
+      "noteGallery": "※ 사진첩에 저장한 파일은 앱 캐시와 별도로 관리됩니다.",
+      "attachmentLine": "- 첨부: {{type}}{{fileNamePart}}{{mimePart}}",
+      "shareDialogTitle": "대화 내용 공유"
+    },
+    "leave": {
+      "title": "채팅방 나가기",
+      "action": "나가기",
+      "rejectInvite": "초대 거부 후 나가기",
+      "reportAndLeave": "신고 후 나가기",
+      "groupMessage": "채팅방을 나가거나 초대를 거부할 수 있습니다.",
+      "reportMessage": "채팅방을 나가거나 신고할 수 있습니다.",
+      "defaultMessage": "채팅방을 나갈까요? 대화 목록에서 사라집니다.",
+      "fail": "채팅방을 나가지 못했습니다.",
+      "selfBlocked": "나와의 채팅은 나갈 수 없습니다."
+    },
+    "secure": {
+      "section": "보안키",
+      "me": "나",
+      "peer": "상대방",
+      "authCancelled": "인증이 취소되었습니다.",
+      "decline": "거절",
+      "newKey": "새 보안키 만들기",
+      "newKeyDesc": "앞으로 쓸 새 키를 만듭니다.",
+      "newKeyConfirmTitle": "새 보안키를 만들까요?",
+      "newKeyConfirmMessage": "앞으로 쓸 새 보안키를 만듭니다. 과거 키는 유지됩니다.",
+      "create": "만들기",
+      "newKeySuccessTitle": "새 보안키 생성 완료",
+      "newKeySuccessMessage": "새 보안키 epoch {{epoch}}로 암호화합니다.",
+      "newKeyFailTitle": "보안키 생성 실패",
+      "newKeyFail": "새 보안키를 만들 수 없습니다.",
+      "historyRequest": "과거 보안키 요청",
+      "historyRequestDesc": "과거 메시지 키를 요청합니다.",
+      "historyRequestConfirmTitle": "과거 보안키를 요청할까요?",
+      "historyRequestConfirmMessage": "대화상대에게 과거 메시지 키를 요청합니다.",
+      "request": "요청",
+      "historyRequestSuccessTitle": "요청 완료",
+      "historyRequestSuccessMessage": "{{count}}명에게 요청했습니다.",
+      "historyRequestEmpty": "요청할 대화상대가 없습니다.",
+      "historyRequestFailTitle": "요청 실패",
+      "historyRequestFail": "과거 보안키를 요청할 수 없습니다.",
+      "claimApproved": "승인된 보안키 가져오기",
+      "claimApprovedDesc": "승인된 과거 키를 저장합니다.",
+      "claimSuccessTitle": "보안키 가져오기 완료",
+      "claimSuccessMessage": "저장 {{imported}}개 · 기존 {{skipped}}개{{conflictText}}",
+      "claimFailTitle": "가져오기 실패",
+      "claimFail": "승인된 보안키를 가져올 수 없습니다.",
+      "incomingRequestTitle": "{{name}}님의 과거 보안키 요청",
+      "shareApprovedDesc": "승인하면 과거 키를 공유합니다.",
+      "historyShareConfirmTitle": "과거 보안키를 공유할까요?",
+      "historyShareConfirmMessage": "{{name}}님에게 과거 보안키를 공유합니다.",
+      "historyShareSuccessTitle": "공유 완료",
+      "historyShareSuccessMessage": "{{name}}님에게 공유했습니다.",
+      "historyShareFailTitle": "공유 실패",
+      "historyShareFail": "과거 보안키를 공유할 수 없습니다.",
+      "historyRejectConfirmTitle": "요청을 거절할까요?",
+      "historyRejectConfirmMessage": "{{name}}님의 요청을 거절합니다.",
+      "rejectSuccessTitle": "거절 완료",
+      "rejectSuccessMessage": "{{name}}님의 요청을 거절했습니다.",
+      "rejectFailTitle": "거절 실패",
+      "rejectFail": "과거 보안키 요청을 거절할 수 없습니다.",
+      "backupSection": "보안키 백업",
+      "backup": "보안키 백업",
+      "backupSummary": "백업됨 · {{rooms}}개 방 · {{keys}}개 키",
+      "noBackup": "백업 없음",
+      "backupConfirmTitle": "보안키를 백업할까요?",
+      "backupCreateMessage": "암호화된 백업만 서버에 저장됩니다. 복구코드는 한 번만 표시됩니다.",
+      "backupReplaceMessage": "새 백업을 만들면 기존 백업이 교체됩니다. 새 복구코드를 저장하세요.",
+      "backupAction": "백업",
+      "backupFailTitle": "백업 실패",
+      "backupCreateFail": "보안키 백업을 만들 수 없습니다.",
+      "restore": "보안키 백업 복원",
+      "restoreDesc": "복구코드로 과거 키를 가져옵니다.",
+      "restoreMessage": "백업 생성 시 받은 복구코드를 입력하세요.",
+      "restoreAction": "복원",
+      "restoreCodeRequired": "복구코드를 입력해 주세요.",
+      "restoreSuccessTitle": "복원 완료",
+      "restoreSuccessMessage": "가져온 키 {{imported}}개 · 기존 {{skipped}}개{{conflictText}}",
+      "restoreFail": "보안키 백업을 복원할 수 없습니다.",
+      "conflictText": " · 충돌 {{conflicts}}개\n충돌 키는 기존 로컬 키를 유지했습니다.",
+      "conflictShort": " · 충돌 {{conflicts}}개",
+      "recoveryCodeTitle": "보안키 복구코드",
+      "recoveryCodeMessage": "복구코드는 다시 표시되지 않습니다. 안전한 곳에 저장하세요.",
+      "copyRecoveryCode": "복구코드 복사",
+      "codeStored": "복구코드를 저장했습니다.",
+      "codeCopied": "복구코드를 복사했습니다.",
+      "codeCopyFail": "복사하지 못했습니다.",
+      "codeConfirmRequired": "복구코드를 복사하거나 저장 확인을 체크해 주세요.",
+      "deleteServerBackup": "서버 백업 삭제",
+      "deleteServerBackupDesc": "서버의 암호화 백업만 삭제합니다.",
+      "backupDeleteConfirmTitle": "보안키 백업을 삭제할까요?",
+      "backupDeleteConfirmMessage": "서버의 암호화 백업이 삭제됩니다. 이 기기의 보안키는 유지됩니다.",
+      "backupDeleteSuccessTitle": "백업 삭제 완료",
+      "backupDeleteSuccessMessage": "서버 백업을 삭제했습니다. 이 기기의 보안키는 유지됩니다.",
+      "backupDeleteFailTitle": "백업 삭제 실패",
+      "backupDeleteFail": "보안키 백업을 삭제할 수 없습니다."
+    },
+    "openProfileEditAccessibility": "오픈채팅 공개 정보 수정"
+  },
+  "me": "나",
+  "noticePromote": {
+    "unsupported": "공지로 올릴 수 없습니다.",
+    "ownerOnly": "방장만 공지로 올릴 수 있습니다.",
+    "noPermission": "공지 권한이 없습니다.",
+    "secureBlocked": "보안 메시지는 공지로 올릴 수 없습니다.",
+    "systemBlocked": "시스템 메시지는 공지로 올릴 수 없습니다.",
+    "deletedBlocked": "삭제된 메시지는 공지로 올릴 수 없습니다.",
+    "missingMessage": "메시지를 확인할 수 없습니다."
+  },
+  "secure": {
+    "promptAuth": "보안 메시지 전송을 위해 인증해 주세요.",
+    "on": "보안모드 켜짐",
+    "off": "보안모드 꺼짐",
+    "readyFail": "보안모드 준비 실패",
+    "sendReadyFail": "보안 전송 준비 실패",
+    "mediaUnsupported": "보안모드에서는 현재 지원하지 않습니다.",
+    "fileUnsupported": "보안모드에서는 파일 전송을 지원하지 않습니다.",
+    "content": {
+      "image": "🔐 암호화된 이미지",
+      "video": "🔐 암호화된 동영상",
+      "audio": "🔐 암호화된 음성",
+      "location": "🔐 암호화된 위치"
+    },
+    "enabled": "보안모드 켜짐",
+    "disabled": "보안모드 꺼짐",
+    "lockedLabel": "🔐 암호화된 메시지",
+    "prompt": {
+      "keyUse": "보안 메시지 키 사용을 위해 인증해 주세요.",
+      "deviceRegister": "보안 기기 등록을 위해 인증해 주세요.",
+      "backupCreate": "보안키 백업을 위해 인증해 주세요.",
+      "backupRestore": "보안키 복원을 위해 인증해 주세요.",
+      "newRoomKey": "새 보안키 생성을 위해 인증해 주세요.",
+      "historyRequest": "과거 보안키 요청을 위해 인증해 주세요.",
+      "historyShare": "과거 보안키 공유를 위해 인증해 주세요.",
+      "historyReject": "과거 보안키 요청 거절을 위해 인증해 주세요.",
+      "historyClaim": "승인된 과거 보안키 가져오기를 위해 인증해 주세요.",
+      "decrypt": "보안 메시지 열람을 위해 인증해 주세요."
+    },
+    "error": {
+      "loginRequired": "로그인이 필요합니다.",
+      "backupEmpty": "백업할 보안키가 없습니다. 보안 메시지 사용 후 다시 시도해 주세요.",
+      "backupMissing": "저장된 보안키 백업이 없습니다.",
+      "backupWrongAccount": "이 계정의 보안키 백업이 아닙니다.",
+      "requesterDeviceMissing": "요청자의 활성 보안 기기를 찾을 수 없습니다.",
+      "noHistoryKeyToShare": "이 기기에 공유할 과거 보안키가 없습니다.",
+      "parcelCreateFailed": "공유할 보안키 데이터를 만들 수 없습니다."
+    }
+  },
+  "jump": {
+    "newMessage": "새 메시지",
+    "newMessageAccessibility": "새 메시지로 이동",
+    "latestAccessibility": "최신 메시지로 이동"
+  },
+  "permission": {
+    "cameraTitle": "권한 필요",
+    "cameraMessage": "카메라 접근 권한이 필요합니다.",
+    "contactsTitle": "권한 필요",
+    "contactsMessage": "연락처 접근 권한이 필요합니다."
+  },
+  "filePick": {
+    "failTitle": "파일 선택 실패",
+    "failMessage": "파일을 선택하지 못했습니다."
+  },
+  "newChat": {
+    "title": "새 채팅",
+    "create": "만들기",
+    "start": "시작",
+    "noName": "이름 없음",
+    "selectPartnerRequired": "대화 상대를 선택해 주세요.",
+    "openTitleRequired": "오픈채팅 이름을 입력해 주세요.",
+    "modeNormal": "일반",
+    "modeOpen": "오픈",
+    "openSectionTitle": "오픈채팅 만들기",
+    "openNamePlaceholder": "오픈채팅 이름",
+    "openHelper": "친구 선택 없이 공개 채팅방을 만듭니다.",
+    "partnerSectionTitle": "대화 상대 선택",
+    "groupTitlePlaceholder": "그룹 채팅방 이름",
+    "searchNamePlaceholder": "이름 검색",
+    "emptyFriends": "친구 없음",
+    "userFallback": "사용자",
+    "privateChatTitle": "개인 채팅",
+    "groupChatTitle": "그룹 채팅",
+    "openChatTitle": "오픈 채팅",
+    "coverPhoto": "대표 사진",
+    "selectPhoto": "사진 선택",
+    "openDescriptionPlaceholder": "방 설명",
+    "openTagsPlaceholder": "예: 동네, 커피, 러닝",
+    "searchVisible": "검색 노출",
+    "searchVisibleDesc": "방 이름, 설명, 태그로 검색됩니다.",
+    "groupModeTitle": "그룹 채팅",
+    "groupModeAutoDesc": "2명 이상 선택하면 그룹방으로 만듭니다.",
+    "groupModeSingleDesc": "1명만 선택해도 그룹방으로 만들 수 있습니다."
+  },
+  "menuModal": {
+    "markRead": "읽음 처리",
+    "roomInfo": "채팅방 정보",
+    "pin": "상단 고정",
+    "unpin": "고정 해제",
+    "mute": "알림 끄기",
+    "unmute": "알림 켜기",
+    "leave": "나가기",
+    "selfRoomTitle": "나와의 채팅"
+  },
+  "roomCard": {
+    "pending": "수락 대기",
+    "emptyMessage": "메시지 없음",
+    "messageFallback": "메시지",
+    "am": "오전",
+    "pm": "오후",
+    "date": "{{month}}월 {{day}}일",
+    "preview": {
+      "image": "[사진]",
+      "video": "[동영상]",
+      "audio": "[음성]",
+      "file": "[파일]",
+      "map": "[위치]",
+      "notice": "[알림]"
+    }
+  },
+  "searchModal": {
+    "rooms": "채팅방",
+    "messages": "대화 내용",
+    "placeholder": "검색",
+    "emptyTitle": "검색",
+    "emptyDesc": "채팅방과 메시지를 검색하세요.",
+    "noResultTitle": "검색 결과 없음",
+    "noResultDesc": "다른 키워드로 검색해 보세요.",
+    "roomPrefix": "채팅방",
+    "visibleName": "표시명",
+    "messageSender": "보낸 사람",
+    "filterNormal": "일반",
+    "filterOpen": "오픈",
+    "filterBeacon": "비콘",
+    "filterBusiness": "비즈니스",
+    "dateAll": "전체",
+    "dateToday": "오늘",
+    "date7d": "7일",
+    "date30d": "30일",
+    "tabChat": "채팅",
+    "tabParticipant": "참가자",
+    "tabOpen": "오픈톡",
+    "participants": "참가자",
+    "openRooms": "오픈톡",
+    "participantEmptyTitle": "참가자 검색",
+    "participantEmptyDesc": "내 채팅방의 표시명으로 검색합니다.",
+    "participantNoResultTitle": "참가자 없음",
+    "participantNoResultDesc": "다른 이름으로 검색해 보세요.",
+    "openEmptyTitle": "오픈톡 검색",
+    "openEmptyDesc": "방 이름, 설명, 태그로 검색합니다.",
+    "openNoResultTitle": "오픈톡 없음",
+    "openNoResultDesc": "다른 키워드로 검색해 보세요.",
+    "typeFilter": "유형",
+    "dateFilter": "날짜",
+    "openJoined": "참여 중",
+    "openPublic": "오픈톡",
+    "participatingRoom": "참여 중인 방"
+  },
+  "location": {
+    "fallbackTitle": "위치",
+    "selectMapApp": "지도 앱 선택",
+    "openMapHint": "지도를 눌러 길찾기"
+  },
+  "translationPanel": {
+    "title": "번역 설정",
+    "subtitle": "이 방에만 적용됩니다.",
+    "autoTranslate": {
+      "title": "자동 번역",
+      "desc": "받은 메시지를 설정 언어로 표시합니다."
+    },
+    "showTranslatedOnly": {
+      "title": "번역문만 보기",
+      "desc": "번역문을 우선 표시합니다."
+    },
+    "tier": {
+      "title": "요금제",
+      "desc": "번역 품질을 선택합니다.",
+      "upgrade": "업그레이드",
+      "options": {
+        "free": {
+          "label": "Basic",
+          "desc": "기본 번역"
+        },
+        "mid": {
+          "label": "Standard",
+          "desc": "자연스러운 대화 번역"
+        },
+        "high": {
+          "label": "Premium",
+          "desc": "문맥과 톤 반영"
+        }
+      }
+    },
+    "tone": {
+      "title": "톤",
+      "desc": "Premium 전용 문체 설정",
+      "disabled": "Premium 등급에서 사용할 수 있습니다.",
+      "options": {
+        "business": {
+          "label": "비즈니스",
+          "desc": "업무에 맞는 정돈된 문체"
+        },
+        "polite": {
+          "label": "정중함",
+          "desc": "부드럽고 예의 있는 톤"
+        },
+        "casual": {
+          "label": "친근함",
+          "desc": "자연스러운 일상 표현"
+        },
+        "neutral": {
+          "label": "중립",
+          "desc": "의미 전달 중심"
+        },
+        "creative": {
+          "label": "창의적",
+          "desc": "더 풍부한 표현"
+        }
+      }
+    },
+    "sendLang": {
+      "title": "보낼 언어",
+      "desc": "자동은 상대의 받을 언어를 따릅니다.",
+      "auto": "자동",
+      "autoDesc": "상대 언어에 맞춰 자동 선택됩니다.",
+      "autoPeerDesc": "현재 상대 기준: {{label}} ({{code}})",
+      "peerBase": "상대 기준",
+      "peerDefault": "상대 기본"
+    },
+    "receiveLang": {
+      "title": "받을 언어",
+      "desc": "받은 메시지를 이 언어로 표시합니다."
+    },
+    "status": {
+      "off": "꺼짐",
+      "on": "ON",
+      "auto": "자동",
+      "receive": "받을",
+      "send": "보낼",
+      "translatedOnly": "번역문만"
+    },
+    "language": {
+      "EN": "영어",
+      "ES": "스페인어",
+      "FR": "프랑스어",
+      "DE": "독일어",
+      "IT": "이탈리아어",
+      "PT": "포르투갈어",
+      "NL": "네덜란드어",
+      "PL": "폴란드어",
+      "RU": "러시아어",
+      "JA": "일본어",
+      "KO": "한국어",
+      "ZH": "중국어",
+      "TR": "튀르키예어",
+      "SV": "스웨덴어",
+      "ID": "인도네시아어",
+      "TH": "태국어",
+      "UK": "우크라이나어",
+      "RO": "루마니아어",
+      "CS": "체코어",
+      "DA": "덴마크어",
+      "EL": "그리스어",
+      "FI": "핀란드어",
+      "HU": "헝가리어",
+      "SK": "슬로바키아어",
+      "SL": "슬로베니아어",
+      "BG": "불가리아어",
+      "ET": "에스토니아어",
+      "LT": "리투아니아어",
+      "LV": "라트비아어",
+      "AR": "아랍어",
+      "ZH_HANS": "중국어 간체",
+      "ZH_HANT": "중국어 번체",
+      "VI": "베트남어",
+      "HI": "힌디어",
+      "HE": "히브리어"
+    }
+  },
+  "header": {
+    "searchPlaceholder": "대화 검색",
+    "advanced": "고급",
+    "sender": "보낸 사람",
+    "date": "날짜"
+  },
+  "attachment": {
+    "photo": "사진",
+    "camera": "카메라",
+    "call": "통화",
+    "pay": "송금",
+    "map": "지도",
+    "music": "뮤직",
+    "file": "파일",
+    "cloud": "톡클라우드",
+    "contact": "연락처",
+    "recentPhotos": "최근 사진",
+    "send": "전송",
+    "photoPermissionRequired": "사진 접근 권한이 필요합니다.",
+    "openSettings": "설정으로 이동",
+    "callUnavailable": "통화를 시작할 수 없습니다.",
+    "phoneMissing": "등록된 전화번호가 없습니다.",
+    "phoneOpenFail": "전화를 시작하지 못했습니다.",
+    "voiceCallUnavailable": "음성 통화는 준비 중입니다.",
+    "contactEmpty": "공유할 연락처 정보가 없습니다.",
+    "contactShareTitle": "연락처",
+    "contactName": "이름",
+    "contactPhone": "번호",
+    "contactShareFail": "연락처를 공유하지 못했습니다.",
+    "voiceMessage": "음성",
+    "capture": "캡처",
+    "schedule": "일정"
+  },
+  "accessibility": {
+    "attachmentClose": "첨부 닫기",
+    "attachmentOpen": "첨부 열기",
+    "messageInput": "메시지 입력",
+    "sendMessage": "메시지 전송",
+    "voiceMessage": "음성 메시지"
+  },
+  "replyPreview": {
+    "peer": "상대방",
+    "replyTo": "{{name}}에게 답장",
+    "cancel": "답장 취소"
+  },
+  "mediaKind": {
+    "image": "사진",
+    "video": "동영상",
+    "audio": "음성 메시지",
+    "file": "파일",
+    "map": "위치",
+    "notice": "공지",
+    "text": "텍스트"
+  },
+  "deleteModal": {
+    "title": "삭제",
+    "mine": "나에게만 삭제",
+    "all": "모두에게 삭제",
+    "moment": "예약 삭제",
+    "sectionTitle": "삭제 시점",
+    "selectTime": "삭제 시점을 선택하세요.",
+    "readBased": "읽은 후 삭제",
+    "readAfterWithDelay": "읽힘 후 +{{delay}}",
+    "afterDelete": "{{delay}} 후 삭제",
+    "unit": {
+      "hour": "시간",
+      "minute": "분",
+      "second": "초"
+    },
+    "cancelTitle": "취소할까요?",
+    "cancelDesc": "선택한 설정은 저장되지 않습니다.",
+    "keepEditing": "계속 설정",
+    "discard": "취소하기"
+  },
+  "messageAction": {
+    "copy": "복사",
+    "selectCopy": "선택 복사",
+    "reply": "답장",
+    "share": "공유",
+    "toMe": "나에게",
+    "notice": "공지",
+    "highlight": "책갈피 설정",
+    "capture": "캡처",
+    "delete": "삭제",
+    "cancelMoment": "삭제 설정 취소",
+    "viewOriginalTranslation": "원문 / 번역 보기",
+    "translateOther": "다른 언어로 번역",
+    "reactors": "공감한 친구",
+    "shareToMe": "나에게 공유",
+    "unhighlight": "책갈피 해제"
+  },
+  "moment": {
+    "title": "모먼트 삭제",
+    "cancel": "삭제 설정 취소",
+    "expiredMessage": "만료된 메시지"
+  },
+  "noticeBanner": {
+    "open": "공지 보기",
+    "close": "공지 닫기"
+  },
+  "newMessagePill": {
+    "label": "새 메시지 {{count}}개",
+    "accessibility": "새 메시지 {{count}}개 보기"
+  },
+  "search": {
+    "sender": "발신자",
+    "senderFilter": "발신자 필터",
+    "dateFilter": "날짜 필터",
+    "prevResult": "이전 결과",
+    "nextResult": "다음 결과",
+    "close": "검색 닫기",
+    "clearSender": "발신자 필터 해제",
+    "placeholder": "검색",
+    "inputAccessibility": "검색어 입력",
+    "clearKeyword": "검색어 지우기",
+    "bookmarkFilter": "책갈피 필터"
+  },
+  "datePicker": {
+    "title": "날짜 선택",
+    "clear": "선택 초기화",
+    "prevMonth": "이전 달",
+    "nextMonth": "다음 달",
+    "monthTitle": "{{year}}년 {{month}}월",
+    "weekday": {
+      "sun": "일",
+      "mon": "월",
+      "tue": "화",
+      "wed": "수",
+      "thu": "목",
+      "fri": "금",
+      "sat": "토"
+    },
+    "dayAccessibility": "{{day}}일",
+    "selected": "선택",
+    "none": "선택 안 함"
+  },
+  "selection": {
+    "title": "삭제",
+    "selectAll": "전체선택",
+    "deleteCount": "삭제하기 {{count}}"
+  },
+  "noticeModel": {
+    "fallback": "메시지를 확인해 주세요.",
+    "scheduleTitle": "일정",
+    "media": {
+      "image": "사진",
+      "video": "동영상",
+      "audio": "음성 메시지",
+      "file": "파일",
+      "map": "위치"
+    },
+    "secureRecovery": {
+      "requestCreated": {
+        "title": "과거 보안키 요청",
+        "body": "과거 키 공유 요청입니다."
+      },
+      "approved": {
+        "title": "과거 보안키 승인",
+        "body": "승인된 과거 키를 가져올 수 있습니다."
+      },
+      "completed": {
+        "title": "과거 보안키 복원 완료",
+        "body": "과거 메시지를 다시 열 수 있습니다."
+      },
+      "rejected": {
+        "title": "과거 보안키 요청 거절",
+        "body": "이 요청으로는 과거 메시지를 열 수 없습니다."
+      }
+    },
+    "scheduleTitleWithPrefix": "[일정] 일정",
+    "weekday": {
+      "sun": "일",
+      "mon": "월",
+      "tue": "화",
+      "wed": "수",
+      "thu": "목",
+      "fri": "금",
+      "sat": "토"
+    }
+  },
+  "messageItem": {
+    "noticeFallback": "공지 메시지입니다.",
+    "secureLinkFallback": "링크",
+    "mapAddressFallback": "위치 정보",
+    "secure": {
+      "genericTitle": "보안 요청",
+      "genericBody": "보안 요청 상태가 업데이트되었습니다.",
+      "fileFallback": "보안 파일"
+    },
+    "tombstone": {
+      "deleted": "삭제된 메시지입니다.",
+      "expired": "만료된 메시지입니다."
+    },
+    "longMessage": {
+      "viewAll": "전체보기"
+    },
+    "action": {
+      "confirm": "확인"
+    }
+  },
+  "linkPreview": {
+    "link": "링크",
+    "web": "웹",
+    "searchTitle": "{{query}} 검색",
+    "searchTitleWithProvider": "{{query}} · {{provider}} 검색",
+    "searchResult": "{{query}} 검색 결과",
+    "searchResultWithProvider": "{{query}} · {{provider}} 검색 결과",
+    "provider": {
+      "naver": "네이버",
+      "google": "구글",
+      "daum": "다음"
+    }
+  },
+  "messageMeta": {
+    "deleteSuffix": "삭제",
+    "cancelMoment": "삭제 예약 취소"
+  },
+  "messageBody": {
+    "link": "링크",
+    "secureMessage": "암호화된 메시지",
+    "file": "파일",
+    "tapToOpen": "탭해서 열기",
+    "locationInfo": "위치 정보",
+    "secureFile": "보안 파일"
+  },
+  "replyBlock": {
+    "peer": "상대방",
+    "replyTo": "{{name}}에게 답장"
+  },
+  "voiceRecorder": {
+    "totalDuration": "전체 {{duration}}"
+  },
+  "actions": {
+    "momentCancelFailTitle": "모먼트 취소 실패",
+    "tryAgain": "잠시 후 다시 시도해 주세요.",
+    "deleteFailTitle": "삭제 실패",
+    "missingServerMessage": "서버 메시지 식별자를 확인할 수 없습니다.",
+    "deleteNetworkFail": "네트워크 오류로 메시지를 삭제하지 못했습니다.",
+    "momentSetFailTitle": "모먼트 설정 실패",
+    "momentSetNetworkFail": "네트워크 오류로 모먼트를 설정하지 못했습니다.",
+    "uploadFailTitle": "업로드 실패",
+    "imageUploadFail": "이미지를 서버에 업로드하지 못했습니다.",
+    "errorTitle": "오류",
+    "mediaSendFail": "미디어 전송 중 문제가 발생했습니다.",
+    "voiceUploadFail": "음성 메시지 업로드에 실패했습니다.",
+    "fileUploadFail": "파일 업로드에 실패했습니다."
+  },
+  "bridge": {
+    "messageNotFound": "로컬에서 해당 메시지를 찾지 못했습니다.",
+    "editedImageSent": "편집한 이미지를 전송했습니다.",
+    "editedImageSendFail": "편집한 이미지를 전송하지 못했습니다."
+  },
+  "capture": {
+    "title": "캡처 선택",
+    "desc": "메시지 범위를 선택하세요",
+    "exit": "캡처 종료",
+    "clear": "선택 해제",
+    "share": "공유",
+    "save": "저장",
+    "shareCapture": "캡처 공유",
+    "saveCapture": "캡처 저장",
+    "anonymousOn": "익명 켜기",
+    "anonymousOff": "익명 끄기",
+    "anonymousUser": "사용자 {{index}}",
+    "error": {
+      "secureBlocked": "보안 대화는 캡처할 수 없습니다.",
+      "messageNotFound": "메시지를 찾지 못했습니다.",
+      "areaNotFound": "캡처 영역을 찾지 못했습니다.",
+      "selectedAreaNotFound": "선택 영역을 찾지 못했습니다.",
+      "areaCalcFailed": "영역 계산에 실패했습니다.",
+      "outOfView": "선택 범위가 화면 밖에 있습니다.",
+      "imageCreateFailed": "캡처 이미지를 만들지 못했습니다.",
+      "emptySelection": "선택된 메시지가 없습니다.",
+      "permissionRequired": "사진 저장 권한이 필요합니다.",
+      "saveFailed": "저장하지 못했습니다.",
+      "shareUnavailable": "공유를 사용할 수 없습니다.",
+      "shareFailed": "공유하지 못했습니다."
+    },
+    "success": {
+      "saved": "캡처를 저장했습니다.",
+      "savedPartial": "일부 범위만 저장했습니다.",
+      "savedVisibleOnly": "보이는 범위만 저장했습니다."
+    },
+    "anonymousInitial": "사"
+  },
+  "schedule": {
+    "common": {
+      "title": "일정",
+      "fallbackTitle": "제목 없음",
+      "roomFallback": "채팅방",
+      "participantFallback": "참가자",
+      "confirm": "확인",
+      "cancel": "취소",
+      "close": "닫기",
+      "delete": "삭제",
+      "done": "완료",
+      "save": "저장",
+      "saving": "저장중",
+      "select": "선택",
+      "weekdays": {
+        "sun": "일",
+        "mon": "월",
+        "tue": "화",
+        "wed": "수",
+        "thu": "목",
+        "fri": "금",
+        "sat": "토"
+      },
+      "period": {
+        "am": "오전",
+        "pm": "오후"
+      },
+      "date": "{{month}}월 {{day}}일 ({{weekday}})",
+      "compactDate": "{{month}}.{{day}} {{weekday}}",
+      "timeWithPeriod": "{{period}} {{hour}}:{{minute}}",
+      "participantCount": "참가자 {{count}}명",
+      "participantCountShort": "참여 {{count}}명",
+      "participantCountCompact": "참여 {{count}}",
+      "openDetail": "{{title}} 상세 보기"
+    },
+    "reminder": {
+      "off": "끄기",
+      "before30m": "30분 전",
+      "before1h": "1시간 전",
+      "before3h": "3시간 전",
+      "before1d": "하루 전",
+      "afterJoin": "참여 후 설정 가능"
+    },
+    "api": {
+      "messageTitle": "일정 · {{title}}",
+      "calendarDefaultTitle": "CO·ONN 일정",
+      "calendarPlace": "장소: {{place}}",
+      "calendarAddress": "주소: {{address}}",
+      "calendarNoteFooter": "CO·ONN 일정",
+      "notificationChannel": "일정",
+      "reminderTimeBody": "{{time}}에 일정이 시작됩니다.",
+      "reminderSoonBody": "일정이 곧 시작됩니다.",
+      "reminderTitle": "일정 알림"
+    },
+    "detail": {
+      "notFound": "일정을 찾을 수 없습니다.",
+      "cancelled": "취소된 일정",
+      "completed": "완료된 일정",
+      "directions": "길찾기",
+      "notification": "알림",
+      "appPush": "앱푸시",
+      "calendar": "캘린더",
+      "syncCalendar": "내 캘린더에 동기화",
+      "synced": "동기화됨",
+      "notSynced": "동기화 안 됨",
+      "join": "참여",
+      "leave": "취소",
+      "noticeBadge": "고지",
+      "noParticipants": "아직 참가자가 없습니다.",
+      "moveToChat": "대화로 이동",
+      "menu": {
+        "edit": "일정 수정",
+        "cancel": "일정 취소",
+        "complete": "완료"
+      },
+      "alert": {
+        "processFailTitle": "처리 실패",
+        "joinChangeFail": "참여 상태를 변경하지 못했습니다.",
+        "participantSettingTitle": "참가자 설정",
+        "promoteNotice": "고지로 승격",
+        "removeNotice": "고지 해제",
+        "promoteNoticeMessage": "{{name}}님을 고지 참가자로 표시할까요?",
+        "removeNoticeMessage": "{{name}}님의 고지 표시를 해제할까요?",
+        "settingFailTitle": "설정 실패",
+        "participantSettingFail": "참가자 설정을 변경하지 못했습니다.",
+        "reminderFailTitle": "알림 설정 실패",
+        "calendarReminderFailTitle": "캘린더 알림 실패",
+        "calendarSyncFailTitle": "캘린더 동기화 실패",
+        "calendarDeleteFailTitle": "캘린더 삭제 실패",
+        "cancelTitle": "일정 취소",
+        "cancelMessage": "일정을 취소할까요?\n참가자에게 취소 상태로 표시됩니다.",
+        "cancelAction": "일정 취소",
+        "cancelFailTitle": "취소 실패",
+        "cancelFail": "일정을 취소하지 못했습니다.",
+        "completeTitle": "일정 완료",
+        "completeMessage": "일정을 완료 처리할까요?\n완료된 일정은 하단에 표시됩니다.",
+        "completeFailTitle": "완료 실패",
+        "completeFail": "일정을 완료하지 못했습니다.",
+        "calendarRemoveTitle": "캘린더에서 삭제",
+        "calendarRemoveMessage": "기기 캘린더에 동기화된 일정을 삭제할까요?"
+      },
+      "error": {
+        "calendarPermissionDenied": "캘린더 권한이 필요합니다.",
+        "calendarNotFound": "추가할 수 있는 캘린더를 찾지 못했습니다.",
+        "invalidScheduleTime": "일정 시간을 확인할 수 없습니다.",
+        "calendarApiUnavailable": "이 기기에서 캘린더 기능을 사용할 수 없습니다.",
+        "calendarDefault": "캘린더 작업을 완료하지 못했습니다.",
+        "notificationPermissionDenied": "알림 권한이 필요합니다.",
+        "reminderTimePast": "알림 시간이 이미 지났습니다.",
+        "reminderDefault": "알림 설정을 완료하지 못했습니다."
+      }
+    },
+    "editor": {
+      "createTitle": "일정 만들기",
+      "editTitle": "일정 수정",
+      "titlePlaceholder": "제목",
+      "allDay": "하루 종일",
+      "startDate": "시작일",
+      "endDate": "종료일",
+      "place": "장소",
+      "map": "지도",
+      "placeNamePlaceholder": "장소명",
+      "memoPlaceholder": "메모를 입력하세요",
+      "cancelledLocked": "취소된 일정은 수정할 수 없습니다.",
+      "locationPickerTitle": "장소 선택",
+      "locationPickerHelper": "지도의 중심을 원하는 위치에 맞춘 뒤 선택하세요.",
+      "validation": {
+        "titleRequired": "제목을 입력해 주세요.",
+        "startInvalid": "시작 시간을 확인해 주세요.",
+        "endInvalid": "종료 시간을 확인해 주세요.",
+        "endBeforeStart": "종료 시간이 시작 시간보다 빠릅니다.",
+        "roomMissing": "채팅방 정보를 찾을 수 없습니다."
+      }
+    },
+    "listScreen": {
+      "loadFail": "일정을 불러오지 못했습니다.",
+      "roomMissing": "채팅방 정보를 찾을 수 없습니다.",
+      "createAccessibility": "일정 만들기",
+      "retry": "다시 시도",
+      "activeCount": "진행 중 {{count}}개",
+      "summary": "채팅방에서 함께 관리하는 일정입니다.",
+      "emptyTitle": "아직 일정이 없습니다",
+      "emptyDesc": "함께 볼 일정을 만들어보세요.",
+      "beaconUnavailableTitle": "비콘 채팅에서는 일정을 사용할 수 없습니다",
+      "beaconUnavailableDesc": "비콘 채팅에서는 일정 항목을 표시하지 않습니다.",
+      "create": "일정 만들기",
+      "joined": "참여중",
+      "notJoined": "미참여",
+      "cancelled": "취소됨",
+      "completed": "완료됨",
+      "past": "지난 일정"
+    },
+    "messageCard": {
+      "cancelled": "취소",
+      "completed": "완료"
+    }
+  },
+  "openProfile": {
+    "common": {
+      "confirm": "확인",
+      "cancel": "취소",
+      "save": "저장",
+      "delete": "삭제",
+      "default": "기본",
+      "user": "사용자",
+      "openChat": "오픈채팅",
+      "business": "비즈니스",
+      "openTalk": "오픈톡",
+      "fallbackName": "오픈프로필",
+      "statusEmpty": "상태메시지 없음",
+      "selectPhoto": "프로필 사진 선택",
+      "photoApplied": "사진을 적용했습니다.",
+      "saved": "저장되었습니다.",
+      "deleted": "삭제되었습니다.",
+      "tryAgain": "잠시 후 다시 시도해 주세요.",
+      "notice": "안내",
+      "actionFailed": "처리하지 못했습니다.",
+      "saveFailed": "저장하지 못했습니다.",
+      "profileSaveFailed": "프로필을 저장하지 못했습니다."
+    },
+    "list": {
+      "title": "오픈프로필",
+      "loadFailed": "오픈프로필을 불러오지 못했습니다.",
+      "nicknameRequired": "닉네임을 입력해 주세요.",
+      "createSuccess": "오픈프로필을 만들었습니다.",
+      "createFailed": "생성 실패",
+      "saveFailed": "저장 실패",
+      "deleteFailed": "삭제 실패",
+      "deleteTitle": "오픈프로필을 삭제할까요?",
+      "deleteDescInUse": "사용 중인 오픈톡의 기존 프로필은 유지됩니다.",
+      "deleteDescDefault": "삭제한 프로필은 다시 사용할 수 없습니다.",
+      "editAccessibility": "오픈프로필 수정",
+      "usedRoomsCount": "사용 중인 오픈톡 {{count}}개",
+      "usedRoomsEmpty": "사용 중인 오픈톡이 없습니다.",
+      "emptyTitle": "오픈프로필이 없습니다.",
+      "emptyDesc": "우측 상단 + 버튼으로 새 프로필을 만들어 보세요."
+    },
+    "viewer": {
+      "action": {
+        "transferOwner": "방장 위임",
+        "promoteManager": "부방장 임명",
+        "demoteManager": "부방장 해제",
+        "kick": "강퇴",
+        "block": "차단",
+        "unblock": "차단 해제",
+        "release": "해제",
+        "delegate": "위임",
+        "appoint": "임명",
+        "changePhoto": "사진 변경",
+        "showPhoto": "사진 공개"
+      },
+      "confirm": {
+        "blockMessage": "이 사용자의 앞으로의 메시지를 내 화면에서 숨길까요?",
+        "unblockMessage": "이 사용자의 메시지를 다시 표시할까요?",
+        "transferOwnerMessage": "{{name}}님에게 방장을 위임할까요?",
+        "promoteManagerMessage": "{{name}}님에게 부방장 권한을 줄까요?",
+        "demoteManagerMessage": "{{name}}님의 부방장 권한을 해제할까요?",
+        "kickMessage": "{{name}}님을 강퇴할까요? 강퇴된 사용자는 다시 입장할 수 없습니다."
+      },
+      "accessibility": {
+        "save": "저장"
+      },
+      "placeholder": {
+        "status": "상태메시지"
+      }
+    },
+    "edit": {
+      "loadFailed": "오픈채팅 정보를 불러오지 못했습니다.",
+      "titleRequired": "방 이름을 입력해 주세요.",
+      "saveFailed": "저장하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      "categoryFallback": "오픈채팅",
+      "titlePlaceholder": "오픈채팅 이름",
+      "changePhoto": "사진 변경",
+      "descriptionPlaceholder": "방을 소개해 주세요.",
+      "tagsPlaceholder": "태그 입력  예: 동네, 커피, 러닝",
+      "publicTitle": "공개",
+      "publicDesc": "방 이름, 설명, 태그로 검색됩니다.",
+      "selectCover": "사진 선택"
+    },
+    "gate": {
+      "loadFailed": "정보를 불러오지 못했습니다.",
+      "joinFailed": "오픈프로필로 입장하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      "enterChat": "채팅방 입장",
+      "startConsult": "상담 시작하기",
+      "selectProfileEnter": "프로필 선택 후 입장",
+      "joinOpenChat": "오픈채팅 참여하기",
+      "openNow": "영업 중",
+      "closed": "영업 종료",
+      "participants": "참여자 {{count}}",
+      "participantsWithMax": "참여자 {{count}}/{{max}}",
+      "createdAt": "개설일 {{date}}",
+      "host": "방장",
+      "introEmpty": "소개가 아직 없습니다."
+    }
+  },
+  "userFallback": "사용자",
+  "room": {
+    "deletedReadonly": "삭제된 방입니다. 대화 내용만 볼 수 있습니다.",
+    "leftReadonly": "나간 채팅방입니다.",
+    "kickedTitle": "강퇴되었습니다.",
+    "kickedMessage": "이 채팅방을 더 이상 이용할 수 없습니다."
+  },
+  "toast": {
+    "selectCopySecureBlocked": "보안 메시지는 선택 복사할 수 없습니다.",
+    "selectCopyUnsupported": "선택 복사할 수 없는 메시지입니다.",
+    "shareToSelfSuccess": "나와의 채팅방에 공유했습니다.",
+    "shareSecureBlocked": "보안 메시지는 공유할 수 없습니다.",
+    "shareUnsupported": "공유할 수 없는 메시지입니다.",
+    "shareSelfRoomUnavailable": "나와의 채팅방을 준비하지 못했습니다.",
+    "shareFailed": "공유하지 못했습니다.",
+    "noticeNoPermission": "공지 등록 권한이 없습니다.",
+    "copied": "복사했습니다."
+  },
+  "longMessage": {
+    "message": "메시지",
+    "translation": "번역",
+    "original": "원문"
+  },
+  "selectCopy": {
+    "titleFallback": "메시지",
+    "translated": "번역",
+    "original": "원문",
+    "hint": "필요한 부분을 길게 눌러 선택",
+    "copied": "복사됨",
+    "copyAll": "전체 복사",
+    "empty": "선택할 텍스트가 없습니다"
+  },
+  "system": {
+    "notice": "채팅방 상태가 변경되었습니다.",
+    "memberJoined": "{{name}}님이 들어왔습니다.",
+    "memberLeft": "{{name}}님이 나갔습니다.",
+    "memberKicked": "{{name}}님이 강퇴되었습니다.",
+    "managerPromoted": "{{name}}님이 부방장으로 지정되었습니다.",
+    "managerDemoted": "{{name}}님의 부방장 권한이 해제되었습니다.",
+    "ownerTransferred": "{{name}}님에게 방장이 위임되었습니다.",
+    "roomDeleted": "방이 삭제되었습니다."
+  },
+  "cancel": "취소"
+}

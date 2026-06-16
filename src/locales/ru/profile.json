@@ -1,0 +1,133 @@
+{
+  "view_title": "Профиль",
+  "edit_title": "Изменить профиль",
+  "nickname": "Никнейм",
+  "handle": "ID",
+  "status_message": "Статус",
+  "public_default": "Профиль по умолчанию открыт",
+  "save_done": "Сохранено.",
+  "no_name": "Без имени",
+  "no_id": "ID не задан",
+  "follow": "Подписаться",
+  "following": "Вы подписаны",
+  "stat_posts": "Посты",
+  "stat_followers": "Подписчики",
+  "stat_following": "Подписки",
+  "empty_posts": "Постов нет",
+  "empty_posts_tab": "Постов нет",
+  "swipe": {
+    "new_post": "＋ Новый пост",
+    "chat_1on1": "Личный чат",
+    "chat_me": "Чат с собой",
+    "call": "Звонок",
+    "more": "Еще →"
+  },
+  "alert": {
+    "setting_soon": "Скоро.",
+    "call_friend_only_title": "Звонок недоступен",
+    "call_friend_only_desc": "Только для друзей.",
+    "call_feature_soon": "Скоро.",
+    "unfollow_title": "Отписаться",
+    "unfollow_desc": "Отписаться?",
+    "keep": "Оставить",
+    "follow_fail": "Не удалось подписаться.",
+    "unfollow_fail": "Не удалось отменить.",
+    "self_chat_fail": "Не удалось начать чат."
+  },
+  "edit": {
+    "error_permission": "Можно редактировать только свой профиль.",
+    "revert_title": "Отменить изменения",
+    "revert_msg": "Отменить изменения?",
+    "revert_action": "Отменить",
+    "revert": "Отменить изменения",
+    "error_add_tab": "Не удалось добавить вкладку.",
+    "confirm_delete_tab": "Удалить вкладку «{{name}}»?",
+    "error_save": "Не удалось сохранить.",
+    "change_cover": "Сменить фон",
+    "status_placeholder": "Введите статус",
+    "section_theme": "Стиль",
+    "theme_color": "Цвет темы",
+    "font_color": "Цвет текста",
+    "statusbar": "Верхняя панель",
+    "text_white": "Белый текст",
+    "text_black": "Черный текст",
+    "section_tabs": "Вкладки",
+    "tab_all": "Все",
+    "tab_input_placeholder": "+ Новая вкладка",
+    "hue": "Цвет (Hue)",
+    "brightness": "Яркость (Brightness)",
+    "apply": "Применить",
+    "setting_tab": "Настройки «{{name}}»",
+    "move_up": "Выше",
+    "move_down": "Ниже",
+    "visibility": "Видимость",
+    "current_vis": "Сейчас: {{val}}",
+    "vis_public": "Все",
+    "vis_private": "Только я",
+    "vis_custom": "Выборочно",
+    "vis_friends": "Друзья",
+    "vis_followers": "Подписчики",
+    "picker_avatar": "Выбрать фото профиля",
+    "picker_cover": "Выбрать фон"
+  },
+  "menu": {
+    "settings": "Настройки",
+    "message": "Сообщение",
+    "unfollow": "Отписаться",
+    "hide": "Скрыть",
+    "hide_confirm": "Скрыть этого пользователя?",
+    "block": "Заблокировать",
+    "block_confirm": "Заблокировать этого пользователя?",
+    "report": "Пожаловаться"
+  },
+  "followList": {
+    "title": "Подписки",
+    "searchPlaceholder": "Никнейм или ID",
+    "searchHint": "Введите запрос",
+    "searchEmpty": "Ничего не найдено",
+    "retry": "Загрузить снова",
+    "unfollowTitle": "Отписаться",
+    "unfollowMessage": "Отписаться от {{name}}?",
+    "unfollowAction": "Отписаться",
+    "tab": {
+      "following": "Подписки",
+      "followers": "Подписчики",
+      "requests": "Запросы"
+    },
+    "list": {
+      "following": "Список подписок",
+      "followers": "Список подписчиков",
+      "requests": "Запросы на подписку"
+    },
+    "section": {
+      "outgoing": "Отправленные",
+      "incoming": "Полученные"
+    },
+    "badge": {
+      "follower": "Подписчик",
+      "pending": "Ожидает"
+    },
+    "action": {
+      "accept": "Принять",
+      "decline": "Отклонить"
+    },
+    "empty": {
+      "followingTitle": "Нет подписок",
+      "followersTitle": "Нет подписчиков",
+      "requestsTitle": "Запросов нет",
+      "followingDesc": "Подпишитесь на интересных людей.",
+      "followersDesc": "Поделитесь своим профилем.",
+      "requestsDesc": "Отправьте или примите запрос."
+    },
+    "error": {
+      "loadFollowing": "Не удалось загрузить подписки.",
+      "loadFollowers": "Не удалось загрузить подписчиков.",
+      "loadRequests": "Не удалось загрузить запросы.",
+      "loadList": "Не удалось загрузить список.",
+      "unfollow": "Не удалось отписаться.",
+      "cancelRequest": "Не удалось отменить запрос.",
+      "acceptRequest": "Не удалось принять запрос.",
+      "rejectRequest": "Не удалось отклонить запрос."
+    }
+  }
+}

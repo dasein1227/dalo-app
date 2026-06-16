@@ -1,0 +1,421 @@
+{
+  "create_title": "สร้างบีคอน",
+  "edit_title": "แก้ไขบีคอน",
+  "detail_title": "ข้อมูลบีคอน",
+  "members_title": "จัดการบีคอน",
+  "my_rooms_title": "บีคอนของฉัน",
+  "join": "เข้าร่วม",
+  "enter": "เข้า",
+  "owner_tools": "เครื่องมือเจ้าของห้อง",
+  "visibility": "การมองเห็น",
+  "status_message": "ข้อความสถานะ",
+  "public_profile": "เปิดโปรไฟล์",
+  "current_members": "จำนวนปัจจุบัน",
+  "age_range": "ช่วงอายุ",
+  "memo": "เมโม",
+  "time_left": "เวลาที่เหลือ",
+  "common": {
+    "beacon": "บีคอน",
+    "noName": "ไม่มีชื่อ",
+    "anonymous": "ผู้ใช้ไม่ระบุชื่อ",
+    "loading": "กำลังโหลด…",
+    "done": "เสร็จ",
+    "confirm": "ยืนยัน",
+    "cancel": "ยกเลิก",
+    "save": "บันทึก",
+    "submit": "ส่ง",
+    "approve": "อนุมัติ",
+    "reject": "ปฏิเสธ",
+    "block": "บล็อก",
+    "kick": "นำออก",
+    "none": "ไม่มี",
+    "unlimited": "ไม่จำกัด"
+  },
+  "error": {
+    "invalidId": "ID ไม่ถูกต้อง",
+    "invalidAccess": "การเข้าถึงไม่ถูกต้อง",
+    "loginRequired": "ต้องเข้าสู่ระบบ",
+    "locationPermission": "ต้องการสิทธิ์ตำแหน่ง",
+    "locationUnavailable": "ตรวจสอบตำแหน่งปัจจุบันไม่ได้",
+    "locationLoadFail": "โหลดตำแหน่งไม่สำเร็จ",
+    "notFound": "ไม่พบบีคอน",
+    "detailNotFound": "ไม่พบข้อมูลบีคอน",
+    "detailLoadFail": "โหลดข้อมูลบีคอนไม่สำเร็จ",
+    "operationFail": "ดำเนินการไม่สำเร็จ"
+  },
+  "time": {
+    "am": "AM",
+    "pm": "PM",
+    "monthDay": "{{month}}/{{day}}",
+    "minute": "{{count}} นาที",
+    "hour": "{{count}} ชม.",
+    "hourMinute": "{{hour}} ชม. {{minute}} นาที",
+    "remainEnded": "สิ้นสุดแล้ว",
+    "remainMinute": "เหลือ {{count}} นาที",
+    "remainHour": "เหลือ {{count}} ชม.",
+    "remainHourMinute": "เหลือ {{hour}} ชม. {{minute}} นาที",
+    "justNow": "เมื่อสักครู่",
+    "agoMinute": "{{count}} นาทีที่แล้ว",
+    "agoHour": "{{count}} ชม.ที่แล้ว",
+    "agoDay": "{{count}} วันที่แล้ว"
+  },
+  "unit": {
+    "people": "คน",
+    "age": "ปี",
+    "count": "รายการ",
+    "times": "ครั้ง",
+    "peopleCount": "{{count}} คน",
+    "ageCount": "{{count}} ปี",
+    "retryLeft": "เหลือ {{count}} ครั้ง"
+  },
+  "tabs": {
+    "dm": "ส่วนตัว",
+    "group": "กลุ่ม",
+    "open": "โอเพน",
+    "beacon": "บีคอน"
+  },
+  "visibilityLabel": {
+    "public": "สาธารณะ",
+    "friends": "เฉพาะเพื่อน",
+    "labels": "เฉพาะกลุ่ม",
+    "custom": "กำหนดเอง",
+    "publicCompact": "สาธารณะ",
+    "friendsCompact": "เพื่อน",
+    "labelsCompact": "กลุ่ม",
+    "customCompact": "กำหนดเอง",
+    "publicExcludeFriends": "ยกเว้นคนรู้จัก"
+  },
+  "visibilityDesc": {
+    "public": "แสดงต่อผู้ใช้ทั่วไป ค่าเริ่มต้นคือเข้าร่วมแบบอนุมัติ",
+    "friends": "แสดงเฉพาะเพื่อน ค่าเริ่มต้นคือเข้าร่วมได้อิสระ",
+    "labels": "แสดงเฉพาะกลุ่มที่เลือก ค่าเริ่มต้นคือเข้าร่วมได้อิสระ",
+    "custom": "กำหนดเพื่อนและกลุ่มเอง ค่าเริ่มต้นคือเข้าร่วมได้อิสระ"
+  },
+  "gender": {
+    "any": "ไม่จำกัดเพศ",
+    "male": "ชาย",
+    "female": "หญิง"
+  },
+  "myRooms": {
+    "headerTitle": "แชท",
+    "status": {
+      "pending": "รออนุมัติ",
+      "joined": "{{visibility}} · เข้าร่วมอยู่",
+      "owner": "{{visibility}} · เหลือ {{minutes}} นาที",
+      "host": "เจ้าของห้อง",
+      "waiting": "รอ",
+      "member": "เข้าร่วมอยู่"
+    },
+    "title": {
+      "mine": "บีคอนของฉัน",
+      "fallback": "บีคอน"
+    },
+    "empty": {
+      "title": "ไม่มีการสนทนา",
+      "beaconDesc": "บีคอนของฉันและบีคอนที่เข้าร่วมจะแสดงที่นี่"
+    },
+    "error": {
+      "loadFail": "โหลดรายการไม่สำเร็จ"
+    },
+    "alert": {
+      "routeCreate": "โปรดตรวจสอบหน้าสร้างบีคอน",
+      "routeChatCreate": "การสร้างแชทใหม่กำลังเตรียม",
+      "routeBeaconSearch": "โปรดตรวจสอบหน้าค้นหาบีคอน",
+      "routeSearch": "โปรดตรวจสอบหน้าค้นหา"
+    }
+  },
+  "form": {
+    "titlePlaceholder": "เป้าหมายบีคอน",
+    "descPlaceholder": "กรอกคำอธิบายหรือกฎ",
+    "durationMin": "30 นาที",
+    "durationMax": "4 ชม.",
+    "minuteSuffix": "นาที",
+    "locationSelectTitle": "ตำแหน่งสำหรับเพื่อน",
+    "locationSelectHelper": "ภายใน 200 ม. จากตำแหน่งปัจจุบัน",
+    "locationPickFailTitle": "เลือกตำแหน่งไม่ได้",
+    "selectedAddress": "ที่อยู่ที่เลือก",
+    "locationEmpty": "ยังไม่ได้เลือกตำแหน่ง โปรดเปิดแผนที่",
+    "locationShortPlaceholder": "ตำแหน่งโดยประมาณ",
+    "locationDetailPlaceholder": "ตำแหน่งละเอียด",
+    "conditionsTitle": "เงื่อนไขเข้าร่วม",
+    "genderTitle": "เพศ",
+    "quotaTitle": "จำนวนรับสมัคร",
+    "quotaDesc": "0 คนคือไม่จำกัด แตะตัวเลขเพื่อกรอกเอง",
+    "ageLimitTitle": "จำกัดอายุ",
+    "ageLimitDesc": "ค่าเริ่มต้นคืออายุของฉัน ±10 ปี",
+    "ageNoLimit": "ไม่จำกัด",
+    "ageMin": "อายุต่ำสุด",
+    "ageMax": "อายุสูงสุด",
+    "maleQuota": "ชาย",
+    "femaleQuota": "หญิง",
+    "mixQuota": "ไม่จำกัดเพศ",
+    "selectGroups": "กลุ่มที่จะเปิดให้เห็น",
+    "selectFriends": "เพื่อนที่จะเปิดให้เห็น",
+    "friendSearch": "ค้นหาเพื่อน",
+    "emptyGroups": "ไม่มีกลุ่ม",
+    "emptyFriends": "ไม่มีเพื่อน",
+    "protectionOff": "ไม่ป้องกัน",
+    "protectionOffAlt": "ไม่ป้องกัน",
+    "createButton": "สร้างบีคอน",
+    "saveButton": "บันทึก",
+    "durationTitle": "ระยะเวลา",
+    "durationDesc": "จะสิ้นสุดอัตโนมัติเมื่อครบเวลาที่กำหนด",
+    "locationProtectionTitle": "ป้องกันตำแหน่ง",
+    "locationProtectionDesc": "แสดงตำแหน่งแบบสุ่มภายในรัศมีที่ตั้งไว้",
+    "refreshLocation": "ตรวจสอบตำแหน่งปัจจุบันอีกครั้ง",
+    "meetingTitle": "บีคอนนี้สำหรับอะไร?",
+    "requireApprovalTitle": "ต้องอนุมัติก่อนเข้าร่วม",
+    "requireApprovalDesc": "เฉพาะผู้ที่โฮสต์อนุมัติเท่านั้นที่เข้าร่วมได้",
+    "hideFromFriendsTitle": "ซ่อนจากเพื่อนของฉัน",
+    "hideFromFriendsDesc": "ยังคงเป็นสาธารณะ แต่ไม่แสดงต่อคนรู้จักของคุณ",
+    "selectedGroupsCount": "เลือกกลุ่มแล้ว {{count}} กลุ่ม",
+    "selectedFriendsCount": "เลือกเพื่อนแล้ว {{count}} คน",
+    "friendLocationDesc": "โน้ตตำแหน่งที่แสดงเฉพาะกลุ่มเป้าหมายที่เลือก เลือกได้ภายใน 200 ม. จากตำแหน่งปัจจุบัน",
+    "locationPickTitle": "เลือกบนแผนที่",
+    "locationPickHint": "ที่อยู่ที่เลือกจะแสดงด้านล่าง",
+    "friendLocationEmpty": "ยังไม่ได้เลือกตำแหน่ง เปิดแผนที่ด้วยปุ่มด้านขวา",
+    "moveToCurrentLocation": "ใช้ตำแหน่งปัจจุบัน"
+  },
+  "create": {
+    "validation": {
+      "titleRequired": "กรอกชื่อการนัดหมาย",
+      "titleMax": "ชื่อการนัดหมายต้องไม่เกิน 80 ตัวอักษร",
+      "duration": "ระยะเวลาต้องอยู่ระหว่าง 10–240 นาที",
+      "ageRange": "โปรดตรวจสอบช่วงอายุ",
+      "locationRequired": "โปรดตรวจสอบตำแหน่งปัจจุบัน",
+      "labelsRequired": "โปรดเลือกกลุ่ม",
+      "customRequired": "โปรดเลือกเพื่อนหรือกลุ่ม"
+    },
+    "alert": {
+      "labelLoadFailTitle": "โหลดกลุ่มไม่สำเร็จ",
+      "labelLoadFail": "โหลดรายการกลุ่มไม่สำเร็จ",
+      "friendLoadFailTitle": "โหลดเพื่อนไม่สำเร็จ",
+      "friendLoadFail": "โหลดรายการเพื่อนไม่สำเร็จ",
+      "createFailTitle": "สร้างบีคอนไม่สำเร็จ",
+      "createFail": "เกิดข้อผิดพลาด"
+    }
+  },
+  "edit": {
+    "validation": {
+      "titleRequired": "กรอกชื่อห้อง",
+      "titleMax": "ชื่อห้องต้องไม่เกิน 80 ตัวอักษร",
+      "duration": "ระยะเวลาต้องอยู่ระหว่าง 10–240 นาที",
+      "ageRange": "โปรดตรวจสอบช่วงอายุ",
+      "labelsRequired": "โปรดเลือกกลุ่ม",
+      "customRequired": "โปรดเลือกเพื่อนหรือกลุ่ม"
+    },
+    "toast": {
+      "moved": "ย้ายไปตำแหน่งปัจจุบันแล้ว",
+      "moveFail": "ย้ายตำแหน่งไม่สำเร็จ",
+      "saved": "บันทึกแล้ว",
+      "saveFail": "เกิดข้อผิดพลาด"
+    }
+  },
+  "detail": {
+    "action": {
+      "ended": "ปิดรับสมัคร",
+      "enter_chat": "เข้าห้องแชท",
+      "cancel_request": "ยกเลิกคำขอ",
+      "join_direct": "เข้าร่วม",
+      "request_retry": "ขออีกครั้ง",
+      "request_join": "ขอเข้าร่วม",
+      "forbidden": "จำกัดการเข้า",
+      "full": "เต็มแล้ว",
+      "closed": "เข้าร่วมไม่ได้"
+    },
+    "badge": {
+      "pending": "รออนุมัติ",
+      "rejected": "ถูกปฏิเสธ",
+      "approval": "ต้องอนุมัติ",
+      "free": "เข้าร่วมอิสระ"
+    },
+    "empty": {
+      "deleted": "บีคอนนี้ไม่มีอยู่",
+      "back": "ย้อนกลับ"
+    },
+    "fallbackTitle": "บีคอนไม่มีชื่อ",
+    "info": {
+      "status": "สถานะ",
+      "capacity": "จำนวนรับสมัคร",
+      "audience": "ผู้ที่มองเห็น",
+      "retry": "โอกาสขอใหม่"
+    },
+    "location": {
+      "title": "ตำแหน่งนัดหมาย",
+      "visible": "จะให้ตำแหน่งละเอียดก่อนเข้าร่วม",
+      "hidden": "ที่อยู่จริงจะแชร์ในแชทหลังเข้าร่วม",
+      "openMap": "ดูบนแผนที่ ›"
+    },
+    "host": {
+      "settings": "ตั้งค่าบีคอน",
+      "settingsDesc": "เปลี่ยนชื่อ คำแนะนำ และการมองเห็น",
+      "members": "จัดการผู้เข้าร่วม",
+      "membersDesc": "ดูสมาชิกและนำออก",
+      "close": "ปิดบีคอน",
+      "closeDesc": "ปิดรับสมัครและปิดห้องแชท"
+    },
+    "requests": {
+      "title": "รอเข้าร่วม",
+      "empty": "ไม่มีคำขอที่รออยู่",
+      "messageTitle": "ข้อความขอเข้าร่วม",
+      "messageDesc": "ฝากข้อความถึงเจ้าของห้องได้ ไม่บังคับ",
+      "placeholder": "เช่น อยู่ใกล้ ๆ",
+      "send": "ส่งคำขอ",
+      "sending": "กำลังส่ง…",
+      "code": "รหัส {{code}}",
+      "temperature": "อุณหภูมิ {{temp}}°",
+      "rejectionCount": "เคยถูกปฏิเสธ {{count}} ครั้ง"
+    },
+    "alert": {
+      "editRoute": "โปรดตรวจสอบหน้าจอแก้ไข",
+      "membersRoute": "โปรดตรวจสอบหน้าจัดการสมาชิก",
+      "loginTitle": "ต้องเข้าสู่ระบบ",
+      "loginDesc": "ต้องเข้าสู่ระบบเพื่อเข้าร่วม",
+      "chatNotFound": "ไม่พบข้อมูลห้องแชท",
+      "cancelTitle": "ยกเลิกคำขอ",
+      "cancelDesc": "ยกเลิกคำขอเข้าร่วมหรือไม่?",
+      "keep": "คงไว้",
+      "cancelFailTitle": "ยกเลิกไม่สำเร็จ",
+      "cancelFail": "ยกเลิกคำขอไม่สำเร็จ",
+      "fullTitle": "เต็มแล้ว",
+      "fullDesc": "จำนวนรับสมัครเต็มแล้ว",
+      "forbiddenTitle": "จำกัดการเข้าร่วม",
+      "forbiddenDesc": "ไม่สามารถเข้าร่วมบีคอนนี้ได้",
+      "endedTitle": "ปิดรับสมัคร",
+      "endedDesc": "บีคอนนี้สิ้นสุดแล้ว",
+      "unavailableTitle": "แจ้งเตือน",
+      "unavailableDesc": "ขณะนี้เข้าร่วมไม่ได้",
+      "requestSentTitle": "ส่งคำขอแล้ว",
+      "requestSentDesc": "โปรดรอเจ้าของห้องอนุมัติ",
+      "requestFailTitle": "ส่งไม่สำเร็จ",
+      "requestFail": "ส่งคำขอไม่สำเร็จ",
+      "approveFailTitle": "อนุมัติไม่สำเร็จ",
+      "approveFail": "อนุมัติผู้เข้าร่วมไม่สำเร็จ",
+      "rejectFailTitle": "ปฏิเสธไม่สำเร็จ",
+      "rejectFail": "ปฏิเสธคำขอเข้าร่วมไม่สำเร็จ",
+      "closeTitle": "ปิดบีคอน",
+      "closeDesc": "ปิดรับสมัครและห้องแชทพร้อมกันหรือไม่?",
+      "closeAction": "ปิด",
+      "closeDoneTitle": "ปิดแล้ว",
+      "closeDoneDesc": "บีคอนสิ้นสุดแล้ว",
+      "closeFailTitle": "ปิดไม่สำเร็จ",
+      "closeFail": "ปิดบีคอนไม่สำเร็จ"
+    }
+  },
+  "members": {
+    "role": {
+      "host": "เจ้าของห้อง",
+      "mod": "ผู้ดูแล",
+      "member": "ผู้เข้าร่วม"
+    },
+    "tab": {
+      "members": "ผู้เข้าร่วม",
+      "requests": "คำขอ {{count}}"
+    },
+    "meta": {
+      "joined": "เข้าร่วม {{time}}",
+      "request": "ขอ {{time}} · เคยถูกปฏิเสธ {{count}} ครั้ง"
+    },
+    "hero": {
+      "titleFallback": "บีคอน",
+      "approval": "ต้องอนุมัติ",
+      "free": "เข้าร่วมอิสระ"
+    },
+    "empty": {
+      "members": "ยังไม่มีผู้เข้าร่วม",
+      "requests": "ไม่มีคำขอที่รออยู่"
+    },
+    "alert": {
+      "loadFailTitle": "โหลดไม่สำเร็จ",
+      "loadFail": "โหลดข้อมูลไม่สำเร็จ",
+      "kickTitle": "นำผู้เข้าร่วมออก",
+      "kickDesc": "นำ {{name}} ออกหรือไม่?",
+      "kickAction": "นำออก",
+      "alreadyHandled": "จัดการแล้วหรือไม่สามารถนำออกได้",
+      "kickFailTitle": "ไม่สำเร็จ",
+      "kickFail": "นำผู้เข้าร่วมออกไม่สำเร็จ",
+      "blockTitle": "บล็อกผู้เข้าร่วม",
+      "blockDesc": "บล็อกและนำ {{name}} ออกหรือไม่?\nผู้ใช้ที่ถูกบล็อกจะไม่ปรากฏอีก",
+      "blockFail": "บล็อกผู้เข้าร่วมไม่สำเร็จ",
+      "approveTitle": "อนุมัติการเข้าร่วม",
+      "approveDesc": "อนุมัติให้ {{name}} เข้าร่วมหรือไม่?",
+      "approveFailTitle": "อนุมัติไม่สำเร็จ",
+      "approveFail": "อนุมัติไม่สำเร็จ",
+      "rejectTitle": "ปฏิเสธการเข้าร่วม",
+      "rejectDesc": "ปฏิเสธคำขอของ {{name}} หรือไม่?",
+      "rejectFailTitle": "ปฏิเสธไม่สำเร็จ",
+      "rejectFail": "ปฏิเสธไม่สำเร็จ"
+    }
+  },
+  "main": {
+    "loadingMap": "กำลังโหลดแผนที่…",
+    "listButton": "รายการ",
+    "emptyRadius": "ไม่มีบีคอนให้แสดง",
+    "card": {
+      "noTitle": "ไม่มีชื่อ",
+      "meta": "ระยะ {{distance}}m · รัศมี {{radius}}m · {{entry}}",
+      "endsAfterMinute": "สิ้นสุดใน {{count}} นาที",
+      "endingSoon": "ใกล้สิ้นสุด",
+      "always": "ตลอดเวลา"
+    },
+    "toast": {
+      "movedHere": "อัปเดตเป็นตำแหน่งปัจจุบันแล้ว"
+    },
+    "error": {
+      "loadFail": "โหลดบีคอนใกล้เคียงไม่สำเร็จ",
+      "locationUnavailable": "ตรวจสอบตำแหน่งไม่ได้",
+      "noActiveBeacon": "ไม่มีบีคอนที่ใช้งานอยู่",
+      "moveFail": "อัปเดตตำแหน่งไม่สำเร็จ"
+    },
+    "accessibility": {
+      "detail": "ดูรายละเอียดบีคอน",
+      "create": "สร้างบีคอนใหม่"
+    }
+  },
+  "search": {
+    "title": "ค้นหา",
+    "placeholder": "การพบปะที่ต้องการ",
+    "distance": "ระยะทาง",
+    "target": "เป้าหมาย",
+    "age": "อายุ",
+    "quick": {
+      "friendsOnly": "เฉพาะเพื่อน",
+      "public": "สาธารณะ",
+      "tenMin": "10 นาที",
+      "twenties": "วัย 20"
+    },
+    "visibility": {
+      "title": "การมองเห็น",
+      "any": "ทั้งหมด",
+      "public": "สาธารณะ",
+      "publicFiltered": "สาธารณะ · ยกเว้นเพื่อน",
+      "friends": "เฉพาะเพื่อน",
+      "labels": "กลุ่ม",
+      "custom": "กำหนด"
+    },
+    "gender": {
+      "title": "เพศ",
+      "any": "ทั้งหมด",
+      "male": "ชาย",
+      "female": "หญิง",
+      "other": "อื่น ๆ"
+    },
+    "distancePreset": {
+      "fiveMin": "5 นาที",
+      "tenMin": "10 นาที",
+      "twentyMin": "20 นาที",
+      "near": "ใกล้"
+    },
+    "agePreset": {
+      "all": "ทั้งหมด",
+      "twenties": "วัย 20",
+      "thirties": "วัย 30",
+      "forties": "วัย 40",
+      "fiftyPlus": "50+"
+    },
+    "action": {
+      "reset": "รีเซ็ต",
+      "apply": "ใช้"
+    }
+  }
+}

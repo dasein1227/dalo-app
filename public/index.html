@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>CO·ONN</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #fbfaf7;
+        --card: #ffffff;
+        --text: #171717;
+        --muted: #74706a;
+        --hairline: rgba(23, 23, 23, 0.1);
+        --button: #171717;
+        --button-text: #ffffff;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 50% 0%, rgba(23, 23, 23, 0.045), transparent 34rem),
+          var(--bg);
+        color: var(--text);
+        font-family:
+          -apple-system,
+          BlinkMacSystemFont,
+          "SF Pro Display",
+          "SF Pro Text",
+          "Apple SD Gothic Neo",
+          "Noto Sans KR",
+          "Segoe UI",
+          sans-serif;
+      }
+
+      main {
+        width: min(100%, 520px);
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: max(36px, env(safe-area-inset-top)) 22px max(34px, env(safe-area-inset-bottom));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .card {
+        width: 100%;
+        padding: 34px 24px 26px;
+        border: 1px solid var(--hairline);
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(18px);
+        text-align: center;
+      }
+
+      .mark {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 20px;
+        border: 1px solid var(--hairline);
+        border-radius: 22px;
+        display: grid;
+        place-items: center;
+        font-size: 21px;
+        letter-spacing: -0.08em;
+        font-weight: 650;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 26px;
+        line-height: 1.15;
+        letter-spacing: -0.035em;
+        font-weight: 640;
+      }
+
+      p {
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.55;
+        letter-spacing: -0.015em;
+      }
+
+      .button {
+        appearance: none;
+        border: 0;
+        width: 100%;
+        margin-top: 26px;
+        padding: 15px 18px;
+        border-radius: 999px;
+        background: var(--button);
+        color: var(--button-text);
+        font-size: 15px;
+        line-height: 1;
+        font-weight: 620;
+        letter-spacing: -0.01em;
+        text-decoration: none;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .sub {
+        margin-top: 14px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="card" aria-label="CO·ONN friend link">
+        <div class="mark" aria-hidden="true">C·O</div>
+        <h1>CO·ONN 친구추가</h1>
+        <p>앱이 설치되어 있으면 CO·ONN에서 바로 열립니다.</p>
+        <a id="open-app" class="button" href="coonn://friends/add">앱에서 열기</a>
+        <p class="sub">앱이 열리지 않으면 CO·ONN에서 QR 스캔을 사용해 주세요.</p>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        function safeDecode(value) {
+          try {
+            return decodeURIComponent(String(value || "").replace(/\+/g, " ")).trim();
+          } catch (e) {
+            return String(value || "").trim();
+          }
+        }
+
+        function clean(value) {
+          return safeDecode(value).replace(/^\/+/, "").replace(/\/+$/, "").trim();
+        }
+
+        function classify(value) {
+          var normalized = clean(value);
+          if (!normalized) return null;
+
+          var lower = normalized.toLowerCase();
+          if (lower.indexOf("fc_") === 0) {
+            return { key: "friendCode", value: normalized.slice(3) };
+          }
+          if (lower.indexOf("friendcode_") === 0) {
+            return { key: "friendCode", value: normalized.slice("friendcode_".length) };
+          }
+          if (lower.indexOf("code_") === 0) {
+            return { key: "friendCode", value: normalized.slice("code_".length) };
+          }
+          if (lower.indexOf("fid_") === 0) {
+            return { key: "followId", value: normalized.slice(4) };
+          }
+          if (lower.indexOf("coonnid_") === 0) {
+            return { key: "followId", value: normalized.slice("coonnid_".length) };
+          }
+          if (lower.indexOf("uid_") === 0) {
+            return { key: "userId", value: normalized.slice(4) };
+          }
+          if (lower.indexOf("user_") === 0) {
+            return { key: "userId", value: normalized.slice(5) };
+          }
+
+          return { key: "userId", value: normalized };
+        }
+
+        function queryTarget() {
+          var params = new URLSearchParams(window.location.search || "");
+          var friendCode = params.get("friendCode") || params.get("friend_code") || params.get("code");
+          if (friendCode) return { key: "friendCode", value: clean(friendCode) };
+
+          var followId = params.get("followId") || params.get("follow_id") || params.get("coonnId") || params.get("coonn_id");
+          if (followId) return { key: "followId", value: clean(followId) };
+
+          var userId = params.get("userId") || params.get("user_id") || params.get("id");
+          if (userId) return classify(userId);
+
+          return null;
+        }
+
+        var path = window.location.pathname || "";
+        var match = path.match(/^\/add\/([^/?#]+)/);
+        var target = (match && match[1] ? classify(match[1]) : null) || queryTarget();
+        var openButton = document.getElementById("open-app");
+
+        if (target && target.value) {
+          var appUrl = "coonn://friends/add?" + target.key + "=" + encodeURIComponent(target.value) + "&source=web";
+          openButton.setAttribute("href", appUrl);
+
+          window.setTimeout(function () {
+            window.location.href = appUrl;
+          }, 350);
+        }
+      })();
+    </script>
+  </body>
+</html>

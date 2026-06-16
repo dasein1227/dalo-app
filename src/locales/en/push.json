@@ -1,0 +1,48 @@
+{
+  "channel": {
+    "social_name": "Social",
+    "social_description": "Friends and social alerts",
+    "chat_name": "Chat",
+    "chat_description": "Chat messages and conversation alerts"
+  },
+  "summary": {
+    "social_title": "CO·ONN",
+    "social_body": "New social alert",
+    "chat_title": "CO·ONN",
+    "chat_body": "New chat alert"
+  },
+  "actions": {
+    "read": "Read",
+    "reply": "Reply"
+  },
+  "common": {
+    "someone": "Someone",
+    "new_notification": "New alert",
+    "new_notification_body": "You have a new alert.",
+    "new_message": "New message"
+  },
+  "friend": {
+    "request_received_title": "Friend request",
+    "request_received_subtitle": "{{actor}}",
+    "request_received_body": "{{actor}} sent you a friend request"
+  },
+  "chat": {
+    "dm_title": "{{sender}}",
+    "dm_subtitle": "",
+    "dm_body_text": "{{message}}",
+    "dm_body_image": "Sent a photo",
+    "dm_body_video": "Sent a video",
+    "dm_body_audio": "Sent a voice message",
+    "dm_body_file": "Sent a file",
+    "dm_body_map": "Shared a location",
+    "group_title": "{{room}}",
+    "group_subtitle": "{{sender}}",
+    "group_body_text": "{{sender}}: {{message}}",
+    "group_body_image": "{{sender}} sent a photo",
+    "group_body_video": "{{sender}} sent a video",
+    "group_body_audio": "{{sender}} sent a voice message",
+    "group_body_file": "{{sender}} sent a file",
+    "group_body_map": "{{sender}} shared a location",
+    "reply_placeholder": "Reply…"
+  }
+}

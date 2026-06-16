@@ -1,0 +1,525 @@
+{
+  "home_title": "ตั้งค่า",
+  "title": "ตั้งค่า",
+  "version": "เวอร์ชันแอป",
+  "open": "เปิด",
+  "change": "เปลี่ยน",
+  "run": "เรียกใช้",
+  "logout": "ออกจากระบบ",
+  "logoutDone": "ออกจากระบบแล้ว",
+  "sections": {
+    "communication": "การสื่อสาร",
+    "general": "ทั่วไป",
+    "advanced": "ขั้นสูง",
+    "service_info": "บริการ",
+    "account": "บัญชี",
+    "notification": "การแจ้งเตือน",
+    "display_language": "หน้าจอและภาษา",
+    "location": "ตำแหน่ง",
+    "data": "ข้อมูล",
+    "support": "ช่วยเหลือ",
+    "info": "ข้อมูล"
+  },
+  "menus": {
+    "call": "โทร",
+    "etc": "อื่น ๆ",
+    "app_manage": "จัดการแอป",
+    "version": "เวอร์ชันแอป"
+  },
+  "alerts": {
+    "logout_title": "ออกจากระบบ",
+    "logout_desc": "การตั้งค่า ออกจากระบบไหม?",
+    "language_change_error": "เปลี่ยนภาษาไม่ได้",
+    "logout_fail": "ออกจากระบบไม่ได้"
+  },
+  "search": {
+    "title": "ค้นหาการตั้งค่า",
+    "soon": "ค้นหาการตั้งค่าจะเปิดใช้เร็ว ๆ นี้"
+  },
+  "me": {
+    "noName": "ไม่มีชื่อ",
+    "profileManage": "จัดการโปรไฟล์",
+    "loadingAccount": "กำลังตรวจสอบบัญชี"
+  },
+  "account": {
+    "title": "บัญชี",
+    "editProfile": "แก้ไขโปรไฟล์",
+    "profilePublicDefault": "แสดงโปรไฟล์ของฉันในบีคอนเป็นค่าเริ่มต้น",
+    "profilePublicHint": "โปรไฟล์ สาธารณะ",
+    "header_title": "บัญชี",
+    "section": {
+      "contact": "ติดต่อ",
+      "identity": "ตัวตน",
+      "visibility": "การมองเห็น",
+      "profile": "โปรไฟล์",
+      "account_management": "บัญชี"
+    },
+    "field": {
+      "phone": "โทรศัพท์",
+      "email": "อีเมล",
+      "id_label": "CO·ONN ID",
+      "friend_code": "รหัสเพื่อน",
+      "show_nickname": "แสดงชื่อเล่น",
+      "profile_photo": "รูปโปรไฟล์",
+      "nickname": "ชื่อเล่น"
+    },
+    "value": {
+      "not_registered": "ยังไม่ลงทะเบียน"
+    },
+    "badge": {
+      "verified": "ยืนยันแล้ว",
+      "verify": "ยืนยัน"
+    },
+    "placeholder": {
+      "id": "ID",
+      "friend_code": "รหัสเพื่อน",
+      "nickname": "ชื่อเล่น"
+    },
+    "help": {
+      "id_desc": "บัญชี",
+      "show_nickname_desc": "แสดงชื่อเล่นให้เพื่อนเห็น"
+    },
+    "error": {
+      "check_duplication": "บัญชี",
+      "id_taken": "มีผู้ใช้แล้ว",
+      "code_taken": "มีผู้ใช้แล้ว",
+      "check_failed": "ไม่สามารถดำเนินการบัญชี ล้มเหลวได้",
+      "invalid_id": "ตัวพิมพ์เล็ก ตัวเลข หรือขีดล่าง 2–30 ตัว",
+      "invalid_friend_code": "ตัวพิมพ์เล็ก ตัวเลข หรือขีดล่าง 2–30 ตัว",
+      "duplicate_exists": "บัญชี",
+      "duplicate_check_required": "จำเป็น",
+      "duplicate_check_retry": "รายการ",
+      "duplicate_value_retry": "บัญชี",
+      "nickname_required": "กรุณาใส่ชื่อเล่น",
+      "nickname_too_long": "ชื่อเล่นยาวได้สูงสุด 30 ตัวอักษร"
+    },
+    "alert": {
+      "check_required": "ต้องตรวจสอบ",
+      "save_success_title": "บันทึกแล้ว",
+      "save_success_desc": "บันทึกการตั้งค่าบัญชีแล้ว",
+      "save_fail_title": "บันทึกไม่สำเร็จ"
+    },
+    "action": {
+      "save": "การตั้งค่า บัญชี บันทึก",
+      "check_duplicate_short": "ตรวจสอบ",
+      "checking_short": "การตั้งค่า บัญชี",
+      "change_photo": "เปลี่ยนรูป",
+      "remove_photo": "ลบรูป"
+    },
+    "status": {
+      "available_short": "ใช้ได้",
+      "duplicate_short": "การตั้งค่า บัญชี"
+    },
+    "picker": {
+      "profile_photo": "เลือกรูป"
+    },
+    "withdrawal": {
+      "entryTitle": "ลบบัญชี",
+      "entryDescription": "ลบบัญชีและข้อมูลส่วนตัวของคุณ",
+      "noticeTitle": "โปรดตรวจสอบรายการเหล่านี้ก่อนดำเนินการต่อ",
+      "noticeMessage": "โปรไฟล์ เพื่อน และการตั้งค่าจะถูกลบ",
+      "noticeItemProfile": "ประวัติแชทบางส่วนอาจยังคงอยู่กับผู้เข้าร่วมอื่นในฐานะผู้ใช้ที่ถูกลบ",
+      "noticeItemChat": "คุณจะสมัครใหม่ด้วยบัญชีเดิมไม่ได้เป็นเวลา 7 วัน",
+      "noticeItemRejoin": "CO·ONN ID และรหัสเพื่อนจะใช้ซ้ำไม่ได้เป็นเวลา 30 วัน",
+      "noticeItemIdentifier": "ฉันตรวจสอบทั้งหมดแล้วและต้องการดำเนินการต่อ",
+      "noticeAcknowledge": "ถัดไป",
+      "continue": "ยกเลิก",
+      "cancel": "บอกเหตุผลที่คุณออก",
+      "surveyTitle": "ความคิดเห็นของคุณช่วยให้ CO·ONN ดีขึ้น",
+      "surveyMessage": "ดำเนินการต่อ",
+      "surveyAction": "กรอกเหตุผล",
+      "otherPlaceholder": "เลือกเหตุผล",
+      "reasonRequired": "กรอกเหตุผล",
+      "otherRequired": "กำลังโหลดเหตุผล",
+      "reasonsLoading": "โหลดเหตุผลไม่ได้",
+      "reasonsEmpty": "ยืนยันขั้นสุดท้าย",
+      "confirmTitle": "การเข้าถึงบัญชีจะหยุดทันที",
+      "confirmMessage": "พิมพ์ “{{keyword}}” ด้านล่าง",
+      "confirmInstruction": "ลบ",
+      "confirmKeyword": "ลบ",
+      "confirmPlaceholder": "ลบ",
+      "confirmAction": "ส่งคำขอลบแล้ว",
+      "completed": "ไม่สามารถลบบัญชีได้"
+    }
+  },
+  "privacy": {
+    "title": "ความเป็นส่วนตัว",
+    "header_title": "ความเป็นส่วนตัว",
+    "section": {
+      "profile": "โปรไฟล์",
+      "friend_req": "คำขอเป็นเพื่อน",
+      "activity": "กิจกรรม"
+    },
+    "field": {
+      "public_profile": "โปรไฟล์สาธารณะ",
+      "allow_search": "อนุญาตให้ค้นหา",
+      "show_nickname": "แสดงชื่อเล่น",
+      "show_location": "แสดงตำแหน่ง",
+      "last_active": "แสดงการใช้งานล่าสุด"
+    },
+    "help": {
+      "public_profile": "ผู้ใช้อื่นดูโปรไฟล์ของคุณได้",
+      "allow_search": "ค้นหา",
+      "show_nickname": "แสดงชื่อเล่นให้เพื่อนเห็น",
+      "show_location": "แสดงตำแหน่งกิจกรรมของคุณ",
+      "last_active": "แสดงเวลาที่ใช้งานล่าสุด"
+    },
+    "option": {
+      "all": "การตั้งค่า ความเป็นส่วนตัว ทั้งหมด",
+      "all_desc": "การตั้งค่า ความเป็นส่วนตัว ทั้งหมด",
+      "friends": "เพื่อนของเพื่อน",
+      "friends_desc": "การตั้งค่า ความเป็นส่วนตัว เพื่อน",
+      "none": "ไม่มีการตั้งค่า ความเป็นส่วนตัว ไม่มี",
+      "none_desc": "การตั้งค่า ความเป็นส่วนตัว ไม่มี"
+    },
+    "alert": {
+      "save_success": "บันทึกแล้ว",
+      "save_fail": "บันทึกไม่ได้",
+      "load_fail": "โหลดไม่ได้",
+      "login_required": "ต้องเข้าสู่ระบบ"
+    }
+  },
+  "radius": {
+    "title": "ขอบเขตย่าน",
+    "current": "ปัจจุบัน",
+    "desc": "การตั้งค่า",
+    "save_error": "บันทึกขอบเขตย่านไม่ได้"
+  },
+  "friends": {
+    "title": "เพื่อน",
+    "manage": "จัดการเพื่อน",
+    "caption": "บล็อก แนะนำ และการมองเห็น",
+    "soon": "เร็ว ๆ นี้"
+  },
+  "notification": {
+    "title": "การแจ้งเตือน",
+    "manage": "การแจ้งเตือน",
+    "caption": "พุช, แจ้งเตือนในแอป, เสียง",
+    "soon": "เร็ว ๆ นี้",
+    "section": {
+      "defaults": "ค่าเริ่มต้น",
+      "types": "ประเภท",
+      "quiet": "เวลาปิดเสียง",
+      "push_types": "ประเภทพุช",
+      "in_app": "แจ้งเตือนในแอป"
+    },
+    "field": {
+      "push": "การแจ้งเตือนพุช",
+      "preview": "ตัวอย่าง",
+      "sound": "เสียง",
+      "vibrate": "สั่น",
+      "chat": "แชต",
+      "system": "ประกาศและระบบ",
+      "marketing": "การตลาด"
+    },
+    "help": {
+      "push": "การแจ้งเตือนพุชทั้งหมด",
+      "preview": "แสดงเนื้อหาบนหน้าจอล็อก",
+      "chat_push": "พุชข้อความแชต",
+      "system_push": "ประกาศบริการและอัปเดตสำคัญ",
+      "marketing_push": "กิจกรรมและโปรโมชัน"
+    },
+    "action": {
+      "save": "การตั้งค่า การแจ้งเตือน บันทึก",
+      "open_system": "ตั้งค่าระบบ",
+      "cancel": "การตั้งค่า การแจ้งเตือน ยกเลิก",
+      "done": "เสร็จสิ้น"
+    },
+    "time": {
+      "start": "เริ่ม",
+      "end": "สิ้นสุด",
+      "hour": "ชม.",
+      "minute": "นาที",
+      "close": "ปิดตัวเลือกเวลา",
+      "select": "เลือก {{label}} {{value}}",
+      "start_time": "เวลาเริ่ม",
+      "end_time": "เวลาสิ้นสุด"
+    },
+    "alert": {
+      "table_missing_title": "ไม่พบตารางการตั้งค่า",
+      "table_missing_message": "สร้าง user_notification_settings",
+      "load_fail": "โหลดไม่ได้",
+      "time_invalid_title": "ตรวจสอบเวลา",
+      "time_invalid_message": "เลือกเวลาอีกครั้ง",
+      "save_success": "บันทึกแล้ว",
+      "save_fail": "บันทึกไม่สำเร็จ",
+      "open_settings_fail_title": "ไม่สามารถดำเนินการโอเพน การตั้งค่า ล้มเหลวได้",
+      "open_settings_fail_message": "เปิดการตั้งค่าระบบไม่ได้",
+      "login_required": "ต้องเข้าสู่ระบบ"
+    },
+    "in_app": {
+      "master": "แจ้งเตือนในแอป",
+      "master_help": "แสดงในกล่องแจ้งเตือนของแอป",
+      "group": {
+        "social": "โซเชียล",
+        "chat": "แชต",
+        "beacon": "Beacon",
+        "schedule": "กำหนดการ",
+        "post": "โพสต์"
+      },
+      "follow_created": "ผู้ติดตามใหม่",
+      "follow_created_help": "เมื่อมีคนติดตามคุณ",
+      "chat_reply": "ตอบกลับ",
+      "chat_reply_help": "เมื่อมีคนตอบกลับข้อความของคุณ",
+      "chat_mention": "กล่าวถึง",
+      "chat_mention_help": "เมื่อมีคนกล่าวถึงคุณ",
+      "beacon_join_request": "คำขอเข้าร่วม",
+      "beacon_join_request_help": "เมื่อมีคำขอเข้าร่วม Beacon",
+      "beacon_join_approved": "อนุมัติการเข้าร่วม",
+      "beacon_join_approved_help": "เมื่อการเข้าร่วม Beacon ได้รับอนุมัติ",
+      "beacon_friend_created": "Beacon จากเพื่อน",
+      "beacon_friend_created_help": "เมื่อเพื่อนสร้าง Beacon",
+      "schedule_created": "กำหนดการใหม่",
+      "schedule_created_help": "เมื่อมีการเพิ่มกำหนดการในห้องที่เข้าร่วม",
+      "schedule_updated": "เปลี่ยนกำหนดการ",
+      "schedule_updated_help": "เมื่อกำหนดการที่เข้าร่วมมีการเปลี่ยนแปลง",
+      "schedule_cancelled": "ยกเลิกกำหนดการ",
+      "schedule_cancelled_help": "เมื่อกำหนดการที่เข้าร่วมถูกยกเลิก",
+      "post_like": "ถูกใจ",
+      "post_like_help": "เมื่อโพสต์ของคุณได้รับการถูกใจ",
+      "post_comment": "ความคิดเห็น",
+      "post_comment_help": "เมื่อมีคนแสดงความคิดเห็นในโพสต์ของคุณ",
+      "post_reply": "ตอบกลับ",
+      "post_reply_help": "เมื่อมีคนตอบกลับความคิดเห็นของคุณ",
+      "post_mention": "กล่าวถึงในโพสต์",
+      "post_mention_help": "เมื่อมีคนกล่าวถึงคุณในโพสต์หรือความคิดเห็น"
+    }
+  },
+  "display": {
+    "title": "หน้าจอและภาษา"
+  },
+  "language": {
+    "title": "ภาษา",
+    "select": "เลือกภาษา",
+    "inUse": "(ใช้งานอยู่)"
+  },
+  "theme": {
+    "title": "ธีม",
+    "caption": "สว่าง / มืด",
+    "soon": "เร็ว ๆ นี้",
+    "header_title": "ธีม",
+    "section_style": "การตั้งค่า",
+    "mode": {
+      "system": "ระบบ",
+      "system_desc": "รายการ",
+      "light": "สว่าง",
+      "light_desc": "รายการ",
+      "dark": "มืด",
+      "dark_desc": "รายการ"
+    }
+  },
+  "chat": {
+    "title": "แชท"
+  },
+  "translate": {
+    "autoDefault": "แปลข้อความอัตโนมัติ",
+    "autoDefaultHint": "ใช้เป็นค่าเริ่มต้นสำหรับแชทใหม่",
+    "showOriginal": "แสดงต้นฉบับพร้อมคำแปล",
+    "showOriginalHint": "แสดง ต้นฉบับ"
+  },
+  "storage": {
+    "title": "ข้อมูลและพื้นที่จัดเก็บ",
+    "clearCache": "ล้างแคช",
+    "clearCacheHint": "ลบไฟล์ชั่วคราว",
+    "soon": "เร็ว ๆ นี้",
+    "section": {
+      "ratio": "สัดส่วนข้อมูล",
+      "rooms": "การตั้งค่า พื้นที่จัดเก็บ"
+    },
+    "summary": {
+      "total_media": "สื่อทั้งหมด",
+      "saved_count": "บันทึกแล้ว {{count}} รายการ"
+    },
+    "legend": {
+      "photo": "รูปภาพ",
+      "video": "พื้นที่จัดเก็บ วิดีโอ",
+      "audio": "เสียง",
+      "file": "ไฟล์",
+      "other": "อื่น ๆ"
+    },
+    "action": {
+      "delete_all": "ลบทั้งหมด",
+      "delete_all_with_size": "ทั้งหมด {{size}}",
+      "delete_room": "ลบ",
+      "scroll_top": "ด้านบน"
+    },
+    "empty": {
+      "title": "ไม่มีสื่อที่บันทึก",
+      "desc": "การตั้งค่า พื้นที่จัดเก็บ"
+    },
+    "alert": {
+      "load_fail": "โหลดไม่ได้",
+      "delete_fail": "ไม่สามารถดำเนินการพื้นที่จัดเก็บ ลบ ล้มเหลวได้",
+      "delete_all_title": "ลบสื่อทั้งหมด",
+      "delete_all_message": "พื้นที่จัดเก็บ ลบ ทั้งหมด",
+      "delete_room_title": "พื้นที่จัดเก็บ ลบ ห้อง {{room}}",
+      "delete_room_message": "พื้นที่จัดเก็บ ลบ ห้อง",
+      "delete_all_success": "ลบแล้ว",
+      "delete_room_success": "ลบข้อมูล {{room}} แล้ว"
+    },
+    "room": {
+      "fallback_title": "ห้องแชท {{id}}",
+      "delete_accessibility": "ลบข้อมูล {{room}}"
+    }
+  },
+  "support": {
+    "title": "ช่วยเหลือ",
+    "cs": "ศูนย์ช่วยเหลือ",
+    "notice": {
+      "title": "ประกาศ",
+      "eyebrow": "NOTICE",
+      "sectionTitle": "ประกาศ {{category}}",
+      "markAll": "อ่านทั้งหมด",
+      "markAllDone": "ทำเครื่องหมายว่าอ่านแล้ว",
+      "loadFail": "โหลดประกาศไม่ได้",
+      "readFail": "ทำเครื่องหมายว่าอ่านไม่ได้",
+      "markAllFail": "ทำเครื่องหมายว่าอ่านไม่ได้",
+      "emptyTitle": "ไม่มีประกาศ",
+      "emptyDesc": "ประกาศใหม่จะแสดงที่นี่",
+      "category": {
+        "normal": "ทั่วไป",
+        "important": "สำคัญ",
+        "legal": "กฎหมาย",
+        "security": "ความปลอดภัย"
+      }
+    },
+    "guide": "คู่มือ",
+    "soon": "เร็ว ๆ นี้",
+    "loading": "กำลังโหลด…",
+    "action": {
+      "ok": "OK"
+    },
+    "alert": {
+      "notice": "ประกาศ",
+      "error": "การตั้งค่า ช่วยเหลือ"
+    },
+    "center": {
+      "title": "ศูนย์ช่วยเหลือ",
+      "hero": "ต้องการให้ช่วยอะไร?",
+      "searchPlaceholder": "ค้นหา",
+      "faq": "คำถามที่พบบ่อย",
+      "categories": "ช่วยเหลือ ศูนย์",
+      "contactTitle": "ต้องการความช่วยเหลือไหม?",
+      "emailDesc": "ช่วยเหลือ ศูนย์ อีเมล",
+      "aiTitle": "AI ช่วยเหลือ",
+      "aiDesc": "ช่วยเหลือ ศูนย์",
+      "policies": "ข้อกำหนดและนโยบาย"
+    },
+    "contact": {
+      "title": "การตั้งค่า ช่วยเหลือ ติดต่อ",
+      "guide": "ช่วยเหลือ ติดต่อ คู่มือ",
+      "category": "หมวดหมู่",
+      "categoryLoading": "กำลังโหลด…",
+      "categoryPlaceholder": "เลือกหมวดหมู่",
+      "categorySelect": "หมวดหมู่",
+      "email": "ช่วยเหลือ ติดต่อ อีเมล",
+      "emailPlaceholder": "อีเมล",
+      "content": "ข้อความ",
+      "contentPlaceholder": "กรอกช่วยเหลือ ติดต่อ เนื้อหา",
+      "submit": "ช่วยเหลือ ติดต่อ",
+      "required": "กรอกช่วยเหลือ ติดต่อ จำเป็น",
+      "categoryRequired": "เลือกหมวดหมู่",
+      "loadFail": "ไม่สามารถดำเนินการติดต่อ โหลด ล้มเหลวได้",
+      "submitFail": "ส่งไม่ได้",
+      "successTitle": "ส่งแล้ว",
+      "successDesc": "ได้รับคำถามแล้ว"
+    },
+    "list": {
+      "all": "ทั้งหมด",
+      "common": "ทั่วไป",
+      "result": "ผลลัพธ์",
+      "empty": "ไม่มีผลลัพธ์"
+    },
+    "policy": {
+      "title": "ข้อกำหนดและนโยบาย",
+      "effectiveDate": "วันที่มีผล",
+      "summary": "สรุป",
+      "download": "ดาวน์โหลด",
+      "downloadStart": "นโยบาย ดาวน์โหลด เริ่ม",
+      "empty": "โหลดเนื้อหาไม่ได้",
+      "versions": "เวอร์ชันก่อนหน้า",
+      "behaviorInfoTitle": "นโยบาย ข้อมูล",
+      "behaviorInfoDesc": "นโยบาย ข้อมูล",
+      "userControlTitle": "นโยบาย ผู้ใช้",
+      "userControlDesc": "เปลี่ยนการตั้งค่าโฆษณาเฉพาะบุคคลได้ในแอป",
+      "version": "เวอร์ชัน",
+      "language": "ภาษา",
+      "loadFail": "ไม่สามารถดำเนินการนโยบาย โหลด ล้มเหลวได้",
+      "summaryEmpty": "ไม่มีช่วยเหลือ นโยบาย สรุป",
+      "downloadCancelledTitle": "ยกเลิกดาวน์โหลด",
+      "downloadCancelled": "ไม่ได้เลือกตำแหน่งบันทึก",
+      "downloadSuccessTitle": "นโยบาย ดาวน์โหลด สำเร็จ",
+      "downloadSuccess": "บันทึกเอกสารนโยบายแล้ว",
+      "downloadFailTitle": "ดาวน์โหลดไม่สำเร็จ",
+      "downloadFail": "บันทึกเอกสารนโยบายไม่ได้",
+      "privacyTitle": "ช่วยเหลือ นโยบาย ความเป็นส่วนตัว",
+      "termsTitle": "ข้อกำหนดการให้บริการ CO·ONN",
+      "marketingTitle": "ช่วยเหลือ นโยบาย"
+    },
+    "company": {
+      "ceo": "ผู้แทน",
+      "regNum": "เลขทะเบียนธุรกิจ",
+      "businessNum": "เลขธุรกิจจำหน่ายทางไปรษณีย์",
+      "address": "ที่อยู่",
+      "cs": "ช่วยเหลือ บริษัท",
+      "host": "ผู้ให้บริการโฮสติ้ง"
+    }
+  },
+  "labs": {
+    "title": "ทดลอง",
+    "features": "การตั้งค่า",
+    "caption": "ลองฟีเจอร์ใหม่ก่อนใคร",
+    "soon": "การตั้งค่า เร็ว ๆ นี้กำลังเตรียมพร้อม",
+    "subtitle": "ลองฟีเจอร์ใหม่ก่อนใคร",
+    "empty_title": "ไม่มีการตั้งค่า",
+    "empty_desc": "การตั้งค่า",
+    "note": "การตั้งค่า"
+  },
+  "admin": {
+    "title": "ผู้ดูแล",
+    "console": "คอนโซลผู้ดูแล"
+  },
+  "open_profiles": {
+    "title": "โอเพนโปรไฟล์",
+    "subtitle": "โอเพน โปรไฟล์ หัวข้อย่อย",
+    "header_title": "โอเพนโปรไฟล์",
+    "fallback_name": "โอเพนโปรไฟล์",
+    "default_badge": "ค่าเริ่มต้น",
+    "status_empty": "ไม่มีสถานะ",
+    "room": {
+      "fallback_title": "โอเพนแชท",
+      "used_count": "ใช้ในโอเพนแชท {{count}} ห้อง",
+      "empty": "ไม่มีโอเพน โปรไฟล์ ห้อง"
+    },
+    "empty": {
+      "title": "ไม่มีโอเพนโปรไฟล์",
+      "desc": "สร้างโปรไฟล์สำหรับโอเพนแชท"
+    },
+    "form": {
+      "create_title": "สร้างโอเพนโปรไฟล์",
+      "edit_title": "แก้ไขโอเพนโปรไฟล์",
+      "nickname": "ชื่อเล่น",
+      "status_message": "สถานะ",
+      "status_placeholder": "โอเพน โปรไฟล์",
+      "default_profile": "โอเพนโปรไฟล์เริ่มต้น",
+      "delete": "ลบโอเพนโปรไฟล์",
+      "pick_avatar": "เลือกรูปโปรไฟล์"
+    },
+    "alert": {
+      "load_fail": "โหลดโอเพนโปรไฟล์ไม่ได้",
+      "nickname_required": "ใส่ชื่อเล่น",
+      "create_fail": "สร้างไม่สำเร็จ",
+      "save_fail": "บันทึกไม่สำเร็จ",
+      "delete_title": "ลบโอเพนโปรไฟล์ไหม?",
+      "delete_used_desc": "โปรไฟล์เดิมในโอเพนแชทที่ใช้อยู่จะยังคงอยู่",
+      "delete_desc": "โอเพน โปรไฟล์ ลบ",
+      "delete_fail": "ลบไม่สำเร็จ"
+    },
+    "toast": {
+      "created": "สร้างโอเพนโปรไฟล์แล้ว",
+      "saved": "บันทึกแล้ว",
+      "deleted": "ลบแล้ว",
+      "photo_applied": "ใช้รูปภาพแล้ว"
+    }
+  }
+}

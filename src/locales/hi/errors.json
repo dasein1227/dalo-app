@@ -1,0 +1,16 @@
+{
+  "common": "त्रुटि",
+  "auth": {
+    "loginRequired": "लॉगिन आवश्यक है।"
+  },
+  "unknown": "एक त्रुटि हुई।",
+  "network": "नेटवर्क कनेक्शन जाँचें।",
+  "invalid_credentials": "ईमेल या पासवर्ड सही नहीं है।",
+  "oauth_cancelled": "लॉगिन रद्द किया गया।",
+  "provider_config": "प्रमाणीकरण प्रदाता सेटिंग्स जाँचें।",
+  "redirect_config": "Redirect URL सेटिंग्स जाँचें।",
+  "session_check_failed": "सेशन जाँचा नहीं जा सका।",
+  "sms_required": "सत्यापन कोड दर्ज करें।",
+  "phone_format": "फ़ोन नंबर अंतरराष्ट्रीय प्रारूप में दर्ज करें (+8210…)।",
+  "email_format": "ईमेल फ़ॉर्मैट सही नहीं है।"
+}

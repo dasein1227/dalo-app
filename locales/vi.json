@@ -1,0 +1,10 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "COONN",
+    "NSPhotoLibraryUsageDescription": "Quyền ảnh dùng để chọn ảnh hồ sơ, bài viết và trò chuyện.",
+    "NSPhotoLibraryAddUsageDescription": "Quyền thư viện ảnh dùng để lưu hình ảnh và media vào thiết bị.",
+    "NSLocationWhenInUseUsageDescription": "Vị trí dùng cho bài viết gần bạn, beacon và tính năng theo khoảng cách.",
+    "NSCameraUsageDescription": "Camera dùng để chụp ảnh hồ sơ, bài viết và trò chuyện.",
+    "NSMicrophoneUsageDescription": "Micro được dùng khi quay video."
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "title": "Editor de imagen",
+  "ratio_original": "Original",
+  "ratio_free": "Libre",
+  "rotate": "Girar",
+  "ratio": "Proporción",
+  "invert": "Horizontal/vertical",
+  "orientation": "Orientación",
+  "reset": "Restablecer",
+  "error_load_title": "Error",
+  "error_load_msg": "No se pudo cargar la imagen.",
+  "error_save_title": "Error al guardar",
+  "error_save_msg": "Inténtalo de nuevo más tarde."
+}

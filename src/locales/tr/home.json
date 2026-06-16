@@ -1,0 +1,183 @@
+{
+  "briefing_title": "Bugün",
+  "briefing_toggle_show": "Göster",
+  "briefing_toggle_hide": "Gizle",
+  "briefing_unread_chat": "Okunmamış sohbetler",
+  "briefing_nearby_beacon": "Yakındaki beacon’lar",
+  "briefing_new_friend_post": "Arkadaş gönderileri",
+  "briefing_new_follower": "Yeni takipçiler",
+  "briefing_count_unit": "",
+  "briefing_people_unit": "",
+  "tabs": {
+    "friends": "Arkadaşlar",
+    "following": "Takip",
+    "local": "Yerel"
+  },
+  "banner_headerTitle": "Yakında",
+  "banner_fallback_title": "Yakın öneriler",
+  "banner_fallback_desc": "Yakındaki yerler aranıyor",
+  "banner_default_headline": "Bugünün mekanı",
+  "banner_unknown_place": "Bilinmeyen yer",
+  "banner_status_open": "Aç",
+  "banner_status_closed": "Kapalı",
+  "banner_tag_fallback": "Önerilen",
+  "empty_feed": "Gösterilecek akış yok.",
+  "scroll_top": "Üste",
+  "briefing_nearby_beacon_title": "Yakındaki beacon’lar",
+  "briefing_today_schedule_title": "Plan",
+  "briefing_continue_chat_title": "Sohbete devam",
+  "briefing_near_news_title": "Yakın haberler",
+  "unknown_user": "Bilinmiyor",
+  "near_news": {
+    "filters": {
+      "all": "Tümü",
+      "post": "Akış",
+      "event": "Etkinlik",
+      "notice": "Duyuru"
+    },
+    "kind": {
+      "post": "Akış",
+      "event": "Etkinlik",
+      "notice": "Duyuru"
+    },
+    "kind_en": {
+      "post": "FEED",
+      "event": "EVENT",
+      "notice": "NOTICE"
+    },
+    "masthead_overline": "CO·ONN LOCAL JOURNAL",
+    "masthead_title": "NEARBY NEWS",
+    "edition_line": "LOCAL EDITION · {{distance}}",
+    "count_line": "FEED {{post}} · EVENT {{event}} · NOTICE {{notice}}",
+    "self": "Ben",
+    "unknown_user": "Bilinmiyor",
+    "unknown_place": "Yakın yer",
+    "distance_pending": "Mesafe kontrol ediliyor",
+    "just_now": "Az önce",
+    "minutes_ago": "{{value}} dk önce",
+    "hours_ago": "{{value}} sa önce",
+    "days_ago": "{{value}} gün önce",
+    "always": "Her zaman",
+    "until": "{{date}} tarihine kadar",
+    "ongoing": "Devam ediyor",
+    "category": {
+      "restaurant": "Restoran",
+      "cafe": "Kafe",
+      "bakery": "Fırın",
+      "market": "Market",
+      "drink": "Pub",
+      "store": "Mağaza"
+    },
+    "place": "Yer",
+    "nearby_place": "Yakın yer",
+    "nearby_feed": "Yakın akış",
+    "event_title": "Etkinlik",
+    "notice_title": "Duyuru",
+    "event_body": "Yeni bir etkinlik var.",
+    "notice_body": "Yeni bir duyuru yayımlandı.",
+    "load_error": "Yakın haberler yüklenemedi.",
+    "collection_title": "Yakın haberler",
+    "media_title": "Yakın haberler",
+    "empty_title": "Haber yok",
+    "empty_desc": "Yakındaki gönderiler ve mekan güncellemeleri burada görünür.",
+    "editing": "Sayfa hazırlanıyor",
+    "load_failed": "Yüklenemedi",
+    "retry": "Tekrar dene",
+    "local_note": "LOCAL NOTE",
+    "by_prefix": "BY "
+  },
+  "schedule_sheet": {
+    "weekdays": {
+      "sun": "Paz",
+      "mon": "Pzt",
+      "tue": "Sal",
+      "wed": "Çar",
+      "thu": "Per",
+      "fri": "Cum",
+      "sat": "Cmt"
+    },
+    "date_title": "{{day}}.{{month}} ({{weekday}})",
+    "period": {
+      "am": "ÖÖ",
+      "pm": "ÖS"
+    },
+    "time_range_cross_day": "{{start}} - {{date}} {{end}}",
+    "default_room_title": "Sohbet odası",
+    "participation": {
+      "joined": "Katıldı",
+      "pending": "Katılmadı"
+    },
+    "search_placeholder": {
+      "joined": "Katıldığınız planlarda ara",
+      "pending": "Uygun planlarda ara"
+    },
+    "load_error": "Planlar yüklenemedi.",
+    "people_count": "{{value}} kişi",
+    "default_title": "Plan",
+    "time_unknown": "Saat belli değil",
+    "today_title": "Plan",
+    "today_empty": "Bugün plan yok",
+    "count": "{{value}}",
+    "header_title": "Plan",
+    "empty": {
+      "load_failed_title": "Yüklenemedi",
+      "load_failed_desc": "Lütfen daha sonra tekrar kontrol edin.",
+      "joined_title": "Katıldığınız plan yok",
+      "joined_desc": "Katıldığınız planlar burada görünür.",
+      "pending_title": "Açık plan yok",
+      "pending_desc": "Uygun planlar burada görünür."
+    }
+  },
+  "notifications": {
+    "header_title": "Bildirimler",
+    "mark_all_read": "Tümünü okundu yap",
+    "follow_back": "Geri takip et",
+    "following": "Takip",
+    "retry": "Yeniden yükle",
+    "empty_title": "Bildirim yok",
+    "empty_desc": "Yeni güncellemeler burada görünür.",
+    "fallback_actor": "Biri",
+    "fallback_schedule": "Plan",
+    "fallback_beacon": "Beacon",
+    "fallback_room": "Sohbet odası",
+    "fallback_notification": "Yeni bildirim",
+    "sections": {
+      "today": "Bugün",
+      "recent": "Son",
+      "unread": "Okunmamış",
+      "earlier": "Daha önce",
+      "this_week": "Bu hafta",
+      "older": "Önceki",
+      "thisWeek": "Bu hafta"
+    },
+    "time": {
+      "just_now": "Az önce",
+      "minutes": "{{value}} dk",
+      "hours": "{{value}} sa",
+      "days": "{{value}} gün",
+      "weeks": "{{value}} hf",
+      "months": "{{value}} ay",
+      "years": "{{value}} yıl"
+    },
+    "copy": {
+      "others": " ve {{value}} kişi daha",
+      "follow_created": "{{name}} sizi takip etti",
+      "chat_reply_created": "{{name}} yanıtladı",
+      "chat_mention_created": "{{name}} sizden bahsetti",
+      "beacon_join_request_created": "{{name}} beacon’a katılmak istedi",
+      "beacon_join_approved": "Beacon katılım isteği onaylandı",
+      "beacon_friend_created": "{{name}} yeni bir beacon oluşturdu",
+      "schedule_created": "{{room}} · {{target}} eklendi",
+      "schedule_updated": "{{room}} · {{target}} güncellendi",
+      "schedule_cancelled": "{{room}} · {{target}} iptal edildi",
+      "post_like_grouped": "{{name}}{{others}} gönderinizi beğendi",
+      "post_comment_grouped": "{{name}}{{others}} yorum yaptı",
+      "post_reply_grouped": "{{name}}{{others}} yorumunuza yanıt verdi",
+      "post_mention_grouped": "{{name}}{{others}} sizden bahsetti"
+    },
+    "error": {
+      "load_failed": "Bildirimler yüklenemedi."
+    },
+    "loading_short": "…"
+  }
+}

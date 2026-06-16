@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1097940109639",
+    "project_id": "coonn-40e2c",
+    "storage_bucket": "coonn-40e2c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1097940109639:android:62801f4676090eb79f2462",
+        "android_client_info": {
+          "package_name": "com.geniestudio.coonn"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDNsNBVLsb-ofoSq-1EK-1trtb7iQ_Eso"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

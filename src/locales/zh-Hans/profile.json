@@ -1,0 +1,133 @@
+{
+  "view_title": "个人资料",
+  "edit_title": "编辑个人资料",
+  "nickname": "昵称",
+  "handle": "账号",
+  "status_message": "状态",
+  "public_default": "默认公开资料",
+  "save_done": "已保存。",
+  "no_name": "无名称",
+  "no_id": "未设置 ID",
+  "follow": "关注",
+  "following": "已关注",
+  "stat_posts": "帖子",
+  "stat_followers": "粉丝",
+  "stat_following": "关注",
+  "empty_posts": "暂无帖子",
+  "empty_posts_tab": "暂无帖子",
+  "swipe": {
+    "new_post": "＋ 新帖子",
+    "chat_1on1": "一对一聊天",
+    "chat_me": "给自己的聊天",
+    "call": "通话",
+    "more": "更多 →"
+  },
+  "alert": {
+    "setting_soon": "准备中。",
+    "call_friend_only_title": "无法通话",
+    "call_friend_only_desc": "仅向好友提供。",
+    "call_feature_soon": "准备中。",
+    "unfollow_title": "取消关注",
+    "unfollow_desc": "要取消关注吗？",
+    "keep": "保留",
+    "follow_fail": "关注失败。",
+    "unfollow_fail": "取消失败。",
+    "self_chat_fail": "无法开始聊天。"
+  },
+  "edit": {
+    "error_permission": "只能编辑自己的资料。",
+    "revert_title": "放弃更改",
+    "revert_msg": "要放弃更改吗？",
+    "revert_action": "取消",
+    "revert": "放弃更改",
+    "error_add_tab": "无法添加标签页。",
+    "confirm_delete_tab": "要删除“{{name}}”标签页吗？",
+    "error_save": "保存失败。",
+    "change_cover": "更换背景",
+    "status_placeholder": "输入状态",
+    "section_theme": "样式",
+    "theme_color": "主题色",
+    "font_color": "字体颜色",
+    "statusbar": "顶部栏",
+    "text_white": "白色文字",
+    "text_black": "黑色文字",
+    "section_tabs": "标签页管理",
+    "tab_all": "全部",
+    "tab_input_placeholder": "+ 新标签页",
+    "hue": "色相 (Hue)",
+    "brightness": "亮度 (Brightness)",
+    "apply": "应用",
+    "setting_tab": "“{{name}}”设置",
+    "move_up": "上移",
+    "move_down": "下移",
+    "visibility": "公开范围",
+    "current_vis": "当前：{{val}}",
+    "vis_public": "公开",
+    "vis_private": "仅自己",
+    "vis_custom": "自定义",
+    "vis_friends": "好友",
+    "vis_followers": "粉丝",
+    "picker_avatar": "选择头像",
+    "picker_cover": "选择背景照片"
+  },
+  "menu": {
+    "settings": "设置",
+    "message": "消息",
+    "unfollow": "取消关注",
+    "hide": "隐藏",
+    "hide_confirm": "要隐藏此用户吗？",
+    "block": "屏蔽",
+    "block_confirm": "要屏蔽此用户吗？",
+    "report": "举报"
+  },
+  "followList": {
+    "title": "关注",
+    "searchPlaceholder": "搜索昵称或 ID",
+    "searchHint": "输入搜索词",
+    "searchEmpty": "无搜索结果",
+    "retry": "重新加载",
+    "unfollowTitle": "取消关注",
+    "unfollowMessage": "要取消关注 {{name}} 吗？",
+    "unfollowAction": "取消",
+    "tab": {
+      "following": "关注中",
+      "followers": "粉丝",
+      "requests": "请求"
+    },
+    "list": {
+      "following": "关注列表",
+      "followers": "粉丝列表",
+      "requests": "关注请求"
+    },
+    "section": {
+      "outgoing": "发出的请求",
+      "incoming": "收到的请求"
+    },
+    "badge": {
+      "follower": "粉丝",
+      "pending": "请求中"
+    },
+    "action": {
+      "accept": "接受",
+      "decline": "拒绝"
+    },
+    "empty": {
+      "followingTitle": "暂无关注",
+      "followersTitle": "暂无粉丝",
+      "requestsTitle": "暂无请求",
+      "followingDesc": "关注感兴趣的人。",
+      "followersDesc": "分享你的个人资料。",
+      "requestsDesc": "发送或接受请求。"
+    },
+    "error": {
+      "loadFollowing": "无法加载关注列表。",
+      "loadFollowers": "无法加载粉丝列表。",
+      "loadRequests": "无法加载请求。",
+      "loadList": "无法加载列表。",
+      "unfollow": "取消失败。",
+      "cancelRequest": "请求取消失败。",
+      "acceptRequest": "请求接受失败。",
+      "rejectRequest": "请求拒绝失败。"
+    }
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "view_title": "Hồ sơ",
+  "edit_title": "Sửa hồ sơ",
+  "nickname": "Nickname",
+  "handle": "Handle",
+  "status_message": "Trạng thái",
+  "public_default": "Mặc định công khai hồ sơ",
+  "save_done": "Đã lưu.",
+  "no_name": "Không có tên",
+  "no_id": "Chưa đặt ID",
+  "follow": "Theo dõi",
+  "following": "Đang theo dõi",
+  "stat_posts": "Bài viết",
+  "stat_followers": "Người theo dõi",
+  "stat_following": "Đang theo dõi",
+  "empty_posts": "Không có bài viết",
+  "empty_posts_tab": "Không có bài viết",
+  "swipe": {
+    "new_post": "＋ Bài viết mới",
+    "chat_1on1": "Chat 1:1",
+    "chat_me": "Chat với tôi",
+    "call": "Gọi",
+    "more": "Thêm →"
+  },
+  "alert": {
+    "setting_soon": "Sắp có.",
+    "call_friend_only_title": "Không thể gọi",
+    "call_friend_only_desc": "Chỉ khả dụng với bạn bè.",
+    "call_feature_soon": "Sắp có.",
+    "unfollow_title": "Bỏ theo dõi",
+    "unfollow_desc": "Bỏ theo dõi?",
+    "keep": "Giữ lại",
+    "follow_fail": "Không theo dõi được.",
+    "unfollow_fail": "Không huỷ được.",
+    "self_chat_fail": "Không bắt đầu được chat."
+  },
+  "edit": {
+    "error_permission": "Chỉ có thể sửa hồ sơ của bạn.",
+    "revert_title": "Huỷ thay đổi",
+    "revert_msg": "Huỷ các thay đổi?",
+    "revert_action": "Huỷ",
+    "revert": "Huỷ thay đổi",
+    "error_add_tab": "Không thêm được tab.",
+    "confirm_delete_tab": "Xoá tab \"{{name}}\"?",
+    "error_save": "Không lưu được.",
+    "change_cover": "Đổi ảnh nền",
+    "status_placeholder": "Nhập trạng thái",
+    "section_theme": "Phong cách",
+    "theme_color": "Màu chủ đề",
+    "font_color": "Màu chữ",
+    "statusbar": "Thanh trên",
+    "text_white": "Chữ trắng",
+    "text_black": "Chữ đen",
+    "section_tabs": "Quản lý tab",
+    "tab_all": "Tất cả",
+    "tab_input_placeholder": "+ Tab mới",
+    "hue": "Màu sắc (Hue)",
+    "brightness": "Độ sáng (Brightness)",
+    "apply": "Áp dụng",
+    "setting_tab": "Cài đặt \"{{name}}\"",
+    "move_up": "Di chuyển lên",
+    "move_down": "Di chuyển xuống",
+    "visibility": "Phạm vi hiển thị",
+    "current_vis": "Hiện tại: {{val}}",
+    "vis_public": "Tất cả",
+    "vis_private": "Chỉ mình tôi",
+    "vis_custom": "Tuỳ chọn",
+    "vis_friends": "Bạn bè",
+    "vis_followers": "Người theo dõi",
+    "picker_avatar": "Chọn ảnh hồ sơ",
+    "picker_cover": "Chọn ảnh nền"
+  },
+  "menu": {
+    "settings": "Cài đặt",
+    "message": "Tin nhắn",
+    "unfollow": "Bỏ theo dõi",
+    "hide": "Ẩn",
+    "hide_confirm": "Ẩn người dùng này?",
+    "block": "Chặn",
+    "block_confirm": "Chặn người dùng này?",
+    "report": "Báo cáo"
+  },
+  "followList": {
+    "title": "Theo dõi",
+    "searchPlaceholder": "Tìm nickname hoặc ID",
+    "searchHint": "Nhập từ khoá",
+    "searchEmpty": "Không có kết quả",
+    "retry": "Tải lại",
+    "unfollowTitle": "Bỏ theo dõi",
+    "unfollowMessage": "Bỏ theo dõi {{name}}?",
+    "unfollowAction": "Huỷ",
+    "tab": {
+      "following": "Đang theo dõi",
+      "followers": "Người theo dõi",
+      "requests": "Yêu cầu"
+    },
+    "list": {
+      "following": "Danh sách đang theo dõi",
+      "followers": "Danh sách người theo dõi",
+      "requests": "Yêu cầu theo dõi"
+    },
+    "section": {
+      "outgoing": "Yêu cầu đã gửi",
+      "incoming": "Yêu cầu đã nhận"
+    },
+    "badge": {
+      "follower": "Người theo dõi",
+      "pending": "Đang yêu cầu"
+    },
+    "action": {
+      "accept": "Chấp nhận",
+      "decline": "Từ chối"
+    },
+    "empty": {
+      "followingTitle": "Chưa theo dõi ai",
+      "followersTitle": "Chưa có người theo dõi",
+      "requestsTitle": "Không có yêu cầu",
+      "followingDesc": "Hãy theo dõi người bạn quan tâm.",
+      "followersDesc": "Hãy chia sẻ hồ sơ của bạn.",
+      "requestsDesc": "Gửi hoặc chấp nhận yêu cầu."
+    },
+    "error": {
+      "loadFollowing": "Không tải được danh sách đang theo dõi.",
+      "loadFollowers": "Không tải được người theo dõi.",
+      "loadRequests": "Không tải được yêu cầu.",
+      "loadList": "Không tải được danh sách.",
+      "unfollow": "Không huỷ được.",
+      "cancelRequest": "Không huỷ được yêu cầu.",
+      "acceptRequest": "Không chấp nhận được yêu cầu.",
+      "rejectRequest": "Không từ chối được yêu cầu."
+    }
+  }
+}

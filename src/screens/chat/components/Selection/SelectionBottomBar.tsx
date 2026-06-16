@@ -1,5 +1,6 @@
 // src/screens/chat/components/Selection/SelectionBottomBar.tsx
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import type { ChatTheme } from '@/screens/chat/theme/chatTheme';
 
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export default function SelectionBottomBar({ theme, insetsBottom, count, onPressDelete }: Props) {
+  const { t } = useTranslation();
   const enabled = count > 0;
 
   return (
@@ -28,7 +30,7 @@ export default function SelectionBottomBar({ theme, insetsBottom, count, onPress
             },
           ]}
         >
-          <Text style={[styles.btnText, { color: theme.headerText }]}>삭제하기 {count}</Text>
+          <Text style={[styles.btnText, { color: theme.headerText }]}>{t('chat:selection.deleteCount', { count })}</Text>
         </Pressable>
       </View>
     </View>

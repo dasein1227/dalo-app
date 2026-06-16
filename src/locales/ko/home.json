@@ -1,0 +1,183 @@
+{
+  "briefing_title": "오늘",
+  "briefing_toggle_show": "펼치기",
+  "briefing_toggle_hide": "접기",
+  "briefing_unread_chat": "안 읽은 채팅",
+  "briefing_nearby_beacon": "주변 비콘",
+  "briefing_new_friend_post": "친구 게시물",
+  "briefing_new_follower": "새 팔로워",
+  "briefing_count_unit": "개",
+  "briefing_people_unit": "명",
+  "tabs": {
+    "friends": "친구",
+    "following": "팔로잉",
+    "local": "로컬"
+  },
+  "banner_headerTitle": "내 주변",
+  "banner_fallback_title": "주변 추천",
+  "banner_fallback_desc": "가까운 장소를 찾는 중",
+  "banner_default_headline": "오늘의 장소",
+  "banner_unknown_place": "알 수 없는 곳",
+  "banner_status_open": "영업중",
+  "banner_status_closed": "영업종료",
+  "banner_tag_fallback": "추천",
+  "empty_feed": "표시할 피드가 없습니다.",
+  "scroll_top": "맨 위로",
+  "briefing_nearby_beacon_title": "주변 비콘",
+  "briefing_today_schedule_title": "오늘 일정",
+  "briefing_continue_chat_title": "이어갈 대화",
+  "briefing_near_news_title": "근처 소식",
+  "unknown_user": "알 수 없음",
+  "near_news": {
+    "filters": {
+      "all": "전체",
+      "post": "피드",
+      "event": "이벤트",
+      "notice": "공지"
+    },
+    "kind": {
+      "post": "피드",
+      "event": "이벤트",
+      "notice": "공지"
+    },
+    "kind_en": {
+      "post": "FEED",
+      "event": "EVENT",
+      "notice": "NOTICE"
+    },
+    "masthead_overline": "CO·ONN LOCAL JOURNAL",
+    "masthead_title": "NEARBY NEWS",
+    "edition_line": "LOCAL EDITION · {{distance}}",
+    "count_line": "FEED {{post}} · EVENT {{event}} · NOTICE {{notice}}",
+    "self": "나",
+    "unknown_user": "알 수 없음",
+    "unknown_place": "주변 장소",
+    "distance_pending": "거리 확인 중",
+    "just_now": "방금 전",
+    "minutes_ago": "{{value}}분 전",
+    "hours_ago": "{{value}}시간 전",
+    "days_ago": "{{value}}일 전",
+    "always": "상시",
+    "until": "{{date}}까지",
+    "ongoing": "진행중",
+    "category": {
+      "restaurant": "음식점",
+      "cafe": "카페",
+      "bakery": "베이커리",
+      "market": "마켓",
+      "drink": "호프",
+      "store": "상점"
+    },
+    "place": "장소",
+    "nearby_place": "주변 장소",
+    "nearby_feed": "근처 피드",
+    "event_title": "이벤트",
+    "notice_title": "공지",
+    "event_body": "새 이벤트가 준비되어 있습니다.",
+    "notice_body": "새 안내가 올라왔습니다.",
+    "load_error": "근처 소식을 불러오지 못했습니다.",
+    "collection_title": "근처 소식",
+    "media_title": "근처 소식",
+    "empty_title": "소식 없음",
+    "empty_desc": "근처 피드와 장소 소식을 모아 보여드릴게요.",
+    "editing": "지면 편집 중",
+    "load_failed": "불러오지 못했습니다",
+    "retry": "다시 시도",
+    "local_note": "LOCAL NOTE",
+    "by_prefix": "BY "
+  },
+  "schedule_sheet": {
+    "weekdays": {
+      "sun": "일",
+      "mon": "월",
+      "tue": "화",
+      "wed": "수",
+      "thu": "목",
+      "fri": "금",
+      "sat": "토"
+    },
+    "date_title": "{{month}}월 {{day}}일 ({{weekday}})",
+    "period": {
+      "am": "오전",
+      "pm": "오후"
+    },
+    "time_range_cross_day": "{{start}} - {{date}} {{end}}",
+    "default_room_title": "채팅방",
+    "participation": {
+      "joined": "참여",
+      "pending": "참여 전"
+    },
+    "search_placeholder": {
+      "joined": "참여 일정 검색",
+      "pending": "참여 전 검색"
+    },
+    "load_error": "일정을 불러오지 못했습니다.",
+    "people_count": "{{value}}명",
+    "default_title": "일정",
+    "time_unknown": "시간 미정",
+    "today_title": "오늘 일정",
+    "today_empty": "오늘 일정 없음",
+    "count": "{{value}}개",
+    "header_title": "일정",
+    "empty": {
+      "load_failed_title": "불러오지 못했습니다",
+      "load_failed_desc": "잠시 후 다시 확인해 주세요.",
+      "joined_title": "참여 일정 없음",
+      "joined_desc": "참여한 일정이 여기에 표시됩니다.",
+      "pending_title": "참여 전 일정 없음",
+      "pending_desc": "참여할 수 있는 일정이 여기에 표시됩니다."
+    }
+  },
+  "notifications": {
+    "header_title": "알림",
+    "mark_all_read": "모두 읽음",
+    "follow_back": "맞팔로우",
+    "following": "팔로잉",
+    "retry": "다시 불러오기",
+    "empty_title": "알림 없음",
+    "empty_desc": "새 소식은 여기에 표시됩니다.",
+    "fallback_actor": "누군가",
+    "fallback_schedule": "일정",
+    "fallback_beacon": "비콘",
+    "fallback_room": "채팅방",
+    "fallback_notification": "새 알림",
+    "sections": {
+      "today": "오늘",
+      "recent": "최근",
+      "unread": "읽지 않음",
+      "earlier": "이전",
+      "this_week": "이번 주",
+      "older": "이전",
+      "thisWeek": "이번 주"
+    },
+    "time": {
+      "just_now": "방금",
+      "minutes": "{{value}}분",
+      "hours": "{{value}}시간",
+      "days": "{{value}}일",
+      "weeks": "{{value}}주",
+      "months": "{{value}}개월",
+      "years": "{{value}}년"
+    },
+    "copy": {
+      "others": " 외 {{value}}명",
+      "follow_created": "{{name}}님이 팔로우했습니다",
+      "chat_reply_created": "{{name}}님이 답장했습니다",
+      "chat_mention_created": "{{name}}님이 나를 언급했습니다",
+      "beacon_join_request_created": "{{name}}님이 비콘 참여를 요청했습니다",
+      "beacon_join_approved": "비콘 참여 승인",
+      "beacon_friend_created": "{{name}}님이 새 비콘을 만들었습니다",
+      "schedule_created": "{{room}} · {{target}} 일정 등록",
+      "schedule_updated": "{{room}} · {{target}} 일정 변경",
+      "schedule_cancelled": "{{room}} · {{target}} 일정 취소",
+      "post_like_grouped": "{{name}}님{{others}}이 내 게시물을 좋아합니다",
+      "post_comment_grouped": "{{name}}님{{others}}이 댓글을 남겼습니다",
+      "post_reply_grouped": "{{name}}님{{others}}이 내 댓글에 답글을 남겼습니다",
+      "post_mention_grouped": "{{name}}님{{others}}이 나를 언급했습니다"
+    },
+    "error": {
+      "load_failed": "알림을 불러오지 못했습니다."
+    },
+    "loading_short": "…"
+  }
+}

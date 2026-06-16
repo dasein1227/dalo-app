@@ -1,0 +1,14 @@
+{
+  "recent": "Recentes",
+  "select_photo": "Selecionar foto",
+  "max_select": "Até {{count}} fotos",
+  "processing_error": "Não foi possível processar.",
+  "select_to_edit": "Selecione uma foto para editar.",
+  "video_edit_warning": "Não é possível editar vídeos.",
+  "bundle_photos": "Enviar juntas",
+  "quality_settings": "Qualidade",
+  "quality_original": "Original",
+  "quality_standard": "Padrão",
+  "quality_low": "Leve",
+  "quality_high": "Alta qualidade"
+}

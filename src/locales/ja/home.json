@@ -1,0 +1,183 @@
+{
+  "briefing_title": "今日",
+  "briefing_toggle_show": "表示",
+  "briefing_toggle_hide": "閉じる",
+  "briefing_unread_chat": "未読チャット",
+  "briefing_nearby_beacon": "周辺ビーコン",
+  "briefing_new_friend_post": "友だち投稿",
+  "briefing_new_follower": "新しいフォロワー",
+  "briefing_count_unit": "件",
+  "briefing_people_unit": "人",
+  "tabs": {
+    "friends": "友だち",
+    "following": "フォロー中",
+    "local": "ローカル"
+  },
+  "banner_headerTitle": "周辺",
+  "banner_fallback_title": "周辺おすすめ",
+  "banner_fallback_desc": "近くの場所を探しています",
+  "banner_default_headline": "今日の場所",
+  "banner_unknown_place": "不明な場所",
+  "banner_status_open": "営業中",
+  "banner_status_closed": "営業終了",
+  "banner_tag_fallback": "おすすめ",
+  "empty_feed": "表示するフィードがありません。",
+  "scroll_top": "上へ",
+  "briefing_nearby_beacon_title": "周辺ビーコン",
+  "briefing_today_schedule_title": "予定",
+  "briefing_continue_chat_title": "続きの会話",
+  "briefing_near_news_title": "近くのニュース",
+  "unknown_user": "不明",
+  "near_news": {
+    "filters": {
+      "all": "すべて",
+      "post": "フィード",
+      "event": "イベント",
+      "notice": "お知らせ"
+    },
+    "kind": {
+      "post": "フィード",
+      "event": "イベント",
+      "notice": "お知らせ"
+    },
+    "kind_en": {
+      "post": "FEED",
+      "event": "EVENT",
+      "notice": "NOTICE"
+    },
+    "masthead_overline": "CO·ONN LOCAL JOURNAL",
+    "masthead_title": "NEARBY NEWS",
+    "edition_line": "LOCAL EDITION · {{distance}}",
+    "count_line": "FEED {{post}} · EVENT {{event}} · NOTICE {{notice}}",
+    "self": "自分",
+    "unknown_user": "不明",
+    "unknown_place": "周辺の場所",
+    "distance_pending": "距離確認中",
+    "just_now": "たった今",
+    "minutes_ago": "{{value}}分前",
+    "hours_ago": "{{value}}時間前",
+    "days_ago": "{{value}}日前",
+    "always": "常時",
+    "until": "{{date}}まで",
+    "ongoing": "進行中",
+    "category": {
+      "restaurant": "レストラン",
+      "cafe": "カフェ",
+      "bakery": "ベーカリー",
+      "market": "マーケット",
+      "drink": "パブ",
+      "store": "ショップ"
+    },
+    "place": "場所",
+    "nearby_place": "周辺の場所",
+    "nearby_feed": "近くのフィード",
+    "event_title": "イベント",
+    "notice_title": "お知らせ",
+    "event_body": "新しいイベントがあります。",
+    "notice_body": "新しいお知らせが投稿されました。",
+    "load_error": "近くのニュースを読み込めませんでした。",
+    "collection_title": "近くのニュース",
+    "media_title": "近くのニュース",
+    "empty_title": "ニュースなし",
+    "empty_desc": "近くの投稿と店舗の更新をここに表示します。",
+    "editing": "紙面編集中",
+    "load_failed": "読み込めませんでした",
+    "retry": "再試行",
+    "local_note": "LOCAL NOTE",
+    "by_prefix": "BY "
+  },
+  "schedule_sheet": {
+    "weekdays": {
+      "sun": "日",
+      "mon": "月",
+      "tue": "火",
+      "wed": "水",
+      "thu": "木",
+      "fri": "金",
+      "sat": "土"
+    },
+    "date_title": "{{month}}月{{day}}日（{{weekday}}）",
+    "period": {
+      "am": "午前",
+      "pm": "午後"
+    },
+    "time_range_cross_day": "{{start}} - {{date}} {{end}}",
+    "default_room_title": "チャットルーム",
+    "participation": {
+      "joined": "参加中",
+      "pending": "参加前"
+    },
+    "search_placeholder": {
+      "joined": "参加中の予定を検索",
+      "pending": "参加前の予定を検索"
+    },
+    "load_error": "予定を読み込めませんでした。",
+    "people_count": "{{value}}人",
+    "default_title": "予定",
+    "time_unknown": "時間未定",
+    "today_title": "予定",
+    "today_empty": "今日の予定なし",
+    "count": "{{value}}件",
+    "header_title": "予定",
+    "empty": {
+      "load_failed_title": "読み込めませんでした",
+      "load_failed_desc": "しばらくしてから再度確認してください。",
+      "joined_title": "参加中の予定なし",
+      "joined_desc": "参加した予定がここに表示されます。",
+      "pending_title": "参加前の予定なし",
+      "pending_desc": "参加できる予定がここに表示されます。"
+    }
+  },
+  "notifications": {
+    "header_title": "通知",
+    "mark_all_read": "すべて既読",
+    "follow_back": "フォローバック",
+    "following": "フォロー中",
+    "retry": "再読み込み",
+    "empty_title": "通知なし",
+    "empty_desc": "新しいお知らせがここに表示されます。",
+    "fallback_actor": "誰か",
+    "fallback_schedule": "予定",
+    "fallback_beacon": "通知",
+    "fallback_room": "チャットルーム",
+    "fallback_notification": "新しい通知",
+    "sections": {
+      "today": "今日",
+      "recent": "最近",
+      "unread": "未読",
+      "earlier": "以前",
+      "this_week": "今週",
+      "older": "以前",
+      "thisWeek": "今週"
+    },
+    "time": {
+      "just_now": "たった今",
+      "minutes": "{{value}}分",
+      "hours": "{{value}}時間",
+      "days": "{{value}}日",
+      "weeks": "{{value}}週",
+      "months": "{{value}}か月",
+      "years": "{{value}}年"
+    },
+    "copy": {
+      "others": " ほか{{value}}人",
+      "follow_created": "{{name}}さんがフォローしました",
+      "chat_reply_created": "{{name}}さんが返信しました",
+      "chat_mention_created": "{{name}}さんがあなたをメンションしました",
+      "beacon_join_request_created": "{{name}}さんがビーコン参加をリクエストしました",
+      "beacon_join_approved": "ビーコン参加が承認されました",
+      "beacon_friend_created": "{{name}}さんが新しいビーコンを作成しました",
+      "schedule_created": "{{room}} · {{target}}の予定を作成",
+      "schedule_updated": "{{room}} · {{target}}の予定を更新",
+      "schedule_cancelled": "{{room}} · {{target}}の予定をキャンセル",
+      "post_like_grouped": "{{name}}さん{{others}}が投稿にいいねしました",
+      "post_comment_grouped": "{{name}}さん{{others}}がコメントしました",
+      "post_reply_grouped": "{{name}}さん{{others}}があなたのコメントに返信しました",
+      "post_mention_grouped": "{{name}}さん{{others}}があなたをメンションしました"
+    },
+    "error": {
+      "load_failed": "通知を読み込めませんでした。"
+    },
+    "loading_short": "…"
+  }
+}

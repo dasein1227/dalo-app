@@ -1,0 +1,1293 @@
+{
+  "title": "聊天",
+  "send": "发送",
+  "attach": "文件",
+  "gallery": "相册",
+  "invite": "邀请",
+  "manage": "管理",
+  "members": "成员",
+  "placeholder": "输入消息…",
+  "date": {
+    "today": "今天",
+    "yesterday": "昨天",
+    "separatorLabel": "{{year}}年{{month}}月{{day}}日 {{weekday}}星期",
+    "floatingLabel": "{{year}}.{{month}}.{{day}} {{weekday}}"
+  },
+  "all": "全部",
+  "and_others_n": "另 N 位",
+  "others_suffix": "等",
+  "anonymous": "匿名",
+  "message": "消息",
+  "message_search": "搜索消息",
+  "message_send": "发送消息",
+  "message_send_failed": "消息发送失败",
+  "message_delete_failed": "无法删除消息。",
+  "message_deleted": "消息已删除。",
+  "new_message_one": "1 条新消息",
+  "new_messages_count": "{{count}} 条新消息",
+  "chat_with_me": "与自己聊天",
+  "self_badge": "我",
+  "chat_room_title": "聊天室",
+  "one_to_one_chat": "一对一聊天",
+  "group_chat_title": "群聊",
+  "open_chat_title": "公开聊天",
+  "beacon_chat_title": "Beacon 聊天",
+  "room_not_found": "房间信息不可用。",
+  "chat_room_not_found": "找不到聊天室。",
+  "conversation_partner": "聊天对象",
+  "audio_send_failed": "语音发送失败",
+  "video": "视频",
+  "photo": "照片",
+  "file_label": "文件",
+  "open_file": "打开文件",
+  "play_video": "播放视频",
+  "voice_message": "语音消息",
+  "share_location": "共享位置",
+  "map_location_shared_title": "已共享位置",
+  "map_tap_to_open": "点按打开地图。",
+  "cannot_open_map": "无法打开地图。",
+  "no_coordinate_info": "无坐标信息",
+  "send_failed": "发送失败",
+  "share": "分享",
+  "share_failed": "分享失败",
+  "delete_failed": "删除失败",
+  "upload_failed": "上传失败",
+  "selection_mode": "选择模式",
+  "selection_mode_hint": "点按消息进行删除。",
+  "selection_clear": "清除选择",
+  "delete_dialog_title": "删除消息",
+  "delete_dialog_desc": "选择删除方式。",
+  "delete_for_everyone": "为所有人删除",
+  "delete_hide_for_everyone": "对所有人隐藏",
+  "delete_for_me": "仅为我删除",
+  "delete_for_me_hint": "所选消息只能从你这边删除。",
+  "reply": "回复",
+  "reply_to_me": "回复我的消息",
+  "reply_to_user": "回复 {{nickname}}",
+  "msg_deleted_by_user": "{{nickname}} 删除了一条消息。",
+  "notice": "公告",
+  "notice_coming_soon": "即将推出。",
+  "korean_label": "韩语",
+  "auto_translate_paid_only": "自动翻译可在 Standard 或 Premium 中使用。",
+  "translation_paid_only": "翻译仅限付费会员使用。",
+  "premium_only": "仅限 Premium",
+  "premium_only_feature_hint": "Premium 可用。",
+  "tone_neutral": "中性",
+  "tone_casual": "轻松",
+  "tone_formal": "正式",
+  "tone_business": "商家",
+  "tone_playful": "活泼",
+  "tone_change_premium_only": "语气设置仅 Premium 可用。",
+  "tone_premium_only_hint": "Premium 翻译可用。",
+  "login_required": "需要登录。",
+  "no_permission_send_rls": "你没有发送消息的权限。(RLS)\n",
+  "rls_help_chat_members": "→ 请确认你已加入 chat_members，并检查 chat_messages 策略。",
+  "search_placeholder": "输入搜索词",
+  "search_result_count": "{{count}} 条结果",
+  "show_original": "查看原文",
+  "show_translation": "查看译文",
+  "translating": "翻译中…",
+  "input": {
+    "placeholder": "发送消息",
+    "placeholderLong": "输入消息…"
+  },
+  "hold_to_unlock": "项目",
+  "error": {
+    "loginRequired": "需要登录。",
+    "roomNotFound": "找不到聊天室。",
+    "createRoomTitle": "无法打开聊天室。",
+    "createRoomMessage": "创建房间消息"
+  },
+  "sheet": {
+    "moreActions": "项目",
+    "media": "照片/视频",
+    "file": "文件",
+    "location": "共享位置",
+    "inviteFriend": "邀请好友",
+    "inviteLink": "邀请链接",
+    "translate": "项目"
+  },
+  "translate": {
+    "title": "标题",
+    "current_lang_prefix": "当前：{{code}}",
+    "tone_label": "语气",
+    "toneNeutral": "中性",
+    "toneNeutralDesc": "自然的默认翻译",
+    "toneCasual": "轻松",
+    "toneCasualDesc": "适合朋友聊天",
+    "toneFormal": "正式",
+    "toneFormalDesc": "礼貌得体",
+    "toneBusiness": "商家",
+    "toneBusinessDesc": "适合工作、邮件和报告",
+    "tonePlayful": "活泼",
+    "tonePlayfulDesc": "适合轻松玩笑和梗"
+  },
+  "unknown": "未知",
+  "voice": "语音",
+  "list": {
+    "tab": {
+      "chat": "聊天",
+      "open": "打开",
+      "beacon": "Beacon",
+      "business": "商家"
+    },
+    "empty": {
+      "chatTitle": "暂无聊天",
+      "chatSub": "向朋友发起聊天。",
+      "openTitle": "暂无公开聊天",
+      "openSub": "发现感兴趣的话题。",
+      "beaconTitle": "暂无已加入的 Beacon",
+      "beaconSub": "查找附近的 Beacon。",
+      "businessTitle": "暂无商家聊天",
+      "businessSub": "咨询记录会显示在这里。"
+    },
+    "leaveConfirmTitle": "离开聊天？",
+    "leaveConfirmMessage": "此聊天将从列表中消失。",
+    "leaveConfirmAction": "离开"
+  },
+  "menu": {
+    "title": "聊天菜单",
+    "joinedDate": "已参加 {{date}}",
+    "media": "照片/视频",
+    "mediaEmpty": "最近媒体会显示在这里。",
+    "noticeSchedule": "公告和日程",
+    "me": "我"
+  },
+  "membersScreen": {
+    "title": "成员",
+    "loading": "加载中…",
+    "empty": "暂无成员",
+    "owner": "房主",
+    "participant": "参加者",
+    "remove": "移除",
+    "removeTitle": "移除",
+    "removeMessage": "要移除 {{name}} 吗？",
+    "loadFail": "无法加载。",
+    "noName": "无名称"
+  },
+  "inviteScreen": {
+    "title": "邀请好友",
+    "roomMissingTitle": "房间信息缺失",
+    "roomMissingMessage": "请重新进入后再试。",
+    "tryAgain": "项目",
+    "loadFailTitle": "无法加载好友。",
+    "selectFriend": "请选择好友。",
+    "selectForAdd": "请选择要添加的好友。",
+    "selectForNewGroup": "请选择一起加入的好友。",
+    "addSuccessTitle": "好友已添加。",
+    "addSuccessMessage": "已添加 {{count}} 人。",
+    "addFailTitle": "无法添加好友。",
+    "createFailTitle": "无法创建群聊。",
+    "friendRowAdd": "添加到当前群组",
+    "friendRowNewGroup": "加入新群组",
+    "groupAddTitle": "添加好友到群组",
+    "newGroupTitle": "新建群聊",
+    "groupAddDesc": "将所选好友添加到当前群组。",
+    "newGroupDesc": "与所选好友创建新群组。",
+    "loading": "正在加载好友",
+    "emptyTitle": "暂无可邀请好友",
+    "emptyDesc": "已在房间中的好友会被排除。",
+    "addCount": "添加 {{count}} 人",
+    "makeGroupCount": "与 {{count}} 人建群",
+    "noName": "无名称",
+    "groupFallbackTitle": "群聊",
+    "groupTitleWithOthers": "{{names}} 等 {{count}} 人"
+  },
+  "roomEdit": {
+    "title": "聊天室信息",
+    "nameLabel": "聊天室名称",
+    "hidePhoto": "隐藏照片",
+    "hidePhotoDesc": "在列表中显示默认图片。",
+    "helperLine1": "你设置的照片和名称仅自己可见。",
+    "helperLine2": "房间编辑",
+    "alertTitle": "公告",
+    "unhideBeforeChange": "请先关闭隐藏照片后再更改。",
+    "saveFail": "保存失败"
+  },
+  "roomData": {
+    "title": "数据管理",
+    "ratioTitle": "按类型统计",
+    "noMedia": "无已保存媒体",
+    "savedCount": "已保存 {{value}}",
+    "deleteAllWithSize": "删除全部媒体（{{size}}）",
+    "photoData": "照片数据",
+    "videoData": "视频数据",
+    "audioData": "语音数据",
+    "fileData": "文件数据",
+    "storageCenter": "房间数据",
+    "loadFail": "无法加载数据信息。",
+    "actionFail": "无法完成操作。",
+    "clear": {
+      "photoTitle": "删除照片数据",
+      "photoMessage": "删除本机保存的照片数据。消息和相册内容会保留。",
+      "photoSuccess": "照片数据已删除。",
+      "videoTitle": "删除视频数据",
+      "videoMessage": "删除本机保存的视频数据。消息和相册内容会保留。",
+      "videoSuccess": "视频数据已删除。",
+      "audioTitle": "删除语音数据",
+      "audioMessage": "删除本机保存的语音数据。消息会保留。",
+      "audioSuccess": "语音数据已删除。",
+      "fileTitle": "删除文件数据",
+      "fileMessage": "删除本机保存的文件数据。消息会保留。",
+      "fileSuccess": "文件数据已删除。",
+      "allTitle": "删除全部媒体",
+      "allMessage": "删除本机保存的照片、视频、语音和文件。消息和相册内容会保留。",
+      "allSuccess": "媒体数据已删除。"
+    }
+  },
+  "collection": {
+    "title": "标题",
+    "count": "{{count}} 个",
+    "total": "共 {{value}}",
+    "tabs": {
+      "links": "链接",
+      "schedules": "日程",
+      "bookmarks": "书签"
+    },
+    "empty": {
+      "media": "暂无照片或视频",
+      "files": "暂无文件",
+      "links": "暂无链接",
+      "notices": "暂无公告",
+      "schedules": "暂无日程",
+      "bookmarks": "暂无书签"
+    },
+    "noDate": "暂无日期",
+    "tapToView": "项目",
+    "bookmarkMissingMessage": "此设备上找不到该消息。",
+    "scheduleEmptyBody": "暂无日程内容。",
+    "secureRecovery": {
+      "completedBody": "历史安全密钥已导入。",
+      "rejectedBody": "历史安全密钥请求已被拒绝。"
+    },
+    "scheduleStatus": {
+      "cancelled": "已取消",
+      "completed": "已完成",
+      "joined": "已参加",
+      "joinedOngoing": "已参加"
+    },
+    "section": {
+      "latestNotice": "最新公告",
+      "previousNotice": "历史公告",
+      "activeSchedules": "进行中/招募中",
+      "closedSchedules": "已完成/已取消"
+    }
+  },
+  "settings": {
+    "title": "聊天室设置",
+    "memberCount": "{{count}} 人",
+    "startedAt": "开始于 {{date}}",
+    "inputLock": "输入框锁定",
+    "theme": {
+      "title": "聊天室主题",
+      "default": "默认",
+      "byRoomType": "按房间类型"
+    },
+    "themePreview": {
+      "other": "好的",
+      "mine": "知道了"
+    },
+    "translation": {
+      "title": "翻译设置"
+    },
+    "sound": {
+      "title": "通知音",
+      "default": "默认",
+      "clear": "设置",
+      "calm": "平静",
+      "short": "短促",
+      "soft": "柔和",
+      "quiet": "安静",
+      "deep": "深沉",
+      "light": "浅色",
+      "mute": "静音"
+    },
+    "data": {
+      "section": "数据",
+      "manage": "管理数据"
+    },
+    "export": {
+      "title": "导出聊天",
+      "message": "将本机保存的聊天导出为文本文件。",
+      "saveFile": "保存文件",
+      "share": "分享",
+      "saveSuccess": "已保存为文件。",
+      "shareSuccess": "已打开分享界面。",
+      "saveCancelled": "已取消保存。",
+      "fail": "无法导出。",
+      "deletedMessage": "[已删除的消息]",
+      "secureExcluded": "[安全消息 - 已排除]",
+      "imageLabel": "[图片]",
+      "videoLabel": "[视频]",
+      "audioLabel": "[语音]",
+      "fileLabel": "[文件]",
+      "unknownSender": "未知",
+      "meSender": "我",
+      "userSender": "设置导出",
+      "fileTitle": "CO·ONN 聊天导出",
+      "roomLine": "聊天室：{{roomTitle}}",
+      "exportedAtLine": "导出时间：{{exportedAt}}",
+      "noteLocal": "※ 此文件基于本机保存的聊天。",
+      "noteText": "※ 你的消息按原文导出；对方消息按当前显示文本导出。",
+      "noteSecure": "※ 安全消息正文和密钥数据不会导出。",
+      "noteGallery": "※ 保存到相册的文件与应用缓存分开管理。",
+      "attachmentLine": "- 附件：{{type}}{{fileNamePart}}{{mimePart}}",
+      "shareDialogTitle": "分享聊天"
+    },
+    "leave": {
+      "title": "退出聊天室",
+      "action": "退出",
+      "rejectInvite": "拒绝邀请并退出",
+      "reportAndLeave": "举报并退出",
+      "groupMessage": "你可以退出房间或拒绝邀请。",
+      "reportMessage": "你可以退出或举报此房间。",
+      "defaultMessage": "要退出这个聊天室吗？它会从聊天列表中消失。",
+      "fail": "无法退出聊天室。",
+      "selfBlocked": "无法退出与自己的聊天。"
+    },
+    "secure": {
+      "section": "安全密钥",
+      "me": "我",
+      "peer": "设置",
+      "authCancelled": "认证已取消。",
+      "decline": "拒绝",
+      "newKey": "创建新安全密钥",
+      "newKeyDesc": "创建之后使用的新密钥。",
+      "newKeyConfirmTitle": "要创建新安全密钥吗？",
+      "newKeyConfirmMessage": "之后将使用新密钥，历史密钥会保留。",
+      "create": "创建",
+      "newKeySuccessTitle": "新安全密钥已创建",
+      "newKeySuccessMessage": "之后将使用安全密钥 epoch {{epoch}} 加密。",
+      "newKeyFailTitle": "密钥创建失败",
+      "newKeyFail": "无法创建新安全密钥。",
+      "historyRequest": "请求历史密钥",
+      "historyRequestDesc": "请求历史消息密钥。",
+      "historyRequestConfirmTitle": "要请求历史安全密钥吗？",
+      "historyRequestConfirmMessage": "向聊天对象请求历史消息密钥。",
+      "request": "请求",
+      "historyRequestSuccessTitle": "请求已发送",
+      "historyRequestSuccessMessage": "已向 {{count}} 人发送请求。",
+      "historyRequestEmpty": "没有可请求的聊天对象。",
+      "historyRequestFailTitle": "请求失败",
+      "historyRequestFail": "无法请求历史安全密钥。",
+      "claimApproved": "导入已批准密钥",
+      "claimApprovedDesc": "保存已批准的历史密钥。",
+      "claimSuccessTitle": "安全密钥已导入",
+      "claimSuccessMessage": "已保存 {{imported}} 个 · 已有 {{skipped}} 个{{conflictText}}",
+      "claimFailTitle": "导入失败",
+      "claimFail": "无法导入已批准的安全密钥。",
+      "incomingRequestTitle": "{{name}} 请求历史安全密钥",
+      "shareApprovedDesc": "批准后将共享历史密钥。",
+      "historyShareConfirmTitle": "要共享历史安全密钥吗？",
+      "historyShareConfirmMessage": "要向 {{name}} 共享历史安全密钥吗？",
+      "historyShareSuccessTitle": "已分享",
+      "historyShareSuccessMessage": "已共享给 {{name}}。",
+      "historyShareFailTitle": "分享失败",
+      "historyShareFail": "无法分享历史安全密钥。",
+      "historyRejectConfirmTitle": "要拒绝请求吗？",
+      "historyRejectConfirmMessage": "要拒绝 {{name}} 的请求吗？",
+      "rejectSuccessTitle": "设置",
+      "rejectSuccessMessage": "已拒绝 {{name}} 的请求。",
+      "rejectFailTitle": "拒绝失败",
+      "rejectFail": "无法拒绝历史安全密钥请求。",
+      "backupSection": "安全密钥备份",
+      "backup": "备份安全密钥",
+      "backupSummary": "已备份 · {{rooms}} 个房间 · {{keys}} 个密钥",
+      "noBackup": "暂无备份",
+      "backupConfirmTitle": "要备份安全密钥吗？",
+      "backupCreateMessage": "只会将加密备份保存到服务器。恢复码只显示一次。",
+      "backupReplaceMessage": "创建新备份会替换现有备份。请保存新的恢复码。",
+      "backupAction": "备份",
+      "backupFailTitle": "备份失败",
+      "backupCreateFail": "无法创建安全密钥备份。",
+      "restore": "恢复密钥备份",
+      "restoreDesc": "使用恢复码导入历史密钥。",
+      "restoreMessage": "请输入创建备份时收到的恢复码。",
+      "restoreAction": "恢复",
+      "restoreCodeRequired": "请输入恢复码。",
+      "restoreSuccessTitle": "恢复完成",
+      "restoreSuccessMessage": "已导入 {{imported}} 个 · 已有 {{skipped}} 个{{conflictText}}",
+      "restoreFail": "无法恢复安全密钥备份。",
+      "conflictText": " · 冲突 {{conflicts}} 个\n冲突密钥已保留本机现有密钥。",
+      "conflictShort": " · 冲突 {{conflicts}} 个",
+      "recoveryCodeTitle": "安全密钥恢复码",
+      "recoveryCodeMessage": "恢复码不会再次显示。请妥善保存。",
+      "copyRecoveryCode": "复制恢复码",
+      "codeStored": "恢复码已保存。",
+      "codeCopied": "恢复码已复制。",
+      "codeCopyFail": "无法复制。",
+      "codeConfirmRequired": "请复制恢复码，或勾选已保存。",
+      "deleteServerBackup": "删除服务器备份",
+      "deleteServerBackupDesc": "仅删除服务器上的加密备份。",
+      "backupDeleteConfirmTitle": "要删除安全密钥备份吗？",
+      "backupDeleteConfirmMessage": "服务器上的加密备份将被删除。本机安全密钥会保留。",
+      "backupDeleteSuccessTitle": "备份已删除",
+      "backupDeleteSuccessMessage": "服务器备份已删除。本机安全密钥会保留。",
+      "backupDeleteFailTitle": "删除备份失败",
+      "backupDeleteFail": "无法删除安全密钥备份。"
+    },
+    "openProfileEditAccessibility": "编辑公开聊天公开信息"
+  },
+  "me": "我",
+  "noticePromote": {
+    "unsupported": "无法设为公告。",
+    "ownerOnly": "只有房主可以设为公告。",
+    "noPermission": "你没有公告权限。",
+    "secureBlocked": "安全消息不能设为公告。",
+    "systemBlocked": "系统消息不能设为公告。",
+    "deletedBlocked": "已删除消息不能设为公告。",
+    "missingMessage": "无法认证消息。"
+  },
+  "secure": {
+    "promptAuth": "请认证后发送安全消息。",
+    "on": "安全模式已开启",
+    "off": "安全模式已关闭",
+    "readyFail": "安全模式准备失败",
+    "sendReadyFail": "安全发送准备失败",
+    "mediaUnsupported": "安全模式下暂不支持。",
+    "fileUnsupported": "安全模式下不支持发送文件。",
+    "content": {
+      "image": "🔐 加密图片",
+      "video": "🔐 加密视频",
+      "audio": "🔐 加密语音",
+      "location": "🔐 加密位置"
+    },
+    "enabled": "安全模式已开启",
+    "disabled": "安全模式已关闭",
+    "lockedLabel": "🔐 加密消息",
+    "prompt": {
+      "keyUse": "请认证后使用安全消息密钥。",
+      "deviceRegister": "请认证后注册安全设备。",
+      "backupCreate": "请认证后备份安全密钥。",
+      "backupRestore": "请认证后恢复安全密钥。",
+      "newRoomKey": "请认证后创建新安全密钥。",
+      "historyRequest": "请认证后请求历史密钥。",
+      "historyShare": "请认证后共享历史密钥。",
+      "historyReject": "请认证后拒绝历史密钥请求。",
+      "historyClaim": "请认证后导入已批准的历史密钥。",
+      "decrypt": "请认证后查看安全消息。"
+    },
+    "error": {
+      "loginRequired": "需要登录。",
+      "backupEmpty": "没有可备份的安全密钥。使用安全消息后再试。",
+      "backupMissing": "没有已保存的安全密钥备份。",
+      "backupWrongAccount": "此安全密钥备份不属于当前账号。",
+      "requesterDeviceMissing": "找不到请求者的有效安全设备。",
+      "noHistoryKeyToShare": "此设备没有可共享的历史安全密钥。",
+      "parcelCreateFailed": "无法创建要共享的安全密钥数据。"
+    }
+  },
+  "jump": {
+    "newMessage": "新消息",
+    "newMessageAccessibility": "前往新消息",
+    "latestAccessibility": "前往最新消息"
+  },
+  "permission": {
+    "cameraTitle": "需要权限",
+    "cameraMessage": "需要相机访问权限。",
+    "contactsTitle": "需要权限",
+    "contactsMessage": "需要通讯录访问权限。"
+  },
+  "filePick": {
+    "failTitle": "文件选择失败",
+    "failMessage": "无法选择文件。"
+  },
+  "newChat": {
+    "title": "新聊天",
+    "create": "创建",
+    "start": "开始",
+    "noName": "无名称",
+    "selectPartnerRequired": "请选择聊天对象。",
+    "openTitleRequired": "请输入公开聊天名称。",
+    "modeNormal": "普通",
+    "modeOpen": "打开",
+    "openSectionTitle": "创建公开聊天",
+    "openNamePlaceholder": "公开聊天名称",
+    "openHelper": "不选择好友即可创建公开聊天室。",
+    "partnerSectionTitle": "选择聊天对象",
+    "groupTitlePlaceholder": "群聊名称",
+    "searchNamePlaceholder": "搜索名称",
+    "emptyFriends": "暂无好友",
+    "userFallback": "项目",
+    "privateChatTitle": "私聊",
+    "groupChatTitle": "群聊",
+    "openChatTitle": "公开聊天",
+    "coverPhoto": "封面照片",
+    "selectPhoto": "选择照片",
+    "openDescriptionPlaceholder": "房间介绍",
+    "openTagsPlaceholder": "项目",
+    "searchVisible": "可搜索",
+    "searchVisibleDesc": "可通过房名、介绍和标签搜索到此房间。",
+    "groupModeTitle": "群聊",
+    "groupModeAutoDesc": "项目",
+    "groupModeSingleDesc": "即使只选择 1 人，也可以创建群组。"
+  },
+  "menuModal": {
+    "markRead": "标为已读",
+    "roomInfo": "聊天室信息",
+    "pin": "置顶",
+    "unpin": "取消置顶",
+    "mute": "静音",
+    "unmute": "取消静音",
+    "leave": "退出",
+    "selfRoomTitle": "与自己聊天"
+  },
+  "roomCard": {
+    "pending": "待审核",
+    "emptyMessage": "暂无消息",
+    "messageFallback": "消息",
+    "am": "上午",
+    "pm": "下午",
+    "date": "{{month}}月{{day}}日",
+    "preview": {
+      "image": "[照片]",
+      "video": "[视频]",
+      "audio": "[语音]",
+      "file": "[文件]",
+      "map": "[位置]",
+      "notice": "[公告]"
+    }
+  },
+  "searchModal": {
+    "rooms": "聊天室",
+    "messages": "消息",
+    "placeholder": "搜索",
+    "emptyTitle": "搜索",
+    "emptyDesc": "搜索聊天室和消息。",
+    "noResultTitle": "无结果",
+    "noResultDesc": "换个关键词试试。",
+    "roomPrefix": "聊天室",
+    "visibleName": "显示名",
+    "messageSender": "发送者",
+    "filterNormal": "普通",
+    "filterOpen": "打开",
+    "filterBeacon": "Beacon",
+    "filterBusiness": "商家",
+    "dateAll": "全部",
+    "dateToday": "今天",
+    "date7d": "7天",
+    "date30d": "30天",
+    "tabChat": "聊天",
+    "tabParticipant": "成员",
+    "tabOpen": "公开聊天",
+    "participants": "成员",
+    "openRooms": "公开聊天",
+    "participantEmptyTitle": "搜索成员",
+    "participantEmptyDesc": "按聊天室内的显示名搜索。",
+    "participantNoResultTitle": "暂无成员",
+    "participantNoResultDesc": "换个名字试试。",
+    "openEmptyTitle": "搜索公开聊天",
+    "openEmptyDesc": "按房间名称、介绍或标签搜索。",
+    "openNoResultTitle": "暂无公开聊天",
+    "openNoResultDesc": "换个关键词试试。",
+    "typeFilter": "类型",
+    "dateFilter": "日期",
+    "openJoined": "已参加",
+    "openPublic": "公开聊天",
+    "participatingRoom": "已加入房间"
+  },
+  "location": {
+    "fallbackTitle": "位置",
+    "selectMapApp": "选择地图应用",
+    "openMapHint": "点按地图查看路线"
+  },
+  "translationPanel": {
+    "title": "翻译设置",
+    "subtitle": "仅适用于此房间。",
+    "autoTranslate": {
+      "title": "自动翻译",
+      "desc": "将收到的消息显示为所选语言。"
+    },
+    "showTranslatedOnly": {
+      "title": "标题",
+      "desc": "优先显示译文。"
+    },
+    "tier": {
+      "title": "标题",
+      "desc": "选择翻译质量。",
+      "upgrade": "项目",
+      "options": {
+        "free": {
+          "label": "Basic",
+          "desc": "Basic 翻译"
+        },
+        "mid": {
+          "label": "Standard",
+          "desc": "自然的聊天翻译"
+        },
+        "high": {
+          "label": "Premium",
+          "desc": "理解上下文和语气"
+        }
+      }
+    },
+    "tone": {
+      "title": "语气",
+      "desc": "Premium 语气设置",
+      "disabled": "Premium 可用。",
+      "options": {
+        "business": {
+          "label": "商家",
+          "desc": "语气"
+        },
+        "polite": {
+          "label": "礼貌",
+          "desc": "柔和且礼貌"
+        },
+        "casual": {
+          "label": "轻松",
+          "desc": "语气轻松"
+        },
+        "neutral": {
+          "label": "中性",
+          "desc": "语气中性"
+        },
+        "creative": {
+          "label": "创意",
+          "desc": "语气创意"
+        }
+      }
+    },
+    "sendLang": {
+      "title": "发送语言",
+      "desc": "自动时会跟随接收方的接收语言。",
+      "auto": "项目",
+      "autoDesc": "自动匹配对方语言。",
+      "autoPeerDesc": "当前按对方设置：{{label}}（{{code}}）",
+      "peerBase": "项目",
+      "peerDefault": "对方默认"
+    },
+    "receiveLang": {
+      "title": "接收语言",
+      "desc": "将收到的消息显示为此语言。"
+    },
+    "status": {
+      "off": "项目",
+      "on": "ON",
+      "auto": "项目",
+      "receive": "项目",
+      "send": "发送",
+      "translatedOnly": "项目"
+    },
+    "language": {
+      "EN": "英语",
+      "ES": "西班牙语",
+      "FR": "法语",
+      "DE": "德语",
+      "IT": "意大利语",
+      "PT": "葡萄牙语",
+      "NL": "荷兰语",
+      "PL": "波兰语",
+      "RU": "俄语",
+      "JA": "日语",
+      "KO": "韩语",
+      "ZH": "中文",
+      "TR": "土耳其语",
+      "SV": "瑞典语",
+      "ID": "印度尼西亚语",
+      "TH": "泰语",
+      "UK": "乌克兰语",
+      "RO": "罗马尼亚语",
+      "CS": "捷克语",
+      "DA": "丹麦语",
+      "EL": "希腊语",
+      "FI": "芬兰语",
+      "HU": "匈牙利语",
+      "SK": "斯洛伐克语",
+      "SL": "斯洛文尼亚语",
+      "BG": "保加利亚语",
+      "ET": "爱沙尼亚语",
+      "LT": "立陶宛语",
+      "LV": "拉脱维亚语",
+      "AR": "阿拉伯语",
+      "ZH_HANS": "简体中文",
+      "ZH_HANT": "繁体中文",
+      "VI": "越南语",
+      "HI": "印地语",
+      "HE": "希伯来语"
+    }
+  },
+  "header": {
+    "searchPlaceholder": "搜索聊天",
+    "advanced": "高级",
+    "sender": "发送者",
+    "date": "日期"
+  },
+  "attachment": {
+    "photo": "照片",
+    "camera": "相机",
+    "call": "电话",
+    "pay": "转账",
+    "map": "地图",
+    "music": "音乐",
+    "file": "文件",
+    "cloud": "云端",
+    "contact": "联系人",
+    "recentPhotos": "最近照片",
+    "send": "发送",
+    "photoPermissionRequired": "需要照片访问权限。",
+    "openSettings": "打开设置",
+    "callUnavailable": "无法发起通话。",
+    "phoneMissing": "未登记电话号码。",
+    "phoneOpenFail": "无法拨打电话。",
+    "voiceCallUnavailable": "语音通话即将推出。",
+    "contactEmpty": "没有可分享的联系人信息。",
+    "contactShareTitle": "联系人",
+    "contactName": "名称",
+    "contactPhone": "电话",
+    "contactShareFail": "无法分享联系人。",
+    "voiceMessage": "语音",
+    "capture": "截图",
+    "schedule": "日程"
+  },
+  "accessibility": {
+    "attachmentClose": "关闭附件",
+    "attachmentOpen": "打开附件",
+    "messageInput": "消息输入",
+    "sendMessage": "发送消息",
+    "voiceMessage": "语音消息"
+  },
+  "replyPreview": {
+    "peer": "项目",
+    "replyTo": "回复 {{name}}",
+    "cancel": "取消回复"
+  },
+  "mediaKind": {
+    "image": "照片",
+    "video": "视频",
+    "audio": "语音消息",
+    "file": "文件",
+    "map": "位置",
+    "notice": "公告",
+    "text": "文本"
+  },
+  "deleteModal": {
+    "title": "删除",
+    "mine": "仅为我删除",
+    "all": "为所有人删除",
+    "moment": "定时删除",
+    "sectionTitle": "删除时间",
+    "selectTime": "选择删除时间。",
+    "readBased": "已读后删除",
+    "readAfterWithDelay": "已读后 +{{delay}}",
+    "afterDelete": "{{delay}} 后删除",
+    "unit": {
+      "hour": "时",
+      "minute": "分",
+      "second": "秒"
+    },
+    "cancelTitle": "取消？",
+    "cancelDesc": "所选设置不会保存。",
+    "keepEditing": "项目",
+    "discard": "取消"
+  },
+  "messageAction": {
+    "copy": "复制",
+    "selectCopy": "选择并复制",
+    "reply": "回复",
+    "share": "分享",
+    "toMe": "发给自己",
+    "notice": "公告",
+    "highlight": "书签",
+    "capture": "截图",
+    "delete": "删除",
+    "cancelMoment": "取消删除设置",
+    "viewOriginalTranslation": "原文 / 译文",
+    "translateOther": "翻译成其他语言",
+    "reactors": "回应的朋友",
+    "shareToMe": "发给自己",
+    "unhighlight": "移除书签"
+  },
+  "moment": {
+    "title": "定时删除",
+    "cancel": "取消删除设置",
+    "expiredMessage": "已过期消息"
+  },
+  "noticeBanner": {
+    "open": "查看公告",
+    "close": "关闭公告"
+  },
+  "newMessagePill": {
+    "label": "{{count}} 条新消息",
+    "accessibility": "查看 {{count}} 条新消息"
+  },
+  "search": {
+    "sender": "发送者",
+    "senderFilter": "发送者筛选",
+    "dateFilter": "日期筛选",
+    "prevResult": "上一个结果",
+    "nextResult": "下一个结果",
+    "close": "关闭搜索",
+    "clearSender": "清除发送者筛选",
+    "placeholder": "搜索",
+    "inputAccessibility": "搜索输入",
+    "clearKeyword": "清除搜索词",
+    "bookmarkFilter": "搜索"
+  },
+  "datePicker": {
+    "title": "选择日期",
+    "clear": "项目",
+    "prevMonth": "上个月",
+    "nextMonth": "项目",
+    "monthTitle": "{{year}}年{{month}}月",
+    "weekday": {
+      "sun": "项目",
+      "mon": "项目",
+      "tue": "项目",
+      "wed": "项目",
+      "thu": "项目",
+      "fri": "项目",
+      "sat": "项目"
+    },
+    "dayAccessibility": "{{day}}日",
+    "selected": "项目",
+    "none": "无"
+  },
+  "selection": {
+    "title": "删除",
+    "selectAll": "选择全部",
+    "deleteCount": "删除 {{count}}"
+  },
+  "noticeModel": {
+    "fallback": "请确认消息。",
+    "scheduleTitle": "日程",
+    "media": {
+      "image": "照片",
+      "video": "视频",
+      "audio": "语音消息",
+      "file": "文件",
+      "map": "位置"
+    },
+    "secureRecovery": {
+      "requestCreated": {
+        "title": "历史密钥请求",
+        "body": "请求共享历史密钥。"
+      },
+      "approved": {
+        "title": "历史密钥已批准",
+        "body": "可以导入已批准的历史密钥。"
+      },
+      "completed": {
+        "title": "历史密钥已恢复",
+        "body": "可以重新打开历史消息。"
+      },
+      "rejected": {
+        "title": "历史密钥请求已拒绝",
+        "body": "此请求无法打开历史消息。"
+      }
+    },
+    "scheduleTitleWithPrefix": "[日程] 日程",
+    "weekday": {
+      "sun": "项目",
+      "mon": "项目",
+      "tue": "项目",
+      "wed": "项目",
+      "thu": "项目",
+      "fri": "项目",
+      "sat": "项目"
+    }
+  },
+  "messageItem": {
+    "noticeFallback": "这是一条公告消息。",
+    "secureLinkFallback": "链接",
+    "mapAddressFallback": "位置信息",
+    "secure": {
+      "genericTitle": "安全请求",
+      "genericBody": "安全请求状态已更新。",
+      "fileFallback": "安全文件"
+    },
+    "tombstone": {
+      "deleted": "此消息已删除。",
+      "expired": "此消息已过期。"
+    },
+    "longMessage": {
+      "viewAll": "查看全部"
+    },
+    "action": {
+      "confirm": "确定"
+    }
+  },
+  "linkPreview": {
+    "link": "链接",
+    "web": "Web",
+    "searchTitle": "搜索 {{query}}",
+    "searchTitleWithProvider": "用 {{provider}} 搜索 {{query}}",
+    "searchResult": "{{query}} 的搜索结果",
+    "searchResultWithProvider": "{{query}} · {{provider}} 搜索结果",
+    "provider": {
+      "naver": "Naver",
+      "google": "Google",
+      "daum": "Daum"
+    }
+  },
+  "messageMeta": {
+    "deleteSuffix": "删除",
+    "cancelMoment": "取消定时删除"
+  },
+  "messageBody": {
+    "link": "链接",
+    "secureMessage": "加密消息",
+    "file": "文件",
+    "tapToOpen": "点按打开",
+    "locationInfo": "位置信息",
+    "secureFile": "安全文件"
+  },
+  "replyBlock": {
+    "peer": "回复拉黑",
+    "replyTo": "回复 {{name}}"
+  },
+  "voiceRecorder": {
+    "totalDuration": "总计 {{duration}}"
+  },
+  "actions": {
+    "momentCancelFailTitle": "取消定时删除失败",
+    "tryAgain": "项目",
+    "deleteFailTitle": "删除失败",
+    "missingServerMessage": "无法认证服务器消息 ID。",
+    "deleteNetworkFail": "网络错误，无法删除消息。",
+    "momentSetFailTitle": "定时删除设置失败",
+    "momentSetNetworkFail": "网络错误，无法设置定时删除。",
+    "uploadFailTitle": "上传失败",
+    "imageUploadFail": "无法将图片上传到服务器。",
+    "errorTitle": "错误",
+    "mediaSendFail": "发送媒体时出现问题。",
+    "voiceUploadFail": "语音消息上传失败",
+    "fileUploadFail": "文件上传失败"
+  },
+  "bridge": {
+    "messageNotFound": "本机找不到这条消息。",
+    "editedImageSent": "项目",
+    "editedImageSendFail": "无法发送编辑后的图片。"
+  },
+  "capture": {
+    "title": "选择截图",
+    "desc": "选择消息范围",
+    "exit": "退出截图",
+    "clear": "截图",
+    "share": "分享",
+    "save": "保存",
+    "shareCapture": "分享截图",
+    "saveCapture": "保存截图",
+    "anonymousOn": "截图",
+    "anonymousOff": "截图",
+    "anonymousUser": "用户 {{index}}",
+    "error": {
+      "secureBlocked": "截图",
+      "messageNotFound": "找不到消息。",
+      "areaNotFound": "找不到截图区域。",
+      "selectedAreaNotFound": "找不到所选区域。",
+      "areaCalcFailed": "无法计算区域。",
+      "outOfView": "所选范围在屏幕之外。",
+      "imageCreateFailed": "无法创建截图图片。",
+      "emptySelection": "未选择消息。",
+      "permissionRequired": "需要照片保存权限。",
+      "saveFailed": "无法保存。",
+      "shareUnavailable": "无法使用分享。",
+      "shareFailed": "无法分享。"
+    },
+    "success": {
+      "saved": "截图已保存。",
+      "savedPartial": "已保存部分范围。",
+      "savedVisibleOnly": "仅保存了可见范围。"
+    },
+    "anonymousInitial": "用"
+  },
+  "schedule": {
+    "common": {
+      "title": "日程",
+      "fallbackTitle": "日程",
+      "roomFallback": "聊天室",
+      "participantFallback": "参加者",
+      "confirm": "确定",
+      "cancel": "取消",
+      "close": "关闭",
+      "delete": "删除",
+      "done": "完成",
+      "save": "保存",
+      "saving": "保存中",
+      "select": "选择",
+      "weekdays": {
+        "sun": "日程",
+        "mon": "日程",
+        "tue": "日程",
+        "wed": "日程",
+        "thu": "日程",
+        "fri": "日程",
+        "sat": "日程"
+      },
+      "period": {
+        "am": "上午",
+        "pm": "下午"
+      },
+      "date": "{{month}}月{{day}}日（{{weekday}}）",
+      "compactDate": "{{month}}.{{day}} {{weekday}}",
+      "timeWithPeriod": "{{period}} {{hour}}:{{minute}}",
+      "participantCount": "{{count}} 位参加者",
+      "participantCountShort": "参加 {{count}} 人",
+      "participantCountCompact": "参加 {{count}}",
+      "openDetail": "查看 {{title}} 详情"
+    },
+    "reminder": {
+      "off": "日程提醒",
+      "before30m": "日程提醒",
+      "before1h": "日程提醒",
+      "before3h": "日程提醒",
+      "before1d": "日程提醒",
+      "afterJoin": "参加后可用"
+    },
+    "api": {
+      "messageTitle": "日程 · {{title}}",
+      "calendarDefaultTitle": "CO·ONN 日程",
+      "calendarPlace": "地点：{{place}}",
+      "calendarAddress": "地址：{{address}}",
+      "calendarNoteFooter": "CO·ONN 日程",
+      "notificationChannel": "日程",
+      "reminderTimeBody": "日程将于 {{time}} 开始。",
+      "reminderSoonBody": "日程即将开始。",
+      "reminderTitle": "日程提醒"
+    },
+    "detail": {
+      "notFound": "找不到日程。",
+      "cancelled": "已取消日程",
+      "completed": "已完成日程",
+      "directions": "路线",
+      "notification": "通知",
+      "appPush": "应用推送",
+      "calendar": "日历",
+      "syncCalendar": "同步到我的日历",
+      "synced": "已同步",
+      "notSynced": "未同步",
+      "join": "参加",
+      "leave": "取消",
+      "noticeBadge": "公告",
+      "noParticipants": "暂无参加者。",
+      "moveToChat": "前往聊天",
+      "menu": {
+        "edit": "编辑日程",
+        "cancel": "取消日程",
+        "complete": "完成"
+      },
+      "alert": {
+        "processFailTitle": "处理失败",
+        "joinChangeFail": "无法更改参加状态。",
+        "participantSettingTitle": "参加者设置",
+        "promoteNotice": "设为公告",
+        "removeNotice": "取消公告",
+        "promoteNoticeMessage": "要将 {{name}} 标为重点参加者吗？",
+        "removeNoticeMessage": "要取消 {{name}} 的重点标记吗？",
+        "settingFailTitle": "设置失败",
+        "participantSettingFail": "无法更改参加者设置。",
+        "reminderFailTitle": "提醒设置失败",
+        "calendarReminderFailTitle": "日历提醒失败",
+        "calendarSyncFailTitle": "日历同步失败",
+        "calendarDeleteFailTitle": "日历删除失败",
+        "cancelTitle": "取消日程",
+        "cancelMessage": "要取消此日程吗？\n参加者会看到取消状态。",
+        "cancelAction": "取消日程",
+        "cancelFailTitle": "取消失败",
+        "cancelFail": "无法取消日程。",
+        "completeTitle": "完成日程",
+        "completeMessage": "要将此日程标记为完成吗？\n已完成日程会显示在下方。",
+        "completeFailTitle": "完成失败",
+        "completeFail": "无法完成日程。",
+        "calendarRemoveTitle": "从日历移除",
+        "calendarRemoveMessage": "要从设备日历中移除已同步的日程吗？"
+      },
+      "error": {
+        "calendarPermissionDenied": "需要日历权限。",
+        "calendarNotFound": "没有可添加的日历。",
+        "invalidScheduleTime": "无法确认日程时间。",
+        "calendarApiUnavailable": "此设备不可使用日历功能。",
+        "calendarDefault": "无法完成日历操作。",
+        "notificationPermissionDenied": "需要通知权限。",
+        "reminderTimePast": "提醒时间已过。",
+        "reminderDefault": "无法设置提醒。"
+      }
+    },
+    "editor": {
+      "createTitle": "创建日程",
+      "editTitle": "编辑日程",
+      "titlePlaceholder": "标题",
+      "allDay": "全天",
+      "startDate": "开始日期",
+      "endDate": "结束日期",
+      "place": "地点",
+      "map": "地图",
+      "placeNamePlaceholder": "地点名称",
+      "memoPlaceholder": "输入备注",
+      "cancelledLocked": "已取消日程不能编辑。",
+      "locationPickerTitle": "选择地点",
+      "locationPickerHelper": "将地图中心移动到目标位置后选择。",
+      "validation": {
+        "titleRequired": "请输入标题。",
+        "startInvalid": "请检查开始时间。",
+        "endInvalid": "请检查结束时间。",
+        "endBeforeStart": "结束时间早于开始时间。",
+        "roomMissing": "找不到聊天室信息。"
+      }
+    },
+    "listScreen": {
+      "loadFail": "无法加载日程。",
+      "roomMissing": "找不到聊天室信息。",
+      "createAccessibility": "创建日程",
+      "retry": "重试",
+      "activeCount": "进行中 {{count}} 个",
+      "summary": "此聊天室共同管理的日程。",
+      "emptyTitle": "暂无日程",
+      "emptyDesc": "创建可一起查看的日程。",
+      "beaconUnavailableTitle": "Beacon 聊天不支持日程",
+      "beaconUnavailableDesc": "Beacon 聊天中不显示日程。",
+      "create": "创建日程",
+      "joined": "已参加",
+      "notJoined": "未参加",
+      "cancelled": "已取消",
+      "completed": "已完成",
+      "past": "过去日程"
+    },
+    "messageCard": {
+      "cancelled": "已取消",
+      "completed": "已完成"
+    }
+  },
+  "openProfile": {
+    "common": {
+      "confirm": "确定",
+      "cancel": "取消",
+      "save": "保存",
+      "delete": "删除",
+      "default": "默认",
+      "user": "公开资料",
+      "openChat": "公开聊天",
+      "business": "商家",
+      "openTalk": "公开聊天",
+      "fallbackName": "公开资料",
+      "statusEmpty": "无状态消息",
+      "selectPhoto": "选择资料照片",
+      "photoApplied": "照片已应用。",
+      "saved": "已保存。",
+      "deleted": "已删除。",
+      "tryAgain": "公开资料",
+      "notice": "公告",
+      "actionFailed": "处理失败。",
+      "saveFailed": "无法保存。",
+      "profileSaveFailed": "无法保存资料。"
+    },
+    "list": {
+      "title": "公开资料",
+      "loadFailed": "无法加载打开资料。",
+      "nicknameRequired": "请输入昵称。",
+      "createSuccess": "公开资料已创建。",
+      "createFailed": "创建失败",
+      "saveFailed": "保存失败",
+      "deleteFailed": "删除失败",
+      "deleteTitle": "要删除公开资料吗？",
+      "deleteDescInUse": "公开聊天中正在使用的现有资料会保留。",
+      "deleteDescDefault": "删除后的资料无法再次使用。",
+      "editAccessibility": "编辑公开资料",
+      "usedRoomsCount": "使用中的公开聊天 {{count}} 个",
+      "usedRoomsEmpty": "没有正在使用的公开聊天。",
+      "emptyTitle": "暂无公开资料。",
+      "emptyDesc": "点按右上角 + 创建新资料。"
+    },
+    "viewer": {
+      "action": {
+        "transferOwner": "转让房主",
+        "promoteManager": "创建管理员",
+        "demoteManager": "移除管理员",
+        "kick": "公开资料",
+        "block": "拉黑",
+        "unblock": "解除拉黑",
+        "release": "公开资料",
+        "delegate": "公开资料",
+        "appoint": "公开资料",
+        "changePhoto": "更换照片",
+        "showPhoto": "显示照片"
+      },
+      "confirm": {
+        "blockMessage": "要在你的屏幕中隐藏此用户之后的消息吗？",
+        "unblockMessage": "要重新显示此用户的消息吗？",
+        "transferOwnerMessage": "要将房主转让给 {{name}} 吗？",
+        "promoteManagerMessage": "要授予 {{name}} 副管理员权限吗？",
+        "demoteManagerMessage": "要解除 {{name}} 的副管理员权限吗？",
+        "kickMessage": "要将 {{name}} 移出聊天室吗？被移出的用户无法再次加入。"
+      },
+      "accessibility": {
+        "save": "保存"
+      },
+      "placeholder": {
+        "status": "状态消息"
+      }
+    },
+    "edit": {
+      "loadFailed": "无法加载公开聊天信息。",
+      "titleRequired": "请输入房间名称。",
+      "saveFailed": "无法保存。请稍后再试。",
+      "categoryFallback": "公开聊天",
+      "titlePlaceholder": "公开聊天名称",
+      "changePhoto": "更换照片",
+      "descriptionPlaceholder": "介绍这个房间。",
+      "tagsPlaceholder": "输入标签  例：邻里、咖啡、跑步",
+      "publicTitle": "公开",
+      "publicDesc": "可通过房名、介绍和标签搜索到此房间。",
+      "selectCover": "选择照片"
+    },
+    "gate": {
+      "loadFailed": "无法加载信息。",
+      "joinFailed": "无法使用公开资料进入。请稍后再试。",
+      "enterChat": "输入聊天",
+      "startConsult": "开始咨询",
+      "selectProfileEnter": "选择资料后进入",
+      "joinOpenChat": "加入公开聊天",
+      "openNow": "打开",
+      "closed": "已打烊",
+      "participants": "参加者 {{count}} 人",
+      "participantsWithMax": "参加者 {{count}}/{{max}}",
+      "createdAt": "创建于 {{date}}",
+      "host": "房主",
+      "introEmpty": "暂无介绍。"
+    }
+  },
+  "userFallback": "项目",
+  "room": {
+    "deletedReadonly": "此房间已删除。只能查看聊天记录。",
+    "leftReadonly": "你已退出此聊天室。",
+    "kickedTitle": "房间",
+    "kickedMessage": "你无法再使用此聊天室。"
+  },
+  "toast": {
+    "selectCopySecureBlocked": "安全消息不能选择复制。",
+    "selectCopyUnsupported": "此消息不能选择复制。",
+    "shareToSelfSuccess": "项目",
+    "shareSecureBlocked": "安全消息不能分享。",
+    "shareUnsupported": "此消息不能分享。",
+    "shareSelfRoomUnavailable": "无法准备与自己的聊天。",
+    "shareFailed": "无法分享。",
+    "noticeNoPermission": "你没有发布公告的权限。",
+    "copied": "已复制。"
+  },
+  "longMessage": {
+    "message": "消息",
+    "translation": "翻译",
+    "original": "原文"
+  },
+  "selectCopy": {
+    "titleFallback": "消息",
+    "translated": "翻译",
+    "original": "原文",
+    "hint": "长按选择文本",
+    "copied": "已复制",
+    "copyAll": "全部复制",
+    "empty": "没有可选择的文本"
+  },
+  "system": {
+    "notice": "聊天室更新",
+    "memberJoined": "{{name}}已加入。",
+    "memberLeft": "{{name}}已离开。",
+    "memberKicked": "{{name}}已被移出。",
+    "managerPromoted": "{{name}}已成为管理员。",
+    "managerDemoted": "{{name}}不再是管理员。",
+    "ownerTransferred": "{{name}}已成为房主。",
+    "roomDeleted": "该聊天室已删除。"
+  },
+  "cancel": "取消"
+}

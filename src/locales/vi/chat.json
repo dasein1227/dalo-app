@@ -1,0 +1,1293 @@
+{
+  "title": "Chat",
+  "send": "Gửi",
+  "attach": "Tệp",
+  "gallery": "Thư viện",
+  "invite": "Mời",
+  "manage": "Quản lý",
+  "members": "Thành viên",
+  "placeholder": "Nhập chat gợi ý.",
+  "date": {
+    "today": "Hôm nay",
+    "yesterday": "Hôm qua",
+    "separatorLabel": "{{day}} tháng {{month}}, {{year}} · {{weekday}}",
+    "floatingLabel": "{{day}}/{{month}}/{{year}} · {{weekday}}"
+  },
+  "all": "Tất cả",
+  "and_others_n": "+ N người khác",
+  "others_suffix": "người khác",
+  "anonymous": "Ẩn danh",
+  "message": "Tin nhắn",
+  "message_search": "Tìm tin nhắn",
+  "message_send": "Gửi tin nhắn",
+  "message_send_failed": "Chat Tin nhắn Lỗi thất bại.",
+  "message_delete_failed": "Không thể xóa tin nhắn.",
+  "message_deleted": "Đã xóa tin nhắn.",
+  "new_message_one": "1 tin nhắn mới",
+  "new_messages_count": "{{count}} tin nhắn mới",
+  "chat_with_me": "Chat với tôi",
+  "self_badge": "Tôi",
+  "chat_room_title": "Phòng chat",
+  "one_to_one_chat": "Chat",
+  "group_chat_title": "Chat nhóm",
+  "open_chat_title": "Open chat",
+  "beacon_chat_title": "Beacon chat",
+  "room_not_found": "Chat Phòng",
+  "chat_room_not_found": "Không tìm thấy phòng chat.",
+  "conversation_partner": "Chat",
+  "audio_send_failed": "Chat Âm thanh Lỗi thất bại.",
+  "video": "Video",
+  "photo": "Ảnh",
+  "file_label": "Tệp",
+  "open_file": "Mở tệp",
+  "play_video": "Phát video",
+  "voice_message": "Tin nhắn thoại",
+  "share_location": "Chia sẻ vị trí",
+  "map_location_shared_title": "Đã chia sẻ vị trí",
+  "map_tap_to_open": "Chat Bản đồ Mở",
+  "cannot_open_map": "Không thể mở bản đồ.",
+  "no_coordinate_info": "Không có tọa độ",
+  "send_failed": "Gửi thất bại",
+  "share": "Chia sẻ",
+  "share_failed": "Chia sẻ thất bại",
+  "delete_failed": "Xóa thất bại",
+  "upload_failed": "Tải lên thất bại",
+  "selection_mode": "Chế độ chọn",
+  "selection_mode_hint": "Nhấn tin nhắn để chọn xóa.",
+  "selection_clear": "Bỏ chọn",
+  "delete_dialog_title": "Xóa tin nhắn",
+  "delete_dialog_desc": "Chọn cách xóa.",
+  "delete_for_everyone": "Xóa với mọi người",
+  "delete_hide_for_everyone": "Chat Xóa",
+  "delete_for_me": "Chỉ xóa với tôi",
+  "delete_for_me_hint": "Tin nhắn đã chọn chỉ có thể xóa với bạn.",
+  "reply": "Trả lời",
+  "reply_to_me": "Trả lời tin nhắn của tôi",
+  "reply_to_user": "Trả lời {{nickname}}",
+  "msg_deleted_by_user": "{{nickname}} đã xóa tin nhắn.",
+  "notice": "Thông báo",
+  "notice_coming_soon": "Sắp ra mắt.",
+  "korean_label": "Tiếng Hàn",
+  "auto_translate_paid_only": "Chat Dịch",
+  "translation_paid_only": "Dịch chỉ dành cho thành viên trả phí.",
+  "premium_only": "Chỉ Premium",
+  "premium_only_feature_hint": "Chat",
+  "tone_neutral": "Trung lập",
+  "tone_casual": "Thân mật",
+  "tone_formal": "Trang trọng",
+  "tone_business": "Kinh doanh",
+  "tone_playful": "Vui vẻ",
+  "tone_change_premium_only": "Chat Giọng văn",
+  "tone_premium_only_hint": "Chat Giọng văn",
+  "login_required": "Cần đăng nhập.",
+  "no_permission_send_rls": "Bạn không có quyền gửi tin nhắn. (RLS)\n",
+  "rls_help_chat_members": "→ Kiểm tra bạn có trong chat_members và chính sách chat_messages.",
+  "search_placeholder": "Nhập từ khóa",
+  "search_result_count": "{{count}} kết quả",
+  "show_original": "Xem bản gốc",
+  "show_translation": "Xem bản dịch",
+  "translating": "Đang dịch…",
+  "input": {
+    "placeholder": "Gửi tin nhắn",
+    "placeholderLong": "Nhập tin nhắn…"
+  },
+  "hold_to_unlock": "Nhấn giữ để mở khóa nhập",
+  "error": {
+    "loginRequired": "Cần đăng nhập.",
+    "roomNotFound": "Không tìm thấy phòng chat.",
+    "createRoomTitle": "Không thể mở phòng chat.",
+    "createRoomMessage": "Vui lòng thử lại sau."
+  },
+  "sheet": {
+    "moreActions": "Tác vụ khác",
+    "media": "Ảnh/Video",
+    "file": "Tệp",
+    "location": "Chia sẻ vị trí",
+    "inviteFriend": "Mời bạn bè",
+    "inviteLink": "Liên kết mời",
+    "translate": "Dịch"
+  },
+  "translate": {
+    "title": "Dịch",
+    "current_lang_prefix": "Hiện tại: {{code}}",
+    "tone_label": "Giọng văn",
+    "toneNeutral": "Trung lập",
+    "toneNeutralDesc": "Bản dịch tự nhiên mặc định",
+    "toneCasual": "Thân mật",
+    "toneCasualDesc": "Chat Dịch Giọng văn Mô tả",
+    "toneFormal": "Trang trọng",
+    "toneFormalDesc": "Chat Dịch Giọng văn Mô tả",
+    "toneBusiness": "Kinh doanh",
+    "toneBusinessDesc": "Chat Dịch Giọng văn Kinh doanh Mô tả",
+    "tonePlayful": "Vui vẻ",
+    "tonePlayfulDesc": "Chat Dịch Giọng văn Mô tả"
+  },
+  "unknown": "Không rõ",
+  "voice": "Thoại",
+  "list": {
+    "tab": {
+      "chat": "Chat",
+      "open": "Mở",
+      "beacon": "Beacon",
+      "business": "Kinh doanh"
+    },
+    "empty": {
+      "chatTitle": "Chưa có chat",
+      "chatSub": "Danh sách Trống Chat",
+      "openTitle": "Chưa có open chat",
+      "openSub": "Danh sách Trống Mở",
+      "beaconTitle": "Chưa tham gia beacon",
+      "beaconSub": "Danh sách Trống",
+      "businessTitle": "Chưa có chat kinh doanh",
+      "businessSub": "Danh sách Trống Kinh doanh"
+    },
+    "leaveConfirmTitle": "Rời cuộc trò chuyện?",
+    "leaveConfirmMessage": "Cuộc trò chuyện này sẽ biến mất khỏi danh sách.",
+    "leaveConfirmAction": "Rời"
+  },
+  "menu": {
+    "title": "Menu chat",
+    "joinedDate": "Tham gia {{date}}",
+    "media": "Ảnh/Video",
+    "mediaEmpty": "Media gần đây sẽ hiện ở đây.",
+    "noticeSchedule": "Chat Menu Thông báo Lịch",
+    "me": "Tôi"
+  },
+  "membersScreen": {
+    "title": "Thành viên",
+    "loading": "Đang tải…",
+    "empty": "Chưa có chat thành viên trống.",
+    "owner": "Chủ phòng",
+    "participant": "Người tham gia",
+    "remove": "Xóa",
+    "removeTitle": "Xóa",
+    "removeMessage": "Xóa {{name}} khỏi phòng?",
+    "loadFail": "Không thể tải danh sách tham gia.",
+    "noName": "Chưa có tên"
+  },
+  "inviteScreen": {
+    "title": "Mời bạn bè",
+    "roomMissingTitle": "Chat Phòng Tiêu đề",
+    "roomMissingMessage": "Nhập chat phòng tin nhắn.",
+    "tryAgain": "Vui lòng thử lại sau.",
+    "loadFailTitle": "Không thể tải danh sách bạn bè.",
+    "selectFriend": "Chọn một người bạn.",
+    "selectForAdd": "Chọn bạn để thêm.",
+    "selectForNewGroup": "Chọn bạn để tham gia.",
+    "addSuccessTitle": "Đã thêm bạn.",
+    "addSuccessMessage": "Đã thêm {{count}} người.",
+    "addFailTitle": "Không thể thêm bạn.",
+    "createFailTitle": "Không thể tạo chat nhóm.",
+    "friendRowAdd": "Thêm vào nhóm này",
+    "friendRowNewGroup": "Thêm vào nhóm mới",
+    "groupAddTitle": "Chat Nhóm Tiêu đề",
+    "newGroupTitle": "Chat nhóm mới",
+    "groupAddDesc": "Thêm bạn đã chọn vào nhóm này.",
+    "newGroupDesc": "Tạo nhóm mới với bạn đã chọn.",
+    "loading": "Đang tải bạn bè",
+    "emptyTitle": "Không có bạn để mời",
+    "emptyDesc": "Chat Trống Mô tả",
+    "addCount": "Thêm {{count}}",
+    "makeGroupCount": "Tạo nhóm với {{count}} người",
+    "noName": "Chưa có tên",
+    "groupFallbackTitle": "Chat nhóm",
+    "groupTitleWithOthers": "{{names}} + {{count}} người"
+  },
+  "roomEdit": {
+    "title": "Thông tin phòng chat",
+    "nameLabel": "Tên phòng chat",
+    "hidePhoto": "Ẩn ảnh",
+    "hidePhotoDesc": "Chat Phòng Sửa Ảnh Mô tả",
+    "helperLine1": "Ảnh và tên bạn đặt chỉ hiển thị với bạn.",
+    "helperLine2": "Không ảnh hưởng đến người khác.",
+    "alertTitle": "Thông báo",
+    "unhideBeforeChange": "Chat Phòng Sửa",
+    "saveFail": "Lưu thất bại"
+  },
+  "roomData": {
+    "title": "Quản lý dữ liệu",
+    "ratioTitle": "Dữ liệu theo loại",
+    "noMedia": "Chưa có media đã lưu",
+    "savedCount": "Đã lưu {{value}}",
+    "deleteAllWithSize": "Xóa toàn bộ media ({{size}})",
+    "photoData": "Dữ liệu ảnh",
+    "videoData": "Dữ liệu video",
+    "audioData": "Chat Phòng Dữ liệu Âm thanh Dữ liệu",
+    "fileData": "Dữ liệu tệp",
+    "storageCenter": "Chat Phòng Dữ liệu Lưu trữ Trung tâm",
+    "loadFail": "Không thể tải thông tin dữ liệu.",
+    "actionFail": "Không thể hoàn tất tác vụ.",
+    "clear": {
+      "photoTitle": "Phòng Dữ liệu Xóa Ảnh Tiêu đề",
+      "photoMessage": "Phòng Dữ liệu Xóa Ảnh Tin nhắn",
+      "photoSuccess": "Đã xóa phòng dữ liệu xóa ảnh hoàn tất.",
+      "videoTitle": "Phòng Dữ liệu Xóa Video Tiêu đề",
+      "videoMessage": "Phòng Dữ liệu Xóa Video Tin nhắn",
+      "videoSuccess": "Đã xóa phòng dữ liệu xóa video hoàn tất.",
+      "audioTitle": "Phòng Dữ liệu Xóa Âm thanh Tiêu đề",
+      "audioMessage": "Phòng Dữ liệu Xóa Âm thanh Tin nhắn",
+      "audioSuccess": "Đã xóa phòng dữ liệu xóa âm thanh hoàn tất.",
+      "fileTitle": "Phòng Dữ liệu Xóa Tệp Tiêu đề",
+      "fileMessage": "Phòng Dữ liệu Xóa Tệp Tin nhắn",
+      "fileSuccess": "Đã xóa phòng dữ liệu xóa tệp hoàn tất.",
+      "allTitle": "Xóa toàn bộ media",
+      "allMessage": "Phòng Dữ liệu Xóa Tất cả Tin nhắn",
+      "allSuccess": "Đã xóa phòng dữ liệu xóa tất cả hoàn tất."
+    }
+  },
+  "collection": {
+    "title": "Bộ sưu tập",
+    "count": "{{count}}",
+    "total": "Tổng {{value}}",
+    "tabs": {
+      "links": "Liên kết",
+      "schedules": "Lịch",
+      "bookmarks": "Dấu trang"
+    },
+    "empty": {
+      "media": "Chưa có ảnh hoặc video",
+      "files": "Chưa có tệp",
+      "links": "Chưa có liên kết",
+      "notices": "Chưa có thông báo",
+      "schedules": "Chưa có lịch",
+      "bookmarks": "Chưa có dấu trang"
+    },
+    "noDate": "Không có ngày",
+    "tapToView": "Nhấn để xem",
+    "bookmarkMissingMessage": "Không tìm thấy chat bộ sưu tập dấu trang tin nhắn.",
+    "scheduleEmptyBody": "Không có nội dung lịch.",
+    "secureRecovery": {
+      "completedBody": "Bộ sưu tập Bảo mật Hoàn tất Nội dung",
+      "rejectedBody": "Bộ sưu tập Bảo mật Nội dung"
+    },
+    "scheduleStatus": {
+      "cancelled": "Bộ sưu tập Lịch Trạng thái Đã hủy",
+      "completed": "Hoàn tất",
+      "joined": "Đã tham gia",
+      "joinedOngoing": "Đã tham gia"
+    },
+    "section": {
+      "latestNotice": "Thông báo mới nhất",
+      "previousNotice": "Thông báo trước",
+      "activeSchedules": "Đang diễn ra / mở",
+      "closedSchedules": "Hoàn tất / đã hủy"
+    }
+  },
+  "settings": {
+    "title": "Chat Cài đặt Tiêu đề",
+    "memberCount": "{{count}} thành viên",
+    "startedAt": "Bắt đầu {{date}}",
+    "inputLock": "Khóa ô nhập",
+    "theme": {
+      "title": "Cài đặt Giao diện Tiêu đề",
+      "default": "Mặc định",
+      "byRoomType": "Theo loại phòng"
+    },
+    "themePreview": {
+      "other": "Cài đặt Giao diện Xem trước",
+      "mine": "Đã rõ"
+    },
+    "translation": {
+      "title": "Cài đặt dịch"
+    },
+    "sound": {
+      "title": "Cài đặt Tiêu đề",
+      "default": "Mặc định",
+      "clear": "Cài đặt Xóa",
+      "calm": "Cài đặt",
+      "short": "Cài đặt",
+      "soft": "Cài đặt",
+      "quiet": "Cài đặt",
+      "deep": "Cài đặt",
+      "light": "Sáng",
+      "mute": "Tắt âm"
+    },
+    "data": {
+      "section": "Dữ liệu",
+      "manage": "Cài đặt Dữ liệu"
+    },
+    "export": {
+      "title": "Xuất chat",
+      "message": "Cài đặt Xuất Tin nhắn",
+      "saveFile": "Lưu tệp",
+      "share": "Chia sẻ",
+      "saveSuccess": "Đã lưu thành tệp.",
+      "shareSuccess": "Đã mở màn hình chia sẻ.",
+      "saveCancelled": "Cài đặt Xuất Lưu Đã hủy",
+      "fail": "Không thể xuất.",
+      "deletedMessage": "[Tin nhắn đã xóa]",
+      "secureExcluded": "[Tin nhắn bảo mật - không xuất]",
+      "imageLabel": "[Ảnh]",
+      "videoLabel": "[Video]",
+      "audioLabel": "Cài đặt Xuất Âm thanh",
+      "fileLabel": "[Tệp]",
+      "unknownSender": "Không rõ",
+      "meSender": "Tôi",
+      "userSender": "Người dùng",
+      "fileTitle": "Cài đặt Xuất Tệp Tiêu đề",
+      "roomLine": "Phòng chat: {{roomTitle}}",
+      "exportedAtLine": "Xuất lúc: {{exportedAt}}",
+      "noteLocal": "Cài đặt Xuất",
+      "noteText": "Cài đặt Xuất",
+      "noteSecure": "Cài đặt Xuất Bảo mật",
+      "noteGallery": "Cài đặt Xuất",
+      "attachmentLine": "- Đính kèm: {{type}}{{fileNamePart}}{{mimePart}}",
+      "shareDialogTitle": "Chia sẻ chat"
+    },
+    "leave": {
+      "title": "Cài đặt Tiêu đề",
+      "action": "Rời",
+      "rejectInvite": "Từ chối lời mời và rời",
+      "reportAndLeave": "Báo cáo và rời",
+      "groupMessage": "Cài đặt Nhóm Tin nhắn",
+      "reportMessage": "Cài đặt Tin nhắn",
+      "defaultMessage": "Cài đặt Mặc định Tin nhắn?",
+      "fail": "Không thể rời phòng chat.",
+      "selfBlocked": "Cài đặt Tôi"
+    },
+    "secure": {
+      "section": "Khóa bảo mật",
+      "me": "Tôi",
+      "peer": "Đối phương",
+      "authCancelled": "Khóa bảo mật",
+      "decline": "Từ chối",
+      "newKey": "Tạo khóa bảo mật mới",
+      "newKeyDesc": "Khóa bảo mật",
+      "newKeyConfirmTitle": "Khóa bảo mật?",
+      "newKeyConfirmMessage": "Khóa bảo mật",
+      "create": "Tạo",
+      "newKeySuccessTitle": "Đã tạo khóa bảo mật mới",
+      "newKeySuccessMessage": "Tin nhắn mới sẽ được mã hóa bằng khóa epoch {{epoch}}.",
+      "newKeyFailTitle": "Khóa bảo mật thất bại.",
+      "newKeyFail": "Không thể tạo khóa bảo mật mới.",
+      "historyRequest": "Khóa bảo mật",
+      "historyRequestDesc": "Khóa bảo mật",
+      "historyRequestConfirmTitle": "Khóa bảo mật?",
+      "historyRequestConfirmMessage": "Khóa bảo mật",
+      "request": "Yêu cầu",
+      "historyRequestSuccessTitle": "Đã gửi yêu cầu",
+      "historyRequestSuccessMessage": "Đã gửi yêu cầu đến {{count}} người.",
+      "historyRequestEmpty": "Chưa có khóa bảo mật.",
+      "historyRequestFailTitle": "Yêu cầu thất bại",
+      "historyRequestFail": "Không thể yêu cầu khóa bảo mật cũ.",
+      "claimApproved": "Nhập khóa đã duyệt",
+      "claimApprovedDesc": "Khóa bảo mật",
+      "claimSuccessTitle": "Khóa bảo mật",
+      "claimSuccessMessage": "Đã lưu {{imported}} · đã có {{skipped}}{{conflictText}}",
+      "claimFailTitle": "Nhập thất bại",
+      "claimFail": "Không thể nhập khóa đã duyệt.",
+      "incomingRequestTitle": "{{name}} yêu cầu khóa bảo mật cũ",
+      "shareApprovedDesc": "Khóa bảo mật",
+      "historyShareConfirmTitle": "Khóa bảo mật?",
+      "historyShareConfirmMessage": "Chia sẻ khóa bảo mật cũ với {{name}}?",
+      "historyShareSuccessTitle": "Đã chia sẻ",
+      "historyShareSuccessMessage": "Đã chia sẻ với {{name}}.",
+      "historyShareFailTitle": "Chia sẻ thất bại",
+      "historyShareFail": "Không thể chia sẻ khóa bảo mật cũ.",
+      "historyRejectConfirmTitle": "Khóa bảo mật?",
+      "historyRejectConfirmMessage": "Từ chối yêu cầu của {{name}}?",
+      "rejectSuccessTitle": "Khóa bảo mật",
+      "rejectSuccessMessage": "Đã từ chối yêu cầu của {{name}}.",
+      "rejectFailTitle": "Khóa bảo mật thất bại.",
+      "rejectFail": "Không thể từ chối yêu cầu khóa cũ.",
+      "backupSection": "Sao lưu khóa bảo mật",
+      "backup": "Khóa bảo mật",
+      "backupSummary": "Đã sao lưu · {{rooms}} phòng · {{keys}} khóa",
+      "noBackup": "Chưa có sao lưu",
+      "backupConfirmTitle": "Sao lưu khóa bảo mật?",
+      "backupCreateMessage": "Khóa bảo mật",
+      "backupReplaceMessage": "Khóa bảo mật",
+      "backupAction": "Khóa bảo mật",
+      "backupFailTitle": "Sao lưu thất bại",
+      "backupCreateFail": "Không thể tạo sao lưu khóa bảo mật.",
+      "restore": "Khóa bảo mật",
+      "restoreDesc": "Khóa bảo mật",
+      "restoreMessage": "Nhập mã khôi phục nhận được khi tạo sao lưu.",
+      "restoreAction": "Khôi phục",
+      "restoreCodeRequired": "Nhập mã khôi phục.",
+      "restoreSuccessTitle": "Khóa bảo mật",
+      "restoreSuccessMessage": "Đã nhập {{imported}} · đã có {{skipped}}{{conflictText}}",
+      "restoreFail": "Không thể khôi phục sao lưu khóa bảo mật.",
+      "conflictText": " · xung đột {{conflicts}}\nCác khóa xung đột vẫn giữ khóa cục bộ hiện có.",
+      "conflictShort": " · xung đột {{conflicts}}",
+      "recoveryCodeTitle": "Mã khôi phục khóa bảo mật",
+      "recoveryCodeMessage": "Khóa bảo mật",
+      "copyRecoveryCode": "Sao chép mã khôi phục",
+      "codeStored": "Đã lưu mã khôi phục.",
+      "codeCopied": "Đã sao chép mã khôi phục.",
+      "codeCopyFail": "Không thể sao chép.",
+      "codeConfirmRequired": "Khóa bảo mật",
+      "deleteServerBackup": "Xóa sao lưu trên máy chủ",
+      "deleteServerBackupDesc": "Khóa bảo mật",
+      "backupDeleteConfirmTitle": "Xóa sao lưu khóa bảo mật?",
+      "backupDeleteConfirmMessage": "Khóa bảo mật",
+      "backupDeleteSuccessTitle": "Đã xóa sao lưu",
+      "backupDeleteSuccessMessage": "Khóa bảo mật",
+      "backupDeleteFailTitle": "Khóa bảo mật thất bại.",
+      "backupDeleteFail": "Không thể xóa sao lưu khóa bảo mật."
+    },
+    "openProfileEditAccessibility": "Chat Cài đặt Mở Hồ sơ Sửa"
+  },
+  "me": "Tôi",
+  "noticePromote": {
+    "unsupported": "Không thể đưa lên thông báo.",
+    "ownerOnly": "Chat Thông báo",
+    "noPermission": "Chat Thông báo Quyền",
+    "secureBlocked": "Chat Thông báo Bảo mật",
+    "systemBlocked": "Chat Thông báo",
+    "deletedBlocked": "Chat Thông báo",
+    "missingMessage": "Không thể kiểm tra tin nhắn."
+  },
+  "secure": {
+    "promptAuth": "Chat Bảo mật",
+    "on": "Chat Bảo mật",
+    "off": "Chat Bảo mật",
+    "readyFail": "Chat Bảo mật Lỗi thất bại.",
+    "sendReadyFail": "Chat Bảo mật Lỗi thất bại.",
+    "mediaUnsupported": "Chat Bảo mật Media",
+    "fileUnsupported": "Chat Bảo mật Tệp",
+    "content": {
+      "image": "Bảo mật Nội dung Ảnh",
+      "video": "Bảo mật Nội dung Video",
+      "audio": "Bảo mật Nội dung Âm thanh",
+      "location": "Bảo mật Nội dung Vị trí"
+    },
+    "enabled": "Chat Bảo mật",
+    "disabled": "Chat Bảo mật",
+    "lockedLabel": "Chat Bảo mật",
+    "prompt": {
+      "keyUse": "Bảo mật Khóa",
+      "deviceRegister": "Bảo mật Đăng ký",
+      "backupCreate": "Bảo mật Sao lưu Tạo",
+      "backupRestore": "Bảo mật Sao lưu Khôi phục",
+      "newRoomKey": "Bảo mật Phòng Khóa",
+      "historyRequest": "Bảo mật Yêu cầu",
+      "historyShare": "Bảo mật Chia sẻ",
+      "historyReject": "Bảo mật",
+      "historyClaim": "Bảo mật",
+      "decrypt": "Bảo mật"
+    },
+    "error": {
+      "loginRequired": "Cần đăng nhập.",
+      "backupEmpty": "Chưa có bảo mật lỗi sao lưu trống.",
+      "backupMissing": "Chưa có bảo mật lỗi sao lưu.",
+      "backupWrongAccount": "Bảo mật Lỗi Sao lưu Tài khoản",
+      "requesterDeviceMissing": "Không tìm thấy thiết bị bảo mật đang hoạt động của người yêu cầu.",
+      "noHistoryKeyToShare": "Chưa có bảo mật lỗi khóa chia sẻ.",
+      "parcelCreateFailed": "Không thể tạo dữ liệu khóa để chia sẻ."
+    }
+  },
+  "jump": {
+    "newMessage": "Chat Tin nhắn",
+    "newMessageAccessibility": "Chat Tin nhắn",
+    "latestAccessibility": "Chat"
+  },
+  "permission": {
+    "cameraTitle": "Cần quyền",
+    "cameraMessage": "Cần quyền truy cập camera.",
+    "contactsTitle": "Cần quyền",
+    "contactsMessage": "Cần quyền truy cập danh bạ."
+  },
+  "filePick": {
+    "failTitle": "Chat Tệp Lỗi Tiêu đề thất bại.",
+    "failMessage": "Không thể chọn tệp."
+  },
+  "newChat": {
+    "title": "Chat Tiêu đề",
+    "create": "Tạo",
+    "start": "Bắt đầu",
+    "noName": "Chưa có tên",
+    "selectPartnerRequired": "Chọn chat chọn bắt buộc.",
+    "openTitleRequired": "Nhập chat mở tiêu đề bắt buộc.",
+    "modeNormal": "Thường",
+    "modeOpen": "Mở",
+    "openSectionTitle": "Tạo open chat",
+    "openNamePlaceholder": "Tên open chat",
+    "openHelper": "Chat Mở",
+    "partnerSectionTitle": "Chọn chat mục tiêu đề.",
+    "groupTitlePlaceholder": "Chat Nhóm Tiêu đề Gợi ý",
+    "searchNamePlaceholder": "Chat Tìm kiếm Gợi ý",
+    "emptyFriends": "Chưa có chat trống bạn bè.",
+    "userFallback": "Người dùng",
+    "privateChatTitle": "Chat Riêng tư Chat Tiêu đề",
+    "groupChatTitle": "Chat nhóm",
+    "openChatTitle": "Open chat",
+    "coverPhoto": "Chat Ảnh",
+    "selectPhoto": "Chọn chat chọn ảnh.",
+    "openDescriptionPlaceholder": "Chat Mở Mô tả Gợi ý",
+    "openTagsPlaceholder": "Chat Mở Gợi ý",
+    "searchVisible": "Chat Tìm kiếm Hiển thị",
+    "searchVisibleDesc": "Chat Tìm kiếm Hiển thị Mô tả",
+    "groupModeTitle": "Chat nhóm",
+    "groupModeAutoDesc": "Chat Nhóm Mô tả",
+    "groupModeSingleDesc": "Chat Nhóm Mô tả"
+  },
+  "menuModal": {
+    "markRead": "Đánh dấu đã đọc",
+    "roomInfo": "Thông tin phòng chat",
+    "pin": "Ghim",
+    "unpin": "Bỏ ghim",
+    "mute": "Tắt âm",
+    "unmute": "Chat Menu Hộp thoại",
+    "leave": "Rời",
+    "selfRoomTitle": "Chat Menu Hộp thoại Tôi Phòng Tiêu đề"
+  },
+  "roomCard": {
+    "pending": "Đang chờ",
+    "emptyMessage": "Chưa có tin nhắn",
+    "messageFallback": "Tin nhắn",
+    "am": "SA",
+    "pm": "CH",
+    "date": "{{day}}/{{month}}",
+    "preview": {
+      "image": "[Ảnh]",
+      "video": "[Video]",
+      "audio": "[Giọng nói]",
+      "file": "[Tệp]",
+      "map": "[Vị trí]",
+      "notice": "[Thông báo]"
+    }
+  },
+  "searchModal": {
+    "rooms": "Chat Tìm kiếm Hộp thoại Phòng",
+    "messages": "Tin nhắn",
+    "placeholder": "Tìm kiếm",
+    "emptyTitle": "Tìm kiếm",
+    "emptyDesc": "Chat Tìm kiếm Hộp thoại Trống Mô tả",
+    "noResultTitle": "Không có kết quả",
+    "noResultDesc": "Thử từ khóa khác.",
+    "roomPrefix": "Phòng chat",
+    "visibleName": "Tên hiển thị",
+    "messageSender": "Người gửi",
+    "filterNormal": "Thường",
+    "filterOpen": "Mở",
+    "filterBeacon": "Beacon",
+    "filterBusiness": "Kinh doanh",
+    "dateAll": "Tất cả",
+    "dateToday": "Hôm nay",
+    "date7d": "Chat Tìm kiếm Hộp thoại",
+    "date30d": "Chat Tìm kiếm Hộp thoại",
+    "tabChat": "Chat",
+    "tabParticipant": "Thành viên",
+    "tabOpen": "Chat Tìm kiếm Hộp thoại Mở",
+    "participants": "Thành viên",
+    "openRooms": "Chat Tìm kiếm Hộp thoại Mở Phòng",
+    "participantEmptyTitle": "Chat Tìm kiếm Hộp thoại Người tham gia Trống Tiêu đề",
+    "participantEmptyDesc": "Chat Tìm kiếm Hộp thoại Người tham gia Trống Mô tả",
+    "participantNoResultTitle": "Chưa có chat tìm kiếm hộp thoại người tham gia kết quả tiêu đề.",
+    "participantNoResultDesc": "Chat Tìm kiếm Hộp thoại Người tham gia Kết quả Mô tả",
+    "openEmptyTitle": "Tìm open chat",
+    "openEmptyDesc": "Tìm theo tên phòng, mô tả hoặc thẻ.",
+    "openNoResultTitle": "Chưa có open chat",
+    "openNoResultDesc": "Thử từ khóa khác.",
+    "typeFilter": "Loại",
+    "dateFilter": "Ngày",
+    "openJoined": "Đã tham gia",
+    "openPublic": "Open chat",
+    "participatingRoom": "Phòng đã tham gia"
+  },
+  "location": {
+    "fallbackTitle": "Vị trí",
+    "selectMapApp": "Chọn chat vị trí chọn bản đồ.",
+    "openMapHint": "Chat Vị trí Mở Bản đồ"
+  },
+  "translationPanel": {
+    "title": "Cài đặt dịch",
+    "subtitle": "Chỉ áp dụng cho phòng này.",
+    "autoTranslate": {
+      "title": "Cài đặt dịch",
+      "desc": "Cài đặt dịch"
+    },
+    "showTranslatedOnly": {
+      "title": "Chỉ bản dịch",
+      "desc": "Cài đặt dịch"
+    },
+    "tier": {
+      "title": "Gói",
+      "desc": "Chọn chất lượng dịch.",
+      "upgrade": "Nâng cấp",
+      "options": {
+        "free": {
+          "label": "Basic",
+          "desc": "Dịch cơ bản"
+        },
+        "mid": {
+          "label": "Standard",
+          "desc": "Dịch hội thoại tự nhiên"
+        },
+        "high": {
+          "label": "Premium",
+          "desc": "Cài đặt dịch"
+        }
+      }
+    },
+    "tone": {
+      "title": "Giọng văn",
+      "desc": "Cài đặt dịch",
+      "disabled": "Cài đặt dịch",
+      "options": {
+        "business": {
+          "label": "Kinh doanh",
+          "desc": "Cài đặt dịch"
+        },
+        "polite": {
+          "label": "Lịch sự",
+          "desc": "Cài đặt dịch"
+        },
+        "casual": {
+          "label": "Thân mật",
+          "desc": "Cài đặt dịch"
+        },
+        "neutral": {
+          "label": "Trung lập",
+          "desc": "Cài đặt dịch"
+        },
+        "creative": {
+          "label": "Sáng tạo",
+          "desc": "Biểu đạt phong phú hơn"
+        }
+      }
+    },
+    "sendLang": {
+      "title": "Ngôn ngữ gửi",
+      "desc": "Cài đặt dịch",
+      "auto": "Tự động",
+      "autoDesc": "Cài đặt dịch",
+      "autoPeerDesc": "Theo người đối thoại hiện tại: {{label}} ({{code}})",
+      "peerBase": "Theo đối phương",
+      "peerDefault": "Mặc định đối phương"
+    },
+    "receiveLang": {
+      "title": "Ngôn ngữ nhận",
+      "desc": "Cài đặt dịch"
+    },
+    "status": {
+      "off": "Tắt",
+      "on": "ON",
+      "auto": "Tự động",
+      "receive": "Nhận",
+      "send": "Gửi",
+      "translatedOnly": "Chỉ bản dịch"
+    },
+    "language": {
+      "EN": "Tiếng Anh",
+      "ES": "Tiếng Tây Ban Nha",
+      "FR": "Tiếng Pháp",
+      "DE": "Tiếng Đức",
+      "IT": "Tiếng Ý",
+      "PT": "Tiếng Bồ Đào Nha",
+      "NL": "Tiếng Hà Lan",
+      "PL": "Tiếng Ba Lan",
+      "RU": "Tiếng Nga",
+      "JA": "Tiếng Nhật",
+      "KO": "Tiếng Hàn",
+      "ZH": "Tiếng Trung",
+      "TR": "Tiếng Thổ Nhĩ Kỳ",
+      "SV": "Tiếng Thụy Điển",
+      "ID": "Tiếng Indonesia",
+      "TH": "Tiếng Thái",
+      "UK": "Tiếng Ukraina",
+      "RO": "Tiếng Romania",
+      "CS": "Tiếng Séc",
+      "DA": "Tiếng Đan Mạch",
+      "EL": "Tiếng Hy Lạp",
+      "FI": "Tiếng Phần Lan",
+      "HU": "Tiếng Hungary",
+      "SK": "Tiếng Slovakia",
+      "SL": "Tiếng Slovenia",
+      "BG": "Tiếng Bulgaria",
+      "ET": "Tiếng Estonia",
+      "LT": "Tiếng Litva",
+      "LV": "Tiếng Latvia",
+      "AR": "Tiếng Ả Rập",
+      "ZH_HANS": "Tiếng Trung giản thể",
+      "ZH_HANT": "Tiếng Trung phồn thể",
+      "VI": "Tiếng Việt",
+      "HI": "Tiếng Hindi",
+      "HE": "Tiếng Hebrew"
+    }
+  },
+  "header": {
+    "searchPlaceholder": "Chat Tìm kiếm Gợi ý",
+    "advanced": "Nâng cao",
+    "sender": "Người gửi",
+    "date": "Ngày"
+  },
+  "attachment": {
+    "photo": "Ảnh",
+    "camera": "Camera",
+    "call": "Gọi",
+    "pay": "Chuyển tiền",
+    "map": "Bản đồ",
+    "music": "Nhạc",
+    "file": "Tệp",
+    "cloud": "Cloud",
+    "contact": "Liên hệ",
+    "recentPhotos": "Chat Ảnh",
+    "send": "Gửi",
+    "photoPermissionRequired": "Cần quyền truy cập ảnh.",
+    "openSettings": "Chat Mở Cài đặt",
+    "callUnavailable": "Không thể bắt đầu cuộc gọi.",
+    "phoneMissing": "Chưa có chat.",
+    "phoneOpenFail": "Không thể bắt đầu cuộc gọi.",
+    "voiceCallUnavailable": "Gọi thoại sắp ra mắt.",
+    "contactEmpty": "Không có thông tin liên hệ để chia sẻ.",
+    "contactShareTitle": "Liên hệ",
+    "contactName": "Tên",
+    "contactPhone": "Điện thoại",
+    "contactShareFail": "Không thể chia sẻ liên hệ.",
+    "voiceMessage": "Thoại",
+    "capture": "Chụp",
+    "schedule": "Lịch"
+  },
+  "accessibility": {
+    "attachmentClose": "Đóng đính kèm",
+    "attachmentOpen": "Mở đính kèm",
+    "messageInput": "Ô nhập tin nhắn",
+    "sendMessage": "Gửi tin nhắn",
+    "voiceMessage": "Tin nhắn thoại"
+  },
+  "replyPreview": {
+    "peer": "Đối phương",
+    "replyTo": "Trả lời {{name}}",
+    "cancel": "Hủy trả lời"
+  },
+  "mediaKind": {
+    "image": "Ảnh",
+    "video": "Video",
+    "audio": "Tin nhắn thoại",
+    "file": "Tệp",
+    "map": "Vị trí",
+    "notice": "Thông báo",
+    "text": "Văn bản"
+  },
+  "deleteModal": {
+    "title": "Xóa",
+    "mine": "Chỉ xóa với tôi",
+    "all": "Xóa với mọi người",
+    "moment": "Xóa",
+    "sectionTitle": "Xóa",
+    "selectTime": "Chọn xóa.",
+    "readBased": "Xóa sau khi đọc",
+    "readAfterWithDelay": "Sau khi đọc +{{delay}}",
+    "afterDelete": "Xóa sau {{delay}}",
+    "unit": {
+      "hour": "Xóa",
+      "minute": "Xóa",
+      "second": "Xóa"
+    },
+    "cancelTitle": "Hủy?",
+    "cancelDesc": "Đã lưu xóa.",
+    "keepEditing": "Tiếp tục chỉnh",
+    "discard": "Hủy"
+  },
+  "messageAction": {
+    "copy": "Sao chép",
+    "selectCopy": "Chọn tác vụ tin nhắn.",
+    "reply": "Trả lời",
+    "share": "Chia sẻ",
+    "toMe": "Tác vụ tin nhắn",
+    "notice": "Thông báo",
+    "highlight": "Đánh dấu",
+    "capture": "Chụp",
+    "delete": "Xóa",
+    "cancelMoment": "Tác vụ tin nhắn",
+    "viewOriginalTranslation": "Tác vụ tin nhắn",
+    "translateOther": "Dịch sang ngôn ngữ khác",
+    "reactors": "Tác vụ tin nhắn",
+    "shareToMe": "Tác vụ tin nhắn",
+    "unhighlight": "Tác vụ tin nhắn"
+  },
+  "moment": {
+    "title": "Chat Xóa hẹn giờ Tiêu đề",
+    "cancel": "Chat Xóa hẹn giờ Hủy",
+    "expiredMessage": "Tin nhắn đã hết hạn"
+  },
+  "noticeBanner": {
+    "open": "Chat Thông báo Banner Mở",
+    "close": "Đóng thông báo"
+  },
+  "newMessagePill": {
+    "label": "{{count}} tin nhắn mới",
+    "accessibility": "Xem {{count}} tin nhắn mới"
+  },
+  "search": {
+    "sender": "Người gửi",
+    "senderFilter": "Lọc người gửi",
+    "dateFilter": "Lọc ngày",
+    "prevResult": "Kết quả trước",
+    "nextResult": "Kết quả tiếp",
+    "close": "Đóng tìm kiếm",
+    "clearSender": "Bỏ lọc người gửi",
+    "placeholder": "Tìm kiếm",
+    "inputAccessibility": "Ô nhập tìm kiếm",
+    "clearKeyword": "Chat Tìm kiếm Xóa",
+    "bookmarkFilter": "Lọc dấu trang"
+  },
+  "datePicker": {
+    "title": "Chọn chat ngày bộ chọn tiêu đề.",
+    "clear": "Chat Ngày Bộ chọn Xóa",
+    "prevMonth": "Tháng trước",
+    "nextMonth": "Tháng sau",
+    "monthTitle": "Tháng {{month}} {{year}}",
+    "weekday": {
+      "sun": "CN",
+      "mon": "T2",
+      "tue": "T3",
+      "wed": "T4",
+      "thu": "T5",
+      "fri": "T6",
+      "sat": "T7"
+    },
+    "dayAccessibility": "Ngày {{day}}",
+    "selected": "Đã chọn",
+    "none": "Không có"
+  },
+  "selection": {
+    "title": "Xóa",
+    "selectAll": "Chọn tất cả",
+    "deleteCount": "Xóa {{count}}"
+  },
+  "noticeModel": {
+    "fallback": "Vui lòng kiểm tra tin nhắn.",
+    "scheduleTitle": "Lịch",
+    "media": {
+      "image": "Ảnh",
+      "video": "Video",
+      "audio": "Tin nhắn thoại",
+      "file": "Tệp",
+      "map": "Vị trí"
+    },
+    "secureRecovery": {
+      "requestCreated": {
+        "title": "Bảo mật Yêu cầu Tiêu đề",
+        "body": "Bảo mật Yêu cầu Nội dung"
+      },
+      "approved": {
+        "title": "Bảo mật Tiêu đề",
+        "body": "Bảo mật Nội dung"
+      },
+      "completed": {
+        "title": "Bảo mật Hoàn tất Tiêu đề",
+        "body": "Bảo mật Hoàn tất Nội dung"
+      },
+      "rejected": {
+        "title": "Bảo mật Tiêu đề",
+        "body": "Bảo mật Nội dung"
+      }
+    },
+    "scheduleTitleWithPrefix": "[Lịch] Lịch",
+    "weekday": {
+      "sun": "CN",
+      "mon": "T2",
+      "tue": "T3",
+      "wed": "T4",
+      "thu": "T5",
+      "fri": "T6",
+      "sat": "T7"
+    }
+  },
+  "messageItem": {
+    "noticeFallback": "Chat Tin nhắn Thông báo Mặc định",
+    "secureLinkFallback": "Liên kết",
+    "mapAddressFallback": "Thông tin vị trí",
+    "secure": {
+      "genericTitle": "Tin nhắn Bảo mật Tiêu đề",
+      "genericBody": "Đã cập nhật tin nhắn bảo mật nội dung.",
+      "fileFallback": "Tệp bảo mật"
+    },
+    "tombstone": {
+      "deleted": "Đã xóa tin nhắn.",
+      "expired": "Tin nhắn"
+    },
+    "longMessage": {
+      "viewAll": "Xem tất cả"
+    },
+    "action": {
+      "confirm": "OK"
+    }
+  },
+  "linkPreview": {
+    "link": "Liên kết",
+    "web": "Web",
+    "searchTitle": "Tìm {{query}}",
+    "searchTitleWithProvider": "Tìm {{query}} · {{provider}}",
+    "searchResult": "Kết quả tìm kiếm {{query}}",
+    "searchResultWithProvider": "Kết quả tìm kiếm {{query}} · {{provider}}",
+    "provider": {
+      "naver": "Naver",
+      "google": "Google",
+      "daum": "Daum"
+    }
+  },
+  "messageMeta": {
+    "deleteSuffix": "Chat Tin nhắn Xóa",
+    "cancelMoment": "Chat Tin nhắn Hủy Xóa hẹn giờ"
+  },
+  "messageBody": {
+    "link": "Liên kết",
+    "secureMessage": "Tin nhắn mã hóa",
+    "file": "Tệp",
+    "tapToOpen": "Nhấn để mở",
+    "locationInfo": "Thông tin vị trí",
+    "secureFile": "Tệp bảo mật"
+  },
+  "replyBlock": {
+    "peer": "Đối phương",
+    "replyTo": "Trả lời {{name}}"
+  },
+  "voiceRecorder": {
+    "totalDuration": "Tổng {{duration}}"
+  },
+  "actions": {
+    "momentCancelFailTitle": "Hủy hẹn giờ thất bại",
+    "tryAgain": "Vui lòng thử lại sau.",
+    "deleteFailTitle": "Xóa thất bại",
+    "missingServerMessage": "Không thể xác định tin nhắn trên máy chủ.",
+    "deleteNetworkFail": "Không thể xóa tin nhắn do lỗi mạng.",
+    "momentSetFailTitle": "Chat Xóa hẹn giờ Lỗi Tiêu đề thất bại.",
+    "momentSetNetworkFail": "Không thể đặt hẹn giờ xóa do lỗi mạng.",
+    "uploadFailTitle": "Tải lên thất bại",
+    "imageUploadFail": "Không thể tải ảnh lên máy chủ.",
+    "errorTitle": "Lỗi",
+    "mediaSendFail": "Chat Media Lỗi",
+    "voiceUploadFail": "Chat Thoại Lỗi thất bại.",
+    "fileUploadFail": "Chat Tệp Lỗi thất bại."
+  },
+  "bridge": {
+    "messageNotFound": "Không tìm thấy tin nhắn trên thiết bị này.",
+    "editedImageSent": "Đã gửi ảnh đã sửa.",
+    "editedImageSendFail": "Không thể gửi ảnh đã sửa."
+  },
+  "capture": {
+    "title": "Chọn chụp.",
+    "desc": "Chọn phạm vi tin nhắn",
+    "exit": "Thoát chụp",
+    "clear": "Chụp",
+    "share": "Chia sẻ",
+    "save": "Lưu",
+    "shareCapture": "Chia sẻ ảnh chụp",
+    "saveCapture": "Lưu ảnh chụp",
+    "anonymousOn": "Chụp",
+    "anonymousOff": "Chụp",
+    "anonymousUser": "Người dùng {{index}}",
+    "error": {
+      "secureBlocked": "Không thể chụp chat bảo mật.",
+      "messageNotFound": "Không tìm thấy tin nhắn.",
+      "areaNotFound": "Không tìm thấy chụp.",
+      "selectedAreaNotFound": "Không tìm thấy chụp.",
+      "areaCalcFailed": "Không thể tính vùng.",
+      "outOfView": "Vùng chọn nằm ngoài màn hình.",
+      "imageCreateFailed": "Không thể tạo ảnh chụp.",
+      "emptySelection": "Chưa chọn tin nhắn.",
+      "permissionRequired": "Cần chụp.",
+      "saveFailed": "Không thể lưu.",
+      "shareUnavailable": "Chụp",
+      "shareFailed": "Không thể chia sẻ."
+    },
+    "success": {
+      "saved": "Đã lưu ảnh chụp.",
+      "savedPartial": "Đã lưu một phần vùng chọn.",
+      "savedVisibleOnly": "Chỉ lưu phần đang hiển thị."
+    },
+    "anonymousInitial": "N"
+  },
+  "schedule": {
+    "common": {
+      "title": "Lịch",
+      "fallbackTitle": "Chưa có tiêu đề",
+      "roomFallback": "Phòng chat",
+      "participantFallback": "Người tham gia",
+      "confirm": "OK",
+      "cancel": "Hủy",
+      "close": "Đóng",
+      "delete": "Xóa",
+      "done": "Xong",
+      "save": "Lưu",
+      "saving": "Đang lưu",
+      "select": "Chọn",
+      "weekdays": {
+        "sun": "CN",
+        "mon": "T2",
+        "tue": "T3",
+        "wed": "T4",
+        "thu": "T5",
+        "fri": "T6",
+        "sat": "T7"
+      },
+      "period": {
+        "am": "SA",
+        "pm": "CH"
+      },
+      "date": "{{day}}/{{month}} ({{weekday}})",
+      "compactDate": "{{day}}/{{month}} {{weekday}}",
+      "timeWithPeriod": "{{period}} {{hour}}:{{minute}}",
+      "participantCount": "{{count}} người tham gia",
+      "participantCountShort": "Tham gia {{count}}",
+      "participantCountCompact": "Tham gia {{count}}",
+      "openDetail": "Xem chi tiết {{title}}"
+    },
+    "reminder": {
+      "off": "Tắt",
+      "before30m": "Lịch",
+      "before1h": "Lịch",
+      "before3h": "Lịch",
+      "before1d": "Lịch",
+      "afterJoin": "Lịch"
+    },
+    "api": {
+      "messageTitle": "Lịch · {{title}}",
+      "calendarDefaultTitle": "Lịch",
+      "calendarPlace": "Địa điểm: {{place}}",
+      "calendarAddress": "Địa chỉ: {{address}}",
+      "calendarNoteFooter": "Lịch",
+      "notificationChannel": "Lịch",
+      "reminderTimeBody": "Lịch bắt đầu lúc {{time}}.",
+      "reminderSoonBody": "Lịch sắp bắt đầu.",
+      "reminderTitle": "Lịch"
+    },
+    "detail": {
+      "notFound": "Không tìm thấy lịch.",
+      "cancelled": "Lịch",
+      "completed": "Lịch",
+      "directions": "Chỉ đường",
+      "notification": "Lịch",
+      "appPush": "Lịch",
+      "calendar": "Lịch",
+      "syncCalendar": "Lịch",
+      "synced": "Lịch",
+      "notSynced": "Lịch",
+      "join": "Lịch",
+      "leave": "Hủy",
+      "noticeBadge": "Thông báo",
+      "noParticipants": "Chưa có lịch.",
+      "moveToChat": "Lịch",
+      "menu": {
+        "edit": "Lịch",
+        "cancel": "Lịch",
+        "complete": "Lịch"
+      },
+      "alert": {
+        "processFailTitle": "Xử lý thất bại",
+        "joinChangeFail": "Không thể đổi trạng thái tham gia.",
+        "participantSettingTitle": "Lịch",
+        "promoteNotice": "Lịch",
+        "removeNotice": "Lịch",
+        "promoteNoticeMessage": "Đánh dấu {{name}} là người tham gia nổi bật?",
+        "removeNoticeMessage": "Bỏ đánh dấu nổi bật cho {{name}}?",
+        "settingFailTitle": "Lịch thất bại.",
+        "participantSettingFail": "Không thể đổi cài đặt người tham gia.",
+        "reminderFailTitle": "Lịch thất bại.",
+        "calendarReminderFailTitle": "Lịch thất bại.",
+        "calendarSyncFailTitle": "Lịch thất bại.",
+        "calendarDeleteFailTitle": "Lịch thất bại.",
+        "cancelTitle": "Lịch",
+        "cancelMessage": "Lịch?",
+        "cancelAction": "Lịch",
+        "cancelFailTitle": "Lịch thất bại.",
+        "cancelFail": "Không thể hủy lịch.",
+        "completeTitle": "Lịch",
+        "completeMessage": "Lịch?",
+        "completeFailTitle": "Lịch thất bại.",
+        "completeFail": "Không thể hoàn tất lịch.",
+        "calendarRemoveTitle": "Lịch",
+        "calendarRemoveMessage": "Lịch?"
+      },
+      "error": {
+        "calendarPermissionDenied": "Cần quyền truy cập lịch.",
+        "calendarNotFound": "Chưa có lịch.",
+        "invalidScheduleTime": "Không thể kiểm tra thời gian lịch.",
+        "calendarApiUnavailable": "Lịch",
+        "calendarDefault": "Không thể hoàn tất thao tác lịch.",
+        "notificationPermissionDenied": "Cần quyền thông báo.",
+        "reminderTimePast": "Lịch",
+        "reminderDefault": "Không thể đặt nhắc nhở."
+      }
+    },
+    "editor": {
+      "createTitle": "Lịch",
+      "editTitle": "Lịch",
+      "titlePlaceholder": "Lịch",
+      "allDay": "Lịch",
+      "startDate": "Ngày bắt đầu",
+      "endDate": "Ngày kết thúc",
+      "place": "Địa điểm",
+      "map": "Bản đồ",
+      "placeNamePlaceholder": "Tên địa điểm",
+      "memoPlaceholder": "Nhập ghi chú",
+      "cancelledLocked": "Lịch",
+      "locationPickerTitle": "Chọn lịch.",
+      "locationPickerHelper": "Lịch",
+      "validation": {
+        "titleRequired": "Nhập tiêu đề.",
+        "startInvalid": "Kiểm tra thời gian bắt đầu.",
+        "endInvalid": "Kiểm tra thời gian kết thúc.",
+        "endBeforeStart": "Thời gian kết thúc trước thời gian bắt đầu.",
+        "roomMissing": "Không tìm thấy lịch."
+      }
+    },
+    "listScreen": {
+      "loadFail": "Không thể tải lịch.",
+      "roomMissing": "Không tìm thấy lịch.",
+      "createAccessibility": "Tạo lịch",
+      "retry": "Thử lại",
+      "activeCount": "Lịch {{count}}",
+      "summary": "Lịch",
+      "emptyTitle": "Chưa có lịch",
+      "emptyDesc": "Tạo lịch để cùng xem.",
+      "beaconUnavailableTitle": "Lịch",
+      "beaconUnavailableDesc": "Lịch",
+      "create": "Lịch",
+      "joined": "Đã tham gia",
+      "notJoined": "Chưa tham gia",
+      "cancelled": "Lịch",
+      "completed": "Hoàn tất",
+      "past": "Lịch"
+    },
+    "messageCard": {
+      "cancelled": "Lịch",
+      "completed": "Hoàn tất"
+    }
+  },
+  "openProfile": {
+    "common": {
+      "confirm": "OK",
+      "cancel": "Hủy",
+      "save": "Lưu",
+      "delete": "Xóa",
+      "default": "Mặc định",
+      "user": "Người dùng",
+      "openChat": "Open chat",
+      "business": "Kinh doanh",
+      "openTalk": "Open chat",
+      "fallbackName": "Open profile",
+      "statusEmpty": "Chưa có trạng thái",
+      "selectPhoto": "Chọn open profile.",
+      "photoApplied": "Đã áp dụng ảnh.",
+      "saved": "Đã lưu.",
+      "deleted": "Đã xóa.",
+      "tryAgain": "Vui lòng thử lại sau.",
+      "notice": "Thông báo",
+      "actionFailed": "Không thể hoàn tất tác vụ.",
+      "saveFailed": "Không thể lưu.",
+      "profileSaveFailed": "Không thể lưu hồ sơ."
+    },
+    "list": {
+      "title": "Open profile",
+      "loadFailed": "Không thể tải open profile.",
+      "nicknameRequired": "Nhập biệt danh.",
+      "createSuccess": "Đã tạo open profile.",
+      "createFailed": "Tạo thất bại",
+      "saveFailed": "Lưu thất bại",
+      "deleteFailed": "Xóa thất bại",
+      "deleteTitle": "Xóa open profile?",
+      "deleteDescInUse": "Open profile",
+      "deleteDescDefault": "Hồ sơ đã xóa không thể dùng lại.",
+      "editAccessibility": "Sửa open profile",
+      "usedRoomsCount": "Đang dùng trong {{count}} open chat",
+      "usedRoomsEmpty": "Chưa có open profile.",
+      "emptyTitle": "Chưa có open profile.",
+      "emptyDesc": "Open profile"
+    },
+    "viewer": {
+      "action": {
+        "transferOwner": "Chuyển chủ phòng",
+        "promoteManager": "Open profile",
+        "demoteManager": "Gỡ quản lý",
+        "kick": "Mời ra",
+        "block": "Chặn",
+        "unblock": "Bỏ chặn",
+        "release": "Gỡ",
+        "delegate": "Open profile",
+        "appoint": "Bổ nhiệm",
+        "changePhoto": "Open profile",
+        "showPhoto": "Open profile"
+      },
+      "confirm": {
+        "blockMessage": "Open profile?",
+        "unblockMessage": "Hiển thị lại tin nhắn của người này?",
+        "transferOwnerMessage": "Chuyển quyền chủ phòng cho {{name}}?",
+        "promoteManagerMessage": "Bổ nhiệm {{name}} làm quản lý?",
+        "demoteManagerMessage": "Gỡ quyền quản lý của {{name}}?",
+        "kickMessage": "Mời {{name}} ra khỏi phòng? Người bị mời ra sẽ không thể vào lại."
+      },
+      "accessibility": {
+        "save": "Lưu"
+      },
+      "placeholder": {
+        "status": "Trạng thái"
+      }
+    },
+    "edit": {
+      "loadFailed": "Không thể tải thông tin open chat.",
+      "titleRequired": "Nhập tên phòng.",
+      "saveFailed": "Không thể lưu. Vui lòng thử lại sau.",
+      "categoryFallback": "Open chat",
+      "titlePlaceholder": "Tên open chat",
+      "changePhoto": "Open profile",
+      "descriptionPlaceholder": "Open profile",
+      "tagsPlaceholder": "Nhập open profile.",
+      "publicTitle": "Công khai",
+      "publicDesc": "Open profile",
+      "selectCover": "Chọn open profile."
+    },
+    "gate": {
+      "loadFailed": "Không thể tải thông tin.",
+      "joinFailed": "Không thể vào bằng open profile. Vui lòng thử lại sau.",
+      "enterChat": "Nhập open profile.",
+      "startConsult": "Open profile",
+      "selectProfileEnter": "Chọn open profile.",
+      "joinOpenChat": "Tham gia open chat",
+      "openNow": "Mở",
+      "closed": "Đã đóng",
+      "participants": "{{count}} người tham gia",
+      "participantsWithMax": "{{count}}/{{max}} người tham gia",
+      "createdAt": "Tạo ngày {{date}}",
+      "host": "Chủ phòng",
+      "introEmpty": "Chưa có giới thiệu."
+    }
+  },
+  "userFallback": "Người dùng",
+  "room": {
+    "deletedReadonly": "Chat Phòng",
+    "leftReadonly": "Chat Phòng",
+    "kickedTitle": "Bạn đã bị mời ra.",
+    "kickedMessage": "Chat Phòng Tin nhắn"
+  },
+  "toast": {
+    "selectCopySecureBlocked": "Chat Thông báo Chọn Sao chép Bảo mật",
+    "selectCopyUnsupported": "Chat Thông báo Chọn Sao chép",
+    "shareToSelfSuccess": "Chat Thông báo Chia sẻ Tôi Hoàn tất",
+    "shareSecureBlocked": "Chat Thông báo Chia sẻ Bảo mật",
+    "shareUnsupported": "Chat Thông báo Chia sẻ",
+    "shareSelfRoomUnavailable": "Không thể chuẩn bị phòng chat với tôi.",
+    "shareFailed": "Không thể chia sẻ.",
+    "noticeNoPermission": "Chat Thông báo Quyền",
+    "copied": "Đã sao chép."
+  },
+  "longMessage": {
+    "message": "Tin nhắn",
+    "translation": "Dịch",
+    "original": "Chat Tin nhắn"
+  },
+  "selectCopy": {
+    "titleFallback": "Tin nhắn",
+    "translated": "Dịch",
+    "original": "Chat Chọn Sao chép",
+    "hint": "Chat Chọn Sao chép",
+    "copied": "Chat Chọn Sao chép",
+    "copyAll": "Chat Chọn Sao chép Tất cả",
+    "empty": "Chưa có chat chọn sao chép trống."
+  },
+  "system": {
+    "notice": "Cập nhật phòng chat",
+    "memberJoined": "{{name}} đã tham gia.",
+    "memberLeft": "{{name}} đã rời đi.",
+    "memberKicked": "{{name}} đã bị xóa khỏi phòng.",
+    "managerPromoted": "{{name}} hiện là quản lý.",
+    "managerDemoted": "{{name}} không còn là quản lý.",
+    "ownerTransferred": "{{name}} hiện là chủ phòng.",
+    "roomDeleted": "Phòng này đã bị xóa."
+  },
+  "cancel": "Hủy"
+}

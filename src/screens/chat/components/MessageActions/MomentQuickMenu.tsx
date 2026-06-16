@@ -9,11 +9,16 @@ import {
   Dimensions,
   Platform,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import type { ChatTheme } from '@/screens/chat/theme/chatTheme';
 
 type AnchorRect = { x: number; y: number; w: number; h: number };
 
 type Props = {
+  // UX 설명(선택)
+  policyText?: string;
+  expiryText?: string;
+
   visible: boolean;
   theme: ChatTheme;
   anchor: AnchorRect | null;
@@ -42,7 +47,10 @@ export default function MomentQuickMenu({
   onClose,
   onCancelMoment,
   canCancel = true,
+  policyText,
+  expiryText,
 }: Props) {
+  const { t } = useTranslation();
   const { width: W, height: H } = Dimensions.get('window');
 
   const pos = useMemo(() => {
@@ -50,7 +58,7 @@ export default function MomentQuickMenu({
     if (!anchor) return { left: (W - 220) / 2, top: (H - 120) / 2 };
 
     const menuW = 220;
-    const menuH = 98;
+    const menuH = policyText || expiryText ? 132 : 98;
 
     // anchor 아래쪽에 뜨도록
     let left = anchor.x + anchor.w / 2 - menuW / 2;
@@ -97,7 +105,19 @@ export default function MomentQuickMenu({
             },
           ]}
         >
-          <Text style={[styles.title, { color: subtle }]}>모먼트 삭제</Text>
+          <Text style={[styles.title, { color: subtle }]}>{t('chat:moment.title')}</Text>
+
+          {!!policyText && (
+            <Text style={[styles.sub, { color: subtle }]} numberOfLines={2}>
+              {policyText}
+            </Text>
+          )}
+          {!!expiryText && (
+            <Text style={[styles.sub, { color: subtle }]} numberOfLines={2}>
+              {expiryText}
+            </Text>
+          )}
+
 
           <Pressable
             disabled={!canCancel}
@@ -112,14 +132,14 @@ export default function MomentQuickMenu({
               !canCancel && { opacity: 0.5 },
             ]}
           >
-            <Text style={[styles.itemText, { color: text }]}>삭제 설정 취소</Text>
+            <Text style={[styles.itemText, { color: text }]}>{t('chat:moment.cancel')}</Text>
           </Pressable>
 
           <Pressable
             onPress={onClose}
             style={({ pressed }) => [styles.item, pressed && { backgroundColor: pressedBg }]}
           >
-            <Text style={[styles.itemText, { color: text }]}>닫기</Text>
+            <Text style={[styles.itemText, { color: text }]}>{t('common:close')}</Text>
           </Pressable>
         </View>
       </View>
@@ -149,6 +169,13 @@ const styles = StyleSheet.create({
         elevation: 12,
       },
     }),
+  },
+  sub: {
+    paddingHorizontal: 14,
+    paddingBottom: 6,
+    fontSize: 11,
+    fontWeight: '700',
+    includeFontPadding: false,
   },
   title: {
     paddingHorizontal: 14,

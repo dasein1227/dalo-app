@@ -1,0 +1,27 @@
+{
+  "splash_loading": "Başlatılıyor…",
+  "offline": "Çevrimdışısınız. Ağ bağlantınızı kontrol edin.",
+  "not_found": "Sayfa bulunamadı.",
+  "notFound": {
+    "header": "Sayfa yok",
+    "title": "Sayfa bulunamadı",
+    "desc": "İstenen ekran bulunamadı. Yol veya bilgileri kontrol edin.",
+    "retry": "Tekrar dene",
+    "home": "Ana sayfaya git",
+    "homeShort": "Ana sayfa",
+    "previous": "Geri",
+    "quick": {
+      "friends": "Arkadaşlar",
+      "settings": "Ayarlar"
+    }
+  },
+  "offlineScreen": {
+    "header": "Çevrimdışı",
+    "title": "Çevrimdışısınız",
+    "desc": "Ağ bağlantınızı kontrol edin.\nWi‑Fi veya mobil veri kapalı olabilir.",
+    "retry": "Tekrar dene",
+    "check": "Bağlantıyı kontrol et",
+    "openSettings": "Ayarları aç",
+    "home": "Ana sayfa"
+  }
+}

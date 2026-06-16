@@ -1,89 +1,129 @@
-import { schemaMigrations } from '@nozbe/watermelondb/Schema/migrations';
-
-// src/lib/chatDB/migrations/index.ts
-// - Normalize add_columns format (array)
-// - Add toVersion 6: messages.room_seq
-// - Add toVersion 7: messages.delete_at
+import { addColumns, createTable, schemaMigrations } from '@nozbe/watermelondb/Schema/migrations';
 
 export default schemaMigrations({
   migrations: [
     {
       toVersion: 2,
       steps: [
-        {
-          type: 'add_columns',
+        addColumns({
           table: 'messages',
-          columns: [{ name: 'translated_text', type: 'string', isOptional: true }],
-        },
+          columns: [
+            { name: 'is_secure', type: 'boolean', isOptional: true, isIndexed: true },
+            { name: 'secure_epoch', type: 'number', isOptional: true, isIndexed: true },
+            { name: 'secure_sender_device_id', type: 'string', isOptional: true, isIndexed: true },
+            { name: 'cipher_suite', type: 'string', isOptional: true },
+            { name: 'ciphertext', type: 'string', isOptional: true },
+            { name: 'nonce', type: 'string', isOptional: true },
+            { name: 'aad_version', type: 'number', isOptional: true },
+            { name: 'secure_meta', type: 'string', isOptional: true },
+          ],
+        }),
       ],
     },
     {
       toVersion: 3,
       steps: [
-        {
-          type: 'create_table',
-          table: 'message_translations',
+        createTable({
+          name: 'room_read_states',
           columns: [
-            { name: 'message_id', type: 'string', isIndexed: true },
             { name: 'room_id', type: 'number', isIndexed: true },
             { name: 'user_id', type: 'string', isIndexed: true },
-
-            { name: 'purpose', type: 'string', isIndexed: true },
-
-            { name: 'target_lang', type: 'string' },
-            { name: 'generated_tier', type: 'string' },
-            { name: 'translated_text', type: 'string' },
-
-            { name: 'created_at', type: 'number', isIndexed: true },
+            { name: 'last_read_seq', type: 'number', isIndexed: true },
+            { name: 'is_active', type: 'boolean', isOptional: true, isIndexed: true },
             { name: 'updated_at', type: 'number' },
           ],
-        },
+        }),
       ],
     },
     {
       toVersion: 4,
       steps: [
-        {
-          type: 'add_columns',
+        addColumns({
           table: 'messages',
           columns: [
-            { name: 'link_preview', type: 'string', isOptional: true },
-            { name: 'link_preview_url', type: 'string', isOptional: true },
-            { name: 'link_preview_status', type: 'string', isOptional: true },
+            { name: 'notice_pinned_at', type: 'number', isOptional: true, isIndexed: true },
           ],
-        },
-      ],
-    },
-    {
-      toVersion: 5,
-      steps: [
-        {
-          type: 'add_columns',
-          table: 'messages',
-          columns: [{ name: 'client_msg_id', type: 'string', isOptional: true }],
-        },
-      ],
-    },
-    {
-      toVersion: 6,
-      steps: [
-        {
-          type: 'add_columns',
-          table: 'messages',
-          columns: [{ name: 'room_seq', type: 'number', isOptional: true }],
-        },
+        }),
       ],
     },
 
-    // ✅ NEW: unified delete timestamp (ms)
+    {
+      toVersion: 5,
+      steps: [
+        createTable({
+          name: 'message_bookmarks',
+          columns: [
+            { name: 'user_id', type: 'string', isIndexed: true },
+            { name: 'room_id', type: 'number', isIndexed: true },
+            { name: 'message_uid', type: 'string', isIndexed: true },
+            { name: 'message_id', type: 'number', isOptional: true, isIndexed: true },
+            { name: 'room_seq', type: 'number', isOptional: true, isIndexed: true },
+            { name: 'created_at', type: 'number', isIndexed: true },
+            { name: 'updated_at', type: 'number', isIndexed: true },
+            { name: 'deleted_at', type: 'number', isOptional: true, isIndexed: true },
+            { name: 'sync_state', type: 'string', isIndexed: true },
+            { name: 'synced_at', type: 'number', isOptional: true },
+            { name: 'last_error', type: 'string', isOptional: true },
+          ],
+        }),
+        createTable({
+          name: 'message_reactions',
+          columns: [
+            { name: 'user_id', type: 'string', isIndexed: true },
+            { name: 'room_id', type: 'number', isIndexed: true },
+            { name: 'message_uid', type: 'string', isIndexed: true },
+            { name: 'message_id', type: 'number', isOptional: true, isIndexed: true },
+            { name: 'room_seq', type: 'number', isOptional: true, isIndexed: true },
+            { name: 'reaction_key', type: 'string', isIndexed: true },
+            { name: 'created_at', type: 'number', isIndexed: true },
+            { name: 'updated_at', type: 'number', isIndexed: true },
+            { name: 'deleted_at', type: 'number', isOptional: true, isIndexed: true },
+            { name: 'sync_state', type: 'string', isIndexed: true },
+            { name: 'synced_at', type: 'number', isOptional: true },
+            { name: 'last_error', type: 'string', isOptional: true },
+          ],
+        }),
+        createTable({
+          name: 'message_reaction_counts',
+          columns: [
+            { name: 'room_id', type: 'number', isIndexed: true },
+            { name: 'message_uid', type: 'string', isIndexed: true },
+            { name: 'reaction_key', type: 'string', isIndexed: true },
+            { name: 'count', type: 'number' },
+            { name: 'updated_at', type: 'number', isIndexed: true },
+          ],
+        }),
+      ],
+    },
+
+    {
+      toVersion: 6,
+      steps: [
+        addColumns({
+          table: 'rooms',
+          columns: [
+            { name: 'member_count', type: 'number', isOptional: true },
+          ],
+        }),
+      ],
+    },
+
     {
       toVersion: 7,
       steps: [
-        {
-          type: 'add_columns',
-          table: 'messages',
-          columns: [{ name: 'delete_at', type: 'number', isOptional: true }],
-        },
+        createTable({
+          name: 'room_open_snapshots',
+          columns: [
+            { name: 'room_id', type: 'number', isIndexed: true },
+            { name: 'user_id', type: 'string', isIndexed: true },
+            { name: 'items_json', type: 'string' },
+            { name: 'last_seq', type: 'number', isOptional: true, isIndexed: true },
+            { name: 'tail_signature', type: 'string', isOptional: true },
+            { name: 'item_count', type: 'number', isOptional: true },
+            { name: 'created_at', type: 'number', isIndexed: true },
+            { name: 'updated_at', type: 'number', isIndexed: true },
+          ],
+        }),
       ],
     },
   ],

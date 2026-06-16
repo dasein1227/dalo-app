@@ -1,350 +1,552 @@
-// src/screens/friends/Edit.tsx
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
   ActivityIndicator,
-  Alert,
-  TextInput,
-  Modal,
   Image,
-  ScrollView,
-  StatusBar,
+  KeyboardAvoidingView,
   Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { ChevronLeft, Star, Tag, Shield, UserMinus, Save } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
+import { useAppTheme } from '@/theme/useAppTheme';
+import { createFriendEditStyles, createFriendEditTheme } from './Edit.theme';
+import CoonnFloatingToast from '@/components/feedback/CoonnFloatingToast';
+import { createCoonnFloatingToastTheme } from '@/components/feedback/CoonnFloatingToast.theme';
+import { useCoonnFloatingToast } from '@/components/feedback/useCoonnFloatingToast';
+import CoonnAlert, { type CoonnAlertVariant } from '@/components/CoonnAlert';
+import { ChevronLeft, EyeOff, Shield, Star, Tag, UserMinus } from 'lucide-react-native';
+import type { FriendDetail } from './api/friends.types';
+import { loadFriendDetail } from './api/friends.read';
+import {
+  removeFriend,
+  setFriendAlias,
+  setFriendBlock,
+  setFriendFavorite,
+  setFriendHidden,
+  setFriendMemo,
+  setLabelMember,
+} from './api/friends.write';
+import FriendGroupManager, { type FriendDraftGroup } from './components/FriendGroupManager';
 
-import { supabase } from '@/lib/supabase';
+type ScreenMode = 'main' | 'groups';
 
-type FriendDetail = {
-  friend_id: string;
-  nickname: string | null;
-  follow_id: string | null;
-  friend_code: string | null;
-  phone_number: string | null;
-  avatar_url: string | null;
-
-  alias: string | null;
-  is_favorite: boolean;
-
-  is_blocked_by_me: boolean;
-  is_blocking_me: boolean;
-
-  groups: { id: number; name: string; in_group: boolean }[];
+type FriendEditAlertState = {
+  visible: boolean;
+  title: string;
+  message?: string;
+  variant?: CoonnAlertVariant;
+  confirmText?: string;
+  cancelText?: string;
+  secondaryConfirmText?: string;
+  singleButton?: boolean;
+  dismissOnBackdrop?: boolean;
+  onConfirm?: () => void | Promise<void>;
+  onSecondaryConfirm?: () => void | Promise<void>;
 };
 
-const BG = '#fff';
-const TEXT = '#111827';
-const MUTED = '#6B7280';
-const HAIRLINE = '#E5E7EB';
-const ACCENT = '#FF5A7A';
+const EMPTY_ALERT_STATE: FriendEditAlertState = {
+  visible: false,
+  title: '',
+  message: undefined,
+  variant: 'default',
+  singleButton: true,
+  dismissOnBackdrop: true,
+};
 
-async function rpc<T>(fn: string, args?: Record<string, any>): Promise<T> {
-  const { data, error } = await supabase.rpc(fn, args ?? {});
-  if (error) throw error;
-  return data as T;
+function safeName(
+  detail: FriendDetail | null,
+  fallbackUser: string,
+  fallbackUnknown: string,
+) {
+  if (!detail) return fallbackUser;
+  return detail.alias?.trim() || detail.nickname?.trim() || detail.follow_id?.trim() || fallbackUnknown;
 }
 
-function safeMsg(e: any) {
-  return (e?.message ?? String(e)) as string;
-}
-
-export default function FriendEditScreen() {
+export default function FriendDetailScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
+  const { t } = useTranslation();
+  const appTheme = useAppTheme();
+  const ui = useMemo(() => createFriendEditTheme(appTheme), [appTheme]);
+  const styles = useMemo(() => createFriendEditStyles(ui), [ui]);
+  const { toast, showToast, hideToast } = useCoonnFloatingToast();
+  const [alertState, setAlertState] = useState<FriendEditAlertState>(EMPTY_ALERT_STATE);
+
+  const alertTheme = Boolean((appTheme as any)?.isDark) ? 'coonn_dark' : 'coonn_light';
+  const closeAlert = useCallback(() => {
+    setAlertState((prev) => ({ ...prev, visible: false }));
+  }, []);
+  const showInfoAlert = useCallback((title: string, message?: string, variant: CoonnAlertVariant = 'default') => {
+    setAlertState({
+      visible: true,
+      title,
+      message,
+      variant,
+      singleButton: true,
+      confirmText: t('common:ok'),
+      dismissOnBackdrop: true,
+      onConfirm: closeAlert,
+    });
+  }, [closeAlert, t]);
+  const toastTheme = useMemo(() => {
+    const colors = ui.colors as any;
+    return createCoonnFloatingToastTheme(
+      {
+        isDark: Boolean((appTheme as any)?.isDark ?? colors.isDark),
+        surface: colors.toastBackground ?? colors.card ?? colors.background ?? null,
+        textPrimary: colors.textPrimary ?? colors.iconPrimary ?? null,
+        border: colors.toastBorder ?? colors.border ?? colors.divider ?? null,
+        accentColor: colors.primary ?? colors.iconPrimary ?? null,
+        dangerColor: colors.danger ?? null,
+        shadowColor: colors.primary ?? colors.iconPrimary ?? null,
+      },
+      toast.tone,
+    );
+  }, [appTheme, toast.tone, ui]);
   const friendId = String(route.params?.friend_id ?? '');
+  const initialMode = route.params?.initialMode === 'groups' ? 'groups' : 'main';
+  const enteredDirectGroups = initialMode === 'groups';
 
   const [detail, setDetail] = useState<FriendDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [removing, setRemoving] = useState(false);
+
+  const [screenMode, setScreenMode] = useState<ScreenMode>(initialMode);
 
   const [alias, setAlias] = useState('');
-  const [savingAlias, setSavingAlias] = useState(false);
-
-  const [groupModal, setGroupModal] = useState(false);
+  const [memo, setMemo] = useState('');
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [draftGroups, setDraftGroups] = useState<FriendDraftGroup[]>([]);
 
   const load = useCallback(async () => {
     if (!friendId) return;
     try {
       setLoading(true);
-      const d = await rpc<FriendDetail>('get_friend_detail_v1', { friend_id: friendId });
+      const d = await loadFriendDetail(friendId);
       setDetail(d);
       setAlias(d?.alias ?? '');
+      setMemo(d?.memo ?? '');
+      setIsFavorite(!!d?.is_favorite);
+      setIsHidden(!!d?.is_hidden);
+      setIsBlocked(!!d?.is_blocked_by_me);
+      setDraftGroups((d?.groups ?? []).map((g) => ({ id: g.id, name: g.name, in_group: !!g.in_group })));
     } catch (e: any) {
-      Alert.alert('불러오기 실패', safeMsg(e).slice(0, 200));
+      showInfoAlert(t('friends:edit.alert.loadFail'), e?.message ?? String(e), 'danger');
       setDetail(null);
     } finally {
       setLoading(false);
     }
-  }, [friendId]);
+  }, [friendId, showInfoAlert]);
 
   useEffect(() => {
     load();
   }, [load]);
 
-  const name = useMemo(() => {
-    if (!detail) return '사용자';
-    return detail.alias?.trim() || detail.nickname?.trim() || detail.follow_id?.trim() || detail.friend_code?.trim() || '사용자';
-  }, [detail]);
+  const name = useMemo(
+    () => safeName(detail, t('friends:userFallback'), t('friends:edit.unknownUser')),
+    [detail, t],
+  );
 
-  const sub = useMemo(() => {
-    if (!detail) return '';
-    return detail.follow_id || detail.friend_code || detail.phone_number || detail.friend_id.slice(0, 8) + '…';
-  }, [detail]);
+  const selectedGroupNames = useMemo(
+    () => draftGroups.filter((g) => g.in_group).map((g) => g.name).join(', '),
+    [draftGroups],
+  );
 
-  const toggleFavorite = useCallback(async () => {
-    if (!detail) return;
-    try {
-      const next = !detail.is_favorite;
-      await rpc('set_friend_favorite', { friend_id: detail.friend_id, favorite: next });
-      setDetail({ ...detail, is_favorite: next });
-    } catch (e: any) {
-      Alert.alert('실패', safeMsg(e).slice(0, 200));
+  const hasChanges = useMemo(() => {
+    if (!detail) return false;
+
+    const aliasChanged = (alias.trim() || '') !== (detail.alias?.trim() || '');
+    const memoChanged = (memo.trim() || '') !== (detail.memo?.trim() || '');
+    const favoriteChanged = isFavorite !== !!detail.is_favorite;
+    const hiddenChanged = isHidden !== !!detail.is_hidden;
+    const blockedChanged = isBlocked !== !!detail.is_blocked_by_me;
+
+    const originalGroups = new Map(detail.groups.map((g) => [g.id, !!g.in_group]));
+    const groupChanged = draftGroups.some((g) => originalGroups.get(g.id) !== !!g.in_group);
+
+    return aliasChanged || memoChanged || favoriteChanged || hiddenChanged || blockedChanged || groupChanged;
+  }, [alias, memo, isFavorite, isHidden, isBlocked, draftGroups, detail]);
+
+  const saveAll = useCallback(async () => {
+    if (!detail || !hasChanges) {
+      navigation.goBack();
+      return;
     }
-  }, [detail]);
 
-  const saveAlias = useCallback(async () => {
-    if (!detail) return;
     try {
-      setSavingAlias(true);
-      await rpc('set_friend_alias', { friend_id: detail.friend_id, alias: alias.trim() || null });
-      setDetail({ ...detail, alias: alias.trim() || null });
-      Alert.alert('완료', '별칭을 저장했습니다.');
+      setSaving(true);
+
+      const aliasChanged = (alias.trim() || '') !== (detail.alias?.trim() || '');
+      const memoChanged = (memo.trim() || '') !== (detail.memo?.trim() || '');
+      const favoriteChanged = isFavorite !== !!detail.is_favorite;
+      const hiddenChanged = isHidden !== !!detail.is_hidden;
+      const blockedChanged = isBlocked !== !!detail.is_blocked_by_me;
+
+      if (aliasChanged) {
+        await setFriendAlias(detail.friend_id, alias.trim() || null);
+      }
+
+      if (memoChanged) {
+        await setFriendMemo(detail.friend_id, memo.trim() || null);
+      }
+
+      if (favoriteChanged) {
+        await setFriendFavorite(detail.friend_id, isFavorite);
+      }
+
+      if (hiddenChanged) {
+        await setFriendHidden(detail.friend_id, isHidden);
+      }
+
+      if (blockedChanged) {
+        await setFriendBlock(detail.friend_id, isBlocked);
+      }
+
+      const originalGroups = new Map(detail.groups.map((g) => [g.id, !!g.in_group]));
+      for (const g of draftGroups) {
+        const before = originalGroups.get(g.id) ?? false;
+        const after = !!g.in_group;
+        if (before !== after) {
+          await setLabelMember(g.id, detail.friend_id, after);
+        }
+      }
+
+      setDetail((prev) =>
+        prev
+          ? {
+              ...prev,
+              alias: alias.trim() || null,
+              memo: memo.trim() || null,
+              is_favorite: isFavorite,
+              is_hidden: isHidden,
+              is_blocked_by_me: isBlocked,
+              groups: draftGroups.map((g) => ({ ...g })),
+            }
+          : prev,
+      );
+      showToast({ message: t('friends:edit.toast.saved'), tone: 'success', showMark: true });
     } catch (e: any) {
-      Alert.alert('실패', safeMsg(e).slice(0, 200));
+      showInfoAlert(t('friends:edit.alert.saveFail'), e?.message ?? String(e), 'danger');
     } finally {
-      setSavingAlias(false);
+      setSaving(false);
     }
-  }, [alias, detail]);
+  }, [alias, detail, draftGroups, hasChanges, isBlocked, isFavorite, isHidden, memo, navigation, showInfoAlert, showToast, t]);
 
-  const toggleBlock = useCallback(async () => {
+  const confirmRemove = useCallback(() => {
     if (!detail) return;
-    try {
-      const next = !detail.is_blocked_by_me;
-      await rpc('set_friend_block', { target_id: detail.friend_id, blocked: next, reason: null });
-      await load();
-    } catch (e: any) {
-      Alert.alert('실패', safeMsg(e).slice(0, 200));
-    }
-  }, [detail, load]);
 
-  const removeFriend = useCallback(async () => {
-    if (!detail) return;
-    Alert.alert('친구 삭제', `${name}님을 친구에서 삭제할까요?`, [
-      { text: '취소', style: 'cancel' },
-      {
-        text: '삭제',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await rpc('remove_friend_v1', { friend_id: detail.friend_id });
-            Alert.alert('완료', '친구를 삭제했습니다.');
-            navigation.goBack();
-          } catch (e: any) {
-            Alert.alert('삭제 실패', safeMsg(e).slice(0, 200));
-          }
-        },
+    setAlertState({
+      visible: true,
+      title: t('friends:edit.remove.title'),
+      message: t('friends:edit.remove.message', { name }),
+      variant: 'danger',
+      confirmText: t('common:delete'),
+      cancelText: t('common:cancel'),
+      singleButton: false,
+      dismissOnBackdrop: false,
+      onConfirm: async () => {
+        try {
+          setRemoving(true);
+          await removeFriend(detail.friend_id);
+          closeAlert();
+          navigation.goBack();
+        } catch (e: any) {
+          showInfoAlert(t('friends:edit.alert.removeFail'), e?.message ?? String(e), 'danger');
+        } finally {
+          setRemoving(false);
+        }
       },
-    ]);
-  }, [detail, name, navigation]);
+    });
+  }, [closeAlert, detail, name, navigation, showInfoAlert, t]);
 
-  const toggleGroup = useCallback(async (labelId: number, inGroup: boolean) => {
-    if (!detail) return;
-    try {
-      await rpc('set_label_member_v1', { label_id: labelId, friend_id: detail.friend_id, in_group: !inGroup });
-      setDetail({
-        ...detail,
-        groups: detail.groups.map((g) => (g.id === labelId ? { ...g, in_group: !inGroup } : g)),
-      });
-    } catch (e: any) {
-      Alert.alert('실패', safeMsg(e).slice(0, 200));
+  const exitDirectGroups = useCallback(() => {
+    if (!hasChanges) {
+      navigation.goBack();
+      return;
     }
-  }, [detail]);
+
+    setAlertState({
+      visible: true,
+      title: t('friends:edit.unsaved.title'),
+      message: t('friends:edit.unsaved.message'),
+      variant: 'danger',
+      confirmText: t('common:save'),
+      secondaryConfirmText: t('friends:edit.unsaved.discard'),
+      cancelText: t('common:cancel'),
+      singleButton: false,
+      dismissOnBackdrop: false,
+      onConfirm: async () => {
+        closeAlert();
+        await saveAll();
+      },
+      onSecondaryConfirm: () => {
+        closeAlert();
+        navigation.goBack();
+      },
+    });
+  }, [closeAlert, hasChanges, navigation, saveAll, t]);
+
+  const onBackPress = useCallback(() => {
+    if (screenMode === 'groups') {
+      if (enteredDirectGroups) {
+        exitDirectGroups();
+        return;
+      }
+      setScreenMode('main');
+      return;
+    }
+
+    navigation.goBack();
+  }, [enteredDirectGroups, exitDirectGroups, navigation, screenMode]);
+
+  const onRightPress = useCallback(() => {
+    if (screenMode === 'groups') {
+      if (enteredDirectGroups) {
+        void saveAll();
+        return;
+      }
+      setScreenMode('main');
+      return;
+    }
+
+    void saveAll();
+  }, [enteredDirectGroups, saveAll, screenMode]);
 
   if (loading) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: BG }}>
-        <StatusBar barStyle="dark-content" backgroundColor="#fff" translucent={false} />
-        <View style={st.center}><ActivityIndicator /></View>
+      <SafeAreaView style={{ flex: 1, backgroundColor: ui.colors.background }}>
+        <View style={styles.center}>
+          <ActivityIndicator />
+        </View>
       </SafeAreaView>
     );
   }
 
   if (!detail) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: BG }}>
-        <StatusBar barStyle="dark-content" backgroundColor="#fff" translucent={false} />
-        <View style={st.center}><Text style={{ color: MUTED }}>사용자를 불러올 수 없습니다.</Text></View>
+      <SafeAreaView style={{ flex: 1, backgroundColor: ui.colors.background }}>
+        <View style={styles.center}>
+          <Text style={{ color: ui.colors.textSecondary }}>{t('friends:edit.alert.userLoadFail')}</Text>
+        </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: BG }}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" translucent={false} />
+    <SafeAreaView style={{ flex: 1, backgroundColor: ui.colors.background }}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={0}
+      >
+        <View style={styles.topBar}>
+          <Pressable style={styles.topLeft} hitSlop={10} onPress={onBackPress}>
+            <ChevronLeft size={23} color={ui.colors.iconPrimary} strokeWidth={1.9} />
+          </Pressable>
 
-      <View style={st.topBar}>
-        <Pressable style={st.topLeft} hitSlop={10} onPress={() => navigation.goBack()}>
-          <ChevronLeft size={22} color={TEXT} />
-        </Pressable>
-        <Text style={st.topTitle}>친구 관리</Text>
-        <View style={st.topRight} />
-      </View>
+          <Text style={styles.topTitle}>{screenMode === 'groups' ? t('friends:edit.groups.title') : t('friends:edit.title')}</Text>
 
-      <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 28 }}>
-        <View style={st.card}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-            {detail.avatar_url ? (
-              <Image source={{ uri: detail.avatar_url }} style={st.avatar} />
-            ) : (
-              <View style={[st.avatar, st.avatarFallback]}>
-                <Text style={st.initial}>{(name?.[0] ?? 'U').toUpperCase()}</Text>
-              </View>
-            )}
-
-            <View style={{ flex: 1 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <Text style={st.name}>{name}</Text>
-                <Pressable onPress={toggleFavorite} hitSlop={8}>
-                  <Star size={18} color={detail.is_favorite ? ACCENT : MUTED} fill={detail.is_favorite ? ACCENT : 'transparent'} />
-                </Pressable>
-              </View>
-              <Text style={st.sub}>{sub}</Text>
-              {detail.is_blocking_me ? <Text style={st.warn}>상대가 나를 차단한 상태입니다.</Text> : null}
-            </View>
-          </View>
-        </View>
-
-        <View style={st.section}>
-          <Text style={st.sectionTitle}>별칭</Text>
-          <View style={st.inline}>
-            <TextInput
-              style={st.input}
-              value={alias}
-              onChangeText={setAlias}
-              placeholder="별칭 입력"
-              placeholderTextColor="#9CA3AF"
-            />
-            <Pressable style={[st.iconBtn, savingAlias && { opacity: 0.6 }]} disabled={savingAlias} onPress={saveAlias}>
-              <Save size={18} color={TEXT} />
-            </Pressable>
-          </View>
-        </View>
-
-        <View style={st.section}>
-          <Text style={st.sectionTitle}>그룹</Text>
-
-          <Pressable style={st.actionRow} onPress={() => setGroupModal(true)}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              <Tag size={18} color={TEXT} />
-              <Text style={st.actionText}>그룹 설정</Text>
-            </View>
-            <Text style={st.actionHint}>
-              {detail.groups.filter((g) => g.in_group).map((g) => g.name).join(', ') || '없음'}
+          <Pressable
+            style={styles.topRight}
+            hitSlop={10}
+            disabled={saving}
+            onPress={onRightPress}
+          >
+            <Text style={[styles.confirmText, saving && styles.confirmTextDisabled]}>
+              {saving ? t('friends:action.saving') : screenMode === 'groups' && !enteredDirectGroups ? t('common:done') : t('common:ok')}
             </Text>
           </Pressable>
         </View>
 
-        <View style={st.section}>
-          <Text style={st.sectionTitle}>보안</Text>
+        {screenMode === 'groups' ? (
+          <FriendGroupManager
+            friendName={name}
+            groups={draftGroups}
+            onToggleGroup={(groupId) => {
+              setDraftGroups((prev) =>
+                prev.map((row) =>
+                  row.id === groupId ? { ...row, in_group: !row.in_group } : row,
+                ),
+              );
+            }}
+          />
+        ) : (
+          <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+            <View style={styles.mainSection}>
+              <View style={styles.profileHeader}>
+                {detail.avatar_url ? (
+                  <Image source={{ uri: detail.avatar_url }} style={styles.heroAvatar} />
+                ) : (
+                  <View style={[styles.heroAvatar, styles.heroAvatarFallback]}>
+                    <Text style={styles.heroInitial}>{name.slice(0, 1).toUpperCase()}</Text>
+                  </View>
+                )}
 
-          <Pressable style={st.actionRow} onPress={toggleBlock}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              <Shield size={18} color={TEXT} />
-              <Text style={st.actionText}>{detail.is_blocked_by_me ? '차단 해제' : '친구 차단'}</Text>
+                <View style={styles.profileTextWrap}>
+                  <Text style={styles.profileName} numberOfLines={1}>{name}</Text>
+                  <Text style={styles.profileSub} numberOfLines={1}>
+                    {detail.nickname || detail.follow_id || t('friends:edit.unknownUser')}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.rowDivider} />
+
+              <View style={styles.fieldBlock}>
+                <Text style={styles.blockLabel}>{t('friends:edit.field.name')}</Text>
+                <TextInput
+                  style={styles.nameInput}
+                  value={alias}
+                  onChangeText={setAlias}
+                  placeholder={t('friends:edit.placeholder.alias')}
+                  placeholderTextColor={ui.colors.textTertiary}
+                  maxLength={60}
+                />
+                <Text style={styles.helperText}>
+                  {t('friends:edit.helper.friendName', { name: detail.nickname || detail.follow_id || t('friends:edit.none') })}
+                </Text>
+              </View>
+
+              <View style={styles.rowDivider} />
+
+              <View style={styles.favoriteRow}>
+                <Text style={styles.favoriteText}>{t('friends:favorite')}</Text>
+                <Pressable
+                  hitSlop={10}
+                  onPress={() => setIsFavorite((prev) => !prev)}
+                  style={styles.favoriteButton}
+                >
+                  <Star
+                    size={18}
+                    color={isFavorite ? ui.colors.favorite : ui.colors.iconSecondary}
+                    fill={isFavorite ? ui.colors.favorite : 'transparent'}
+                  />
+                  <Text style={[styles.favoriteButtonText, isFavorite && styles.favoriteButtonTextOn]}>
+                    {isFavorite ? t('friends:edit.state.on') : t('friends:edit.state.off')}
+                  </Text>
+                </Pressable>
+              </View>
             </View>
-            <Text style={st.actionHint}>{detail.is_blocked_by_me ? '현재 차단됨' : '차단 안 됨'}</Text>
-          </Pressable>
-        </View>
 
-        <Pressable style={[st.dangerBtn]} onPress={removeFriend}>
-          <UserMinus size={18} color="#fff" />
-          <Text style={st.dangerTxt}>친구 삭제</Text>
-        </Pressable>
-      </ScrollView>
+            <View style={styles.sectionDivider} />
 
-      {/* Group Modal */}
-      <Modal transparent visible={groupModal} animationType="fade" onRequestClose={() => setGroupModal(false)}>
-        <Pressable style={st.backdrop} onPress={() => setGroupModal(false)}>
-          <Pressable style={[st.modalCard, { maxHeight: 520 }]} onPress={() => {}}>
-            <Text style={st.modalTitle}>그룹 설정</Text>
+            <View style={styles.mainSection}>
+              <View style={styles.fieldBlock}>
+                <View style={styles.memoTitleRow}>
+                  <Text style={styles.blockLabel}>{t('friends:memo')}</Text>
+                  <Text style={styles.memoCount}>{memo.length}/500</Text>
+                </View>
+                <TextInput
+                  style={styles.memoInput}
+                  value={memo}
+                  onChangeText={(text) => setMemo(text.slice(0, 500))}
+                  placeholder={t('friends:edit.placeholder.memo')}
+                  placeholderTextColor={ui.colors.textTertiary}
+                  multiline
+                  textAlignVertical="top"
+                  maxLength={500}
+                />
+                <Text style={styles.helperText}>{t('friends:edit.helper.privateMemo')}</Text>
+              </View>
+            </View>
 
-            <ScrollView>
-              {detail.groups.length === 0 ? (
-                <Text style={{ color: MUTED, lineHeight: 18 }}>그룹이 없습니다. 그룹 화면에서 먼저 그룹을 생성하세요.</Text>
-              ) : (
-                detail.groups.map((g) => (
-                  <Pressable key={g.id} style={st.groupRow} onPress={() => toggleGroup(g.id, g.in_group)}>
-                    <Text style={st.groupName}>{g.name}</Text>
-                    <Text style={[st.groupState, g.in_group ? { color: '#111827' } : { color: MUTED }]}>
-                      {g.in_group ? '포함' : '미포함'}
-                    </Text>
-                  </Pressable>
-                ))
-              )}
-            </ScrollView>
+            <View style={styles.sectionDivider} />
 
-            <Pressable style={[st.btn, st.ghost, { marginTop: 12 }]} onPress={() => setGroupModal(false)}>
-              <Text style={st.btnGhostTxt}>닫기</Text>
-            </Pressable>
-          </Pressable>
-        </Pressable>
-      </Modal>
+            <View style={styles.mainSection}>
+              <View style={styles.fieldBlock}>
+                <Text style={styles.smallSectionTitle}>{t('friends:edit.section.groups')}</Text>
+              </View>
+
+              <View style={styles.rowDivider} />
+
+              <Pressable style={styles.actionRow} onPress={() => setScreenMode('groups')}>
+                <View style={styles.rowLeft}>
+                  <Tag size={18} color={ui.colors.iconPrimary} strokeWidth={1.9} />
+                  <Text style={styles.actionText}>{t('friends:edit.groups.title')}</Text>
+                </View>
+                <Text style={styles.actionHint}>
+                  {selectedGroupNames || t('friends:edit.none')}
+                </Text>
+              </Pressable>
+            </View>
+
+            <View style={styles.sectionDivider} />
+
+            <View style={styles.mainSection}>
+              <View style={styles.fieldBlock}>
+                <Text style={styles.smallSectionTitle}>{t('friends:edit.section.security')}</Text>
+              </View>
+
+              <View style={styles.rowDivider} />
+
+              <Pressable style={styles.actionRow} onPress={() => setIsHidden((prev) => !prev)}>
+                <View style={styles.rowLeft}>
+                  <EyeOff size={18} color={ui.colors.iconPrimary} strokeWidth={1.9} />
+                  <Text style={styles.actionText}>{t('friends:hidden')}</Text>
+                </View>
+                <Text style={styles.actionHint}>{isHidden ? t('friends:edit.state.hidden') : t('friends:edit.state.visible')}</Text>
+              </Pressable>
+
+              <View style={styles.rowDivider} />
+
+              <Pressable style={styles.actionRow} onPress={() => setIsBlocked((prev) => !prev)}>
+                <View style={styles.rowLeft}>
+                  <Shield size={18} color={ui.colors.iconPrimary} strokeWidth={1.9} />
+                  <Text style={styles.actionText}>{isBlocked ? t('friends:unblock') : t('friends:block')}</Text>
+                </View>
+                <Text style={styles.actionHint}>{isBlocked ? t('friends:edit.state.blocked') : t('friends:edit.state.unblocked')}</Text>
+              </Pressable>
+
+              <View style={styles.rowDivider} />
+
+              <Pressable style={styles.actionRow} onPress={confirmRemove} disabled={removing}>
+                <View style={styles.rowLeft}>
+                  <UserMinus size={18} color={ui.colors.danger} strokeWidth={1.9} />
+                  <Text style={styles.deleteText}>{t('common:delete')}</Text>
+                </View>
+                <Text style={styles.actionHint}>{removing ? t('friends:action.processing') : ''}</Text>
+              </Pressable>
+            </View>
+
+            {detail.is_blocking_me ? <Text style={styles.warnText}>{t('friends:edit.alert.blockedByPeer')}</Text> : null}
+          </ScrollView>
+        )}
+      </KeyboardAvoidingView>
+      <CoonnFloatingToast
+        visible={toast.visible}
+        message={toast.message}
+        tone={toast.tone}
+        showMark={toast.showMark}
+        theme={toastTheme}
+        bottomOffset={32}
+        onHidden={hideToast}
+      />
+
+      <CoonnAlert
+        visible={alertState.visible}
+        theme={alertTheme}
+        variant={alertState.variant ?? 'default'}
+        title={alertState.title}
+        message={alertState.message}
+        confirmText={alertState.confirmText ?? t('common:ok')}
+        cancelText={alertState.cancelText ?? t('common:cancel')}
+        secondaryConfirmText={alertState.secondaryConfirmText}
+        onConfirm={alertState.onConfirm ?? closeAlert}
+        onSecondaryConfirm={alertState.onSecondaryConfirm}
+        onCancel={closeAlert}
+        singleButton={alertState.singleButton}
+        dismissOnBackdrop={alertState.dismissOnBackdrop}
+        dismissOnBackButton={alertState.dismissOnBackdrop}
+      />
     </SafeAreaView>
   );
 }
 
-const st = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-
-  topBar: {
-    height: 54,
-    backgroundColor: '#fff',
-    paddingHorizontal: 14,
-    paddingLeft: 5,
-    paddingTop: Platform.OS === 'ios' ? 8 : 4,
-    paddingBottom: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  topLeft: { width: 44, alignItems: 'flex-start', justifyContent: 'center' },
-  topTitle: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '700', color: TEXT },
-  topRight: { width: 44 },
-
-  card: { borderWidth: 1, borderColor: HAIRLINE, borderRadius: 18, backgroundColor: '#fff', padding: 14 },
-  avatar: { width: 56, height: 56, borderRadius: 22, backgroundColor: '#E5E7EB' },
-  avatarFallback: { backgroundColor: '#111827', alignItems: 'center', justifyContent: 'center' },
-  initial: { color: '#fff', fontWeight: '900' },
-  name: { fontSize: 16, fontWeight: '900', color: TEXT },
-  sub: { marginTop: 4, color: MUTED, fontWeight: '700', fontSize: 12 },
-  warn: { marginTop: 6, color: '#EF4444', fontWeight: '800', fontSize: 12 },
-
-  section: { marginTop: 14, borderWidth: 1, borderColor: HAIRLINE, borderRadius: 18, backgroundColor: '#fff', padding: 14 },
-  sectionTitle: { fontSize: 14, fontWeight: '900', color: TEXT, marginBottom: 10 },
-
-  inline: { flexDirection: 'row', gap: 10, alignItems: 'center' },
-  input: { flex: 1, height: 44, borderRadius: 12, borderWidth: 1, borderColor: HAIRLINE, paddingHorizontal: 12, color: TEXT, backgroundColor: '#fff' },
-  iconBtn: { width: 44, height: 44, borderRadius: 14, borderWidth: 1, borderColor: HAIRLINE, alignItems: 'center', justifyContent: 'center' },
-
-  actionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8 },
-  actionText: { color: TEXT, fontWeight: '900', fontSize: 14 },
-  actionHint: { color: MUTED, fontWeight: '800', fontSize: 12, maxWidth: 160, textAlign: 'right' },
-
-  dangerBtn: { marginTop: 16, height: 46, borderRadius: 16, backgroundColor: '#EF4444', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 10 },
-  dangerTxt: { color: '#fff', fontWeight: '900' },
-
-  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center', padding: 20 },
-  modalCard: { width: Math.min(420, 360), borderRadius: 18, backgroundColor: '#fff', borderWidth: 1, borderColor: HAIRLINE, padding: 14 },
-  modalTitle: { fontSize: 16, fontWeight: '900', color: TEXT, marginBottom: 10 },
-
-  groupRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
-  groupName: { color: TEXT, fontWeight: '900' },
-  groupState: { fontWeight: '900' },
-
-  btn: { height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  ghost: { backgroundColor: '#fff', borderWidth: 1, borderColor: HAIRLINE },
-  btnGhostTxt: { color: TEXT, fontWeight: '900' },
-});

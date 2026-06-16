@@ -1,0 +1,16 @@
+{
+  "common": "错误",
+  "auth": {
+    "loginRequired": "需要登录。"
+  },
+  "unknown": "发生错误。",
+  "network": "请检查网络连接。",
+  "invalid_credentials": "邮箱或密码不正确。",
+  "oauth_cancelled": "登录已取消。",
+  "provider_config": "请检查认证提供方设置。",
+  "redirect_config": "请检查 Redirect URL 设置。",
+  "session_check_failed": "无法验证会话。",
+  "sms_required": "请输入验证码。",
+  "phone_format": "请使用国际格式输入电话号码（+8210…）。",
+  "email_format": "邮箱格式不正确。"
+}

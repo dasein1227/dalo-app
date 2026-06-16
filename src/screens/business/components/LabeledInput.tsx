@@ -1,7 +1,7 @@
 // src/screens/business/components/LabeledInput.tsx
 import React from 'react';
 import { View, Text, TextInput, TextInputProps } from 'react-native';
-import { styles } from './bizStyles';
+import { useBizStyles } from './bizStyles';
 
 export type LabeledInputProps = {
   label: string;
@@ -22,17 +22,22 @@ export const LabeledInput: React.FC<LabeledInputProps> = ({
   multiline,
   keyboardType = 'default',
   autoCapitalize = 'sentences',
-}) => (
+}) => {
+  const styles = useBizStyles();
+
+  return (
   <View style={styles.inputRow}>
     <Text style={styles.inputLabel}>{label}</Text>
     <TextInput
       value={value}
       onChangeText={onChangeText}
       placeholder={placeholder}
+      placeholderTextColor={styles.__placeholder.color}
       style={[styles.input, multiline && styles.inputMultiline]}
       multiline={multiline}
       keyboardType={keyboardType}
       autoCapitalize={autoCapitalize}
     />
   </View>
-);
+  );
+};

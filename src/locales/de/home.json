@@ -1,0 +1,183 @@
+{
+  "briefing_title": "Heute",
+  "briefing_toggle_show": "Anzeigen",
+  "briefing_toggle_hide": "Ausblenden",
+  "briefing_unread_chat": "Ungelesene Chats",
+  "briefing_nearby_beacon": "Beacons in der Nähe",
+  "briefing_new_friend_post": "Freundesbeiträge",
+  "briefing_new_follower": "Neue Follower",
+  "briefing_count_unit": "",
+  "briefing_people_unit": "",
+  "tabs": {
+    "friends": "Freunde",
+    "following": "Folge ich",
+    "local": "Lokal"
+  },
+  "banner_headerTitle": "In der Nähe",
+  "banner_fallback_title": "Empfehlungen in der Nähe",
+  "banner_fallback_desc": "Orte in deiner Nähe werden gesucht",
+  "banner_default_headline": "Ort des Tages",
+  "banner_unknown_place": "Unbekannter Ort",
+  "banner_status_open": "Geöffnet",
+  "banner_status_closed": "Geschlossen",
+  "banner_tag_fallback": "Empfohlen",
+  "empty_feed": "Kein Feed verfügbar.",
+  "scroll_top": "Oben",
+  "briefing_nearby_beacon_title": "Beacons in der Nähe",
+  "briefing_today_schedule_title": "Termin",
+  "briefing_continue_chat_title": "Chat fortsetzen",
+  "briefing_near_news_title": "News in der Nähe",
+  "unknown_user": "Unbekannt",
+  "near_news": {
+    "filters": {
+      "all": "Alle",
+      "post": "Feed",
+      "event": "Event",
+      "notice": "Hinweis"
+    },
+    "kind": {
+      "post": "Feed",
+      "event": "Event",
+      "notice": "Hinweis"
+    },
+    "kind_en": {
+      "post": "FEED",
+      "event": "EVENT",
+      "notice": "NOTICE"
+    },
+    "masthead_overline": "CO·ONN LOCAL JOURNAL",
+    "masthead_title": "NEARBY NEWS",
+    "edition_line": "LOKALE AUSGABE · {{distance}}",
+    "count_line": "FEED {{post}} · EVENT {{event}} · HINWEIS {{notice}}",
+    "self": "Ich",
+    "unknown_user": "Unbekannt",
+    "unknown_place": "Ort in der Nähe",
+    "distance_pending": "Entfernung wird geprüft",
+    "just_now": "Gerade eben",
+    "minutes_ago": "vor {{value}} Min.",
+    "hours_ago": "vor {{value}} Std.",
+    "days_ago": "vor {{value}} Tagen",
+    "always": "Immer",
+    "until": "Bis {{date}}",
+    "ongoing": "Laufend",
+    "category": {
+      "restaurant": "Restaurant",
+      "cafe": "Café",
+      "bakery": "Bäckerei",
+      "market": "Markt",
+      "drink": "Pub",
+      "store": "Shop"
+    },
+    "place": "Ort",
+    "nearby_place": "Ort in der Nähe",
+    "nearby_feed": "Feed in der Nähe",
+    "event_title": "Event",
+    "notice_title": "Hinweis",
+    "event_body": "Ein neues Event ist verfügbar.",
+    "notice_body": "Ein neuer Hinweis wurde veröffentlicht.",
+    "load_error": "News in der Nähe konnten nicht geladen werden.",
+    "collection_title": "News in der Nähe",
+    "media_title": "News in der Nähe",
+    "empty_title": "Keine News",
+    "empty_desc": "Beiträge und Updates aus der Nähe erscheinen hier.",
+    "editing": "Seite wird vorbereitet",
+    "load_failed": "Konnte nicht geladen werden",
+    "retry": "Erneut versuchen",
+    "local_note": "LOKALE NOTIZ",
+    "by_prefix": "VON "
+  },
+  "schedule_sheet": {
+    "weekdays": {
+      "sun": "So",
+      "mon": "Mo",
+      "tue": "Di",
+      "wed": "Mi",
+      "thu": "Do",
+      "fri": "Fr",
+      "sat": "Sa"
+    },
+    "date_title": "{{day}}.{{month}}. ({{weekday}})",
+    "period": {
+      "am": "AM",
+      "pm": "PM"
+    },
+    "time_range_cross_day": "{{start}} - {{date}} {{end}}",
+    "default_room_title": "Chatraum",
+    "participation": {
+      "joined": "Dabei",
+      "pending": "Nicht dabei"
+    },
+    "search_placeholder": {
+      "joined": "Beigetretene Termine suchen",
+      "pending": "Verfügbare Termine suchen"
+    },
+    "load_error": "Termine konnten nicht geladen werden.",
+    "people_count": "{{value}} Personen",
+    "default_title": "Termin",
+    "time_unknown": "Zeit offen",
+    "today_title": "Termin",
+    "today_empty": "Heute keine Termine",
+    "count": "{{value}}",
+    "header_title": "Termin",
+    "empty": {
+      "load_failed_title": "Konnte nicht geladen werden",
+      "load_failed_desc": "Bitte später erneut prüfen.",
+      "joined_title": "Keine beigetretenen Termine",
+      "joined_desc": "Termine, denen du beitrittst, erscheinen hier.",
+      "pending_title": "Keine offenen Termine",
+      "pending_desc": "Verfügbare Termine erscheinen hier."
+    }
+  },
+  "notifications": {
+    "header_title": "Benachrichtigungen",
+    "mark_all_read": "Alle als gelesen markieren",
+    "follow_back": "Zurückfolgen",
+    "following": "Folge ich",
+    "retry": "Neu laden",
+    "empty_title": "Keine Benachrichtigungen",
+    "empty_desc": "Neue Updates erscheinen hier.",
+    "fallback_actor": "Jemand",
+    "fallback_schedule": "Termin",
+    "fallback_beacon": "Beacon",
+    "fallback_room": "Chatraum",
+    "fallback_notification": "Neue Benachrichtigung",
+    "sections": {
+      "today": "Heute",
+      "recent": "Aktuell",
+      "unread": "Ungelesen",
+      "earlier": "Früher",
+      "this_week": "Diese Woche",
+      "older": "Früher",
+      "thisWeek": "Diese Woche"
+    },
+    "time": {
+      "just_now": "Gerade eben",
+      "minutes": "{{value}} Min.",
+      "hours": "{{value}} Std.",
+      "days": "{{value}} T.",
+      "weeks": "{{value}} Wo.",
+      "months": "{{value}} Mon.",
+      "years": "{{value}} J."
+    },
+    "copy": {
+      "others": " und {{value}} weitere",
+      "follow_created": "{{name}} folgt dir",
+      "chat_reply_created": "{{name}} hat geantwortet",
+      "chat_mention_created": "{{name}} hat dich erwähnt",
+      "beacon_join_request_created": "{{name}} möchte deinem Beacon beitreten",
+      "beacon_join_approved": "Beacon-Anfrage genehmigt",
+      "beacon_friend_created": "{{name}} hat einen neuen Beacon erstellt",
+      "schedule_created": "{{room}} · {{target}} hinzugefügt",
+      "schedule_updated": "{{room}} · {{target}} aktualisiert",
+      "schedule_cancelled": "{{room}} · {{target}} abgesagt",
+      "post_like_grouped": "{{name}}{{others}} gefällt dein Beitrag",
+      "post_comment_grouped": "{{name}}{{others}} hat kommentiert",
+      "post_reply_grouped": "{{name}}{{others}} hat auf deinen Kommentar geantwortet",
+      "post_mention_grouped": "{{name}}{{others}} hat dich erwähnt"
+    },
+    "error": {
+      "load_failed": "Benachrichtigungen konnten nicht geladen werden."
+    },
+    "loading_short": "…"
+  }
+}

@@ -1,0 +1,525 @@
+{
+  "home_title": "Ayarlar",
+  "title": "Ayarlar",
+  "version": "Uygulama sürümü",
+  "open": "Aç",
+  "change": "Değiştir",
+  "run": "Çalıştır",
+  "logout": "Ayarlar çıkış",
+  "logoutDone": "Çıkış yapıldı.",
+  "sections": {
+    "communication": "İletişim",
+    "general": "Genel",
+    "advanced": "Gelişmiş",
+    "service_info": "Hizmet",
+    "account": "Hesap",
+    "notification": "Bildirimler",
+    "display_language": "Ekran ve dil",
+    "location": "Konum",
+    "data": "Veri",
+    "support": "Destek",
+    "info": "Bilgi"
+  },
+  "menus": {
+    "call": "Ara",
+    "etc": "Diğer",
+    "app_manage": "Uygulama yönetimi",
+    "version": "Uygulama sürümü"
+  },
+  "alerts": {
+    "logout_title": "Ayarlar çıkış",
+    "logout_desc": "ayarlar çıkış yapılsın mı?",
+    "language_change_error": "Dil değiştirilemedi.",
+    "logout_fail": "Çıkış yapılamadı."
+  },
+  "search": {
+    "title": "Ayarlarda ara",
+    "soon": "Ayar araması yakında."
+  },
+  "me": {
+    "noName": "İsim yok",
+    "profileManage": "Profili yönet",
+    "loadingAccount": "Hesap kontrol ediliyor"
+  },
+  "account": {
+    "title": "Hesap",
+    "editProfile": "Profili düzenle",
+    "profilePublicDefault": "Beacon’larda profilimi varsayılan göster",
+    "profilePublicHint": "Profil herkese açık",
+    "header_title": "Hesap",
+    "section": {
+      "contact": "İletişim",
+      "identity": "Kimlik",
+      "visibility": "Görünürlük",
+      "profile": "Profil",
+      "account_management": "Hesap"
+    },
+    "field": {
+      "phone": "Telefon",
+      "email": "E-posta",
+      "id_label": "CO·ONN ID",
+      "friend_code": "Arkadaş kodu",
+      "show_nickname": "Takma adı göster",
+      "profile_photo": "Profil fotoğrafı",
+      "nickname": "Takma ad"
+    },
+    "value": {
+      "not_registered": "Kayıtlı değil"
+    },
+    "badge": {
+      "verified": "Doğrulandı",
+      "verify": "Doğrula"
+    },
+    "placeholder": {
+      "id": "ID",
+      "friend_code": "Arkadaş kodu",
+      "nickname": "Takma ad"
+    },
+    "help": {
+      "id_desc": "Aramada kullanılan benzersiz ID’niz.",
+      "show_nickname_desc": "Göster"
+    },
+    "error": {
+      "check_duplication": "Önce uygunluğu kontrol edin.",
+      "id_taken": "Zaten kullanılıyor.",
+      "code_taken": "Zaten kullanılıyor.",
+      "check_failed": "öğe yapılamadı",
+      "invalid_id": "2–30 küçük harf, rakam veya alt çizgi",
+      "invalid_friend_code": "2–30 küçük harf, rakam veya alt çizgi",
+      "duplicate_exists": "Bu değer zaten kullanılıyor.",
+      "duplicate_check_required": "Kaydetmeden önce tekrar kontrolünü tamamlayın.",
+      "duplicate_check_retry": "Uygunluğu tekrar kontrol edin.",
+      "duplicate_value_retry": "Zaten kullanılıyor. Tekrar kontrol edin.",
+      "nickname_required": "Bir takma ad gir.",
+      "nickname_too_long": "Takma ad en fazla 30 karakter olabilir."
+    },
+    "alert": {
+      "check_required": "Kontrol gerekli",
+      "save_success_title": "Kaydedildi",
+      "save_success_desc": "Hesap ayarları kaydedildi.",
+      "save_fail_title": "Kaydedilemedi"
+    },
+    "action": {
+      "save": "Kaydet",
+      "check_duplicate_short": "Kontrol et",
+      "checking_short": "Ayarlar",
+      "change_photo": "Fotoğrafı değiştir",
+      "remove_photo": "Fotoğrafı kaldır"
+    },
+    "status": {
+      "available_short": "Uygun",
+      "duplicate_short": "Ayarlar"
+    },
+    "picker": {
+      "profile_photo": "Fotoğraf seç"
+    },
+    "withdrawal": {
+      "entryTitle": "Hesabı sil",
+      "entryDescription": "Hesabınızı ve kişisel verilerinizi silin.",
+      "noticeTitle": "Devam etmeden önce bunları gözden geçirin.",
+      "noticeMessage": "Profiliniz, arkadaşlarınız ve ayarlarınız silinir.",
+      "noticeItemProfile": "Bazı sohbet geçmişleri diğer katılımcılarda silinmiş kullanıcı olarak kalabilir.",
+      "noticeItemChat": "Aynı hesapla 7 gün boyunca yeniden katılamazsınız.",
+      "noticeItemRejoin": "CO·ONN ID ve arkadaş kodu 30 gün boyunca yeniden kullanılamaz.",
+      "noticeItemIdentifier": "Her şeyi okudum ve devam etmek istiyorum.",
+      "noticeAcknowledge": "İleri",
+      "continue": "İptal",
+      "cancel": "Neden ayrıldığınızı söyleyin",
+      "surveyTitle": "Geri bildiriminiz CO·ONN’u geliştirmemize yardımcı olur.",
+      "surveyMessage": "Devam",
+      "surveyAction": "Nedeni girin.",
+      "otherPlaceholder": "Bir neden seçin.",
+      "reasonRequired": "Nedeni girin.",
+      "otherRequired": "Nedenler yükleniyor.",
+      "reasonsLoading": "Nedenler yüklenemedi.",
+      "reasonsEmpty": "Son onay",
+      "confirmTitle": "Hesap erişimi hemen durdurulur.",
+      "confirmMessage": "Aşağıya “{{keyword}}” yazın.",
+      "confirmInstruction": "SİL",
+      "confirmKeyword": "SİL",
+      "confirmPlaceholder": "Sil",
+      "confirmAction": "Silme isteği alındı.",
+      "completed": "Hesap silinemedi."
+    }
+  },
+  "privacy": {
+    "title": "Gizlilik",
+    "header_title": "Gizlilik",
+    "section": {
+      "profile": "Profil",
+      "friend_req": "Arkadaş istekleri",
+      "activity": "Etkinlik"
+    },
+    "field": {
+      "public_profile": "Herkese açık profil",
+      "allow_search": "Aramaya izin ver",
+      "show_nickname": "Takma adı göster",
+      "show_location": "Konumu göster",
+      "last_active": "Son aktif zamanı göster"
+    },
+    "help": {
+      "public_profile": "Diğer kullanıcılar profilinizi görebilir.",
+      "allow_search": "Arama",
+      "show_nickname": "Göster",
+      "show_location": "Göster konum",
+      "last_active": "Aktif"
+    },
+    "option": {
+      "all": "Ayarlar",
+      "all_desc": "Ayarlar",
+      "friends": "Arkadaşların arkadaşları",
+      "friends_desc": "Ayarlar",
+      "none": "ayarlar yok",
+      "none_desc": "Ayarlar"
+    },
+    "alert": {
+      "save_success": "Kaydedildi.",
+      "save_fail": "Kaydedilemedi.",
+      "load_fail": "Yüklenemedi.",
+      "login_required": "Giriş gerekli."
+    }
+  },
+  "radius": {
+    "title": "Mahalle aralığı",
+    "current": "Geçerli",
+    "desc": "Ayarlar",
+    "save_error": "Mahalle aralığı kaydedilemedi."
+  },
+  "friends": {
+    "title": "Arkadaşlar",
+    "manage": "Ayarlar",
+    "caption": "Engeller, öneriler, görünürlük",
+    "soon": "Yakında."
+  },
+  "notification": {
+    "title": "Bildirimler",
+    "manage": "Bildirimler",
+    "caption": "Push, uygulama içi uyarılar, ses",
+    "soon": "Yakında.",
+    "section": {
+      "defaults": "Varsayılan",
+      "types": "Türler",
+      "quiet": "Sessiz saatler",
+      "push_types": "Push türleri",
+      "in_app": "Uygulama içi uyarılar"
+    },
+    "field": {
+      "push": "Push bildirimleri",
+      "preview": "Önizleme",
+      "sound": "Ses",
+      "vibrate": "Titreşim",
+      "chat": "Sohbet",
+      "system": "Duyuru ve sistem",
+      "marketing": "Pazarlama"
+    },
+    "help": {
+      "push": "Tüm push bildirimleri",
+      "preview": "Kilit ekranında içeriği göster",
+      "chat_push": "Sohbet mesajı push’u",
+      "system_push": "Servis duyuruları ve önemli güncellemeler",
+      "marketing_push": "Etkinlikler ve promosyonlar"
+    },
+    "action": {
+      "save": "Kaydet",
+      "open_system": "Sistem ayarları",
+      "cancel": "İptal",
+      "done": "Bitti"
+    },
+    "time": {
+      "start": "Başlat",
+      "end": "Bitir",
+      "hour": "sa",
+      "minute": "dk",
+      "close": "Saat seçiciyi kapat",
+      "select": "{{label}} {{value}} seç",
+      "start_time": "Başlangıç saati",
+      "end_time": "Bitiş saati"
+    },
+    "alert": {
+      "table_missing_title": "Ayar tablosu yok",
+      "table_missing_message": "user_notification_settings oluşturun.",
+      "load_fail": "Yüklenemedi",
+      "time_invalid_title": "Saati kontrol edin",
+      "time_invalid_message": "Saati yeniden seçin.",
+      "save_success": "Kaydedildi.",
+      "save_fail": "Kaydedilemedi",
+      "open_settings_fail_title": "bildirim yapılamadı",
+      "open_settings_fail_message": "Sistem ayarları açılamadı.",
+      "login_required": "Giriş gerekli."
+    },
+    "in_app": {
+      "master": "Uygulama içi uyarılar",
+      "master_help": "Uygulama bildirim kutusunda göster",
+      "group": {
+        "social": "Sosyal",
+        "chat": "Sohbet",
+        "beacon": "Beacon",
+        "schedule": "Planlar",
+        "post": "Gönderiler"
+      },
+      "follow_created": "Yeni takipçi",
+      "follow_created_help": "Biri sizi takip ettiğinde",
+      "chat_reply": "Yanıtlar",
+      "chat_reply_help": "Mesajınıza yanıt verildiğinde",
+      "chat_mention": "Bahsetmeler",
+      "chat_mention_help": "Biri sizden bahsettiğinde",
+      "beacon_join_request": "Katılma istekleri",
+      "beacon_join_request_help": "Beacon katılma isteği geldiğinde",
+      "beacon_join_approved": "Katılım onaylandı",
+      "beacon_join_approved_help": "Beacon katılımınız onaylandığında",
+      "beacon_friend_created": "Arkadaş beacon’ları",
+      "beacon_friend_created_help": "Bir arkadaş beacon oluşturduğunda",
+      "schedule_created": "Yeni plan",
+      "schedule_created_help": "Katıldığınız odaya plan eklendiğinde",
+      "schedule_updated": "Plan değişiklikleri",
+      "schedule_updated_help": "Katıldığınız plan değiştiğinde",
+      "schedule_cancelled": "İptal edilen planlar",
+      "schedule_cancelled_help": "Katıldığınız plan iptal edildiğinde",
+      "post_like": "Beğeniler",
+      "post_like_help": "Gönderiniz beğeni aldığında",
+      "post_comment": "Yorumlar",
+      "post_comment_help": "Gönderinize yorum yapıldığında",
+      "post_reply": "Yanıtlar",
+      "post_reply_help": "Yorumunuza yanıt verildiğinde",
+      "post_mention": "Gönderi bahsetmeleri",
+      "post_mention_help": "Gönderi veya yorumda sizden bahsedildiğinde"
+    }
+  },
+  "display": {
+    "title": "Ekran ve dil"
+  },
+  "language": {
+    "title": "Dil",
+    "select": "ayarlar seç seçin",
+    "inUse": "(Kullanımda)"
+  },
+  "theme": {
+    "title": "Tema",
+    "caption": "Açık/Koyu",
+    "soon": "Yakında.",
+    "header_title": "Tema",
+    "section_style": "Mod",
+    "mode": {
+      "system": "Sistem",
+      "system_desc": "Cihaz ayarını kullan",
+      "light": "Açık",
+      "light_desc": "Açık görünüm",
+      "dark": "Koyu",
+      "dark_desc": "Koyu görünüm"
+    }
+  },
+  "chat": {
+    "title": "Sohbet"
+  },
+  "translate": {
+    "autoDefault": "Mesajları otomatik çevir",
+    "autoDefaultHint": "Yeni sohbetler için varsayılan kullanılır.",
+    "showOriginal": "Orijinali çeviriyle göster",
+    "showOriginalHint": "Göster orijinal"
+  },
+  "storage": {
+    "title": "Veri ve depolama",
+    "clearCache": "Önbelleği temizle",
+    "clearCacheHint": "Geçici dosyaları sil",
+    "soon": "Yakında.",
+    "section": {
+      "ratio": "Veri oranı",
+      "rooms": "Depolama"
+    },
+    "summary": {
+      "total_media": "Toplam medya",
+      "saved_count": "{{count}} kayıtlı"
+    },
+    "legend": {
+      "photo": "Fotoğraflar",
+      "video": "Depolama",
+      "audio": "Ses",
+      "file": "Dosyalar",
+      "other": "Diğer"
+    },
+    "action": {
+      "delete_all": "Tümünü sil",
+      "delete_all_with_size": "depolama {{size}}",
+      "delete_room": "Sil",
+      "scroll_top": "Üste"
+    },
+    "empty": {
+      "title": "Kayıtlı medya yok",
+      "desc": "Açtığınız medyalar burada görünür."
+    },
+    "alert": {
+      "load_fail": "Yüklenemedi.",
+      "delete_fail": "depolama yapılamadı",
+      "delete_all_title": "Tüm medyayı sil",
+      "delete_all_message": "Depolama",
+      "delete_room_title": "depolama {{room}}",
+      "delete_room_message": "Depolama",
+      "delete_all_success": "Silindi.",
+      "delete_room_success": "{{room}} verileri silindi."
+    },
+    "room": {
+      "fallback_title": "Sohbet {{id}}",
+      "delete_accessibility": "{{room}} verilerini sil"
+    }
+  },
+  "support": {
+    "title": "Destek",
+    "cs": "Destek",
+    "notice": {
+      "title": "Duyurular",
+      "eyebrow": "NOTICE",
+      "sectionTitle": "{{category}} duyuruları",
+      "markAll": "Tümünü okundu yap",
+      "markAllDone": "Okundu olarak işaretlendi.",
+      "loadFail": "destek yapılamadı",
+      "readFail": "destek yapılamadı",
+      "markAllFail": "destek yapılamadı",
+      "emptyTitle": "Duyuru yok",
+      "emptyDesc": "Yeni duyurular burada görünür.",
+      "category": {
+        "normal": "Genel",
+        "important": "Önemli",
+        "legal": "Yasal",
+        "security": "Güvenlik"
+      }
+    },
+    "guide": "Kılavuz",
+    "soon": "Yakında.",
+    "loading": "Yükleniyor…",
+    "action": {
+      "ok": "Destek"
+    },
+    "alert": {
+      "notice": "Duyuru",
+      "error": "Hata"
+    },
+    "center": {
+      "title": "Destek",
+      "hero": "destek yapılsın mı?",
+      "searchPlaceholder": "Ara",
+      "faq": "SSS",
+      "categories": "Yardım konuları",
+      "contactTitle": "destek yapılsın mı?",
+      "emailDesc": "Destek",
+      "aiTitle": "AI destek",
+      "aiDesc": "Destek",
+      "policies": "Şartlar ve politikalar"
+    },
+    "contact": {
+      "title": "Destek",
+      "guide": "Destek",
+      "category": "Kategori",
+      "categoryLoading": "Yükleniyor…",
+      "categoryPlaceholder": "Kategori seç",
+      "categorySelect": "Kategori",
+      "email": "Yanıt e-postası",
+      "emailPlaceholder": "E-posta adresi",
+      "content": "Mesaj",
+      "contentPlaceholder": "destek girin",
+      "submit": "Destek",
+      "required": "E-posta ve mesaj girin.",
+      "categoryRequired": "Kategori seçin.",
+      "loadFail": "destek yapılamadı",
+      "submitFail": "Gönderilemedi.",
+      "successTitle": "Gönderildi",
+      "successDesc": "Destek"
+    },
+    "list": {
+      "all": "Tümü",
+      "common": "Genel",
+      "result": "Destek",
+      "empty": "Sonuç yok."
+    },
+    "policy": {
+      "title": "Şartlar ve politikalar",
+      "effectiveDate": "Yürürlük tarihi",
+      "summary": "Özet",
+      "download": "İndir",
+      "downloadStart": "Destek",
+      "empty": "İçerik yüklenemedi.",
+      "versions": "Önceki sürümler",
+      "behaviorInfoTitle": "Destek",
+      "behaviorInfoDesc": "Destek",
+      "userControlTitle": "Kullanıcı seçimi",
+      "userControlDesc": "Kişiselleştirilmiş reklam ayarlarını uygulamada değiştirebilirsiniz.",
+      "version": "Sürüm",
+      "language": "Dil",
+      "loadFail": "destek yapılamadı",
+      "summaryEmpty": "Özet yok.",
+      "downloadCancelledTitle": "İndirme iptal edildi",
+      "downloadCancelled": "Kaydetme konumu seçilmedi.",
+      "downloadSuccessTitle": "Destek",
+      "downloadSuccess": "Politika belgesi kaydedildi.",
+      "downloadFailTitle": "İndirilemedi",
+      "downloadFail": "Politika belgesi kaydedilemedi.",
+      "privacyTitle": "Destek",
+      "termsTitle": "CO·ONN Hizmet Şartları",
+      "marketingTitle": "Destek"
+    },
+    "company": {
+      "ceo": "CEO",
+      "regNum": "Destek",
+      "businessNum": "Destek",
+      "address": "Adres",
+      "cs": "Destek",
+      "host": "Barındırma sağlayıcısı"
+    }
+  },
+  "labs": {
+    "title": "Laboratuvar",
+    "features": "Ayarlar",
+    "caption": "Ayarlar",
+    "soon": "ayarlar yakında yakında hazır",
+    "subtitle": "Ayarlar",
+    "empty_title": "ayarlar yok",
+    "empty_desc": "Ayarlar",
+    "note": "Ayarlar"
+  },
+  "admin": {
+    "title": "Yönetici",
+    "console": "Yönetici konsolu"
+  },
+  "open_profiles": {
+    "title": "Açık profiller",
+    "subtitle": "Açık",
+    "header_title": "Açık profiller",
+    "fallback_name": "Açık profil",
+    "default_badge": "Varsayılan",
+    "status_empty": "Durum mesajı yok",
+    "room": {
+      "fallback_title": "Açık sohbet",
+      "used_count": "Kullanılan açık sohbet: {{count}}",
+      "empty": "açık oda yok"
+    },
+    "empty": {
+      "title": "Açık profil yok",
+      "desc": "Ayarlar açık"
+    },
+    "form": {
+      "create_title": "Açık profil oluştur",
+      "edit_title": "Açık profili düzenle",
+      "nickname": "Takma ad",
+      "status_message": "Durum mesajı",
+      "status_placeholder": "Açık",
+      "default_profile": "Varsayılan açık profil",
+      "delete": "Açık profili sil",
+      "pick_avatar": "Profil fotoğrafı seç"
+    },
+    "alert": {
+      "load_fail": "Açık profiller yüklenemedi.",
+      "nickname_required": "Takma ad girin.",
+      "create_fail": "Oluşturulamadı",
+      "save_fail": "Kaydedilemedi",
+      "delete_title": "Açık profil silinsin mi?",
+      "delete_used_desc": "Açık sohbet odalarındaki mevcut profiller korunur.",
+      "delete_desc": "Silinen profiller geri yüklenemez.",
+      "delete_fail": "Silinemedi"
+    },
+    "toast": {
+      "created": "Açık profil oluşturuldu.",
+      "saved": "Kaydedildi.",
+      "deleted": "Silindi.",
+      "photo_applied": "Fotoğraf uygulandı."
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "COONN",
+    "NSPhotoLibraryUsageDescription": "Photo access is used to select profile, post, and chat images.",
+    "NSPhotoLibraryAddUsageDescription": "Photo library access is used to save images and media to your device.",
+    "NSLocationWhenInUseUsageDescription": "Location is used for nearby posts, beacons, and distance-based features.",
+    "NSCameraUsageDescription": "Camera access is used to take profile, post, and chat photos.",
+    "NSMicrophoneUsageDescription": "Microphone access is used when recording videos."
+  }
+}

@@ -1,0 +1,253 @@
+{
+  "title": "好友",
+  "requests": "好友邀請",
+  "requests_empty": "沒有新的好友邀請。",
+  "requests_received": "收到的邀請",
+  "requests_sent": "送出的邀請",
+  "add_friend": "新增好友",
+  "send_request": "送出好友邀請",
+  "request_sent": "已送出好友邀請。",
+  "request_send_failed": "好友邀請傳送失敗。",
+  "request_cancel": "取消邀請",
+  "request_canceled": "已取消好友邀請。",
+  "request_cancel_failed": "無法取消好友邀請。",
+  "accept": "接受",
+  "decline": "拒絕",
+  "accepted": "已接受好友邀請。",
+  "declined": "已拒絕好友邀請。",
+  "accept_failed": "無法接受好友邀請。",
+  "decline_failed": "無法拒絕好友邀請。",
+  "remove_friend": "刪除好友",
+  "remove_friend_confirm": "要刪除這位好友嗎？",
+  "remove_friend_done": "好友已刪除。",
+  "remove_friend_failed": "好友刪除失敗。",
+  "blocked": "已封鎖",
+  "block": "封鎖",
+  "unblock": "解除封鎖",
+  "block_done": "已封鎖。",
+  "unblock_done": "已解除封鎖。",
+  "search_placeholder": "搜尋暱稱、ID、好友代碼",
+  "code_placeholder": "輸入好友代碼",
+  "already_friends": "已是好友。",
+  "already_requested": "已送出好友邀請。",
+  "self_not_allowed": "無法向自己送出好友邀請。",
+  "hidden": "隱藏",
+  "favorite": "最愛",
+  "memo": "備註",
+  "alias": "別名",
+  "group": {
+    "title": "群組",
+    "manageTitle": "好友群組",
+    "createTitle": "新增群組",
+    "createDesc": "請輸入群組名稱。",
+    "createPlaceholder": "例：同事、附近好友、讀書會",
+    "createAction": "建立",
+    "createFail": "建立失敗",
+    "editTitle": "編輯群組名稱",
+    "editDesc": "請輸入新名稱。",
+    "editPlaceholder": "群組名稱",
+    "saveAction": "儲存",
+    "renameFail": "修改失敗",
+    "nameRequired": "請輸入群組名稱。",
+    "deleteTitle": "刪除群組",
+    "deleteMessage": "要刪除「{{name}}」群組嗎？",
+    "emptyTitle": "沒有群組",
+    "emptyDesc": "建立新的群組吧。",
+    "memberEmpty": "沒有群組成員。",
+    "addTitle": "新增好友",
+    "addSuccess": "已新增。",
+    "addFail": "新增失敗",
+    "addEmpty": "沒有可新增的好友。",
+    "removeSuccess": "已移除。",
+    "removeFail": "移除失敗",
+    "memberCount": "{{count}} 人"
+  },
+  "userFallback": "使用者",
+  "list": {
+    "favoriteFriendsCount": "最愛 {{count}}",
+    "friendsCount": "好友 {{count}}"
+  },
+  "tabs": {
+    "friends": "好友",
+    "groups": "群組"
+  },
+  "search": {
+    "placeholder": "輸入搜尋詞",
+    "friendPlaceholder": "搜尋好友名稱、ID",
+    "groupPlaceholder": "搜尋群組、參與者",
+    "namePlaceholder": "搜尋名稱",
+    "friendPickerPlaceholder": "搜尋好友",
+    "contactsPlaceholder": "搜尋姓名或號碼",
+    "waitTitle": "等待輸入",
+    "waitCaption": "輸入資訊後搜尋。",
+    "emptyTitle": "沒有結果",
+    "emptyCaption": "沒有符合的使用者。",
+    "contactEmptyTitle": "沒有聯絡人",
+    "contactEmptyCaption": "沒有符合條件的聯絡人。",
+    "groupNamePlaceholder": "搜尋群組"
+  },
+  "action": {
+    "favoriteAdd": "加入最愛",
+    "favoriteRemove": "移除",
+    "manageFriend": "管理好友",
+    "manageGroup": "管理群組",
+    "contact": "聯絡",
+    "create": "建立",
+    "save": "儲存",
+    "add": "新增",
+    "remove": "移除",
+    "select": "選擇",
+    "search": "搜尋",
+    "processing": "處理中",
+    "saving": "儲存中"
+  },
+  "alert": {
+    "notice": "提示",
+    "fail": "失敗",
+    "loadFail": "載入失敗",
+    "deleteFail": "刪除失敗",
+    "profileRouteMissing": "找不到個人檔案畫面。",
+    "chatRouteMissing": "找不到聊天畫面。",
+    "phoneMissing": "沒有電話號碼。",
+    "phoneOpenFail": "無法開啟電話 App。",
+    "removeFriendTitle": "刪除好友",
+    "removeFriendMessage": "要刪除 {{name}} 嗎？",
+    "blockTitle": "封鎖",
+    "blockMessage": "要封鎖 {{name}} 嗎？",
+    "blockFail": "封鎖失敗",
+    "friendEditRouteMissing": "找不到好友管理畫面。"
+  },
+  "add": {
+    "title": "新增好友",
+    "loginRequired": "需要登入。",
+    "contactSearch": "尋找聯絡人",
+    "userFallback": "使用者 {{id}}",
+    "noName": "沒有名稱",
+    "myProfile": "我的個人檔案",
+    "notSet": "未設定",
+    "friendCodeLabel": "好友代碼",
+    "qrOfflineHint": "可透過 QR 碼直接連結。",
+    "shareLink": "分享連結",
+    "scanQr": "掃描 QR",
+    "qrTitle": "我的連結代碼",
+    "qrDesc": "對方掃描後\n即可連結。",
+    "scanGuide": "請掃描對方的 QR。",
+    "contactsTitle": "用聯絡人尋找",
+    "contactsDesc": "從通訊錄選擇並搜尋。",
+    "mode": {
+      "coonnIdTitle": "CO·ONN ID",
+      "coonnIdHint": "輸入對方的公開 ID。",
+      "coonnIdPlaceholder": "輸入 ID",
+      "friendCodeTitle": "好友代碼",
+      "friendCodeHint": "輸入好友代碼。",
+      "friendCodePlaceholder": "輸入好友代碼",
+      "phoneTitle": "聯絡人",
+      "phoneHint": "用手機號碼尋找。",
+      "phonePlaceholder": "輸入號碼"
+    },
+    "result": {
+      "noPublicId": "沒有公開 ID",
+      "friendCodeVerified": "好友代碼已確認",
+      "friendCodeMatched": "好友代碼相符",
+      "contact": "聯絡人 · {{phone}}",
+      "added": "已新增",
+      "limited": "受限",
+      "add": "新增"
+    },
+    "share": {
+      "myId": "我的 ID",
+      "friendCode": "好友代碼",
+      "title": "分享 CO·ONN 連結",
+      "message": "[CO·ONN] 和我連結吧。{{idText}}{{codeText}}\n\n可透過下方連結開啟新增好友畫面。\n{{url}}"
+    },
+    "toast": {
+      "added": "已新增為好友。"
+    },
+    "alert": {
+      "permissionRequired": "需要權限",
+      "cameraPermissionRequired": "需要相機權限。",
+      "contactsPermissionRequired": "需要聯絡人權限。",
+      "contactsLoadFail": "聯絡人載入失敗",
+      "searchFail": "搜尋失敗",
+      "addFail": "新增失敗"
+    },
+    "error": {
+      "invalidUser": "使用者無效。",
+      "selfQr": "這是你的 QR。",
+      "userNotFound": "找不到使用者。",
+      "invalidQr": "代碼無效。",
+      "minLength": "請輸入至少 {{count}} 個字。"
+    },
+    "findTitle": "尋找新好友",
+    "card": {
+      "idTitle": "用 ID 尋找",
+      "idDesc": "搜尋 CO·ONN ID",
+      "codeTitle": "用代碼尋找",
+      "codeDesc": "搜尋好友代碼",
+      "contactsTitle": "聯絡人",
+      "contactsDesc": "依通訊錄"
+    },
+    "digitalCardTitle": "我的名片"
+  },
+  "communication": {
+    "noPhone": "沒有電話號碼",
+    "phoneCall": "一般通話",
+    "voiceCall": "語音通話",
+    "comingSoon": "準備中"
+  },
+  "edit": {
+    "title": "好友設定",
+    "unknownUser": "未知",
+    "none": "無",
+    "field": {
+      "name": "名稱"
+    },
+    "placeholder": {
+      "alias": "輸入別名",
+      "memo": "輸入備註"
+    },
+    "helper": {
+      "friendName": "好友名稱 · {{name}}",
+      "privateMemo": "僅對你顯示。"
+    },
+    "section": {
+      "groups": "群組",
+      "security": "安全"
+    },
+    "state": {
+      "on": "開啟",
+      "off": "關閉",
+      "hidden": "隱藏",
+      "visible": "顯示中",
+      "blocked": "已封鎖",
+      "unblocked": "未封鎖"
+    },
+    "toast": {
+      "saved": "已儲存。"
+    },
+    "alert": {
+      "loadFail": "載入失敗",
+      "saveFail": "儲存失敗",
+      "removeFail": "刪除失敗",
+      "userLoadFail": "無法載入使用者。",
+      "blockedByPeer": "對方已封鎖你。"
+    },
+    "remove": {
+      "title": "刪除好友",
+      "message": "要刪除 {{name}} 嗎？"
+    },
+    "unsaved": {
+      "title": "變更內容",
+      "message": "有尚未儲存的變更。",
+      "discard": "不儲存"
+    },
+    "groups": {
+      "title": "管理群組",
+      "subtitle": "選擇要加入的群組。",
+      "selectedCount": "已選 {{count}}",
+      "inGroup": "目前已加入",
+      "addHint": "點按新增",
+      "emptySearch": "試試其他名稱。"
+    }
+  }
+}

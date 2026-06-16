@@ -1,0 +1,35 @@
+{
+  "title": "Autorisations",
+  "subtitle": "Autorisez les accès nécessaires.",
+  "location_title": "Localisation",
+  "location_desc": "Nécessaire pour afficher les beacons à proximité et la carte.",
+  "notifications_title": "Notifications (facultatif)",
+  "notifications_desc": "Recevez les invitations beacon, les chats et les alertes.",
+  "allow_now": "Autoriser",
+  "allowed": "Autorisé",
+  "open_settings": "Ouvrir les réglages",
+  "continue_without_location": "Configurer plus tard",
+  "background_location_title": "Localisation en arrière-plan (facultatif)",
+  "background_location_desc": "Recevez les beacons et alertes de proximité sans ouvrir l’app.",
+  "background_location_hint": "La batterie peut être plus sollicitée. Modifiable à tout moment dans les réglages.",
+  "gallery": {
+    "title": "Accès aux photos requis",
+    "description": "Autorisation nécessaire pour sélectionner des photos."
+  },
+  "camera": {
+    "title": "Accès à l’appareil photo requis",
+    "description": "Autorisation nécessaire pour prendre une photo."
+  },
+  "location": {
+    "title": "Accès à la localisation requis",
+    "description": "Autorisation nécessaire pour vérifier votre position."
+  },
+  "notification": {
+    "title": "Notifications",
+    "description": "Autorisation nécessaire pour recevoir les notifications."
+  },
+  "action": {
+    "openSettings": "Ouvrir les réglages",
+    "notNow": "Plus tard"
+  }
+}

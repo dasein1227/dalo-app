@@ -1,1 +1,725 @@
-{}
+{
+  "common": {
+    "appName": "CO·ONN",
+    "ok": "確認",
+    "cancel": "キャンセル",
+    "close": "閉じる",
+    "save": "保存",
+    "done": "完了",
+    "edit": "編集",
+    "delete": "削除",
+    "next": "次へ",
+    "back": "戻る",
+    "continue": "続ける",
+    "later": "後で",
+    "loading": "読み込み中…",
+    "required": "必須項目です。",
+    "copied": "コピーしました。",
+    "manage": "管理",
+    "share": "共有",
+    "notice": "お知らせ",
+    "error": "エラー",
+    "success": "成功",
+    "fail": "失敗",
+    "preparing": "準備中",
+    "feature_coming_soon": "準備中の機能です。"
+  },
+  "imageEditor": {
+    "title": "画像編集",
+    "ratio_original": "オリジナル",
+    "ratio_free": "自由",
+    "rotate": "回転",
+    "ratio": "比率",
+    "invert": "横/縦",
+    "orientation": "横/縦",
+    "reset": "リセット",
+    "error_load_title": "エラー",
+    "error_load_msg": "画像を読み込めません。",
+    "error_save_title": "保存失敗",
+    "error_save_msg": "しばらくしてからもう一度お試しください。"
+  },
+  "media": {
+    "recent": "最近の項目",
+    "select_photo": "写真を選択",
+    "max_select": "最大{{count}}枚まで選択できます。",
+    "processing_error": "画像処理中に問題が発生しました。",
+    "select_to_edit": "編集する写真を選択してください。",
+    "video_edit_warning": "動画は編集できません。",
+    "bundle_photos": "写真をまとめて送信",
+    "quality_settings": "画質設定",
+    "quality_original": "オリジナル",
+    "quality_standard": "標準画質",
+    "quality_low": "低容量",
+    "quality_high": "高画質"
+  },
+  "permission": {
+    "required": "権限が必要です",
+    "gallery_desc": "写真をアップロードするにはギャラリーへのアクセス権限を許可してください。"
+  },
+  "errors": {
+    "common": "エラー",
+    "auth": {
+      "loginRequired": "ログインが必要です。"
+    },
+    "unknown": "エラーが発生しました。",
+    "network": "ネットワーク接続を確認してください。",
+    "invalid_credentials": "メールアドレスまたはパスワードが正しくありません。",
+    "oauth_cancelled": "ログインがキャンセルされました。",
+    "provider_config": "認証プロバイダー設定を確認してください。",
+    "redirect_config": "Redirect URL設定を確認してください。",
+    "session_check_failed": "セッションを確認できませんでした。",
+    "sms_required": "認証コードを入力してください。",
+    "phone_format": "電話番号は国際形式（+8210…）で入力してください。",
+    "email_format": "正しいメール形式ではありません。"
+  },
+  "auth": {
+    "start_easy": "かんたんに始める",
+    "continue_google": "Googleで続行",
+    "continue_apple": "Appleで続行",
+    "or_login": "別の方法でログイン",
+    "back": "戻る",
+    "email_title": "メールで始める",
+    "email_placeholder": "メールアドレス",
+    "password_placeholder": "パスワード",
+    "login_btn": "ログイン",
+    "signup_link": "まだアカウントをお持ちでないですか？ 登録",
+    "phone_title": "電話番号で始める",
+    "phone_placeholder": "電話番号（例：01012345678）",
+    "send_otp": "認証コード送信",
+    "otp_sent_desc": "{{phone}}に送信された認証コードを入力してください。",
+    "otp_placeholder": "認証コード6桁",
+    "verify_otp": "認証コード確認",
+    "oauth_url_missing": "認証URLが見つかりません。",
+    "error_login": "ログイン中にエラーが発生しました。",
+    "alert_notice": "お知らせ",
+    "alert_input_email_pass": "メールアドレスとパスワードを入力してください。",
+    "alert_login_fail": "ログイン失敗",
+    "alert_signup_fail": "登録失敗",
+    "alert_signup_email_sent": "登録確認メールを送信しました。",
+    "alert_input_phone": "電話番号を入力してください。",
+    "alert_send_fail": "送信失敗",
+    "alert_otp_sent": "認証コードを送信しました。",
+    "alert_verify_fail": "認証失敗",
+    "apple_only_ios": "iOSでのみ対応しています。",
+    "oauth_invalid_client": "Supabase → 認証プロバイダー（Client ID/Secret）設定を確認してください。",
+    "oauth_redirect_missing": "Supabase Redirect URLs設定を確認してください。"
+  },
+  "phone": {
+    "title": "電話番号認証",
+    "subtitle": "CO·ONNで友だちと安全に繋がり通話機能を使うために\n携帯電話番号を一度だけ認証してください。",
+    "global_support": "世界中の国番号に対応しています。",
+    "country_label": "国 / 地域",
+    "phone_label": "電話番号",
+    "phone_placeholder": "番号を入力（数字のみ）",
+    "phone_helper_empty": "電話番号を入力してください。",
+    "phone_helper_invalid_short": "電話番号が短すぎます。",
+    "phone_helper_invalid_long": "電話番号が長すぎます。",
+    "phone_helper_hint": "海外番号もそのまま入力してください。数字のみ入力できます。",
+    "phone_helper_default": "携帯電話番号は友だち推薦、通話機能、セキュリティ強化に使用されます。",
+    "send_code": "認証コードを受け取る",
+    "code_label": "認証コード",
+    "code_caption": "SMSで届いた6桁の認証コードを入力してください。",
+    "code_placeholder": "6桁の数字",
+    "verify_code": "認証する",
+    "verify_code_required": "SMSで届いた認証コードを入力してください。",
+    "why_needed_title": "なぜ電話番号が必要ですか？",
+    "why_needed_body": "• 知人推薦、友だち探し、通話機能に使用されます。\n• スパム/悪質アカウント防止のため、1人1番号ポリシーを適用できます。\n• 認証された番号は他の人に直接公開されず、プライバシーポリシーに従って安全に保管されます。",
+    "country_select_title": "国 / 地域を選択",
+    "send_code_success": "入力した番号に認証コードを送りました。\nSMSを確認してください。",
+    "send_code_failed": "認証コード送信中に問題が発生しました。\nしばらくしてからもう一度お試しください。",
+    "verify_success": "電話番号の認証が完了しました。",
+    "verify_failed": "認証コードの確認中に問題が発生しました。\n番号とコードをもう一度確認してください。"
+  },
+  "legal": {
+    "title": "利用規約・プライバシー同意",
+    "tos_required": "[必須] サービス利用規約に同意",
+    "privacy_required": "[必須] プライバシーポリシーに同意",
+    "marketing_optional": "[任意] マーケティング情報受信に同意（プッシュ/メール）",
+    "need_required": "必須項目に同意してください。",
+    "view_tos": "利用規約を見る",
+    "view_privacy": "プライバシーポリシーを見る",
+    "terms_title": "利用規約",
+    "terms_content": "本規約は、CO·ONN（以下「会社」）が提供するサービスの利用に関し、会員と会社の権利・義務および責任事項を定めるものです。利用者はサービスを利用することにより、本規約の内容を十分に理解し同意したものとみなされます。会員はサービス利用にあたり関連法令および本規約を遵守しなければならず、会社は安定的な運営のために必要な措置を講じることがあります。",
+    "privacy_title": "プライバシーポリシー",
+    "privacy_content": "会社は利用者の個人情報を重要視し、『個人情報保護法』等の関連法令を遵守します。サービス提供に必要な最小限の個人情報のみを収集し、明示された目的以外には利用しません。会社は利用者の同意なく個人情報を第三者に提供せず、個人情報を安全に保護するための技術的・管理的措置を講じます。利用者はいつでも自身の個人情報の閲覧・修正・削除を請求できます。"
+  },
+  "permissions": {
+    "title": "権限設定",
+    "subtitle": "円滑にご利用いただくため、以下の権限を許可してください。",
+    "location_title": "位置情報の権限",
+    "location_desc": "周辺のビーコンと地図を表示するために必要です。",
+    "notifications_title": "通知の権限（任意）",
+    "notifications_desc": "ビーコン招待、チャット、お知らせを受け取れます。",
+    "allow_now": "今すぐ許可",
+    "allowed": "許可済み",
+    "open_settings": "設定を開く",
+    "continue_without_location": "後で設定して続ける",
+    "background_location_title": "バックグラウンド位置情報の権限（任意）",
+    "background_location_desc": "アプリを開いていなくても周辺ビーコン/位置情報ベースのお知らせを受け取れます。",
+    "background_location_hint": "バッテリー消費が増える場合があります。設定でいつでも変更できます。"
+  },
+  "map": {
+    "title": "地図",
+    "refresh": "更新",
+    "filter": "フィルター",
+    "create_beacon": "ビーコンを作成",
+    "no_location_permission": "位置情報の権限がないため地図を表示できません。"
+  },
+  "beacons": {
+    "create_title": "ビーコン作成",
+    "edit_title": "ビーコン編集",
+    "detail_title": "ビーコン詳細",
+    "members_title": "メンバー",
+    "my_rooms_title": "自分のルーム",
+    "join": "参加する",
+    "enter": "入室する",
+    "owner_tools": "オーナーメニュー",
+    "visibility": "公開範囲",
+    "status_message": "ステータスメッセージ",
+    "public_profile": "プロフィールを公開",
+    "current_members": "現在の人数",
+    "age_range": "年齢層",
+    "memo": "メモ",
+    "time_left": "残り時間"
+  },
+  "post": {
+    "tab_all": "すべて",
+    "tab_default": "投稿",
+    "loading": "思い出を読み込み中...",
+    "not_found": "投稿が見つかりません。",
+    "no_image": "画像なし",
+    "view_all_comments": "コメント{{count}}件をすべて表示",
+    "delete_confirm_title": "削除",
+    "delete_confirm_message": "本当に削除しますか？",
+    "delete_success": "削除しました。",
+    "delete_fail": "削除失敗",
+    "save_feature_title": "保存",
+    "save_feature_desc": "準備中",
+    "pin_feature_desc": "固定機能は準備中です。",
+    "report_feature_desc": "通報機能は準備中です。",
+    "block_feature_desc": "ブロック機能は準備中です。",
+    "create": {
+      "title": "新規投稿",
+      "min_image_alert": "写真を最低1枚選択してください。",
+      "reorder_title": "並び替え",
+      "reorder_guide": "入れ替える写真をタップしてください。",
+      "reorder_help": "写真を長押しして順序を変更してください。",
+      "add_photo": "写真を追加",
+      "caption_placeholder": "文言を入力してください...",
+      "tag_people": "人をタグ付け",
+      "people_count_suffix": "名選択済み",
+      "add_location": "位置を追加",
+      "business_partner": "ビジネスパートナー",
+      "select_tab": "タブを選択",
+      "visibility_label": "公開範囲（複数選択可）",
+      "disable_comments": "コメント機能を無効化",
+      "disable_share": "共有機能を無効化",
+      "search_person": "人を検索",
+      "search_business": "ビジネスを検索",
+      "upload_error": "アップロード中にエラーが発生しました。"
+    },
+    "upload": {
+      "progress": "思い出を残しています...",
+      "success": "大切な瞬間を記録しました。",
+      "fail": "記録できませんでした。",
+      "share_action": "共有する"
+    },
+    "menu": {
+      "pin": "投稿を固定",
+      "edit": "編集",
+      "delete": "削除",
+      "report": "通報",
+      "block": "ブロック"
+    },
+    "likes": {
+      "title": "いいね",
+      "empty": "まだ「いいね」がありません。",
+      "follow": "フォロー",
+      "follow_chat_soon": "フォロー／1:1チャットは後で連携します。"
+    },
+    "comment": {
+      "title": "コメント",
+      "placeholder": "コメントする...",
+      "submit": "投稿",
+      "view_replies": "返信{{count}}件を見る",
+      "reply_action": "返信する",
+      "replying_to": "{{name}}さんに返信中",
+      "delete_title": "コメント削除",
+      "delete_message": "このコメントを削除しますか？",
+      "delete_fail": "コメント削除に失敗しました。"
+    }
+  },
+  "chat": {
+    "title": "チャット",
+    "send": "送信",
+    "attach": "添付",
+    "gallery": "ギャラリー",
+    "invite": "招待",
+    "manage": "管理",
+    "members": "メンバー",
+    "placeholder": "メッセージを入力してください…",
+    "all": "すべて",
+    "and_others_n": "ほか N",
+    "others_suffix": "ほか",
+    "anonymous": "匿名",
+    "message": "メッセージ",
+    "message_search": "メッセージ検索",
+    "message_send": "メッセージ送信",
+    "message_send_failed": "メッセージ送信失敗",
+    "message_delete_failed": "メッセージの削除に失敗しました。",
+    "message_deleted": "メッセージを削除しました。",
+    "new_message_one": "新しいメッセージ1件",
+    "new_messages_count": "新しいメッセージ{{count}}件",
+    "chat_with_me": "自分とのチャット",
+    "chat_room_title": "チャットルーム",
+    "one_to_one_chat": "1:1チャット",
+    "group_chat_title": "グループチャット",
+    "open_chat_title": "オープンチャット",
+    "beacon_chat_title": "ビーコンチャット",
+    "room_not_found": "ルーム情報がありません。",
+    "chat_room_not_found": "チャットルームが見つかりません。",
+    "conversation_partner": "相手",
+    "audio_send_failed": "音声送信失敗",
+    "video": "動画",
+    "photo": "写真",
+    "file_label": "ファイル",
+    "open_file": "ファイルを開く",
+    "play_video": "動画を再生",
+    "voice_message": "ボイスメッセージ",
+    "share_location": "位置情報を共有",
+    "map_location_shared_title": "位置情報共有",
+    "map_tap_to_open": "地図を開くにはタップしてください。",
+    "cannot_open_map": "地図を開けません。",
+    "no_coordinate_info": "座標情報なし",
+    "send_failed": "送信失敗",
+    "share": "共有",
+    "share_failed": "共有失敗",
+    "delete_failed": "削除失敗",
+    "upload_failed": "アップロード失敗",
+    "selection_mode": "選択モード",
+    "selection_mode_hint": "削除するメッセージをタップして選択してください。",
+    "selection_clear": "選択解除",
+    "delete_dialog_title": "メッセージ削除",
+    "delete_dialog_desc": "削除方法を選択してください。",
+    "delete_for_everyone": "全員から削除",
+    "delete_hide_for_everyone": "メッセージを隠す（全員から非表示）",
+    "delete_for_me": "自分だけ削除",
+    "delete_for_me_hint": "選択したメッセージは自分からのみ削除できます。",
+    "reply": "返信",
+    "reply_to_me": "自分のメッセージに返信",
+    "reply_to_user": "{{nickname}}さんに返信",
+    "msg_deleted_by_user": "{{nickname}}さんがメッセージを削除しました。",
+    "notice": "お知らせ",
+    "notice_coming_soon": "お知らせ機能は後日実装予定です。",
+    "korean_label": "韓国語",
+    "auto_translate_paid_only": "中級/上級翻訳プランでのみ自動翻訳を利用できます。",
+    "translation_paid_only": "翻訳は有料会員専用です。",
+    "premium_only": "プレミアム専用",
+    "premium_only_feature_hint": "プレミアム会員から利用できる機能です。",
+    "tone_neutral": "中立",
+    "tone_casual": "カジュアル",
+    "tone_formal": "丁寧",
+    "tone_business": "ビジネス",
+    "tone_playful": "おもしろく",
+    "tone_change_premium_only": "翻訳トーン変更は上級（プレミアム）翻訳会員から利用できます。",
+    "tone_premium_only_hint": "上級翻訳（プレミアム）でのみ適用されます。",
+    "login_required": "ログインが必要です。",
+    "no_permission_send_rls": "メッセージを送信する権限がありません。（RLS）\n",
+    "rls_help_chat_members": "→ chat_membersに自分が含まれているか、chat_messagesのポリシーを確認してください。",
+    "search_placeholder": "検索語を入力してください",
+    "search_result_count": "結果{{count}}件",
+    "show_original": "原文を見る",
+    "show_translation": "翻訳を見る",
+    "translating": "翻訳中…",
+    "input": {
+      "placeholder": "メッセージを送信"
+    },
+    "error": {
+      "loginRequired": "ログインが必要です。",
+      "roomNotFound": "チャットルームが見つかりません。"
+    },
+    "sheet": {
+      "moreActions": "その他の操作",
+      "media": "写真/動画",
+      "file": "ファイル",
+      "location": "位置情報共有",
+      "inviteFriend": "友だちを招待",
+      "inviteLink": "招待リンク",
+      "translate": "翻訳"
+    },
+    "translate": {
+      "title": "翻訳",
+      "current_lang_prefix": "現在: {{code}}",
+      "tone_label": "翻訳トーン",
+      "toneNeutral": "中立",
+      "toneNeutralDesc": "基本の自然な翻訳",
+      "toneCasual": "カジュアル",
+      "toneCasualDesc": "チャット/友だち向け",
+      "toneFormal": "丁寧",
+      "toneFormalDesc": "敬語/丁寧な表現",
+      "toneBusiness": "ビジネス",
+      "toneBusinessDesc": "メール/レポート/業務用",
+      "tonePlayful": "おもしろく",
+      "tonePlayfulDesc": "ミーム/軽い冗談など"
+    },
+    "roomCard": {
+      "preview": {
+        "image": "[写真]",
+        "video": "[動画]",
+        "audio": "[音声]",
+        "file": "[ファイル]",
+        "map": "[位置]",
+        "notice": "[お知らせ]"
+      }
+    }
+  },
+  "profile": {
+    "view_title": "プロフィール",
+    "edit_title": "プロフィール編集",
+    "nickname": "ニックネーム",
+    "handle": "ハンドル",
+    "status_message": "ステータスメッセージ",
+    "public_default": "プロフィールをデフォルト公開",
+    "save_done": "プロフィールを保存しました。",
+    "no_name": "名前なし",
+    "no_id": "ID未設定",
+    "follow": "フォロー",
+    "following": "フォロー中",
+    "stat_posts": "投稿",
+    "stat_followers": "フォロワー",
+    "stat_following": "フォロー中",
+    "empty_posts": "まだ投稿がありません。",
+    "empty_posts_tab": "このタブには投稿がありません。",
+    "swipe": {
+      "new_post": "＋ 新規投稿",
+      "chat_1on1": "1:1チャット",
+      "chat_me": "自分とのチャット",
+      "call": "通話",
+      "more": "もっと見る →"
+    },
+    "alert": {
+      "setting_soon": "プロフィール設定画面は準備中です。",
+      "call_friend_only_title": "通話不可",
+      "call_friend_only_desc": "通話は友だちにのみ提供されます。",
+      "call_feature_soon": "電話番号 / ボイスコール機能は後日連携予定です。",
+      "unfollow_title": "フォロー解除",
+      "unfollow_desc": "フォローを解除しますか？",
+      "keep": "維持",
+      "follow_fail": "フォローに失敗しました。しばらくしてからもう一度お試しください。",
+      "unfollow_fail": "フォロー解除に失敗しました。しばらくしてからもう一度お試しください。",
+      "self_chat_fail": "自分とのチャットを開始できません。"
+    },
+    "edit": {
+      "error_permission": "自分のプロフィールのみ編集できます。",
+      "revert_title": "設定を元に戻す",
+      "revert_msg": "保存していない変更をすべて取り消して元に戻しますか？",
+      "revert_action": "元に戻す",
+      "revert": "設定を元に戻す",
+      "error_add_tab": "タブ追加失敗",
+      "confirm_delete_tab": "\"{{name}}\" タブを削除しますか？",
+      "error_save": "保存に失敗しました。",
+      "change_cover": "背景を変更",
+      "status_placeholder": "ステータスメッセージを入力してください",
+      "section_theme": "テーマとスタイル",
+      "theme_color": "テーマカラー",
+      "font_color": "フォントカラー",
+      "statusbar": "ステータスバーのスタイル",
+      "text_white": "白文字",
+      "text_black": "黒文字",
+      "section_tabs": "タブ管理",
+      "tab_all": "すべて（デフォルト）",
+      "tab_input_placeholder": "+ 新しいタブ名を入力",
+      "hue": "色相（Hue）",
+      "brightness": "明度（Brightness）",
+      "apply": "適用",
+      "setting_tab": "\"{{name}}\" 設定",
+      "move_up": "上へ",
+      "move_down": "下へ",
+      "visibility": "公開範囲設定",
+      "current_vis": "現在: {{val}}",
+      "vis_public": "全体公開",
+      "vis_private": "自分のみ",
+      "vis_custom": "一部公開",
+      "vis_friends": "友だち",
+      "vis_followers": "フォロワー",
+      "picker_avatar": "プロフィール写真を選択",
+      "picker_cover": "背景写真を選択"
+    }
+  },
+  "settings": {
+    "home_title": "設定",
+    "title": "設定",
+    "version": "アプリバージョン",
+    "open": "開く",
+    "change": "変更",
+    "run": "実行",
+    "logout": "ログアウト",
+    "logoutDone": "ログアウトしました。",
+    "sections": {
+      "communication": "コミュニケーション",
+      "general": "基本設定",
+      "advanced": "詳細",
+      "service_info": "サービス情報"
+    },
+    "menus": {
+      "call": "通話",
+      "etc": "その他",
+      "app_manage": "アプリ管理"
+    },
+    "alerts": {
+      "logout_title": "ログアウト",
+      "logout_desc": "本当にログアウトしますか？",
+      "language_change_error": "言語変更中に問題が発生しました。"
+    },
+    "search": {
+      "title": "設定検索",
+      "soon": "設定検索機能はまもなく提供予定です。"
+    },
+    "me": {
+      "noName": "（名前なし）",
+      "profileManage": "プロフィール管理"
+    },
+    "account": {
+      "title": "アカウント管理",
+      "editProfile": "プロフィール編集",
+      "profilePublicDefault": "ビーコンで自分のプロフィールをデフォルト公開",
+      "profilePublicHint": "ビーコン作成時のデフォルト値として使用されます。個別ビーコンで変更できます。",
+      "header_title": "自分の情報管理",
+      "section": {
+        "contact": "連絡先情報",
+        "identity": "識別設定",
+        "visibility": "公開範囲"
+      },
+      "field": {
+        "phone": "電話番号",
+        "email": "メール",
+        "id_label": "CO·ONN ID",
+        "friend_code": "友だちコード",
+        "show_nickname": "友だちにニックネームを表示"
+      },
+      "value": {
+        "not_registered": "未登録"
+      },
+      "badge": {
+        "verified": "認証済み",
+        "verify": "認証する"
+      },
+      "placeholder": {
+        "id": "IDを入力",
+        "friend_code": "コードを入力"
+      },
+      "help": {
+        "id_desc": "ユーザーを検索する際に使用する固有IDです。",
+        "show_nickname_desc": "オフにするとIDのみ表示されます。"
+      },
+      "error": {
+        "check_duplication": "重複している項目を確認してください。",
+        "id_taken": "すでに使用中のIDです。",
+        "code_taken": "すでに使用中のコードです。"
+      },
+      "alert": {
+        "check_required": "確認が必要",
+        "save_success_title": "保存完了",
+        "save_success_desc": "情報を更新しました。",
+        "save_fail_title": "保存失敗"
+      },
+      "action": {
+        "save": "保存する"
+      }
+    },
+    "privacy": {
+      "title": "プライバシー",
+      "header_title": "プライバシー",
+      "section": {
+        "profile": "プロフィールと検索",
+        "friend_req": "友だち申請ポリシー",
+        "activity": "活動情報"
+      },
+      "field": {
+        "public_profile": "プロフィールを公開",
+        "allow_search": "検索を許可",
+        "show_nickname": "友だちにニックネームを表示",
+        "show_location": "位置情報を表示",
+        "last_active": "最終アクティブ時間"
+      },
+      "help": {
+        "public_profile": "他のユーザーがプロフィールを閲覧できます",
+        "allow_search": "ニックネーム/ハンドルで検索できます",
+        "show_nickname": "実名の代わりにニックネームを優先表示",
+        "show_location": "活動ビーコンで位置を表示",
+        "last_active": "プロフィールに最終アクセス時間を表示"
+      },
+      "option": {
+        "all": "すべて許可",
+        "all_desc": "誰でも友だち申請可能",
+        "friends": "友だちの友だちのみ",
+        "friends_desc": "自分の友だちと繋がっている人のみ申請可能",
+        "none": "すべて拒否",
+        "none_desc": "すべての友だち申請を拒否"
+      },
+      "alert": {
+        "save_success": "設定を保存しました。",
+        "save_fail": "保存に失敗しました。"
+      }
+    },
+    "radius": {
+      "title": "自分の近所の範囲設定",
+      "current": "現在",
+      "desc": "設定した距離内の情報のみ受け取ります。"
+    },
+    "friends": {
+      "title": "友だち",
+      "manage": "友だち管理",
+      "caption": "ブロック、おすすめ、公開範囲",
+      "soon": "友だち設定画面は後日提供予定です。"
+    },
+    "notification": {
+      "title": "通知",
+      "manage": "通知設定",
+      "caption": "プッシュ、音、バイブ",
+      "soon": "通知設定画面は後日連携予定です。"
+    },
+    "display": {
+      "title": "画面と言語"
+    },
+    "language": {
+      "title": "言語",
+      "select": "言語を選択",
+      "inUse": "（使用中）"
+    },
+    "theme": {
+      "title": "テーマ",
+      "caption": "ライト / ダークモード",
+      "soon": "テーマ設定画面は後日提供予定です。",
+      "header_title": "テーマ設定",
+      "section_style": "画面スタイル",
+      "mode": {
+        "system": "システム設定",
+        "system_desc": "端末設定に合わせて自動で変更されます。",
+        "light": "ライトモード",
+        "light_desc": "明るくクリーンな画面です。",
+        "dark": "ダークモード",
+        "dark_desc": "目に優しい暗い画面です。"
+      }
+    },
+    "chat": {
+      "title": "チャット"
+    },
+    "translate": {
+      "autoDefault": "メッセージを自動翻訳",
+      "autoDefaultHint": "新規チャットのデフォルト値として使用されます。",
+      "showOriginal": "翻訳とともに原文を表示",
+      "showOriginalHint": "オンにすると翻訳メッセージの下に原文も表示されます。"
+    },
+    "storage": {
+      "title": "データとストレージ",
+      "clearCache": "キャッシュをクリア",
+      "clearCacheHint": "一時ファイルを削除",
+      "soon": "キャッシュ削除ロジックは未接続です。後日アップデート予定です。"
+    },
+    "support": {
+      "title": "サポート",
+      "cs": "カスタマーサポート / 運営ポリシー",
+      "notice": "お知らせ",
+      "guide": "アプリガイド",
+      "soon": "この画面は後日連携予定です。"
+    },
+    "labs": {
+      "title": "ラボ",
+      "features": "ラボ機能",
+      "caption": "新機能を先行体験できます。",
+      "soon": "ラボ機能画面は準備中です。"
+    },
+    "admin": {
+      "title": "管理者",
+      "console": "管理者コンソール"
+    }
+  },
+  "home": {
+    "briefing_title": "今日のブリーフィング",
+    "briefing_toggle_show": "要約を見る",
+    "briefing_toggle_hide": "要約を閉じる",
+    "briefing_unread_chat": "未読チャット",
+    "briefing_nearby_beacon": "周辺ビーコン",
+    "briefing_new_friend_post": "友だちの新しい投稿",
+    "briefing_new_follower": "新しいフォロワー",
+    "briefing_count_unit": "件",
+    "briefing_people_unit": "名",
+    "tabs": {
+      "friends": "友だち",
+      "following": "フォロー中",
+      "local": "ローカル"
+    },
+    "banner_headerTitle": "近く",
+    "banner_fallback_title": "周辺を確認中です",
+    "banner_fallback_desc": "近くの場所を集めています",
+    "empty_feed": "まだ表示するフィードがありません。",
+    "scroll_top": "一番上へ"
+  },
+  "system": {
+    "splash_loading": "起動準備中…",
+    "offline": "オフラインです。ネットワークを確認してください。",
+    "not_found": "ページが見つかりません。"
+  },
+  "placeholders": {
+    "search": "検索",
+    "write_something": "何を送りますか？"
+  },
+  "tabs": {
+    "map": "地図",
+    "chat": "チャット",
+    "friends": "友だち",
+    "explore": "探索"
+  },
+  "location": {
+    "title": "位置情報送信",
+    "search_placeholder": "場所名、住所を検索",
+    "loading_current": "現在地を確認中...",
+    "moving_tooltip": "移動中...",
+    "address_label": "地図位置の住所",
+    "status_moving": "位置を移動中...",
+    "status_checking": "位置を確認中...",
+    "status_loading": "位置情報読み込み中...",
+    "detail_placeholder": "詳細住所を入力（任意）",
+    "btn_fixing": "位置を固定中...",
+    "btn_send": "この位置を送信",
+    "error_no_result": "検索結果がありません。",
+    "error_search_failed": "検索中に問題が発生しました。",
+    "error_wait_fix": "位置固定が完了してから選択してください。"
+  },
+  "mediaViewer": {
+    "header_default": "写真",
+    "empty": "メディアがありません。",
+    "video_open_external": "▶ 動画を開く",
+    "video_no_expo_av": "expo-av未インストール環境",
+    "alert_save_success": "保存完了",
+    "alert_save_msg_single": "写真をギャラリーに保存しました。",
+    "alert_save_msg_multiple": "{{count}}枚の写真をギャラリーに保存しました。",
+    "alert_save_fail_title": "保存失敗",
+    "alert_save_fail_msg": "写真を保存できませんでした。しばらくしてからもう一度お試しください。",
+    "alert_share_empty": "共有する写真がありません。",
+    "alert_share_bundle_info": "お知らせ",
+    "alert_share_bundle_msg": "複数枚同時共有はまだ準備中のため、最初の写真のみ共有されます。",
+    "alert_share_fail_title": "共有失敗",
+    "alert_share_fail_load": "画像を読み込めませんでした。",
+    "alert_share_fail_msg": "画像を共有できませんでした。",
+    "modal_info": "写真情報",
+    "modal_save": "写真を保存",
+    "modal_share": "写真を共有",
+    "modal_delete": "写真を削除",
+    "info_date": "送信時刻",
+    "info_type": "タイプ",
+    "info_location": "位置",
+    "label_save_option": "保存方法を選択してください。",
+    "label_save_current": "この写真のみ保存",
+    "label_save_all": "まとめ写真をすべて保存（{{count}}枚）",
+    "label_share_option": "共有方法を選択してください。",
+    "label_share_current": "この写真のみ共有",
+    "label_share_all": "まとめ写真を共有",
+    "confirm_delete": "選択した写真を削除しますか？",
+    "confirm_delete_bundle_hint": "まとめ写真はまとめて削除されます。",
+    "state_deleting": "削除中…",
+    "state_saving": "保存中…",
+    "state_sharing": "共有中…"
+  }
+}

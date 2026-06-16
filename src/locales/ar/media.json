@@ -1,0 +1,14 @@
+{
+  "recent": "الأحدث",
+  "select_photo": "اختيار صورة",
+  "max_select": "حتى {{count}} صور",
+  "processing_error": "تعذّرت المعالجة.",
+  "select_to_edit": "اختر صورة للتعديل.",
+  "video_edit_warning": "لا يمكن تعديل الفيديو.",
+  "bundle_photos": "إرسال كمجموعة",
+  "quality_settings": "الجودة",
+  "quality_original": "الأصلية",
+  "quality_standard": "عادية",
+  "quality_low": "حجم منخفض",
+  "quality_high": "جودة عالية"
+}

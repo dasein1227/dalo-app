@@ -1,0 +1,421 @@
+{
+  "create_title": "비콘 생성",
+  "edit_title": "비콘 수정",
+  "detail_title": "비콘 정보",
+  "members_title": "비콘 관리",
+  "my_rooms_title": "내 비콘",
+  "join": "참여",
+  "enter": "입장",
+  "owner_tools": "방장 도구",
+  "visibility": "공개 범위",
+  "status_message": "상태 메시지",
+  "public_profile": "프로필 공개",
+  "current_members": "현재 인원",
+  "age_range": "연령대",
+  "memo": "메모",
+  "time_left": "남은 시간",
+  "common": {
+    "beacon": "비콘",
+    "noName": "이름 없음",
+    "anonymous": "익명 사용자",
+    "loading": "불러오는 중…",
+    "done": "완료",
+    "confirm": "확인",
+    "cancel": "취소",
+    "save": "저장",
+    "submit": "전송",
+    "approve": "승인",
+    "reject": "거절",
+    "block": "차단",
+    "kick": "내보내기",
+    "none": "없음",
+    "unlimited": "제한 없음"
+  },
+  "error": {
+    "invalidId": "잘못된 ID입니다.",
+    "invalidAccess": "잘못된 접근입니다.",
+    "loginRequired": "로그인이 필요합니다.",
+    "locationPermission": "위치 권한이 필요합니다.",
+    "locationUnavailable": "현재 위치를 확인할 수 없습니다.",
+    "locationLoadFail": "위치를 불러오지 못했습니다.",
+    "notFound": "비콘을 찾을 수 없습니다.",
+    "detailNotFound": "비콘 정보를 찾을 수 없습니다.",
+    "detailLoadFail": "비콘 정보를 불러오지 못했습니다.",
+    "operationFail": "작업을 완료하지 못했습니다."
+  },
+  "time": {
+    "am": "오전",
+    "pm": "오후",
+    "monthDay": "{{month}}월 {{day}}일",
+    "minute": "{{count}}분",
+    "hour": "{{count}}시간",
+    "hourMinute": "{{hour}}시간 {{minute}}분",
+    "remainEnded": "종료됨",
+    "remainMinute": "{{count}}분 남음",
+    "remainHour": "{{count}}시간 남음",
+    "remainHourMinute": "{{hour}}시간 {{minute}}분 남음",
+    "justNow": "방금 전",
+    "agoMinute": "{{count}}분 전",
+    "agoHour": "{{count}}시간 전",
+    "agoDay": "{{count}}일 전"
+  },
+  "unit": {
+    "people": "명",
+    "age": "세",
+    "count": "개",
+    "times": "회",
+    "peopleCount": "{{count}}명",
+    "ageCount": "{{count}}세",
+    "retryLeft": "{{count}}회 남음"
+  },
+  "tabs": {
+    "dm": "개인",
+    "group": "그룹",
+    "open": "오픈",
+    "beacon": "비콘"
+  },
+  "visibilityLabel": {
+    "public": "전체 공개",
+    "friends": "친구 공개",
+    "labels": "그룹 공개",
+    "custom": "커스텀 공개",
+    "publicCompact": "전체공개",
+    "friendsCompact": "친구공개",
+    "labelsCompact": "그룹공개",
+    "customCompact": "커스텀 공개",
+    "publicExcludeFriends": "지인 제외"
+  },
+  "visibilityDesc": {
+    "public": "불특정 다수에게 노출됩니다. 기본값은 승인 입장입니다.",
+    "friends": "친구에게만 보입니다. 기본값은 자유 입장입니다.",
+    "labels": "선택한 그룹에만 보입니다. 기본값은 자유 입장입니다.",
+    "custom": "친구와 그룹을 직접 지정합니다. 기본값은 자유 입장입니다."
+  },
+  "gender": {
+    "any": "성별 무관",
+    "male": "남성",
+    "female": "여성"
+  },
+  "myRooms": {
+    "headerTitle": "채팅",
+    "status": {
+      "pending": "승인 대기",
+      "joined": "{{visibility}} · 참여 중",
+      "owner": "{{visibility}} · {{minutes}}분 남음",
+      "host": "방장",
+      "waiting": "대기",
+      "member": "참여중"
+    },
+    "title": {
+      "mine": "내 비콘",
+      "fallback": "비콘"
+    },
+    "empty": {
+      "title": "대화가 없습니다.",
+      "beaconDesc": "내 비콘과 참여 중인 비콘이 표시됩니다."
+    },
+    "error": {
+      "loadFail": "목록을 불러오지 못했습니다."
+    },
+    "alert": {
+      "routeCreate": "비콘 생성 화면을 확인해 주세요.",
+      "routeChatCreate": "새 채팅 생성은 준비 중입니다.",
+      "routeBeaconSearch": "비콘 검색 화면을 확인해 주세요.",
+      "routeSearch": "검색 화면을 확인해 주세요."
+    }
+  },
+  "form": {
+    "titlePlaceholder": "비콘 목적",
+    "descPlaceholder": "설명 또는 규칙 입력",
+    "durationMin": "30분",
+    "durationMax": "4시간",
+    "minuteSuffix": "분",
+    "locationSelectTitle": "친구 공개 위치",
+    "locationSelectHelper": "현재 위치 기준 200m 이내",
+    "locationPickFailTitle": "위치 선택 불가",
+    "selectedAddress": "선택된 주소",
+    "locationEmpty": "선택한 위치가 없습니다. 지도를 열어 주세요.",
+    "locationShortPlaceholder": "대략적 위치",
+    "locationDetailPlaceholder": "상세 위치",
+    "conditionsTitle": "참여 조건",
+    "genderTitle": "성별",
+    "quotaTitle": "모집 정원",
+    "quotaDesc": "0명은 제한 없음입니다. 숫자를 눌러 직접 입력할 수 있습니다.",
+    "ageLimitTitle": "연령 제한",
+    "ageLimitDesc": "기본값은 내 연령 기준 ±10세입니다.",
+    "ageNoLimit": "제한 없음",
+    "ageMin": "최소 나이",
+    "ageMax": "최대 나이",
+    "maleQuota": "남성",
+    "femaleQuota": "여성",
+    "mixQuota": "성별 무관",
+    "selectGroups": "공개할 그룹",
+    "selectFriends": "공개할 친구",
+    "friendSearch": "친구 검색",
+    "emptyGroups": "그룹이 없습니다.",
+    "emptyFriends": "친구가 없습니다.",
+    "protectionOff": "보호 안 함",
+    "protectionOffAlt": "보호 안함",
+    "createButton": "비콘 생성",
+    "saveButton": "저장",
+    "durationTitle": "유지 시간",
+    "durationDesc": "지정 시간이 지나면 자동 종료됩니다.",
+    "locationProtectionTitle": "위치 보호",
+    "locationProtectionDesc": "설정한 범위 안에서 위치를 임의 표시합니다.",
+    "refreshLocation": "현재 위치 다시 확인",
+    "meetingTitle": "어떤 모임인가요?",
+    "requireApprovalTitle": "승인 후 입장",
+    "requireApprovalDesc": "방장이 승인한 사람만 참여할 수 있습니다.",
+    "hideFromFriendsTitle": "내 친구에게 숨기기",
+    "hideFromFriendsDesc": "전체 공개지만 내 지인에게는 노출하지 않습니다.",
+    "selectedGroupsCount": "선택된 그룹 {{count}}개",
+    "selectedFriendsCount": "선택된 친구 {{count}}명",
+    "friendLocationDesc": "비공개 대상에게만 보이는 위치 안내입니다. 현재 위치 기준 200m 이내에서 선택할 수 있습니다.",
+    "locationPickTitle": "지도에서 선택",
+    "locationPickHint": "선택한 주소가 아래에 표시됩니다.",
+    "friendLocationEmpty": "선택한 위치가 없습니다. 오른쪽 버튼으로 지도를 열어 주세요.",
+    "moveToCurrentLocation": "현재 위치로 수정"
+  },
+  "create": {
+    "validation": {
+      "titleRequired": "모임명을 입력해 주세요.",
+      "titleMax": "모임명은 80자 이내입니다.",
+      "duration": "지속 시간은 10~240분입니다.",
+      "ageRange": "연령 범위를 확인해 주세요.",
+      "locationRequired": "현재 위치를 확인해 주세요.",
+      "labelsRequired": "그룹을 선택해 주세요.",
+      "customRequired": "친구 또는 그룹을 선택해 주세요."
+    },
+    "alert": {
+      "labelLoadFailTitle": "그룹 불러오기 실패",
+      "labelLoadFail": "그룹 목록을 불러오지 못했습니다.",
+      "friendLoadFailTitle": "친구 불러오기 실패",
+      "friendLoadFail": "친구 목록을 불러오지 못했습니다.",
+      "createFailTitle": "비콘 생성 실패",
+      "createFail": "오류가 발생했습니다."
+    }
+  },
+  "edit": {
+    "validation": {
+      "titleRequired": "방제를 입력해 주세요.",
+      "titleMax": "방제는 80자 이내입니다.",
+      "duration": "지속 시간은 10~240분입니다.",
+      "ageRange": "연령 범위를 확인해 주세요.",
+      "labelsRequired": "그룹을 선택해 주세요.",
+      "customRequired": "친구 또는 그룹을 선택해 주세요."
+    },
+    "toast": {
+      "moved": "현재 위치로 이동했습니다.",
+      "moveFail": "위치를 이동하지 못했습니다.",
+      "saved": "저장되었습니다.",
+      "saveFail": "오류가 발생했습니다."
+    }
+  },
+  "detail": {
+    "action": {
+      "ended": "모집 종료",
+      "enter_chat": "채팅방 입장",
+      "cancel_request": "요청 취소",
+      "join_direct": "참여",
+      "request_retry": "다시 요청",
+      "request_join": "참여 요청",
+      "forbidden": "입장 제한",
+      "full": "정원 마감",
+      "closed": "참여 불가"
+    },
+    "badge": {
+      "pending": "승인 대기",
+      "rejected": "거절됨",
+      "approval": "승인제",
+      "free": "자유 입장"
+    },
+    "empty": {
+      "deleted": "존재하지 않는 비콘입니다.",
+      "back": "이전으로"
+    },
+    "fallbackTitle": "이름 없는 비콘",
+    "info": {
+      "status": "진행 상태",
+      "capacity": "모집 정원",
+      "audience": "공개 대상",
+      "retry": "재신청 기회"
+    },
+    "location": {
+      "title": "모임 위치",
+      "visible": "참여 전 상세 위치가 제공됩니다.",
+      "hidden": "정확한 주소는 참여 후 채팅방에서 공유됩니다.",
+      "openMap": "지도에서 보기 ›"
+    },
+    "host": {
+      "settings": "비콘 설정",
+      "settingsDesc": "방제, 소개글, 공개 범위 변경",
+      "members": "참여자 관리",
+      "membersDesc": "멤버 확인 및 내보내기",
+      "close": "비콘 종료",
+      "closeDesc": "모집을 마감하고 채팅방을 닫습니다."
+    },
+    "requests": {
+      "title": "참여 대기",
+      "empty": "대기 중인 요청이 없습니다.",
+      "messageTitle": "참여 요청 메시지",
+      "messageDesc": "방장에게 전할 말을 남겨주세요. 선택사항입니다.",
+      "placeholder": "예) 근처에 있어요.",
+      "send": "요청 보내기",
+      "sending": "전송 중…",
+      "code": "코드 {{code}}",
+      "temperature": "온도 {{temp}}°",
+      "rejectionCount": "이전 거절 {{count}}회"
+    },
+    "alert": {
+      "editRoute": "수정 화면을 확인해 주세요.",
+      "membersRoute": "멤버 관리 화면을 확인해 주세요.",
+      "loginTitle": "로그인 필요",
+      "loginDesc": "참여하려면 로그인이 필요합니다.",
+      "chatNotFound": "채팅방 정보를 찾을 수 없습니다.",
+      "cancelTitle": "요청 취소",
+      "cancelDesc": "참여 요청을 취소할까요?",
+      "keep": "유지",
+      "cancelFailTitle": "취소 실패",
+      "cancelFail": "요청을 취소하지 못했습니다.",
+      "fullTitle": "정원 마감",
+      "fullDesc": "모집 인원이 모두 찼습니다.",
+      "forbiddenTitle": "참여 제한",
+      "forbiddenDesc": "이 비콘에는 참여할 수 없습니다.",
+      "endedTitle": "모집 종료",
+      "endedDesc": "종료된 비콘입니다.",
+      "unavailableTitle": "안내",
+      "unavailableDesc": "현재 참여할 수 없습니다.",
+      "requestSentTitle": "요청 완료",
+      "requestSentDesc": "방장 승인을 기다려 주세요.",
+      "requestFailTitle": "전송 실패",
+      "requestFail": "요청을 보내지 못했습니다.",
+      "approveFailTitle": "승인 실패",
+      "approveFail": "참여자 승인에 실패했습니다.",
+      "rejectFailTitle": "거절 실패",
+      "rejectFail": "참여 요청 거절에 실패했습니다.",
+      "closeTitle": "비콘 종료",
+      "closeDesc": "모집과 채팅방을 함께 종료할까요?",
+      "closeAction": "종료",
+      "closeDoneTitle": "종료 완료",
+      "closeDoneDesc": "비콘이 종료되었습니다.",
+      "closeFailTitle": "종료 실패",
+      "closeFail": "비콘을 종료하지 못했습니다."
+    }
+  },
+  "members": {
+    "role": {
+      "host": "방장",
+      "mod": "운영자",
+      "member": "참여자"
+    },
+    "tab": {
+      "members": "참여자",
+      "requests": "신청 {{count}}"
+    },
+    "meta": {
+      "joined": "참여 {{time}}",
+      "request": "요청 {{time}} · 과거 거절 {{count}}회"
+    },
+    "hero": {
+      "titleFallback": "비콘",
+      "approval": "승인제",
+      "free": "자유 입장"
+    },
+    "empty": {
+      "members": "아직 참여자가 없습니다.",
+      "requests": "대기 중인 신청이 없습니다."
+    },
+    "alert": {
+      "loadFailTitle": "불러오기 실패",
+      "loadFail": "정보를 불러오지 못했습니다.",
+      "kickTitle": "참여자 내보내기",
+      "kickDesc": "{{name}}님을 내보낼까요?",
+      "kickAction": "내보내기",
+      "alreadyHandled": "이미 처리되었거나 내보낼 수 없습니다.",
+      "kickFailTitle": "실패",
+      "kickFail": "참여자를 내보내지 못했습니다.",
+      "blockTitle": "참여자 차단",
+      "blockDesc": "{{name}}님을 차단하고 제외할까요?\n차단된 사용자는 다시 볼 수 없습니다.",
+      "blockFail": "참여자를 차단하지 못했습니다.",
+      "approveTitle": "참가 승인",
+      "approveDesc": "{{name}}님의 참가를 승인할까요?",
+      "approveFailTitle": "승인 실패",
+      "approveFail": "승인하지 못했습니다.",
+      "rejectTitle": "참가 거절",
+      "rejectDesc": "{{name}}님의 참가 요청을 거절할까요?",
+      "rejectFailTitle": "거절 실패",
+      "rejectFail": "거절하지 못했습니다."
+    }
+  },
+  "main": {
+    "loadingMap": "지도 불러오는 중…",
+    "listButton": "리스트",
+    "emptyRadius": "표시할 비콘이 없습니다.",
+    "card": {
+      "noTitle": "제목 없음",
+      "meta": "거리 {{distance}}m · 반경 {{radius}}m · {{entry}}",
+      "endsAfterMinute": "{{count}}분 후 종료",
+      "endingSoon": "곧 종료",
+      "always": "상시"
+    },
+    "toast": {
+      "movedHere": "현재 위치로 갱신했습니다."
+    },
+    "error": {
+      "loadFail": "주변 비콘을 불러오지 못했습니다.",
+      "locationUnavailable": "위치를 확인할 수 없습니다.",
+      "noActiveBeacon": "활성 비콘이 없습니다.",
+      "moveFail": "위치를 갱신하지 못했습니다."
+    },
+    "accessibility": {
+      "detail": "비콘 자세히 보기",
+      "create": "새 비콘 만들기"
+    }
+  },
+  "search": {
+    "title": "검색",
+    "placeholder": "찾고 싶은 만남",
+    "distance": "거리",
+    "target": "대상",
+    "age": "연령",
+    "quick": {
+      "friendsOnly": "친구만",
+      "public": "공개",
+      "tenMin": "10분",
+      "twenties": "20대"
+    },
+    "visibility": {
+      "title": "공개 범위",
+      "any": "전체",
+      "public": "전체공개",
+      "publicFiltered": "공개 · 친구 제외",
+      "friends": "친구 공개",
+      "labels": "그룹",
+      "custom": "지정"
+    },
+    "gender": {
+      "title": "성별",
+      "any": "전체",
+      "male": "남성",
+      "female": "여성",
+      "other": "기타"
+    },
+    "distancePreset": {
+      "fiveMin": "5분",
+      "tenMin": "10분",
+      "twentyMin": "20분",
+      "near": "가까이"
+    },
+    "agePreset": {
+      "all": "전체",
+      "twenties": "20대",
+      "thirties": "30대",
+      "forties": "40대",
+      "fiftyPlus": "50+"
+    },
+    "action": {
+      "reset": "초기화",
+      "apply": "적용"
+    }
+  }
+}

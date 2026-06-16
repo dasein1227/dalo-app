@@ -1,0 +1,183 @@
+{
+  "briefing_title": "Hari ini",
+  "briefing_toggle_show": "Tampilkan",
+  "briefing_toggle_hide": "Sembunyikan",
+  "briefing_unread_chat": "Chat belum dibaca",
+  "briefing_nearby_beacon": "Beacon sekitar",
+  "briefing_new_friend_post": "Postingan teman",
+  "briefing_new_follower": "Pengikut baru",
+  "briefing_count_unit": "Jumlah",
+  "briefing_people_unit": "orang",
+  "tabs": {
+    "friends": "Teman",
+    "following": "Mengikuti",
+    "local": "Lokal"
+  },
+  "banner_headerTitle": "Sekitar",
+  "banner_fallback_title": "Pilihan sekitar",
+  "banner_fallback_desc": "Mencari tempat di sekitar",
+  "banner_default_headline": "Tempat hari ini",
+  "banner_unknown_place": "Tempat tidak dikenal",
+  "banner_status_open": "Buka",
+  "banner_status_closed": "Tutup",
+  "banner_tag_fallback": "Rekomendasi",
+  "empty_feed": "Tidak ada feed untuk ditampilkan.",
+  "scroll_top": "Beranda",
+  "briefing_nearby_beacon_title": "Beacon sekitar",
+  "briefing_today_schedule_title": "Jadwal",
+  "briefing_continue_chat_title": "Lanjut chat",
+  "briefing_near_news_title": "Kabar sekitar",
+  "unknown_user": "Tidak diketahui",
+  "near_news": {
+    "filters": {
+      "all": "Semua",
+      "post": "Feed",
+      "event": "Acara",
+      "notice": "Pengumuman"
+    },
+    "kind": {
+      "post": "Feed",
+      "event": "Acara",
+      "notice": "Pengumuman"
+    },
+    "kind_en": {
+      "post": "FEED",
+      "event": "EVENT",
+      "notice": "NOTICE"
+    },
+    "masthead_overline": "CO·ONN LOCAL JOURNAL",
+    "masthead_title": "NEARBY NEWS",
+    "edition_line": "LOCAL EDITION · {{distance}}",
+    "count_line": "FEED {{post}} · EVENT {{event}} · NOTICE {{notice}}",
+    "self": "Saya",
+    "unknown_user": "Tidak diketahui",
+    "unknown_place": "Kabar Tidak diketahui",
+    "distance_pending": "Memeriksa jarak",
+    "just_now": "Baru saja",
+    "minutes_ago": "{{value}} menit lalu",
+    "hours_ago": "{{value}} jam lalu",
+    "days_ago": "{{value}} hari lalu",
+    "always": "Selalu",
+    "until": "Sampai {{date}}",
+    "ongoing": "Berlangsung",
+    "category": {
+      "restaurant": "Restoran",
+      "cafe": "Kafe",
+      "bakery": "Toko roti",
+      "market": "Pasar",
+      "drink": "Pub",
+      "store": "Kabar Kategori Toko"
+    },
+    "place": "Tempat",
+    "nearby_place": "Kabar Sekitar",
+    "nearby_feed": "Kabar Sekitar Feed",
+    "event_title": "Acara",
+    "notice_title": "Pengumuman",
+    "event_body": "Acara baru tersedia.",
+    "notice_body": "Pengumuman baru diposting.",
+    "load_error": "Kabar sekitar tidak dapat dimuat.",
+    "collection_title": "Kabar sekitar",
+    "media_title": "Kabar sekitar",
+    "empty_title": "Tidak ada kabar",
+    "empty_desc": "Postingan sekitar dan update tempat akan muncul di sini.",
+    "editing": "Menyiapkan halaman",
+    "load_failed": "Kabar Muat Gagal tidak dapat diproses.",
+    "retry": "Coba lagi",
+    "local_note": "Kabar Lokal",
+    "by_prefix": "BY "
+  },
+  "schedule_sheet": {
+    "weekdays": {
+      "sun": "Min",
+      "mon": "Sen",
+      "tue": "Sel",
+      "wed": "Rab",
+      "thu": "Kam",
+      "fri": "Jum",
+      "sat": "Sab"
+    },
+    "date_title": "{{day}}/{{month}} ({{weekday}})",
+    "period": {
+      "am": "AM",
+      "pm": "PM"
+    },
+    "time_range_cross_day": "{{start}} - {{date}} {{end}}",
+    "default_room_title": "Ruang chat",
+    "participation": {
+      "joined": "Ikut",
+      "pending": "Belum ikut"
+    },
+    "search_placeholder": {
+      "joined": "Cari jadwal yang diikuti",
+      "pending": "Cari jadwal tersedia"
+    },
+    "load_error": "Jadwal tidak dapat dimuat.",
+    "people_count": "{{value}} orang",
+    "default_title": "Jadwal",
+    "time_unknown": "Waktu belum ditentukan",
+    "today_title": "Jadwal",
+    "today_empty": "Tidak ada jadwal hari ini",
+    "count": "{{value}}",
+    "header_title": "Jadwal",
+    "empty": {
+      "load_failed_title": "Muat Gagal tidak dapat diproses.",
+      "load_failed_desc": "Periksa lagi nanti.",
+      "joined_title": "Tidak ada jadwal diikuti",
+      "joined_desc": "Jadwal yang Anda ikuti akan muncul di sini.",
+      "pending_title": "Tidak ada jadwal terbuka",
+      "pending_desc": "Jadwal tersedia akan muncul di sini."
+    }
+  },
+  "notifications": {
+    "header_title": "Notifikasi",
+    "mark_all_read": "Tandai semua dibaca",
+    "follow_back": "Ikuti balik",
+    "following": "Mengikuti",
+    "retry": "Muat ulang",
+    "empty_title": "Tidak ada notifikasi",
+    "empty_desc": "Update baru akan muncul di sini.",
+    "fallback_actor": "Seseorang",
+    "fallback_schedule": "Jadwal",
+    "fallback_beacon": "Beranda Notifikasi Beacon",
+    "fallback_room": "Ruang chat",
+    "fallback_notification": "Notifikasi baru",
+    "sections": {
+      "today": "Hari ini",
+      "recent": "Terbaru",
+      "unread": "Belum dibaca",
+      "earlier": "Sebelumnya",
+      "this_week": "Minggu ini",
+      "older": "Sebelumnya",
+      "thisWeek": "Minggu ini"
+    },
+    "time": {
+      "just_now": "Baru saja",
+      "minutes": "{{value}} mnt",
+      "hours": "{{value}} jam",
+      "days": "{{value}} hr",
+      "weeks": "{{value}} mg",
+      "months": "{{value}} bln",
+      "years": "{{value}} th"
+    },
+    "copy": {
+      "others": " dan {{value}} lainnya",
+      "follow_created": "{{name}} mengikuti Anda",
+      "chat_reply_created": "{{name}} membalas",
+      "chat_mention_created": "{{name}} menyebut Anda",
+      "beacon_join_request_created": "{{name}} meminta bergabung ke beacon",
+      "beacon_join_approved": "Permintaan beacon disetujui",
+      "beacon_friend_created": "{{name}} membuat beacon baru",
+      "schedule_created": "{{room}} · {{target}} dibuat",
+      "schedule_updated": "{{room}} · {{target}} diperbarui",
+      "schedule_cancelled": "{{room}} · {{target}} dibatalkan",
+      "post_like_grouped": "{{name}}{{others}} menyukai postingan Anda",
+      "post_comment_grouped": "{{name}}{{others}} berkomentar",
+      "post_reply_grouped": "{{name}}{{others}} membalas komentar Anda",
+      "post_mention_grouped": "{{name}}{{others}} menyebut Anda"
+    },
+    "error": {
+      "load_failed": "Notifikasi tidak dapat dimuat."
+    },
+    "loading_short": "…"
+  }
+}

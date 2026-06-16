@@ -1,0 +1,253 @@
+{
+  "title": "Bạn bè",
+  "requests": "Yêu cầu kết bạn",
+  "requests_empty": "Không có yêu cầu mới.",
+  "requests_received": "Đã nhận",
+  "requests_sent": "Đã gửi",
+  "add_friend": "Thêm bạn",
+  "send_request": "Gửi yêu cầu kết bạn",
+  "request_sent": "Đã gửi yêu cầu kết bạn.",
+  "request_send_failed": "Không gửi được yêu cầu kết bạn.",
+  "request_cancel": "Huỷ yêu cầu",
+  "request_canceled": "Đã huỷ yêu cầu kết bạn.",
+  "request_cancel_failed": "Không huỷ được yêu cầu kết bạn.",
+  "accept": "Chấp nhận",
+  "decline": "Từ chối",
+  "accepted": "Đã chấp nhận yêu cầu kết bạn.",
+  "declined": "Đã từ chối yêu cầu kết bạn.",
+  "accept_failed": "Không chấp nhận được yêu cầu kết bạn.",
+  "decline_failed": "Không từ chối được yêu cầu kết bạn.",
+  "remove_friend": "Xoá bạn",
+  "remove_friend_confirm": "Xoá người bạn này?",
+  "remove_friend_done": "Đã xoá bạn.",
+  "remove_friend_failed": "Không xoá được bạn.",
+  "blocked": "Đã chặn",
+  "block": "Chặn",
+  "unblock": "Bỏ chặn",
+  "block_done": "Đã chặn.",
+  "unblock_done": "Đã bỏ chặn.",
+  "search_placeholder": "Tìm nickname, ID, mã bạn bè",
+  "code_placeholder": "Nhập mã bạn bè",
+  "already_friends": "Đã là bạn bè.",
+  "already_requested": "Đã gửi yêu cầu kết bạn.",
+  "self_not_allowed": "Không thể gửi yêu cầu cho chính mình.",
+  "hidden": "Ẩn",
+  "favorite": "Yêu thích",
+  "memo": "Ghi chú",
+  "alias": "Biệt danh",
+  "group": {
+    "title": "Nhóm",
+    "manageTitle": "Nhóm bạn bè",
+    "createTitle": "Nhóm mới",
+    "createDesc": "Nhập tên nhóm.",
+    "createPlaceholder": "VD: Đồng nghiệp, bạn gần nhà, nhóm học",
+    "createAction": "Tạo",
+    "createFail": "Tạo thất bại",
+    "editTitle": "Sửa tên nhóm",
+    "editDesc": "Nhập tên mới.",
+    "editPlaceholder": "Tên nhóm",
+    "saveAction": "Lưu",
+    "renameFail": "Sửa thất bại",
+    "nameRequired": "Vui lòng nhập tên nhóm.",
+    "deleteTitle": "Xoá nhóm",
+    "deleteMessage": "Xoá nhóm \"{{name}}\"?",
+    "emptyTitle": "Không có nhóm",
+    "emptyDesc": "Hãy tạo nhóm mới.",
+    "memberEmpty": "Nhóm chưa có thành viên.",
+    "addTitle": "Thêm bạn",
+    "addSuccess": "Đã thêm.",
+    "addFail": "Thêm thất bại",
+    "addEmpty": "Không có bạn để thêm.",
+    "removeSuccess": "Đã gỡ.",
+    "removeFail": "Gỡ thất bại",
+    "memberCount": "{{count}} người"
+  },
+  "userFallback": "Người dùng",
+  "list": {
+    "favoriteFriendsCount": "Yêu thích {{count}}",
+    "friendsCount": "Bạn bè {{count}}"
+  },
+  "tabs": {
+    "friends": "Bạn bè",
+    "groups": "Nhóm"
+  },
+  "search": {
+    "placeholder": "Nhập từ khoá",
+    "friendPlaceholder": "Tìm tên bạn, ID",
+    "groupPlaceholder": "Tìm nhóm, thành viên",
+    "namePlaceholder": "Tìm tên",
+    "friendPickerPlaceholder": "Tìm bạn",
+    "contactsPlaceholder": "Tìm tên hoặc số",
+    "waitTitle": "Chờ nhập",
+    "waitCaption": "Nhập thông tin rồi tìm kiếm.",
+    "emptyTitle": "Không có kết quả",
+    "emptyCaption": "Không có người dùng phù hợp.",
+    "contactEmptyTitle": "Không có liên hệ",
+    "contactEmptyCaption": "Không có liên hệ phù hợp.",
+    "groupNamePlaceholder": "Tìm nhóm"
+  },
+  "action": {
+    "favoriteAdd": "Yêu thích",
+    "favoriteRemove": "Bỏ",
+    "manageFriend": "Quản lý bạn",
+    "manageGroup": "Quản lý nhóm",
+    "contact": "Liên hệ",
+    "create": "Tạo",
+    "save": "Lưu",
+    "add": "Thêm",
+    "remove": "Gỡ",
+    "select": "Chọn",
+    "search": "Tìm kiếm",
+    "processing": "Đang xử lý",
+    "saving": "Đang lưu"
+  },
+  "alert": {
+    "notice": "Thông báo",
+    "fail": "Thất bại",
+    "loadFail": "Không tải được",
+    "deleteFail": "Xoá thất bại",
+    "profileRouteMissing": "Không tìm thấy màn hình hồ sơ.",
+    "chatRouteMissing": "Không tìm thấy màn hình chat.",
+    "phoneMissing": "Không có số điện thoại.",
+    "phoneOpenFail": "Không mở được ứng dụng gọi điện.",
+    "removeFriendTitle": "Xoá bạn",
+    "removeFriendMessage": "Xoá {{name}}?",
+    "blockTitle": "Chặn",
+    "blockMessage": "Chặn {{name}}?",
+    "blockFail": "Chặn thất bại",
+    "friendEditRouteMissing": "Không tìm thấy màn hình quản lý bạn."
+  },
+  "add": {
+    "title": "Thêm bạn",
+    "loginRequired": "Cần đăng nhập.",
+    "contactSearch": "Tìm trong liên hệ",
+    "userFallback": "Người dùng {{id}}",
+    "noName": "Không có tên",
+    "myProfile": "Hồ sơ của tôi",
+    "notSet": "Chưa đặt",
+    "friendCodeLabel": "Mã bạn bè",
+    "qrOfflineHint": "Có thể kết nối nhanh bằng mã QR.",
+    "shareLink": "Chia sẻ liên kết",
+    "scanQr": "Quét QR",
+    "qrTitle": "Mã kết nối của tôi",
+    "qrDesc": "Người kia quét mã để\nkết nối ngay.",
+    "scanGuide": "Quét QR của người kia.",
+    "contactsTitle": "Tìm bằng liên hệ",
+    "contactsDesc": "Chọn từ danh bạ để tìm.",
+    "mode": {
+      "coonnIdTitle": "CO·ONN ID",
+      "coonnIdHint": "Nhập ID công khai của người kia.",
+      "coonnIdPlaceholder": "Nhập ID",
+      "friendCodeTitle": "Mã bạn bè",
+      "friendCodeHint": "Nhập mã bạn bè.",
+      "friendCodePlaceholder": "Nhập mã bạn bè",
+      "phoneTitle": "Liên hệ",
+      "phoneHint": "Tìm bằng số điện thoại.",
+      "phonePlaceholder": "Nhập số"
+    },
+    "result": {
+      "noPublicId": "Không có ID công khai",
+      "friendCodeVerified": "Mã bạn bè đã xác nhận",
+      "friendCodeMatched": "Mã bạn bè khớp",
+      "contact": "Liên hệ · {{phone}}",
+      "added": "Đã thêm",
+      "limited": "Bị giới hạn",
+      "add": "Thêm"
+    },
+    "share": {
+      "myId": "ID của tôi",
+      "friendCode": "Mã bạn bè",
+      "title": "Chia sẻ liên kết CO·ONN",
+      "message": "[CO·ONN] Kết nối với tôi nhé.{{idText}}{{codeText}}\n\nMở màn hình thêm bạn bằng liên kết dưới đây.\n{{url}}"
+    },
+    "toast": {
+      "added": "Đã thêm bạn."
+    },
+    "alert": {
+      "permissionRequired": "Cần quyền",
+      "cameraPermissionRequired": "Cần quyền camera.",
+      "contactsPermissionRequired": "Cần quyền danh bạ.",
+      "contactsLoadFail": "Không tải được liên hệ",
+      "searchFail": "Tìm kiếm thất bại",
+      "addFail": "Thêm thất bại"
+    },
+    "error": {
+      "invalidUser": "Người dùng không hợp lệ.",
+      "selfQr": "Đây là QR của bạn.",
+      "userNotFound": "Không tìm thấy người dùng.",
+      "invalidQr": "Mã không hợp lệ.",
+      "minLength": "Nhập ít nhất {{count}} ký tự."
+    },
+    "findTitle": "Tìm bạn mới",
+    "card": {
+      "idTitle": "Tìm bằng ID",
+      "idDesc": "Tìm CO·ONN ID",
+      "codeTitle": "Tìm bằng mã",
+      "codeDesc": "Tìm mã bạn bè",
+      "contactsTitle": "Liên hệ",
+      "contactsDesc": "Dựa trên danh bạ"
+    },
+    "digitalCardTitle": "Danh thiếp của tôi"
+  },
+  "communication": {
+    "noPhone": "Không có số điện thoại",
+    "phoneCall": "Gọi thường",
+    "voiceCall": "Gọi thoại",
+    "comingSoon": "Sắp có"
+  },
+  "edit": {
+    "title": "Cài đặt bạn bè",
+    "unknownUser": "Không xác định",
+    "none": "Không có",
+    "field": {
+      "name": "Tên"
+    },
+    "placeholder": {
+      "alias": "Nhập biệt danh",
+      "memo": "Nhập ghi chú"
+    },
+    "helper": {
+      "friendName": "Tên bạn · {{name}}",
+      "privateMemo": "Chỉ hiển thị với bạn."
+    },
+    "section": {
+      "groups": "Nhóm",
+      "security": "Bảo mật"
+    },
+    "state": {
+      "on": "Bật",
+      "off": "Tắt",
+      "hidden": "Ẩn",
+      "visible": "Đang hiển thị",
+      "blocked": "Đã chặn",
+      "unblocked": "Chưa chặn"
+    },
+    "toast": {
+      "saved": "Đã lưu."
+    },
+    "alert": {
+      "loadFail": "Không tải được",
+      "saveFail": "Lưu thất bại",
+      "removeFail": "Xoá thất bại",
+      "userLoadFail": "Không tải được người dùng.",
+      "blockedByPeer": "Người kia đã chặn bạn."
+    },
+    "remove": {
+      "title": "Xoá bạn",
+      "message": "Xoá {{name}}?"
+    },
+    "unsaved": {
+      "title": "Thay đổi",
+      "message": "Có thay đổi chưa lưu.",
+      "discard": "Không lưu"
+    },
+    "groups": {
+      "title": "Quản lý nhóm",
+      "subtitle": "Chọn nhóm để thêm vào.",
+      "selectedCount": "Đã chọn {{count}}",
+      "inGroup": "Đang trong nhóm",
+      "addHint": "Nhấn để thêm",
+      "emptySearch": "Thử tìm bằng tên khác."
+    }
+  }
+}

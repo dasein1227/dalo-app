@@ -1,0 +1,14 @@
+{
+  "recent": "รายการล่าสุด",
+  "select_photo": "เลือกรูปภาพ",
+  "max_select": "สูงสุด {{count}} รูป",
+  "processing_error": "ดำเนินการไม่สำเร็จ",
+  "select_to_edit": "เลือกรูปภาพที่ต้องการแก้ไข",
+  "video_edit_warning": "ไม่สามารถแก้ไขวิดีโอได้",
+  "bundle_photos": "ส่งเป็นชุด",
+  "quality_settings": "คุณภาพ",
+  "quality_original": "ต้นฉบับ",
+  "quality_standard": "มาตรฐาน",
+  "quality_low": "ประหยัดพื้นที่",
+  "quality_high": "คุณภาพสูง"
+}

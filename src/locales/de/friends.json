@@ -1,0 +1,253 @@
+{
+  "title": "Freunde",
+  "requests": "Freundschaftsanfragen",
+  "requests_empty": "Keine neuen Freundschaftsanfragen.",
+  "requests_received": "Erhalten",
+  "requests_sent": "Gesendet",
+  "add_friend": "Freund hinzufügen",
+  "send_request": "Anfrage senden",
+  "request_sent": "Freundschaftsanfrage gesendet.",
+  "request_send_failed": "Freundschaftsanfrage konnte nicht gesendet werden.",
+  "request_cancel": "Anfrage abbrechen",
+  "request_canceled": "Freundschaftsanfrage abgebrochen.",
+  "request_cancel_failed": "Freundschaftsanfrage konnte nicht abgebrochen werden.",
+  "accept": "Annehmen",
+  "decline": "Ablehnen",
+  "accepted": "Freundschaftsanfrage angenommen.",
+  "declined": "Freundschaftsanfrage abgelehnt.",
+  "accept_failed": "Freundschaftsanfrage konnte nicht angenommen werden.",
+  "decline_failed": "Freundschaftsanfrage konnte nicht abgelehnt werden.",
+  "remove_friend": "Freund entfernen",
+  "remove_friend_confirm": "Diesen Freund entfernen?",
+  "remove_friend_done": "Freund entfernt.",
+  "remove_friend_failed": "Freund konnte nicht entfernt werden.",
+  "blocked": "Blockiert",
+  "block": "Blockieren",
+  "unblock": "Entsperren",
+  "block_done": "Blockiert.",
+  "unblock_done": "Entsperrt.",
+  "search_placeholder": "Nickname, ID oder Freundescode suchen",
+  "code_placeholder": "Freundescode eingeben",
+  "already_friends": "Ihr seid bereits Freunde.",
+  "already_requested": "Du hast bereits eine Anfrage gesendet.",
+  "self_not_allowed": "Du kannst dir selbst keine Anfrage senden.",
+  "hidden": "Ausgeblendet",
+  "favorite": "Favorit",
+  "memo": "Notiz",
+  "alias": "Alias",
+  "group": {
+    "title": "Gruppen",
+    "manageTitle": "Freundeskreise",
+    "createTitle": "Neue Gruppe",
+    "createDesc": "Gib einen Gruppennamen ein.",
+    "createPlaceholder": "z. B. Kollegen, Nachbarn, Lerngruppe",
+    "createAction": "Erstellen",
+    "createFail": "Erstellen fehlgeschlagen",
+    "editTitle": "Gruppenname ändern",
+    "editDesc": "Gib einen neuen Namen ein.",
+    "editPlaceholder": "Gruppenname",
+    "saveAction": "Speichern",
+    "renameFail": "Ändern fehlgeschlagen",
+    "nameRequired": "Gib einen Gruppennamen ein.",
+    "deleteTitle": "Gruppe löschen",
+    "deleteMessage": "Gruppe „{{name}}“ löschen?",
+    "emptyTitle": "Keine Gruppen",
+    "emptyDesc": "Erstelle eine neue Gruppe.",
+    "memberEmpty": "Keine Gruppenmitglieder.",
+    "addTitle": "Freunde hinzufügen",
+    "addSuccess": "Hinzugefügt.",
+    "addFail": "Hinzufügen fehlgeschlagen",
+    "addEmpty": "Keine Freunde zum Hinzufügen.",
+    "removeSuccess": "Entfernt.",
+    "removeFail": "Entfernen fehlgeschlagen",
+    "memberCount": "{{count}} Personen"
+  },
+  "userFallback": "Nutzer",
+  "list": {
+    "favoriteFriendsCount": "Favoriten {{count}}",
+    "friendsCount": "Freunde {{count}}"
+  },
+  "tabs": {
+    "friends": "Freunde",
+    "groups": "Gruppen"
+  },
+  "search": {
+    "placeholder": "Suchbegriff eingeben",
+    "friendPlaceholder": "Freund oder ID suchen",
+    "groupPlaceholder": "Gruppe oder Teilnehmer suchen",
+    "namePlaceholder": "Name suchen",
+    "friendPickerPlaceholder": "Freunde suchen",
+    "contactsPlaceholder": "Name oder Nummer suchen",
+    "waitTitle": "Eingabe ausstehend",
+    "waitCaption": "Gib Informationen ein und suche.",
+    "emptyTitle": "Keine Ergebnisse",
+    "emptyCaption": "Keine passenden Nutzer gefunden.",
+    "contactEmptyTitle": "Keine Kontakte",
+    "contactEmptyCaption": "Keine passenden Kontakte gefunden.",
+    "groupNamePlaceholder": "Gruppe suchen"
+  },
+  "action": {
+    "favoriteAdd": "Favorisieren",
+    "favoriteRemove": "Entfernen",
+    "manageFriend": "Freund verwalten",
+    "manageGroup": "Gruppe verwalten",
+    "contact": "Kontaktieren",
+    "create": "Erstellen",
+    "save": "Speichern",
+    "add": "Hinzufügen",
+    "remove": "Entfernen",
+    "select": "Auswählen",
+    "search": "Suchen",
+    "processing": "In Bearbeitung",
+    "saving": "Speichern"
+  },
+  "alert": {
+    "notice": "Hinweis",
+    "fail": "Fehlgeschlagen",
+    "loadFail": "Laden fehlgeschlagen",
+    "deleteFail": "Löschen fehlgeschlagen",
+    "profileRouteMissing": "Profilseite nicht gefunden.",
+    "chatRouteMissing": "Chatseite nicht gefunden.",
+    "phoneMissing": "Keine Telefonnummer vorhanden.",
+    "phoneOpenFail": "Telefon-App konnte nicht geöffnet werden.",
+    "removeFriendTitle": "Freund entfernen",
+    "removeFriendMessage": "{{name}} entfernen?",
+    "blockTitle": "Blockieren",
+    "blockMessage": "{{name}} blockieren?",
+    "blockFail": "Blockieren fehlgeschlagen",
+    "friendEditRouteMissing": "Freundeverwaltung nicht gefunden."
+  },
+  "add": {
+    "title": "Freund hinzufügen",
+    "loginRequired": "Anmeldung erforderlich.",
+    "contactSearch": "Kontakte suchen",
+    "userFallback": "Nutzer {{id}}",
+    "noName": "Kein Name",
+    "myProfile": "Mein Profil",
+    "notSet": "Nicht festgelegt",
+    "friendCodeLabel": "Freundescode",
+    "qrOfflineHint": "Direkt per QR-Code verbinden.",
+    "shareLink": "Link teilen",
+    "scanQr": "QR scannen",
+    "qrTitle": "Mein Verbindungscode",
+    "qrDesc": "Scannen verbindet euch\ndirekt.",
+    "scanGuide": "Scanne den QR-Code der anderen Person.",
+    "contactsTitle": "Über Kontakte suchen",
+    "contactsDesc": "Aus dem Adressbuch auswählen und suchen.",
+    "mode": {
+      "coonnIdTitle": "CO·ONN ID",
+      "coonnIdHint": "Gib die öffentliche ID der anderen Person ein.",
+      "coonnIdPlaceholder": "ID eingeben",
+      "friendCodeTitle": "Freundescode",
+      "friendCodeHint": "Gib den Freundescode ein.",
+      "friendCodePlaceholder": "Freundescode eingeben",
+      "phoneTitle": "Kontakt",
+      "phoneHint": "Per Mobilnummer suchen.",
+      "phonePlaceholder": "Nummer eingeben"
+    },
+    "result": {
+      "noPublicId": "Keine öffentliche ID",
+      "friendCodeVerified": "Freundescode bestätigt",
+      "friendCodeMatched": "Freundescode stimmt überein",
+      "contact": "Kontakt · {{phone}}",
+      "added": "Hinzugefügt",
+      "limited": "Eingeschränkt",
+      "add": "Hinzufügen"
+    },
+    "share": {
+      "myId": "Meine ID",
+      "friendCode": "Freundescode",
+      "title": "CO·ONN Link teilen",
+      "message": "[CO·ONN] Verbinde dich mit mir.{{idText}}{{codeText}}\n\nÜber diesen Link öffnest du die Freund hinzufügen-Seite.\n{{url}}"
+    },
+    "toast": {
+      "added": "Als Freund hinzugefügt."
+    },
+    "alert": {
+      "permissionRequired": "Berechtigung erforderlich",
+      "cameraPermissionRequired": "Kamerazugriff erforderlich.",
+      "contactsPermissionRequired": "Kontaktzugriff erforderlich.",
+      "contactsLoadFail": "Kontakte konnten nicht geladen werden",
+      "searchFail": "Suche fehlgeschlagen",
+      "addFail": "Hinzufügen fehlgeschlagen"
+    },
+    "error": {
+      "invalidUser": "Ungültiger Nutzer.",
+      "selfQr": "Das ist dein QR-Code.",
+      "userNotFound": "Nutzer nicht gefunden.",
+      "invalidQr": "Ungültiger Code.",
+      "minLength": "Mindestens {{count}} Zeichen eingeben."
+    },
+    "findTitle": "Neue Freunde finden",
+    "card": {
+      "idTitle": "Per ID suchen",
+      "idDesc": "CO·ONN ID suchen",
+      "codeTitle": "Per Code suchen",
+      "codeDesc": "Freundescode suchen",
+      "contactsTitle": "Kontakte",
+      "contactsDesc": "Aus dem Adressbuch"
+    },
+    "digitalCardTitle": "Meine Karte"
+  },
+  "communication": {
+    "noPhone": "Keine Telefonnummer",
+    "phoneCall": "Anruf",
+    "voiceCall": "Sprachanruf",
+    "comingSoon": "In Vorbereitung"
+  },
+  "edit": {
+    "title": "Freundeseinstellungen",
+    "unknownUser": "Unbekannt",
+    "none": "Keine",
+    "field": {
+      "name": "Name"
+    },
+    "placeholder": {
+      "alias": "Alias eingeben",
+      "memo": "Notiz eingeben"
+    },
+    "helper": {
+      "friendName": "Freundesname · {{name}}",
+      "privateMemo": "Nur für dich sichtbar."
+    },
+    "section": {
+      "groups": "Gruppen",
+      "security": "Sicherheit"
+    },
+    "state": {
+      "on": "Ein",
+      "off": "Aus",
+      "hidden": "Ausgeblendet",
+      "visible": "Sichtbar",
+      "blocked": "Blockiert",
+      "unblocked": "Nicht blockiert"
+    },
+    "toast": {
+      "saved": "Gespeichert."
+    },
+    "alert": {
+      "loadFail": "Laden fehlgeschlagen",
+      "saveFail": "Speichern fehlgeschlagen",
+      "removeFail": "Entfernen fehlgeschlagen",
+      "userLoadFail": "Nutzer konnte nicht geladen werden.",
+      "blockedByPeer": "Die andere Person hat dich blockiert."
+    },
+    "remove": {
+      "title": "Freund entfernen",
+      "message": "{{name}} entfernen?"
+    },
+    "unsaved": {
+      "title": "Änderungen",
+      "message": "Es gibt ungespeicherte Änderungen.",
+      "discard": "Nicht speichern"
+    },
+    "groups": {
+      "title": "Gruppen verwalten",
+      "subtitle": "Wähle die Gruppen aus.",
+      "selectedCount": "Ausgewählt {{count}}",
+      "inGroup": "Bereits enthalten",
+      "addHint": "Zum Hinzufügen tippen",
+      "emptySearch": "Suche mit einem anderen Namen."
+    }
+  }
+}

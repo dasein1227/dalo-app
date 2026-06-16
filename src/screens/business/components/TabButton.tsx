@@ -1,7 +1,7 @@
 // src/screens/business/components/TabButton.tsx
 import React from 'react';
 import { Pressable, Text } from 'react-native';
-import { styles } from './bizStyles';
+import { useBizStyles } from './bizStyles';
 
 export type TabButtonProps = {
   label: string;
@@ -13,7 +13,10 @@ export const TabButton: React.FC<TabButtonProps> = ({
   label,
   active,
   onPress,
-}) => (
+}) => {
+  const styles = useBizStyles();
+
+  return (
   <Pressable
     style={[styles.tabButton, active && styles.tabButtonActive]}
     onPress={onPress}
@@ -22,4 +25,5 @@ export const TabButton: React.FC<TabButtonProps> = ({
       {label}
     </Text>
   </Pressable>
-);
+  );
+};

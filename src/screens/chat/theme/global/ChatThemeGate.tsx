@@ -1,11 +1,15 @@
 // src/screens/chat/theme/global/ChatThemeGate.tsx
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, StyleSheet, ImageBackground } from 'react-native';
 import { supabase } from '@/lib/supabase';
 import type { ChatTheme } from '@/screens/chat/theme/chatTheme';
 import ChatEffectOverlay, { type OverlayMode, type Intensity } from './ChatEffectOverlay';
 
 type BackgroundMode = 'none' | 'color' | 'image';
+
+
+const UI_GLOBAL_THEME_SELECT =
+  'id, enabled, theme_id, background_mode, background_color, background_opacity, background_key, background_url, background_blur, overlay_enabled, overlay_mode, effect_intensity, force, starts_at, ends_at, updated_at' as const;
 
 type GlobalThemeRow = {
   id: number;
@@ -122,7 +126,7 @@ async function fetchRows(roomType: string): Promise<GlobalThemeRow[]> {
   // theme_id = roomType OR theme_id IS NULL(global)
   const { data, error } = await supabase
     .from('ui_global_theme')
-    .select('*')
+    .select(UI_GLOBAL_THEME_SELECT)
     .or(`theme_id.eq.${roomType},theme_id.is.null`);
 
   if (error) {
@@ -132,21 +136,37 @@ async function fetchRows(roomType: string): Promise<GlobalThemeRow[]> {
   return (data as any as GlobalThemeRow[]) ?? [];
 }
 
+function createThemeWatchChannelName(roomType: string) {
+  // Supabase Realtime channel topic은 같은 이름을 재사용하면 기존 subscribed 채널을 돌려받을 수 있다.
+  // 그 상태에서 .on('postgres_changes')를 다시 붙이면
+  // "cannot add postgres_changes callbacks ... after subscribe()"가 발생한다.
+  const safeRoomType = String(roomType || 'default').replace(/[^a-zA-Z0-9_-]/g, '_');
+  return `ui_global_theme_watch_${safeRoomType}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
 function subscribeRows(roomType: string, onAnyChange: () => void) {
+  const channelName = createThemeWatchChannelName(roomType);
+
   const ch = supabase
-    .channel(`ui_global_theme_watch_${roomType}`)
+    .channel(channelName)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'ui_global_theme' }, (payload: any) => {
       const row = (payload?.new ?? payload?.old) as GlobalThemeRow | null;
       if (!row) return;
 
       // 관련 row만 반응: 현재 theme_id 또는 global(NULL)
       if (row.theme_id == null || row.theme_id === roomType) onAnyChange();
-    })
-    .subscribe();
+    });
+
+  ch.subscribe();
+
+  let removed = false;
 
   return () => {
+    if (removed) return;
+    removed = true;
+
     try {
-      supabase.removeChannel(ch);
+      void supabase.removeChannel(ch);
     } catch {}
   };
 }
@@ -159,25 +179,51 @@ type Props = {
 
 export default function ChatThemeGate({ theme, roomType, children }: Props) {
   const [rows, setRows] = useState<GlobalThemeRow[]>([]);
+  const loadSeqRef = useRef(0);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const loadRows = useCallback(
+    async (targetRoomType: string, seq: number) => {
+      const next = await fetchRows(targetRoomType);
+      if (loadSeqRef.current !== seq) return;
+      setRows(next);
+    },
+    [],
+  );
 
   useEffect(() => {
     let cancelled = false;
-    let unsub: null | (() => void) = null;
+    const seq = loadSeqRef.current + 1;
+    loadSeqRef.current = seq;
 
-    const load = async () => {
-      const next = await fetchRows(roomType);
+    const requestLoad = () => {
       if (cancelled) return;
-      setRows(next);
+
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
+
+      debounceTimerRef.current = setTimeout(() => {
+        if (cancelled) return;
+        void loadRows(roomType, seq);
+      }, 80);
     };
 
-    load();
-    unsub = subscribeRows(roomType, load);
+    void loadRows(roomType, seq);
+    const unsub = subscribeRows(roomType, requestLoad);
 
     return () => {
       cancelled = true;
-      if (unsub) unsub();
+
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
+
+      unsub();
     };
-  }, [roomType]);
+  }, [loadRows, roomType]);
 
   const chosen = useMemo(() => pickBest(rows, roomType), [rows, roomType]);
   const resolved = useMemo(() => resolve(chosen), [chosen]);

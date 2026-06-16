@@ -1,0 +1,526 @@
+{
+  "home_title": "설정",
+  "title": "설정",
+  "version": "앱 버전",
+  "open": "열기",
+  "change": "변경",
+  "run": "실행",
+  "logout": "로그아웃",
+  "logoutDone": "로그아웃되었습니다.",
+  "sections": {
+    "communication": "커뮤니케이션",
+    "general": "기본",
+    "advanced": "고급",
+    "service_info": "서비스",
+    "account": "계정",
+    "notification": "알림",
+    "display_language": "화면 및 언어",
+    "location": "위치",
+    "data": "데이터",
+    "support": "고객지원",
+    "info": "정보"
+  },
+  "menus": {
+    "call": "통화",
+    "etc": "기타",
+    "app_manage": "앱 관리",
+    "version": "앱 버전"
+  },
+  "alerts": {
+    "logout_title": "로그아웃",
+    "logout_desc": "로그아웃할까요?",
+    "language_change_error": "언어를 변경하지 못했습니다.",
+    "logout_fail": "로그아웃하지 못했습니다."
+  },
+  "search": {
+    "title": "설정 검색",
+    "soon": "설정 검색 기능은 곧 제공될 예정입니다."
+  },
+  "me": {
+    "noName": "이름 없음",
+    "profileManage": "프로필 관리",
+    "loadingAccount": "계정 확인 중"
+  },
+  "account": {
+    "title": "계정",
+    "editProfile": "프로필 편집",
+    "profilePublicDefault": "비콘에서 내 프로필 기본 공개",
+    "profilePublicHint": "비콘 생성 시 기본값으로 사용됩니다. 개별 비콘에서 변경 가능.",
+    "header_title": "계정",
+    "section": {
+      "contact": "연락처",
+      "identity": "식별 정보",
+      "visibility": "공개",
+      "profile": "프로필",
+      "account_management": "계정 관리"
+    },
+    "field": {
+      "phone": "전화번호",
+      "email": "이메일",
+      "id_label": "CO·ONN ID",
+      "friend_code": "친구 코드",
+      "show_nickname": "닉네임 표시",
+      "profile_photo": "프로필 사진",
+      "nickname": "닉네임"
+    },
+    "value": {
+      "not_registered": "미등록"
+    },
+    "badge": {
+      "verified": "인증됨",
+      "verify": "인증"
+    },
+    "placeholder": {
+      "id": "아이디",
+      "friend_code": "친구 코드",
+      "nickname": "닉네임"
+    },
+    "help": {
+      "id_desc": "검색에 쓰이는 고유 ID입니다.",
+      "show_nickname_desc": "친구에게 닉네임을 표시합니다."
+    },
+    "error": {
+      "check_duplication": "중복 확인이 필요합니다.",
+      "id_taken": "이미 사용 중입니다.",
+      "code_taken": "이미 사용 중입니다.",
+      "check_failed": "중복 확인에 실패했습니다.",
+      "invalid_id": "영문 소문자, 숫자, 밑줄 2~30자",
+      "invalid_friend_code": "영문 소문자, 숫자, 밑줄 2~30자",
+      "duplicate_exists": "이미 사용 중인 값입니다.",
+      "duplicate_check_required": "저장 전 중복 확인을 완료해 주세요.",
+      "duplicate_check_retry": "중복 확인을 다시 완료해 주세요.",
+      "duplicate_value_retry": "이미 사용 중인 값입니다. 다시 확인해 주세요.",
+      "nickname_required": "닉네임을 입력해주세요.",
+      "nickname_too_long": "닉네임은 30자까지 입력할 수 있습니다."
+    },
+    "alert": {
+      "check_required": "확인 필요",
+      "save_success_title": "저장 완료",
+      "save_success_desc": "계정 설정이 저장되었습니다.",
+      "save_fail_title": "저장 실패"
+    },
+    "action": {
+      "save": "저장",
+      "check_duplicate_short": "확인",
+      "checking_short": "…",
+      "change_photo": "사진 변경",
+      "remove_photo": "사진 삭제"
+    },
+    "status": {
+      "available_short": "사용 가능",
+      "duplicate_short": "중복"
+    },
+    "picker": {
+      "profile_photo": "사진 선택"
+    },
+    "withdrawal": {
+      "entryTitle": "계정 탈퇴",
+      "entryDescription": "계정과 개인 정보를 삭제합니다.",
+      "noticeTitle": "계정 탈퇴",
+      "noticeMessage": "탈퇴 전 아래 내용을 확인해주세요.",
+      "noticeItemProfile": "프로필, 친구, 설정 정보가 삭제됩니다.",
+      "noticeItemChat": "일부 대화 기록은 상대방 기록 보존을 위해 탈퇴한 사용자로 표시될 수 있습니다.",
+      "noticeItemRejoin": "탈퇴 후 7일 동안 같은 계정으로 다시 가입할 수 없습니다.",
+      "noticeItemIdentifier": "CO·ONN ID와 친구 코드는 30일 동안 재사용할 수 없습니다.",
+      "noticeAcknowledge": "위의 확인사항을 모두 확인하였고, 탈퇴를 진행합니다.",
+      "continue": "다음",
+      "cancel": "취소",
+      "surveyTitle": "떠나는 이유를 알려주세요",
+      "surveyMessage": "더 나은 서비스를 만드는 데 참고하겠습니다.",
+      "surveyAction": "계속",
+      "otherPlaceholder": "이유를 입력해주세요.",
+      "reasonRequired": "탈퇴 사유를 선택해주세요.",
+      "otherRequired": "이유를 입력해주세요.",
+      "reasonsLoading": "사유를 불러오는 중입니다.",
+      "reasonsEmpty": "탈퇴 사유를 불러오지 못했습니다.",
+      "confirmTitle": "마지막 확인",
+      "confirmMessage": "탈퇴하면 즉시 계정 이용이 중지됩니다.",
+      "confirmInstruction": "아래에 “{{keyword}}”를 입력해주세요.",
+      "confirmKeyword": "탈퇴",
+      "confirmPlaceholder": "탈퇴",
+      "confirmAction": "탈퇴",
+      "completed": "탈퇴가 접수되었습니다.",
+      "failed": "탈퇴 처리에 실패했습니다."
+    }
+  },
+  "privacy": {
+    "title": "개인정보",
+    "header_title": "개인정보",
+    "section": {
+      "profile": "프로필",
+      "friend_req": "친구 요청",
+      "activity": "활동"
+    },
+    "field": {
+      "public_profile": "프로필 공개",
+      "allow_search": "검색 허용",
+      "show_nickname": "닉네임 표시",
+      "show_location": "위치 표시",
+      "last_active": "최근 접속 표시"
+    },
+    "help": {
+      "public_profile": "다른 사용자가 프로필을 볼 수 있습니다.",
+      "allow_search": "닉네임과 ID로 검색됩니다.",
+      "show_nickname": "친구에게 닉네임을 표시합니다.",
+      "show_location": "활동 위치를 표시합니다.",
+      "last_active": "최근 접속 시간을 표시합니다."
+    },
+    "option": {
+      "all": "모두 허용",
+      "all_desc": "누구나 요청 가능",
+      "friends": "친구의 친구",
+      "friends_desc": "연결된 사용자만 요청 가능",
+      "none": "모두 차단",
+      "none_desc": "친구 요청 차단"
+    },
+    "alert": {
+      "save_success": "저장되었습니다.",
+      "save_fail": "저장하지 못했습니다.",
+      "load_fail": "불러오지 못했습니다.",
+      "login_required": "로그인이 필요합니다."
+    }
+  },
+  "radius": {
+    "title": "동네 범위",
+    "current": "현재",
+    "desc": "이 범위의 소식만 표시됩니다.",
+    "save_error": "동네 범위를 저장하지 못했습니다."
+  },
+  "friends": {
+    "title": "친구",
+    "manage": "친구 관리",
+    "caption": "차단, 추천, 공개 범위",
+    "soon": "준비 중입니다."
+  },
+  "notification": {
+    "title": "알림",
+    "manage": "알림",
+    "caption": "푸시, 인앱 알림, 소리",
+    "soon": "준비 중입니다.",
+    "section": {
+      "defaults": "기본",
+      "types": "유형",
+      "quiet": "조용한 시간",
+      "push_types": "푸시 유형",
+      "in_app": "인앱 알림"
+    },
+    "field": {
+      "push": "푸시 알림",
+      "preview": "미리보기",
+      "sound": "소리",
+      "vibrate": "진동",
+      "chat": "채팅",
+      "system": "공지·시스템",
+      "marketing": "마케팅"
+    },
+    "help": {
+      "push": "전체 푸시 알림",
+      "preview": "잠금화면에 내용 표시",
+      "chat_push": "채팅 메시지 푸시",
+      "system_push": "서비스 안내와 주요 공지",
+      "marketing_push": "이벤트와 프로모션"
+    },
+    "action": {
+      "save": "저장",
+      "open_system": "시스템 설정",
+      "cancel": "취소",
+      "done": "완료"
+    },
+    "time": {
+      "start": "시작",
+      "end": "종료",
+      "hour": "시",
+      "minute": "분",
+      "close": "시간 선택 닫기",
+      "select": "{{label}} {{value}} 선택",
+      "start_time": "시작 시간",
+      "end_time": "종료 시간"
+    },
+    "alert": {
+      "table_missing_title": "설정 테이블 없음",
+      "table_missing_message": "user_notification_settings를 생성하세요.",
+      "load_fail": "불러오기 실패",
+      "time_invalid_title": "시간 확인",
+      "time_invalid_message": "시간을 다시 선택하세요.",
+      "save_success": "저장되었습니다.",
+      "save_fail": "저장 실패",
+      "open_settings_fail_title": "열기 실패",
+      "open_settings_fail_message": "시스템 설정을 열 수 없습니다.",
+      "login_required": "로그인이 필요합니다."
+    },
+    "in_app": {
+      "master": "인앱 알림",
+      "master_help": "앱 안 알림함에 표시",
+      "group": {
+        "social": "소셜",
+        "chat": "채팅",
+        "beacon": "비콘",
+        "schedule": "일정",
+        "post": "게시물"
+      },
+      "follow_created": "새 팔로워",
+      "follow_created_help": "나를 팔로우했을 때",
+      "chat_reply": "답장",
+      "chat_reply_help": "내 메시지에 답장했을 때",
+      "chat_mention": "멘션",
+      "chat_mention_help": "나를 멘션했을 때",
+      "beacon_join_request": "참여 요청",
+      "beacon_join_request_help": "비콘 참여 요청이 왔을 때",
+      "beacon_join_approved": "참여 승인",
+      "beacon_join_approved_help": "비콘 참여가 승인됐을 때",
+      "beacon_friend_created": "친구 비콘",
+      "beacon_friend_created_help": "친구가 비콘을 만들었을 때",
+      "schedule_created": "새 일정",
+      "schedule_created_help": "참여 중인 방에 일정이 생겼을 때",
+      "schedule_updated": "일정 변경",
+      "schedule_updated_help": "참여 중인 일정이 변경됐을 때",
+      "schedule_cancelled": "일정 취소",
+      "schedule_cancelled_help": "참여 중인 일정이 취소됐을 때",
+      "post_like": "좋아요",
+      "post_like_help": "내 게시물에 좋아요가 모였을 때",
+      "post_comment": "댓글",
+      "post_comment_help": "내 게시물에 댓글이 달렸을 때",
+      "post_reply": "답글",
+      "post_reply_help": "내 댓글에 답글이 달렸을 때",
+      "post_mention": "게시물 멘션",
+      "post_mention_help": "게시물이나 댓글에서 나를 멘션했을 때"
+    }
+  },
+  "display": {
+    "title": "화면 및 언어"
+  },
+  "language": {
+    "title": "언어",
+    "select": "언어 선택",
+    "inUse": "(사용 중)"
+  },
+  "theme": {
+    "title": "테마",
+    "caption": "라이트 / 다크",
+    "soon": "준비 중입니다.",
+    "header_title": "테마",
+    "section_style": "모드",
+    "mode": {
+      "system": "시스템",
+      "system_desc": "기기 설정 기준",
+      "light": "라이트",
+      "light_desc": "밝은 화면",
+      "dark": "다크",
+      "dark_desc": "어두운 화면"
+    }
+  },
+  "chat": {
+    "title": "채팅"
+  },
+  "translate": {
+    "autoDefault": "메시지 자동 번역",
+    "autoDefaultHint": "새 채팅의 기본값으로 사용됩니다.",
+    "showOriginal": "번역과 함께 원문 표시",
+    "showOriginalHint": "켜 두면 번역 메시지 아래에 원문이 함께 표시됩니다."
+  },
+  "storage": {
+    "title": "데이터 및 저장공간",
+    "clearCache": "캐시 정리",
+    "clearCacheHint": "임시파일 삭제",
+    "soon": "준비 중입니다.",
+    "section": {
+      "ratio": "데이터 비율",
+      "rooms": "채팅방별 데이터"
+    },
+    "summary": {
+      "total_media": "전체 미디어",
+      "saved_count": "{{count}}개 저장됨"
+    },
+    "legend": {
+      "photo": "사진",
+      "video": "동영상",
+      "audio": "음성",
+      "file": "파일",
+      "other": "기타"
+    },
+    "action": {
+      "delete_all": "전체 삭제",
+      "delete_all_with_size": "전체 삭제 ({{size}})",
+      "delete_room": "삭제",
+      "scroll_top": "맨 위로"
+    },
+    "empty": {
+      "title": "저장된 미디어 없음",
+      "desc": "열어본 미디어가 표시됩니다."
+    },
+    "alert": {
+      "load_fail": "불러오지 못했습니다.",
+      "delete_fail": "삭제하지 못했습니다.",
+      "delete_all_title": "전체 미디어 삭제",
+      "delete_all_message": "기기에 저장된 채팅 미디어를 삭제합니다. 서버와 사진첩은 유지됩니다.",
+      "delete_room_title": "{{room}} 데이터 삭제",
+      "delete_room_message": "이 채팅방의 기기 저장 미디어를 삭제합니다. 서버와 사진첩은 유지됩니다.",
+      "delete_all_success": "삭제되었습니다.",
+      "delete_room_success": "{{room}} 데이터를 삭제했습니다."
+    },
+    "room": {
+      "fallback_title": "채팅방 {{id}}",
+      "delete_accessibility": "{{room}} 데이터 삭제"
+    }
+  },
+  "support": {
+    "title": "고객지원",
+    "cs": "고객센터",
+    "notice": {
+      "title": "공지사항",
+      "eyebrow": "NOTICE",
+      "sectionTitle": "{{category}} 공지",
+      "markAll": "모두 읽음",
+      "markAllDone": "읽음 처리되었습니다.",
+      "loadFail": "공지사항을 불러오지 못했습니다.",
+      "readFail": "읽음 처리에 실패했습니다.",
+      "markAllFail": "읽음 처리에 실패했습니다.",
+      "emptyTitle": "공지 없음",
+      "emptyDesc": "새 공지는 이곳에 표시됩니다.",
+      "category": {
+        "normal": "일반",
+        "important": "중요",
+        "legal": "약관",
+        "security": "보안"
+      }
+    },
+    "guide": "이용 가이드",
+    "soon": "준비 중입니다.",
+    "loading": "불러오는 중…",
+    "action": {
+      "ok": "확인"
+    },
+    "alert": {
+      "notice": "알림",
+      "error": "오류"
+    },
+    "center": {
+      "title": "고객센터",
+      "hero": "무엇을 도와드릴까요?",
+      "searchPlaceholder": "검색",
+      "faq": "자주 묻는 질문",
+      "categories": "도움말",
+      "contactTitle": "도움이 필요하신가요?",
+      "emailDesc": "이메일로 답변드립니다.",
+      "aiTitle": "AI 상담",
+      "aiDesc": "24시간 상담",
+      "policies": "약관 및 정책"
+    },
+    "contact": {
+      "title": "1:1 문의",
+      "guide": "문의 내용을 남겨주세요.\n이메일로 답변드립니다.",
+      "category": "문의 유형",
+      "categoryLoading": "불러오는 중…",
+      "categoryPlaceholder": "문의 유형 선택",
+      "categorySelect": "문의 유형",
+      "email": "답변 이메일",
+      "emailPlaceholder": "이메일 주소",
+      "content": "문의 내용",
+      "contentPlaceholder": "문의 내용을 입력해 주세요.",
+      "submit": "문의 접수",
+      "required": "이메일과 내용을 입력해 주세요.",
+      "categoryRequired": "문의 유형을 선택해 주세요.",
+      "loadFail": "화면을 불러오지 못했습니다.",
+      "submitFail": "접수하지 못했습니다.",
+      "successTitle": "접수 완료",
+      "successDesc": "문의가 접수되었습니다."
+    },
+    "list": {
+      "all": "전체",
+      "common": "공통",
+      "result": "결과",
+      "empty": "결과가 없습니다."
+    },
+    "policy": {
+      "title": "약관 및 정책",
+      "effectiveDate": "시행일",
+      "summary": "요약",
+      "download": "다운로드",
+      "downloadStart": "다운로드를 시작합니다.",
+      "empty": "내용을 불러오지 못했습니다.",
+      "versions": "이전 버전",
+      "behaviorInfoTitle": "행태정보 수집·이용",
+      "behaviorInfoDesc": "서비스 개선을 위해 필요한 최소 정보만 수집합니다.",
+      "userControlTitle": "이용자 선택권",
+      "userControlDesc": "앱 설정에서 맞춤형 광고 수신을 변경할 수 있습니다.",
+      "version": "버전",
+      "language": "언어",
+      "loadFail": "정책 문서를 불러오지 못했습니다.",
+      "summaryEmpty": "등록된 요약이 없습니다.",
+      "downloadCancelledTitle": "다운로드 취소",
+      "downloadCancelled": "저장 위치를 선택하지 않았습니다.",
+      "downloadSuccessTitle": "다운로드 완료",
+      "downloadSuccess": "정책 문서를 저장했습니다.",
+      "downloadFailTitle": "다운로드 실패",
+      "downloadFail": "정책 문서를 저장하지 못했습니다.",
+      "privacyTitle": "개인정보 처리방침",
+      "termsTitle": "CO·ONN 이용약관",
+      "marketingTitle": "마케팅 정보 수신 동의"
+    },
+    "company": {
+      "ceo": "대표",
+      "regNum": "사업자등록번호",
+      "businessNum": "통신판매업신고번호",
+      "address": "주소",
+      "cs": "고객센터",
+      "host": "호스팅사업자"
+    }
+  },
+  "labs": {
+    "title": "실험실",
+    "features": "실험실 기능",
+    "caption": "새로운 기능을 먼저 사용해 보세요.",
+    "soon": "실험실 기능 화면은 준비 중입니다.",
+    "subtitle": "새 기능을 먼저 사용해 보세요.",
+    "empty_title": "준비 중인 기능 없음",
+    "empty_desc": "새 기능이 준비되면 이곳에서 먼저 공개됩니다.",
+    "note": "실험실 기능은 정식 출시 전까지 변경될 수 있습니다."
+  },
+  "admin": {
+    "title": "관리자",
+    "console": "관리자 콘솔"
+  },
+  "open_profiles": {
+    "title": "오픈프로필",
+    "subtitle": "오픈톡에서 사용할 프로필을 관리합니다.",
+    "header_title": "오픈프로필",
+    "fallback_name": "오픈프로필",
+    "default_badge": "기본",
+    "status_empty": "상태메시지 없음",
+    "room": {
+      "fallback_title": "오픈톡",
+      "used_count": "사용 중인 오픈톡 {{count}}개",
+      "empty": "사용 중인 오픈톡 없음"
+    },
+    "empty": {
+      "title": "오픈프로필 없음",
+      "desc": "새 프로필을 만들어 오픈톡에서 사용해 보세요."
+    },
+    "form": {
+      "create_title": "오픈프로필 만들기",
+      "edit_title": "오픈프로필 수정",
+      "nickname": "닉네임",
+      "status_message": "상태메시지",
+      "status_placeholder": "자신을 짧게 소개해 주세요.",
+      "default_profile": "기본 오픈프로필",
+      "delete": "오픈프로필 삭제",
+      "pick_avatar": "프로필 사진 선택"
+    },
+    "alert": {
+      "load_fail": "오픈프로필을 불러오지 못했습니다.",
+      "nickname_required": "닉네임을 입력해 주세요.",
+      "create_fail": "생성 실패",
+      "save_fail": "저장 실패",
+      "delete_title": "오픈프로필을 삭제할까요?",
+      "delete_used_desc": "사용 중인 오픈톡의 기존 프로필은 유지됩니다.",
+      "delete_desc": "삭제한 프로필은 복구할 수 없습니다.",
+      "delete_fail": "삭제 실패"
+    },
+    "toast": {
+      "created": "오픈프로필을 만들었습니다.",
+      "saved": "저장되었습니다.",
+      "deleted": "삭제되었습니다.",
+      "photo_applied": "사진을 적용했습니다."
+    }
+  }
+}

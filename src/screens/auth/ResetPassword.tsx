@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '../../lib/supabase';
-import AppHeader from '@/components/AppHeader';
+import DetailHeader from '@/components/header/DetailHeader';
 import { useTranslation } from 'react-i18next';
 
 export default function ResetPassword() {
@@ -49,7 +49,7 @@ export default function ResetPassword() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#fff" translucent={false} barStyle="dark-content" />
-      <AppHeader title={t('auth.resetPassword', '비밀번호 재설정')} showBack />
+      <DetailHeader title={t('auth.resetPassword', '비밀번호 재설정')} showBack />
 
       <View style={styles.content}>
         <Text style={styles.desc}>

@@ -1,0 +1,10 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "COONN",
+    "NSPhotoLibraryUsageDescription": "照片访问用于选择头像、帖子和聊天图片。",
+    "NSPhotoLibraryAddUsageDescription": "照片图库访问用于将图片和媒体保存到设备。",
+    "NSLocationWhenInUseUsageDescription": "位置用于附近帖子、Beacon 和基于距离的功能。",
+    "NSCameraUsageDescription": "相机用于拍摄头像、帖子和聊天照片。",
+    "NSMicrophoneUsageDescription": "录制视频时会使用麦克风。"
+  }
+}

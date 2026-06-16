@@ -1,0 +1,28 @@
+{
+  "common": {
+    "title": "Report"
+  },
+  "reasonList": {
+    "title": "Select reason",
+    "guide": "Guide"
+  },
+  "reasonDetail": {
+    "submit": "Submit",
+    "more": "Learn more",
+    "empty": "Couldn’t load report info."
+  },
+  "guide": {
+    "title": "Guide",
+    "empty": "Couldn’t load guide."
+  },
+  "done": {
+    "title": "Report submitted.",
+    "body": "We’ll review it and take action if needed."
+  },
+  "alert": {
+    "loadFail": "Couldn’t load",
+    "info": "Notice",
+    "linkOpenFail": "Couldn’t open link.",
+    "submitFail": "Couldn’t submit"
+  }
+}

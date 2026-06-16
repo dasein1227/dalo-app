@@ -1,0 +1,10 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "COONN",
+    "NSPhotoLibraryUsageDescription": "プロフィール、投稿、チャット画像の選択に写真へのアクセスを使用します。",
+    "NSPhotoLibraryAddUsageDescription": "画像やメディアを端末に保存するために写真ライブラリへのアクセスを使用します。",
+    "NSLocationWhenInUseUsageDescription": "周辺の投稿、ビーコン、距離ベース機能に位置情報を使用します。",
+    "NSCameraUsageDescription": "プロフィール、投稿、チャット写真の撮影にカメラを使用します。",
+    "NSMicrophoneUsageDescription": "動画撮影時にマイクを使用します。"
+  }
+}

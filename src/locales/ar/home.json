@@ -1,0 +1,183 @@
+{
+  "briefing_title": "اليوم",
+  "briefing_toggle_show": "عرض",
+  "briefing_toggle_hide": "إخفاء",
+  "briefing_unread_chat": "دردشات غير مقروءة",
+  "briefing_nearby_beacon": "بيكونات قريبة",
+  "briefing_new_friend_post": "منشورات الأصدقاء",
+  "briefing_new_follower": "متابعون جدد",
+  "briefing_count_unit": "",
+  "briefing_people_unit": "",
+  "tabs": {
+    "friends": "الأصدقاء",
+    "following": "المتابَعون",
+    "local": "محلي"
+  },
+  "banner_headerTitle": "القريب",
+  "banner_fallback_title": "اختيارات قريبة",
+  "banner_fallback_desc": "جارٍ البحث عن أماكن قريبة",
+  "banner_default_headline": "مكان اليوم",
+  "banner_unknown_place": "مكان غير معروف",
+  "banner_status_open": "مفتوح",
+  "banner_status_closed": "مغلق",
+  "banner_tag_fallback": "موصى به",
+  "empty_feed": "لا توجد منشورات لعرضها.",
+  "scroll_top": "الأعلى",
+  "briefing_nearby_beacon_title": "بيكونات قريبة",
+  "briefing_today_schedule_title": "الجدول",
+  "briefing_continue_chat_title": "متابعة الدردشة",
+  "briefing_near_news_title": "أخبار قريبة",
+  "unknown_user": "غير معروف",
+  "near_news": {
+    "filters": {
+      "all": "الكل",
+      "post": "منشورات",
+      "event": "فعاليات",
+      "notice": "إشعارات"
+    },
+    "kind": {
+      "post": "منشور",
+      "event": "فعالية",
+      "notice": "إشعار"
+    },
+    "kind_en": {
+      "post": "FEED",
+      "event": "EVENT",
+      "notice": "NOTICE"
+    },
+    "masthead_overline": "CO·ONN LOCAL JOURNAL",
+    "masthead_title": "NEARBY NEWS",
+    "edition_line": "النسخة المحلية · {{distance}}",
+    "count_line": "FEED {{post}} · EVENT {{event}} · NOTICE {{notice}}",
+    "self": "أنا",
+    "unknown_user": "غير معروف",
+    "unknown_place": "مكان قريب",
+    "distance_pending": "جارٍ فحص المسافة",
+    "just_now": "الآن",
+    "minutes_ago": "قبل {{value}} د",
+    "hours_ago": "قبل {{value}} س",
+    "days_ago": "قبل {{value}} ي",
+    "always": "دائماً",
+    "until": "حتى {{date}}",
+    "ongoing": "جارٍ",
+    "category": {
+      "restaurant": "مطعم",
+      "cafe": "مقهى",
+      "bakery": "مخبز",
+      "market": "سوق",
+      "drink": "حانة",
+      "store": "متجر"
+    },
+    "place": "مكان",
+    "nearby_place": "مكان قريب",
+    "nearby_feed": "منشورات قريبة",
+    "event_title": "فعالية",
+    "notice_title": "إشعار",
+    "event_body": "توجد فعالية جديدة.",
+    "notice_body": "تم نشر إشعار جديد.",
+    "load_error": "تعذر تحميل الأخبار القريبة.",
+    "collection_title": "أخبار قريبة",
+    "media_title": "أخبار قريبة",
+    "empty_title": "لا توجد أخبار",
+    "empty_desc": "ستظهر هنا المنشورات القريبة وتحديثات الأماكن.",
+    "editing": "جارٍ إعداد الصفحة",
+    "load_failed": "تعذر التحميل",
+    "retry": "إعادة المحاولة",
+    "local_note": "ملاحظة محلية",
+    "by_prefix": "بواسطة "
+  },
+  "schedule_sheet": {
+    "weekdays": {
+      "sun": "الأحد",
+      "mon": "الإثنين",
+      "tue": "الثلاثاء",
+      "wed": "الأربعاء",
+      "thu": "الخميس",
+      "fri": "الجمعة",
+      "sat": "السبت"
+    },
+    "date_title": "{{month}}/{{day}} ({{weekday}})",
+    "period": {
+      "am": "ص",
+      "pm": "م"
+    },
+    "time_range_cross_day": "{{start}} - {{date}} {{end}}",
+    "default_room_title": "غرفة دردشة",
+    "participation": {
+      "joined": "مشارك",
+      "pending": "لم تشارك"
+    },
+    "search_placeholder": {
+      "joined": "بحث الجداول المشاركة",
+      "pending": "بحث الجداول المتاحة"
+    },
+    "load_error": "تعذر تحميل الجداول.",
+    "people_count": "{{value}} شخص",
+    "default_title": "جدول",
+    "time_unknown": "الوقت غير محدد",
+    "today_title": "الجدول",
+    "today_empty": "لا توجد جداول اليوم",
+    "count": "{{value}}",
+    "header_title": "الجدول",
+    "empty": {
+      "load_failed_title": "تعذر التحميل",
+      "load_failed_desc": "تحقق لاحقاً.",
+      "joined_title": "لا توجد جداول مشاركة",
+      "joined_desc": "ستظهر هنا الجداول التي تشارك فيها.",
+      "pending_title": "لا توجد جداول مفتوحة",
+      "pending_desc": "ستظهر هنا الجداول المتاحة."
+    }
+  },
+  "notifications": {
+    "header_title": "الإشعارات",
+    "mark_all_read": "تحديد الكل كمقروء",
+    "follow_back": "متابعة بالمثل",
+    "following": "متابَع",
+    "retry": "إعادة التحميل",
+    "empty_title": "لا توجد إشعارات",
+    "empty_desc": "ستظهر التحديثات الجديدة هنا.",
+    "fallback_actor": "شخص ما",
+    "fallback_schedule": "جدول",
+    "fallback_beacon": "بيكون",
+    "fallback_room": "غرفة دردشة",
+    "fallback_notification": "إشعار جديد",
+    "sections": {
+      "today": "اليوم",
+      "recent": "الأحدث",
+      "unread": "غير مقروء",
+      "earlier": "سابقاً",
+      "this_week": "هذا الأسبوع",
+      "older": "سابقًا",
+      "thisWeek": "هذا الأسبوع"
+    },
+    "time": {
+      "just_now": "الآن",
+      "minutes": "{{value}} د",
+      "hours": "{{value}} س",
+      "days": "{{value}} ي",
+      "weeks": "{{value}} أ",
+      "months": "{{value}} ش",
+      "years": "{{value}} س"
+    },
+    "copy": {
+      "others": " و{{value}} آخرون",
+      "follow_created": "{{name}} تابعك",
+      "chat_reply_created": "{{name}} ردّ",
+      "chat_mention_created": "{{name}} ذكرك",
+      "beacon_join_request_created": "{{name}} طلب الانضمام إلى البيكون",
+      "beacon_join_approved": "تمت الموافقة على طلب البيكون",
+      "beacon_friend_created": "{{name}} أنشأ بيكون جديداً",
+      "schedule_created": "{{room}} · تمت إضافة {{target}}",
+      "schedule_updated": "{{room}} · تم تحديث {{target}}",
+      "schedule_cancelled": "{{room}} · تم إلغاء {{target}}",
+      "post_like_grouped": "{{name}}{{others}} أعجبوا بمنشورك",
+      "post_comment_grouped": "{{name}}{{others}} علّقوا",
+      "post_reply_grouped": "{{name}}{{others}} ردّوا على تعليقك",
+      "post_mention_grouped": "{{name}}{{others}} ذكروك"
+    },
+    "error": {
+      "load_failed": "تعذر تحميل الإشعارات."
+    },
+    "loading_short": "…"
+  }
+}

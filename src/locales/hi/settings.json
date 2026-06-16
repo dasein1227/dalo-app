@@ -1,0 +1,525 @@
+{
+  "home_title": "सेटिंग्स",
+  "title": "सेटिंग्स",
+  "version": "ऐप संस्करण",
+  "open": "खोलें",
+  "change": "बदलें",
+  "run": "चलाएँ",
+  "logout": "लॉग आउट",
+  "logoutDone": "लॉग आउट हो गया।",
+  "sections": {
+    "communication": "संचार",
+    "general": "सामान्य",
+    "advanced": "उन्नत",
+    "service_info": "सेवा",
+    "account": "खाता",
+    "notification": "सूचनाएँ",
+    "display_language": "स्क्रीन और भाषा",
+    "location": "स्थान",
+    "data": "डेटा",
+    "support": "सहायता",
+    "info": "जानकारी"
+  },
+  "menus": {
+    "call": "कॉल",
+    "etc": "अन्य",
+    "app_manage": "ऐप प्रबंधन",
+    "version": "ऐप संस्करण"
+  },
+  "alerts": {
+    "logout_title": "लॉग आउट",
+    "logout_desc": "सेटिंग्स लॉग आउट करें?",
+    "language_change_error": "भाषा बदली नहीं जा सकी।",
+    "logout_fail": "लॉग आउट नहीं हो सका।"
+  },
+  "search": {
+    "title": "सेटिंग्स खोजें",
+    "soon": "सेटिंग्स खोज जल्द उपलब्ध होगी।"
+  },
+  "me": {
+    "noName": "नाम नहीं",
+    "profileManage": "प्रोफ़ाइल प्रबंधित करें",
+    "loadingAccount": "खाता जाँचा जा रहा है"
+  },
+  "account": {
+    "title": "खाता",
+    "editProfile": "प्रोफ़ाइल संपादित करें",
+    "profilePublicDefault": "बीकन में प्रोफ़ाइल डिफ़ॉल्ट रूप से दिखाएँ",
+    "profilePublicHint": "बीकन बनाते समय डिफ़ॉल्ट के रूप में उपयोग होगा। हर बीकन में बदला जा सकता है।",
+    "header_title": "खाता",
+    "section": {
+      "contact": "संपर्क",
+      "identity": "पहचान",
+      "visibility": "दृश्यता",
+      "profile": "प्रोफ़ाइल",
+      "account_management": "खाता"
+    },
+    "field": {
+      "phone": "फ़ोन",
+      "email": "ईमेल",
+      "id_label": "CO·ONN ID",
+      "friend_code": "मित्र कोड",
+      "show_nickname": "निकनेम दिखाएँ",
+      "profile_photo": "प्रोफ़ाइल फ़ोटो",
+      "nickname": "निकनेम"
+    },
+    "value": {
+      "not_registered": "पंजीकृत नहीं"
+    },
+    "badge": {
+      "verified": "सत्यापित",
+      "verify": "सत्यापित करें"
+    },
+    "placeholder": {
+      "id": "ID",
+      "friend_code": "मित्र कोड",
+      "nickname": "निकनेम"
+    },
+    "help": {
+      "id_desc": "खाता",
+      "show_nickname_desc": "मित्रों को अपना निकनेम दिखाएँ।"
+    },
+    "error": {
+      "check_duplication": "खाता",
+      "id_taken": "पहले से उपयोग में है।",
+      "code_taken": "पहले से उपयोग में है।",
+      "check_failed": "खाता विफल पूरा नहीं हुआ।",
+      "invalid_id": "2–30 छोटे अंग्रेज़ी अक्षर, अंक या अंडरस्कोर",
+      "invalid_friend_code": "2–30 छोटे अंग्रेज़ी अक्षर, अंक या अंडरस्कोर",
+      "duplicate_exists": "यह मान पहले से उपयोग में है।",
+      "duplicate_check_required": "सहेजने से पहले डुप्लीकेट जाँच पूरी करें।",
+      "duplicate_check_retry": "उपलब्धता फिर जाँचें।",
+      "duplicate_value_retry": "खाता",
+      "nickname_required": "निकनेम दर्ज करें।",
+      "nickname_too_long": "निकनेम 30 अक्षरों तक हो सकता है।"
+    },
+    "alert": {
+      "check_required": "जाँच आवश्यक",
+      "save_success_title": "सहेजा गया",
+      "save_success_desc": "खाता सेटिंग्स सहेजी गईं।",
+      "save_fail_title": "सहेजना विफल"
+    },
+    "action": {
+      "save": "सहेजें",
+      "check_duplicate_short": "जाँचें",
+      "checking_short": "…",
+      "change_photo": "फ़ोटो बदलें",
+      "remove_photo": "फ़ोटो हटाएँ"
+    },
+    "status": {
+      "available_short": "उपलब्ध",
+      "duplicate_short": "सेटिंग्स खाता"
+    },
+    "picker": {
+      "profile_photo": "फ़ोटो चुनें"
+    },
+    "withdrawal": {
+      "entryTitle": "खाता हटाएँ",
+      "entryDescription": "अपना खाता और निजी डेटा हटाएँ।",
+      "noticeTitle": "आगे बढ़ने से पहले इन्हें पढ़ें।",
+      "noticeMessage": "आपकी प्रोफ़ाइल, दोस्त और सेटिंग हट जाएँगी।",
+      "noticeItemProfile": "कुछ चैट इतिहास अन्य लोगों के पास हटाए गए उपयोगकर्ता के रूप में रह सकता है।",
+      "noticeItemChat": "आप 7 दिनों तक उसी खाते से दोबारा जुड़ नहीं सकते।",
+      "noticeItemRejoin": "CO·ONN ID और friend code 30 दिनों तक फिर इस्तेमाल नहीं हो सकते।",
+      "noticeItemIdentifier": "मैंने सब पढ़ लिया है और आगे बढ़ना चाहता हूँ।",
+      "noticeAcknowledge": "आगे",
+      "continue": "रद्द करें",
+      "cancel": "हमें बताएं कि आप क्यों जा रहे हैं",
+      "surveyTitle": "आपकी प्रतिक्रिया CO·ONN को बेहतर बनाती है।",
+      "surveyMessage": "जारी रखें",
+      "surveyAction": "कारण दर्ज करें।",
+      "otherPlaceholder": "एक कारण चुनें।",
+      "reasonRequired": "कारण दर्ज करें।",
+      "otherRequired": "कारण लोड हो रहे हैं।",
+      "reasonsLoading": "कारण लोड नहीं हो सके।",
+      "reasonsEmpty": "अंतिम पुष्टि",
+      "confirmTitle": "खाते की पहुँच तुरंत बंद हो जाएगी।",
+      "confirmMessage": "नीचे “{{keyword}}” लिखें।",
+      "confirmInstruction": "हटाएँ",
+      "confirmKeyword": "हटाएँ",
+      "confirmPlaceholder": "हटाएँ",
+      "confirmAction": "हटाने का अनुरोध भेजा गया।",
+      "completed": "खाता हटाया नहीं जा सका।"
+    }
+  },
+  "privacy": {
+    "title": "गोपनीयता",
+    "header_title": "गोपनीयता",
+    "section": {
+      "profile": "प्रोफ़ाइल",
+      "friend_req": "मित्र अनुरोध",
+      "activity": "गतिविधि"
+    },
+    "field": {
+      "public_profile": "सार्वजनिक प्रोफ़ाइल",
+      "allow_search": "खोज की अनुमति",
+      "show_nickname": "निकनेम दिखाएँ",
+      "show_location": "स्थान दिखाएँ",
+      "last_active": "अंतिम सक्रियता दिखाएँ"
+    },
+    "help": {
+      "public_profile": "अन्य उपयोगकर्ता आपकी प्रोफ़ाइल देख सकते हैं।",
+      "allow_search": "आपको निकनेम और ID से खोजा जा सकता है।",
+      "show_nickname": "मित्रों को अपना निकनेम दिखाएँ।",
+      "show_location": "दिखाएँ स्थान",
+      "last_active": "अंतिम सक्रिय समय दिखाएँ।"
+    },
+    "option": {
+      "all": "सेटिंग्स गोपनीयता सभी",
+      "all_desc": "सेटिंग्स गोपनीयता सभी",
+      "friends": "मित्रों के मित्र",
+      "friends_desc": "केवल जुड़े उपयोगकर्ता अनुरोध कर सकते हैं",
+      "none": "सेटिंग्स गोपनीयता कोई नहीं",
+      "none_desc": "मित्र अनुरोध ब्लॉक करें"
+    },
+    "alert": {
+      "save_success": "सहेजा गया।",
+      "save_fail": "सहेजा नहीं गया।",
+      "load_fail": "लोड नहीं हुआ।",
+      "login_required": "लॉगिन आवश्यक है।"
+    }
+  },
+  "radius": {
+    "title": "पड़ोस सीमा",
+    "current": "वर्तमान",
+    "desc": "इस सीमा के अपडेट ही दिखेंगे।",
+    "save_error": "पड़ोस सीमा सहेजी नहीं गई।"
+  },
+  "friends": {
+    "title": "मित्र",
+    "manage": "सेटिंग्स मित्र",
+    "caption": "सेटिंग्स मित्र",
+    "soon": "जल्द आ रहा है।"
+  },
+  "notification": {
+    "title": "सूचनाएँ",
+    "manage": "सूचनाएँ",
+    "caption": "पुश, इन-ऐप अलर्ट, ध्वनि",
+    "soon": "जल्द आ रहा है।",
+    "section": {
+      "defaults": "डिफ़ॉल्ट",
+      "types": "प्रकार",
+      "quiet": "शांत समय",
+      "push_types": "पुश प्रकार",
+      "in_app": "इन-ऐप अलर्ट"
+    },
+    "field": {
+      "push": "पुश सूचनाएँ",
+      "preview": "पूर्वावलोकन",
+      "sound": "ध्वनि",
+      "vibrate": "वाइब्रेशन",
+      "chat": "चैट",
+      "system": "सूचना व सिस्टम",
+      "marketing": "मार्केटिंग"
+    },
+    "help": {
+      "push": "सभी पुश सूचनाएँ",
+      "preview": "लॉक स्क्रीन पर सामग्री दिखाएँ",
+      "chat_push": "चैट संदेश पुश",
+      "system_push": "सेवा सूचना और प्रमुख अपडेट",
+      "marketing_push": "इवेंट और प्रमोशन"
+    },
+    "action": {
+      "save": "सहेजें",
+      "open_system": "सिस्टम सेटिंग्स",
+      "cancel": "रद्द",
+      "done": "पूर्ण"
+    },
+    "time": {
+      "start": "शुरू",
+      "end": "समाप्त",
+      "hour": "सूचना समय",
+      "minute": "सूचना समय",
+      "close": "समय चयन बंद करें",
+      "select": "{{label}} {{value}} चुनें",
+      "start_time": "शुरू समय",
+      "end_time": "समाप्त समय"
+    },
+    "alert": {
+      "table_missing_title": "सेटिंग्स टेबल नहीं है",
+      "table_missing_message": "user_notification_settings बनाएँ।",
+      "load_fail": "लोड नहीं हो सका",
+      "time_invalid_title": "समय जाँचें",
+      "time_invalid_message": "समय फिर चुनें।",
+      "save_success": "सहेजा गया।",
+      "save_fail": "सहेजना विफल",
+      "open_settings_fail_title": "ओपन सेटिंग्स विफल पूरा नहीं हुआ।",
+      "open_settings_fail_message": "सिस्टम सेटिंग्स नहीं खुलीं।",
+      "login_required": "लॉगिन आवश्यक है।"
+    },
+    "in_app": {
+      "master": "इन-ऐप अलर्ट",
+      "master_help": "ऐप के नोटिफिकेशन बॉक्स में दिखाएँ",
+      "group": {
+        "social": "सोशल",
+        "chat": "चैट",
+        "beacon": "बीकन",
+        "schedule": "शेड्यूल",
+        "post": "पोस्ट"
+      },
+      "follow_created": "नया फ़ॉलोअर",
+      "follow_created_help": "जब कोई आपको फ़ॉलो करे",
+      "chat_reply": "जवाब",
+      "chat_reply_help": "जब कोई आपके संदेश का जवाब दे",
+      "chat_mention": "मेंशन",
+      "chat_mention_help": "जब कोई आपको मेंशन करे",
+      "beacon_join_request": "जॉइन अनुरोध",
+      "beacon_join_request_help": "जब बीकन जॉइन अनुरोध आए",
+      "beacon_join_approved": "जॉइन स्वीकृत",
+      "beacon_join_approved_help": "जब आपका बीकन जॉइन स्वीकृत हो",
+      "beacon_friend_created": "दोस्त के बीकन",
+      "beacon_friend_created_help": "जब दोस्त बीकन बनाए",
+      "schedule_created": "नया शेड्यूल",
+      "schedule_created_help": "जब जुड़ी हुई रूम में शेड्यूल जोड़ा जाए",
+      "schedule_updated": "शेड्यूल बदला",
+      "schedule_updated_help": "जब आपका जुड़ा शेड्यूल बदले",
+      "schedule_cancelled": "शेड्यूल रद्द",
+      "schedule_cancelled_help": "जब आपका जुड़ा शेड्यूल रद्द हो",
+      "post_like": "लाइक",
+      "post_like_help": "जब आपकी पोस्ट पर लाइक आएँ",
+      "post_comment": "टिप्पणियाँ",
+      "post_comment_help": "जब कोई आपकी पोस्ट पर टिप्पणी करे",
+      "post_reply": "जवाब",
+      "post_reply_help": "जब कोई आपकी टिप्पणी का जवाब दे",
+      "post_mention": "पोस्ट मेंशन",
+      "post_mention_help": "जब कोई पोस्ट या टिप्पणी में आपको मेंशन करे"
+    }
+  },
+  "display": {
+    "title": "स्क्रीन और भाषा"
+  },
+  "language": {
+    "title": "भाषा",
+    "select": "भाषा चुनें",
+    "inUse": "(उपयोग में)"
+  },
+  "theme": {
+    "title": "थीम",
+    "caption": "लाइट / डार्क",
+    "soon": "जल्द आ रहा है।",
+    "header_title": "थीम",
+    "section_style": "मोड",
+    "mode": {
+      "system": "सिस्टम",
+      "system_desc": "डिवाइस सेटिंग के अनुसार",
+      "light": "लाइट",
+      "light_desc": "हल्का रूप",
+      "dark": "डार्क",
+      "dark_desc": "गहरा रूप"
+    }
+  },
+  "chat": {
+    "title": "चैट"
+  },
+  "translate": {
+    "autoDefault": "संदेशों का स्वचालित अनुवाद",
+    "autoDefaultHint": "नई चैट के लिए डिफ़ॉल्ट।",
+    "showOriginal": "अनुवाद के साथ मूल दिखाएँ",
+    "showOriginalHint": "चालू होने पर मूल पाठ अनुवादित संदेशों के नीचे दिखता है।"
+  },
+  "storage": {
+    "title": "डेटा और स्टोरेज",
+    "clearCache": "कैश साफ़ करें",
+    "clearCacheHint": "अस्थायी फ़ाइलें हटाएँ",
+    "soon": "जल्द आ रहा है।",
+    "section": {
+      "ratio": "डेटा अनुपात",
+      "rooms": "सेटिंग्स स्टोरेज"
+    },
+    "summary": {
+      "total_media": "कुल मीडिया",
+      "saved_count": "{{count}} सहेजे गए"
+    },
+    "legend": {
+      "photo": "फ़ोटो",
+      "video": "स्टोरेज वीडियो",
+      "audio": "स्टोरेज ऑडियो",
+      "file": "फ़ाइलें",
+      "other": "अन्य"
+    },
+    "action": {
+      "delete_all": "सब हटाएँ",
+      "delete_all_with_size": "{{size}} सभी",
+      "delete_room": "हटाएँ",
+      "scroll_top": "शीर्ष"
+    },
+    "empty": {
+      "title": "कोई सहेजा मीडिया नहीं",
+      "desc": "सेटिंग्स स्टोरेज"
+    },
+    "alert": {
+      "load_fail": "लोड नहीं हुआ।",
+      "delete_fail": "स्टोरेज हटाएँ विफल पूरा नहीं हुआ।",
+      "delete_all_title": "सभी मीडिया हटाएँ",
+      "delete_all_message": "इस डिवाइस पर सहेजा चैट मीडिया हटाता है। सर्वर फ़ाइलें और गैलरी सुरक्षित रहती हैं।",
+      "delete_room_title": "{{room}} डेटा हटाएँ",
+      "delete_room_message": "इस रूम का डिवाइस में सहेजा मीडिया हटाता है। सर्वर फ़ाइलें और गैलरी सुरक्षित रहती हैं।",
+      "delete_all_success": "हटाएँ सभी पूर्ण",
+      "delete_room_success": "{{room}} डेटा हटाया गया।"
+    },
+    "room": {
+      "fallback_title": "चैट रूम {{id}}",
+      "delete_accessibility": "{{room}} डेटा हटाएँ"
+    }
+  },
+  "support": {
+    "title": "सहायता",
+    "cs": "सेटिंग्स सहायता",
+    "notice": {
+      "title": "सूचनाएँ",
+      "eyebrow": "सूचना",
+      "sectionTitle": "{{category}} सूचना",
+      "markAll": "सब पढ़ा हुआ करें",
+      "markAllDone": "पढ़ा हुआ कर दिया गया।",
+      "loadFail": "सूचनाएँ लोड नहीं हुईं।",
+      "readFail": "पढ़ा हुआ नहीं कर सके।",
+      "markAllFail": "पढ़ा हुआ नहीं कर सके।",
+      "emptyTitle": "कोई सूचना नहीं",
+      "emptyDesc": "नई सूचनाएँ यहाँ दिखेंगी।",
+      "category": {
+        "normal": "सामान्य",
+        "important": "महत्वपूर्ण",
+        "legal": "कानूनी",
+        "security": "सुरक्षा"
+      }
+    },
+    "guide": "गाइड",
+    "soon": "जल्द आ रहा है।",
+    "loading": "लोड हो रहा है…",
+    "action": {
+      "ok": "सेटिंग्स सहायता ठीक"
+    },
+    "alert": {
+      "notice": "सूचना",
+      "error": "त्रुटि"
+    },
+    "center": {
+      "title": "सेटिंग्स सहायता केंद्र",
+      "hero": "सहायता केंद्र करें?",
+      "searchPlaceholder": "खोजें",
+      "faq": "अक्सर पूछे जाने वाले प्रश्न",
+      "categories": "सहायता केंद्र",
+      "contactTitle": "मदद चाहिए?",
+      "emailDesc": "सहायता केंद्र ईमेल",
+      "aiTitle": "AI सहायता",
+      "aiDesc": "सहायता केंद्र",
+      "policies": "शर्तें और नीतियाँ"
+    },
+    "contact": {
+      "title": "सेटिंग्स सहायता संपर्क",
+      "guide": "अपना संदेश लिखें।\nहम ईमेल से जवाब देंगे।",
+      "category": "श्रेणी",
+      "categoryLoading": "लोड हो रहा है…",
+      "categoryPlaceholder": "श्रेणी चुनें",
+      "categorySelect": "श्रेणी",
+      "email": "उत्तर ईमेल",
+      "emailPlaceholder": "ईमेल पता",
+      "content": "संदेश",
+      "contentPlaceholder": "सहायता संपर्क सामग्री",
+      "submit": "सहायता संपर्क",
+      "required": "सहायता संपर्क आवश्यक",
+      "categoryRequired": "श्रेणी चुनें।",
+      "loadFail": "स्क्रीन लोड नहीं हुई।",
+      "submitFail": "जमा नहीं हुआ।",
+      "successTitle": "जमा हो गया",
+      "successDesc": "सहायता संपर्क पूर्ण"
+    },
+    "list": {
+      "all": "सभी",
+      "common": "सामान्य",
+      "result": "परिणाम",
+      "empty": "कोई परिणाम नहीं।"
+    },
+    "policy": {
+      "title": "शर्तें और नीतियाँ",
+      "effectiveDate": "प्रभावी तिथि",
+      "summary": "सारांश",
+      "download": "डाउनलोड",
+      "downloadStart": "नीति डाउनलोड शुरू",
+      "empty": "सामग्री लोड नहीं हुई।",
+      "versions": "पिछले संस्करण",
+      "behaviorInfoTitle": "नीति जानकारी",
+      "behaviorInfoDesc": "सेवा सुधार के लिए केवल न्यूनतम डेटा एकत्र करते हैं।",
+      "userControlTitle": "उपयोगकर्ता विकल्प",
+      "userControlDesc": "ऐप में वैयक्तिकृत विज्ञापन सेटिंग बदल सकते हैं।",
+      "version": "संस्करण",
+      "language": "भाषा",
+      "loadFail": "नीति लोड विफल पूरा नहीं हुआ।",
+      "summaryEmpty": "कोई सहायता नीति सारांश नहीं।",
+      "downloadCancelledTitle": "डाउनलोड रद्द",
+      "downloadCancelled": "सहेजने का स्थान नहीं चुना गया।",
+      "downloadSuccessTitle": "नीति डाउनलोड पूर्ण",
+      "downloadSuccess": "नीति दस्तावेज़ सहेजा गया।",
+      "downloadFailTitle": "डाउनलोड विफल",
+      "downloadFail": "नीति दस्तावेज़ सहेजा नहीं गया।",
+      "privacyTitle": "सहायता नीति गोपनीयता",
+      "termsTitle": "CO·ONN सेवा शर्तें",
+      "marketingTitle": "सहायता नीति"
+    },
+    "company": {
+      "ceo": "CEO",
+      "regNum": "कंपनी",
+      "businessNum": "कंपनी बिज़नेस",
+      "address": "पता",
+      "cs": "सहायता कंपनी",
+      "host": "होस्टिंग प्रदाता"
+    }
+  },
+  "labs": {
+    "title": "लैब्स",
+    "features": "सेटिंग्स",
+    "caption": "सेटिंग्स",
+    "soon": "सेटिंग्स जल्द जल्द उपलब्ध होगा।",
+    "subtitle": "सेटिंग्स उपशीर्षक",
+    "empty_title": "सेटिंग्स",
+    "empty_desc": "नई सुविधाएँ लॉन्च से पहले यहाँ दिखेंगी।",
+    "note": "Labs सुविधाएँ आधिकारिक रिलीज़ से पहले बदल सकती हैं।"
+  },
+  "admin": {
+    "title": "एडमिन",
+    "console": "एडमिन कंसोल"
+  },
+  "open_profiles": {
+    "title": "ओपन प्रोफ़ाइल",
+    "subtitle": "ओपन चैट के लिए प्रोफ़ाइल प्रबंधित करें।",
+    "header_title": "ओपन प्रोफ़ाइल",
+    "fallback_name": "ओपन प्रोफ़ाइल",
+    "default_badge": "डिफ़ॉल्ट",
+    "status_empty": "कोई स्टेटस संदेश नहीं",
+    "room": {
+      "fallback_title": "ओपन चैट",
+      "used_count": "{{count}} ओपन चैट में उपयोग हो रहा है",
+      "empty": "उपयोग में कोई ओपन चैट रूम नहीं"
+    },
+    "empty": {
+      "title": "कोई ओपन प्रोफ़ाइल नहीं",
+      "desc": "ओपन चैट के लिए प्रोफ़ाइल बनाएँ।"
+    },
+    "form": {
+      "create_title": "ओपन प्रोफ़ाइल बनाएँ",
+      "edit_title": "ओपन प्रोफ़ाइल संपादित करें",
+      "nickname": "निकनेम",
+      "status_message": "स्टेटस संदेश",
+      "status_placeholder": "ओपन प्रोफ़ाइल",
+      "default_profile": "डिफ़ॉल्ट ओपन प्रोफ़ाइल",
+      "delete": "ओपन प्रोफ़ाइल हटाएँ",
+      "pick_avatar": "प्रोफ़ाइल फ़ोटो चुनें"
+    },
+    "alert": {
+      "load_fail": "ओपन प्रोफ़ाइल लोड नहीं हुईं।",
+      "nickname_required": "निकनेम लिखें।",
+      "create_fail": "बनाना विफल",
+      "save_fail": "सहेजना विफल",
+      "delete_title": "ओपन प्रोफ़ाइल हटाएँ?",
+      "delete_used_desc": "ओपन चैट रूम में मौजूदा प्रोफ़ाइल बनी रहेगी।",
+      "delete_desc": "हटाई गई प्रोफ़ाइल बहाल नहीं हो सकती।",
+      "delete_fail": "हटाना विफल"
+    },
+    "toast": {
+      "created": "ओपन प्रोफ़ाइल बनाई गई।",
+      "saved": "सहेजा गया।",
+      "deleted": "प्रोफ़ाइल टोस्ट",
+      "photo_applied": "फ़ोटो लागू हुई।"
+    }
+  }
+}

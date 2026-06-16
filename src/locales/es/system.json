@@ -1,0 +1,27 @@
+{
+  "splash_loading": "Preparando inicio…",
+  "offline": "Sin conexión. Revisa la red.",
+  "not_found": "Página no encontrada.",
+  "notFound": {
+    "header": "Página no encontrada",
+    "title": "No encontramos esta página",
+    "desc": "No se encontró la pantalla solicitada. Revisa la ruta o la información.",
+    "retry": "Reintentar",
+    "home": "Ir al inicio",
+    "homeShort": "Inicio",
+    "previous": "Atrás",
+    "quick": {
+      "friends": "Amigos",
+      "settings": "Ajustes"
+    }
+  },
+  "offlineScreen": {
+    "header": "Sin conexión",
+    "title": "Estás sin conexión",
+    "desc": "Revisa tu conexión de red.\nEl Wi-Fi o los datos móviles pueden estar desactivados.",
+    "retry": "Reintentar",
+    "check": "Comprobar conexión",
+    "openSettings": "Abrir ajustes",
+    "home": "Inicio"
+  }
+}

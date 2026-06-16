@@ -1,0 +1,526 @@
+{
+  "home_title": "設定",
+  "title": "設定",
+  "version": "アプリバージョン",
+  "open": "営業中",
+  "change": "変更",
+  "run": "実行",
+  "logout": "設定ログアウト",
+  "logoutDone": "ログアウトしました。",
+  "sections": {
+    "communication": "コミュニケーション",
+    "general": "基本",
+    "advanced": "詳細",
+    "service_info": "サービス",
+    "account": "アカウント",
+    "notification": "通知",
+    "display_language": "表示と言語",
+    "location": "位置",
+    "data": "データ",
+    "support": "サポート",
+    "info": "案内"
+  },
+  "menus": {
+    "call": "電話",
+    "etc": "その他",
+    "app_manage": "アプリ管理",
+    "version": "アプリバージョン"
+  },
+  "alerts": {
+    "logout_title": "ログアウト",
+    "logout_desc": "設定しますか？",
+    "language_change_error": "言語を変更できませんでした。",
+    "logout_fail": "ログアウトできませんでした。"
+  },
+  "search": {
+    "title": "設定を検索",
+    "soon": "設定検索は準備中です。"
+  },
+  "me": {
+    "noName": "名前なし",
+    "profileManage": "プロフィール管理",
+    "loadingAccount": "アカウント確認中"
+  },
+  "account": {
+    "title": "アカウント",
+    "editProfile": "プロフィール編集",
+    "profilePublicDefault": "ビーコンでプロフィールを標準公開",
+    "profilePublicHint": "ビーコン作成時の初期値として使われます。個別ビーコンで変更できます。",
+    "header_title": "アカウント",
+    "section": {
+      "contact": "連絡先",
+      "identity": "識別情報",
+      "visibility": "公開範囲",
+      "profile": "プロフィール",
+      "account_management": "アカウント管理"
+    },
+    "field": {
+      "phone": "電話番号",
+      "email": "メール",
+      "id_label": "CO·ONN ID",
+      "friend_code": "友だちコード",
+      "show_nickname": "ニックネーム表示",
+      "profile_photo": "プロフィール写真",
+      "nickname": "ニックネーム"
+    },
+    "value": {
+      "not_registered": "未登録"
+    },
+    "badge": {
+      "verified": "認証済み",
+      "verify": "認証"
+    },
+    "placeholder": {
+      "id": "ID",
+      "friend_code": "友だちコード",
+      "nickname": "ニックネーム"
+    },
+    "help": {
+      "id_desc": "検索に使われる固有IDです。",
+      "show_nickname_desc": "友だちにニックネームを表示します。"
+    },
+    "error": {
+      "check_duplication": "アカウントエラー",
+      "id_taken": "すでに使用中です。",
+      "code_taken": "すでに使用中です。",
+      "check_failed": "アカウントエラーできませんでした。",
+      "invalid_id": "英小文字、数字、アンダーバー 2〜30文字",
+      "invalid_friend_code": "英小文字、数字、アンダーバー 2〜30文字",
+      "duplicate_exists": "アカウントエラー",
+      "duplicate_check_required": "アカウントエラー",
+      "duplicate_check_retry": "アカウントエラー",
+      "duplicate_value_retry": "アカウントエラー",
+      "nickname_required": "ニックネームを入力してください。",
+      "nickname_too_long": "ニックネームは30文字までです。"
+    },
+    "alert": {
+      "check_required": "確認が必要です",
+      "save_success_title": "保存しました",
+      "save_success_desc": "アカウント設定を保存しました。",
+      "save_fail_title": "保存に失敗しました"
+    },
+    "action": {
+      "save": "保存",
+      "check_duplicate_short": "確認",
+      "checking_short": "アカウント操作",
+      "change_photo": "写真を変更",
+      "remove_photo": "写真を削除"
+    },
+    "status": {
+      "available_short": "使用可能",
+      "duplicate_short": "使用中"
+    },
+    "picker": {
+      "profile_photo": "写真を選択"
+    },
+    "withdrawal": {
+      "entryTitle": "アカウント削除",
+      "entryDescription": "アカウントと個人情報を削除します。",
+      "noticeTitle": "アカウント削除",
+      "noticeMessage": "続行する前に以下をご確認ください。",
+      "noticeItemProfile": "プロフィール、友だち、設定情報が削除されます。",
+      "noticeItemChat": "一部のトーク履歴は相手側に残り、削除済みユーザーとして表示される場合があります。",
+      "noticeItemRejoin": "削除後7日間は同じアカウントで再登録できません。",
+      "noticeItemIdentifier": "CO·ONN IDと友だちコードは30日間再利用できません。",
+      "noticeAcknowledge": "上記をすべて確認し、削除を続行します。",
+      "continue": "次へ",
+      "cancel": "キャンセル",
+      "surveyTitle": "退会理由を教えてください",
+      "surveyMessage": "CO·ONNの改善に活用します。",
+      "surveyAction": "続行",
+      "otherPlaceholder": "理由を入力してください。",
+      "reasonRequired": "理由を選択してください。",
+      "otherRequired": "理由を入力してください。",
+      "reasonsLoading": "理由を読み込み中です。",
+      "reasonsEmpty": "理由を読み込めませんでした。",
+      "confirmTitle": "最終確認",
+      "confirmMessage": "アカウントは直ちに利用停止になります。",
+      "confirmInstruction": "下に「{{keyword}}」と入力してください。",
+      "confirmKeyword": "削除",
+      "confirmPlaceholder": "削除",
+      "confirmAction": "削除",
+      "completed": "削除を受け付けました。",
+      "failed": "削除できませんでした。"
+    }
+  },
+  "privacy": {
+    "title": "プライバシー",
+    "header_title": "プライバシー",
+    "section": {
+      "profile": "プロフィール",
+      "friend_req": "友だちリクエスト",
+      "activity": "アクティビティ"
+    },
+    "field": {
+      "public_profile": "プロフィール公開",
+      "allow_search": "検索を許可",
+      "show_nickname": "ニックネーム表示",
+      "show_location": "位置を表示",
+      "last_active": "最終アクセスを表示"
+    },
+    "help": {
+      "public_profile": "他のユーザーがプロフィールを閲覧できます。",
+      "allow_search": "設定プライバシー",
+      "show_nickname": "設定プライバシー",
+      "show_location": "設定プライバシー",
+      "last_active": "設定プライバシー"
+    },
+    "option": {
+      "all": "プライバシーすべて",
+      "all_desc": "設定プライバシー",
+      "friends": "友だちの友だち",
+      "friends_desc": "設定プライバシー",
+      "none": "プライバシーなしなし",
+      "none_desc": "設定プライバシー"
+    },
+    "alert": {
+      "save_success": "保存しました。",
+      "save_fail": "保存できませんでした。",
+      "load_fail": "読み込めませんでした。",
+      "login_required": "ログインが必要です。"
+    }
+  },
+  "radius": {
+    "title": "近所の範囲",
+    "current": "現在",
+    "desc": "設定説明",
+    "save_error": "近所の範囲を保存できませんでした。"
+  },
+  "friends": {
+    "title": "友だち",
+    "manage": "友だち管理",
+    "caption": "ブロック、推薦、公開範囲",
+    "soon": "準備中です。"
+  },
+  "notification": {
+    "title": "通知",
+    "manage": "通知",
+    "caption": "プッシュ、アプリ内通知、音",
+    "soon": "準備中です。",
+    "section": {
+      "defaults": "基本",
+      "types": "種類",
+      "quiet": "通知を控える時間",
+      "push_types": "プッシュ種別",
+      "in_app": "アプリ内通知"
+    },
+    "field": {
+      "push": "プッシュ通知",
+      "preview": "プレビュー",
+      "sound": "音",
+      "vibrate": "バイブレーション",
+      "chat": "チャット",
+      "system": "お知らせ・システム",
+      "marketing": "マーケティング"
+    },
+    "help": {
+      "push": "すべてのプッシュ通知",
+      "preview": "ロック画面に内容を表示",
+      "chat_push": "チャットメッセージのプッシュ",
+      "system_push": "サービス案内と重要なお知らせ",
+      "marketing_push": "イベントとプロモーション"
+    },
+    "action": {
+      "save": "保存",
+      "open_system": "システム設定",
+      "cancel": "キャンセル",
+      "done": "完了"
+    },
+    "time": {
+      "start": "開始",
+      "end": "終了",
+      "hour": "通知時間",
+      "minute": "通知時間",
+      "close": "時間選択を閉じる",
+      "select": "{{label}} {{value}}を選択",
+      "start_time": "開始時間",
+      "end_time": "終了時間"
+    },
+    "alert": {
+      "table_missing_title": "設定テーブルなし",
+      "table_missing_message": "user_notification_settings を作成してください。",
+      "load_fail": "読み込めませんでした",
+      "time_invalid_title": "時間を確認",
+      "time_invalid_message": "時間をもう一度選択してください。",
+      "save_success": "保存しました。",
+      "save_fail": "保存に失敗しました",
+      "open_settings_fail_title": "通知通知できませんでした。",
+      "open_settings_fail_message": "システム設定を開けませんでした。",
+      "login_required": "ログインが必要です。"
+    },
+    "in_app": {
+      "master": "アプリ内通知",
+      "master_help": "アプリ内の通知一覧に表示",
+      "group": {
+        "social": "ソーシャル",
+        "chat": "チャット",
+        "beacon": "ビーコン",
+        "schedule": "予定",
+        "post": "投稿"
+      },
+      "follow_created": "新しいフォロワー",
+      "follow_created_help": "フォローされたとき",
+      "chat_reply": "返信",
+      "chat_reply_help": "自分のメッセージに返信されたとき",
+      "chat_mention": "メンション",
+      "chat_mention_help": "自分がメンションされたとき",
+      "beacon_join_request": "参加リクエスト",
+      "beacon_join_request_help": "ビーコン参加リクエストが届いたとき",
+      "beacon_join_approved": "参加承認",
+      "beacon_join_approved_help": "ビーコン参加が承認されたとき",
+      "beacon_friend_created": "友達のビーコン",
+      "beacon_friend_created_help": "友達がビーコンを作成したとき",
+      "schedule_created": "新しい予定",
+      "schedule_created_help": "参加中のルームに予定が追加されたとき",
+      "schedule_updated": "予定変更",
+      "schedule_updated_help": "参加中の予定が変更されたとき",
+      "schedule_cancelled": "予定キャンセル",
+      "schedule_cancelled_help": "参加中の予定がキャンセルされたとき",
+      "post_like": "いいね",
+      "post_like_help": "自分の投稿にいいねが集まったとき",
+      "post_comment": "コメント",
+      "post_comment_help": "自分の投稿にコメントされたとき",
+      "post_reply": "返信",
+      "post_reply_help": "自分のコメントに返信されたとき",
+      "post_mention": "投稿メンション",
+      "post_mention_help": "投稿やコメントでメンションされたとき"
+    }
+  },
+  "display": {
+    "title": "表示と言語"
+  },
+  "language": {
+    "title": "言語",
+    "select": "言語を選択",
+    "inUse": "（使用中）"
+  },
+  "theme": {
+    "title": "テーマ",
+    "caption": "ライト / ダーク",
+    "soon": "準備中です。",
+    "header_title": "テーマ",
+    "section_style": "モード",
+    "mode": {
+      "system": "システム",
+      "system_desc": "端末設定に合わせる",
+      "light": "ライト",
+      "light_desc": "明るい表示",
+      "dark": "ダーク",
+      "dark_desc": "暗い表示"
+    }
+  },
+  "chat": {
+    "title": "チャット"
+  },
+  "translate": {
+    "autoDefault": "設定翻訳",
+    "autoDefaultHint": "新しいチャットの初期値として使用されます。",
+    "showOriginal": "翻訳と一緒に原文を表示",
+    "showOriginalHint": "設定翻訳"
+  },
+  "storage": {
+    "title": "データとストレージ",
+    "clearCache": "キャッシュを整理",
+    "clearCacheHint": "設定ストレージを削除",
+    "soon": "準備中です。",
+    "section": {
+      "ratio": "データ比率",
+      "rooms": "設定ストレージ"
+    },
+    "summary": {
+      "total_media": "全メディア",
+      "saved_count": "{{count}}件保存済み"
+    },
+    "legend": {
+      "photo": "写真",
+      "video": "ストレージ動画",
+      "audio": "ストレージ音声",
+      "file": "ファイル",
+      "other": "その他"
+    },
+    "action": {
+      "delete_all": "すべて削除",
+      "delete_all_with_size": "すべて削除（{{size}}）",
+      "delete_room": "削除",
+      "scroll_top": "ストレージ操作"
+    },
+    "empty": {
+      "title": "保存済みメディアなし",
+      "desc": "開いたメディアがここに表示されます。"
+    },
+    "alert": {
+      "load_fail": "読み込めませんでした。",
+      "delete_fail": "ストレージ通知できませんでした。",
+      "delete_all_title": "すべてのメディアを削除",
+      "delete_all_message": "ストレージ通知を削除",
+      "delete_room_title": "{{room}}のデータを削除",
+      "delete_room_message": "ストレージ通知を削除",
+      "delete_all_success": "削除しました。",
+      "delete_room_success": "{{room}}のデータを削除しました。"
+    },
+    "room": {
+      "fallback_title": "チャットルーム {{id}}",
+      "delete_accessibility": "{{room}}のデータを削除"
+    }
+  },
+  "support": {
+    "title": "サポート",
+    "cs": "設定サポート",
+    "notice": {
+      "title": "お知らせタイトル",
+      "eyebrow": "NOTICE",
+      "sectionTitle": "{{category}}のお知らせ",
+      "markAll": "すべて既読",
+      "markAllDone": "既読にしました。",
+      "loadFail": "お知らせを読み込めませんでした。",
+      "readFail": "既読にできませんでした。",
+      "markAllFail": "既読にできませんでした。",
+      "emptyTitle": "お知らせなし",
+      "emptyDesc": "サポートお知らせ",
+      "category": {
+        "normal": "基本",
+        "important": "重要",
+        "legal": "規約",
+        "security": "セキュリティ"
+      }
+    },
+    "guide": "ガイド",
+    "soon": "準備中です。",
+    "loading": "読み込み中…",
+    "action": {
+      "ok": "OK"
+    },
+    "alert": {
+      "notice": "お知らせ",
+      "error": "エラー"
+    },
+    "center": {
+      "title": "ヘルプセンター",
+      "hero": "何をお手伝いできますか？",
+      "searchPlaceholder": "検索",
+      "faq": "よくある質問",
+      "categories": "ヘルプ",
+      "contactTitle": "お困りですか？",
+      "emailDesc": "メールで返信します。",
+      "aiTitle": "AI相談",
+      "aiDesc": "24時間対応",
+      "policies": "規約とポリシー"
+    },
+    "contact": {
+      "title": "問い合わせタイトル",
+      "guide": "問い合わせガイド",
+      "category": "カテゴリ",
+      "categoryLoading": "読み込み中…",
+      "categoryPlaceholder": "カテゴリを選択",
+      "categorySelect": "カテゴリ",
+      "email": "返信用メール",
+      "emailPlaceholder": "メールアドレス",
+      "content": "メッセージ",
+      "contentPlaceholder": "お問い合わせ内容を入力してください。",
+      "submit": "送信",
+      "required": "問い合わせ必須",
+      "categoryRequired": "カテゴリを選択してください。",
+      "loadFail": "画面を読み込めませんでした。",
+      "submitFail": "申請できませんでした。",
+      "successTitle": "申請完了",
+      "successDesc": "お問い合わせを受け付けました。"
+    },
+    "list": {
+      "all": "すべて",
+      "common": "基本",
+      "result": "一覧結果",
+      "empty": "結果がありません。"
+    },
+    "policy": {
+      "title": "規約とポリシー",
+      "effectiveDate": "施行日",
+      "summary": "要約",
+      "download": "ダウンロード",
+      "downloadStart": "サポートポリシーを読み込み",
+      "empty": "内容を読み込めませんでした。",
+      "versions": "以前のバージョン",
+      "behaviorInfoTitle": "行動情報の収集・利用",
+      "behaviorInfoDesc": "サービス改善に必要な最小限の情報のみ収集します。",
+      "userControlTitle": "ユーザーの選択権",
+      "userControlDesc": "アプリ設定でパーソナライズ広告の受信を変更できます。",
+      "version": "バージョン",
+      "language": "言語",
+      "loadFail": "ポリシー文書を読み込めませんでした。",
+      "summaryEmpty": "サポートポリシーなし",
+      "downloadCancelledTitle": "サポートポリシーを読み込み",
+      "downloadCancelled": "保存先が選択されていません。",
+      "downloadSuccessTitle": "サポートポリシーを読み込み",
+      "downloadSuccess": "ポリシー文書を保存しました。",
+      "downloadFailTitle": "ダウンロード失敗",
+      "downloadFail": "ポリシー文書を保存できませんでした。",
+      "privacyTitle": "プライバシーポリシー",
+      "termsTitle": "CO·ONN利用規約",
+      "marketingTitle": "マーケティング情報受信同意"
+    },
+    "company": {
+      "ceo": "代表",
+      "regNum": "サポート会社",
+      "businessNum": "サポート会社",
+      "address": "住所",
+      "cs": "カスタマーサポート",
+      "host": "ホスティング事業者"
+    }
+  },
+  "labs": {
+    "title": "ラボ",
+    "features": "ラボ機能",
+    "caption": "新機能を先に試せます。",
+    "soon": "設定準備中は準備中です。",
+    "subtitle": "新機能を先に試せます。",
+    "empty_title": "設定なし",
+    "empty_desc": "新機能は正式公開前にここで先行公開されます。",
+    "note": "ラボ機能は正式リリース前に変更される場合があります。"
+  },
+  "admin": {
+    "title": "管理者",
+    "console": "管理者コンソール"
+  },
+  "open_profiles": {
+    "title": "設定タイトル",
+    "subtitle": "設定サブタイトル",
+    "header_title": "オープンプロフィール",
+    "fallback_name": "オープンプロフィール",
+    "default_badge": "デフォルト",
+    "status_empty": "ステータスメッセージなし",
+    "room": {
+      "fallback_title": "オープンチャット",
+      "used_count": "使用中のオープンチャット{{count}}件",
+      "empty": "ルームなしなし"
+    },
+    "empty": {
+      "title": "オープンプロフィールなし",
+      "desc": "なし説明"
+    },
+    "form": {
+      "create_title": "オープンプロフィールを作成",
+      "edit_title": "オープンプロフィールを編集",
+      "nickname": "ニックネーム",
+      "status_message": "ステータスメッセージ",
+      "status_placeholder": "自分を短く紹介してください。",
+      "default_profile": "デフォルトのオープンプロフィール",
+      "delete": "オープンプロフィールを削除",
+      "pick_avatar": "プロフィール写真を選択"
+    },
+    "alert": {
+      "load_fail": "オープンプロフィールを読み込めませんでした。",
+      "nickname_required": "ニックネームを入力してください。",
+      "create_fail": "作成失敗",
+      "save_fail": "保存に失敗しました",
+      "delete_title": "オープンプロフィールを削除しますか？",
+      "delete_used_desc": "使用中のオープンチャットの既存プロフィールは維持されます。",
+      "delete_desc": "設定通知を削除",
+      "delete_fail": "削除失敗"
+    },
+    "toast": {
+      "created": "オープンプロフィールを作成しました。",
+      "saved": "保存しました。",
+      "deleted": "削除しました。",
+      "photo_applied": "写真を適用しました。"
+    }
+  }
+}

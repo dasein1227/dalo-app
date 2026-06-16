@@ -1,0 +1,10 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "COONN",
+    "NSPhotoLibraryUsageDescription": "Akses foto digunakan untuk memilih gambar profil, postingan, dan chat.",
+    "NSPhotoLibraryAddUsageDescription": "Akses galeri digunakan untuk menyimpan gambar dan media ke perangkat.",
+    "NSLocationWhenInUseUsageDescription": "Lokasi digunakan untuk postingan sekitar, beacon, dan fitur berbasis jarak.",
+    "NSCameraUsageDescription": "Kamera digunakan untuk mengambil foto profil, postingan, dan chat.",
+    "NSMicrophoneUsageDescription": "Mikrofon digunakan saat merekam video."
+  }
+}

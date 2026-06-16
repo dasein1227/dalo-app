@@ -1,0 +1,35 @@
+{
+  "title": "Pengaturan izin",
+  "subtitle": "Izinkan akses yang diperlukan.",
+  "location_title": "Izin lokasi",
+  "location_desc": "Diperlukan untuk menampilkan beacon sekitar dan peta.",
+  "notifications_title": "Izin notifikasi (opsional)",
+  "notifications_desc": "Terima undangan beacon, chat, dan pemberitahuan.",
+  "allow_now": "Izinkan sekarang",
+  "allowed": "Diizinkan",
+  "open_settings": "Buka pengaturan",
+  "continue_without_location": "Atur nanti dan lanjutkan",
+  "background_location_title": "Izin lokasi latar belakang (opsional)",
+  "background_location_desc": "Terima beacon sekitar dan notifikasi berbasis lokasi tanpa membuka aplikasi.",
+  "background_location_hint": "Dapat meningkatkan penggunaan baterai. Anda bisa mengubahnya kapan saja di pengaturan.",
+  "gallery": {
+    "title": "Akses foto diperlukan",
+    "description": "Izin diperlukan untuk memilih foto."
+  },
+  "camera": {
+    "title": "Akses kamera diperlukan",
+    "description": "Izin kamera diperlukan untuk mengambil foto."
+  },
+  "location": {
+    "title": "Akses lokasi diperlukan",
+    "description": "Izin diperlukan untuk memeriksa lokasi Anda."
+  },
+  "notification": {
+    "title": "Izin notifikasi",
+    "description": "Izin diperlukan untuk menerima notifikasi."
+  },
+  "action": {
+    "openSettings": "Buka pengaturan",
+    "notNow": "Nanti"
+  }
+}

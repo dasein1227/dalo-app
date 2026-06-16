@@ -1,0 +1,14 @@
+{
+  "title": "تعديل الصورة",
+  "ratio_original": "الأصلية",
+  "ratio_free": "حر",
+  "rotate": "تدوير",
+  "ratio": "النسبة",
+  "invert": "أفقي/عمودي",
+  "orientation": "أفقي/عمودي",
+  "reset": "إعادة ضبط",
+  "error_load_title": "خطأ",
+  "error_load_msg": "لا يمكن تحميل الصورة.",
+  "error_save_title": "فشل الحفظ",
+  "error_save_msg": "حاول مرة أخرى بعد قليل."
+}

@@ -1,0 +1,525 @@
+{
+  "home_title": "Ajustes",
+  "title": "Ajustes",
+  "version": "Versión de la app",
+  "open": "Abrir",
+  "change": "Cambiar",
+  "run": "Ejecutar",
+  "logout": "Cerrar sesión",
+  "logoutDone": "Sesión cerrada.",
+  "sections": {
+    "communication": "Comunicación",
+    "general": "General",
+    "advanced": "Avanzado",
+    "service_info": "Servicio",
+    "account": "Cuenta",
+    "notification": "Notificaciones",
+    "display_language": "Pantalla e idioma",
+    "location": "Ubicación",
+    "data": "Datos",
+    "support": "Soporte",
+    "info": "Información"
+  },
+  "menus": {
+    "call": "Llamada",
+    "etc": "Otros",
+    "app_manage": "Gestión de app",
+    "version": "Versión de la app"
+  },
+  "alerts": {
+    "logout_title": "Cerrar sesión",
+    "logout_desc": "¿Cerrar sesión ahora?",
+    "language_change_error": "No se pudo cambiar el idioma.",
+    "logout_fail": "No se pudo cerrar sesión."
+  },
+  "search": {
+    "title": "Buscar ajustes",
+    "soon": "La búsqueda de ajustes llegará pronto."
+  },
+  "me": {
+    "noName": "Sin nombre",
+    "profileManage": "Gestionar perfil",
+    "loadingAccount": "Verificando cuenta"
+  },
+  "account": {
+    "title": "Cuenta",
+    "editProfile": "Editar perfil",
+    "profilePublicDefault": "Mostrar mi perfil por defecto en beacons",
+    "profilePublicHint": "Se usa por defecto al crear un beacon. Puedes cambiarlo en cada beacon.",
+    "header_title": "Cuenta",
+    "section": {
+      "contact": "Contacto",
+      "identity": "Identidad",
+      "visibility": "Visibilidad",
+      "profile": "Perfil",
+      "account_management": "Cuenta"
+    },
+    "field": {
+      "phone": "Teléfono",
+      "email": "Email",
+      "id_label": "ID de CO·ONN",
+      "friend_code": "Código de amigo",
+      "show_nickname": "Mostrar apodo",
+      "profile_photo": "Foto de perfil",
+      "nickname": "Apodo"
+    },
+    "value": {
+      "not_registered": "No registrado"
+    },
+    "badge": {
+      "verified": "Verificado",
+      "verify": "Verificar"
+    },
+    "placeholder": {
+      "id": "ID",
+      "friend_code": "Código de amigo",
+      "nickname": "Apodo"
+    },
+    "help": {
+      "id_desc": "Tu ID único para búsqueda.",
+      "show_nickname_desc": "Muestra tu apodo a tus amigos."
+    },
+    "error": {
+      "check_duplication": "Verifica disponibilidad primero.",
+      "id_taken": "Ya está en uso.",
+      "code_taken": "Ya está en uso.",
+      "check_failed": "No se pudo completar.",
+      "invalid_id": "2–30 letras minúsculas, números o guiones bajos",
+      "invalid_friend_code": "2–30 letras minúsculas, números o guiones bajos",
+      "duplicate_exists": "Este valor ya está en uso.",
+      "duplicate_check_required": "Completa la verificación antes de guardar.",
+      "duplicate_check_retry": "Verifica disponibilidad de nuevo.",
+      "duplicate_value_retry": "Ya está en uso. Verifica de nuevo.",
+      "nickname_required": "Ingresa un apodo.",
+      "nickname_too_long": "El apodo puede tener hasta 30 caracteres."
+    },
+    "alert": {
+      "check_required": "Verificación requerida",
+      "save_success_title": "Guardado",
+      "save_success_desc": "Ajustes de cuenta guardados.",
+      "save_fail_title": "Error al guardar"
+    },
+    "action": {
+      "save": "Guardar",
+      "check_duplicate_short": "Verificar",
+      "checking_short": "…",
+      "change_photo": "Cambiar foto",
+      "remove_photo": "Quitar foto"
+    },
+    "status": {
+      "available_short": "Disponible",
+      "duplicate_short": "Ocupado"
+    },
+    "picker": {
+      "profile_photo": "Seleccionar foto"
+    },
+    "withdrawal": {
+      "entryTitle": "Eliminar cuenta",
+      "entryDescription": "Elimina tu cuenta y datos personales.",
+      "noticeTitle": "Revisa estos puntos antes de continuar.",
+      "noticeMessage": "Tu perfil, amigos y ajustes se eliminarán.",
+      "noticeItemProfile": "Parte del historial de chat puede conservarse para otros participantes y mostrarse como usuario eliminado.",
+      "noticeItemChat": "No podrás volver a registrarte con la misma cuenta durante 7 días.",
+      "noticeItemRejoin": "Tu CO·ONN ID y código de amigo no podrán reutilizarse durante 30 días.",
+      "noticeItemIdentifier": "He revisado todo y quiero continuar.",
+      "noticeAcknowledge": "Siguiente",
+      "continue": "Cancelar",
+      "cancel": "Cuéntanos por qué te vas",
+      "surveyTitle": "Tus comentarios nos ayudan a mejorar CO·ONN.",
+      "surveyMessage": "Continuar",
+      "surveyAction": "Escribe el motivo.",
+      "otherPlaceholder": "Selecciona un motivo.",
+      "reasonRequired": "Escribe el motivo.",
+      "otherRequired": "Cargando motivos.",
+      "reasonsLoading": "No se pudieron cargar los motivos.",
+      "reasonsEmpty": "Confirmación final",
+      "confirmTitle": "El acceso a tu cuenta se detendrá de inmediato.",
+      "confirmMessage": "Escribe “{{keyword}}” abajo.",
+      "confirmInstruction": "ELIMINAR",
+      "confirmKeyword": "ELIMINAR",
+      "confirmPlaceholder": "Eliminar",
+      "confirmAction": "Solicitud de eliminación enviada.",
+      "completed": "No se pudo eliminar la cuenta."
+    }
+  },
+  "privacy": {
+    "title": "Privacidad",
+    "header_title": "Privacidad",
+    "section": {
+      "profile": "Perfil",
+      "friend_req": "Solicitudes de amistad",
+      "activity": "Actividad"
+    },
+    "field": {
+      "public_profile": "Perfil público",
+      "allow_search": "Permitir búsqueda",
+      "show_nickname": "Mostrar apodo",
+      "show_location": "Mostrar ubicación",
+      "last_active": "Mostrar última actividad"
+    },
+    "help": {
+      "public_profile": "Otros usuarios pueden ver tu perfil.",
+      "allow_search": "Pueden encontrarte por apodo e ID.",
+      "show_nickname": "Muestra tu apodo a tus amigos.",
+      "show_location": "Muestra tu ubicación de actividad.",
+      "last_active": "Muestra tu última actividad."
+    },
+    "option": {
+      "all": "Todos",
+      "all_desc": "Cualquiera puede enviar solicitudes",
+      "friends": "Amigos de amigos",
+      "friends_desc": "Solo usuarios conectados pueden solicitar",
+      "none": "Nadie",
+      "none_desc": "Bloquea solicitudes de amistad"
+    },
+    "alert": {
+      "save_success": "Guardado.",
+      "save_fail": "No se pudo guardar.",
+      "load_fail": "No se pudo cargar.",
+      "login_required": "Inicia sesión para continuar."
+    }
+  },
+  "radius": {
+    "title": "Rango del barrio",
+    "current": "Actual",
+    "desc": "Solo se muestran novedades dentro de este rango.",
+    "save_error": "No se pudo guardar el rango."
+  },
+  "friends": {
+    "title": "Amigos",
+    "manage": "Gestionar amigos",
+    "caption": "Bloqueos, recomendaciones, visibilidad",
+    "soon": "Próximamente."
+  },
+  "notification": {
+    "title": "Notificaciones",
+    "manage": "Notificaciones",
+    "caption": "Push, avisos en la app y sonido",
+    "soon": "Próximamente.",
+    "section": {
+      "defaults": "General",
+      "types": "Tipos",
+      "quiet": "Horas de silencio",
+      "push_types": "Tipos de push",
+      "in_app": "Avisos en la app"
+    },
+    "field": {
+      "push": "Notificaciones push",
+      "preview": "Vista previa",
+      "sound": "Sonido",
+      "vibrate": "Vibración",
+      "chat": "Chat",
+      "system": "Avisos y sistema",
+      "marketing": "Marketing"
+    },
+    "help": {
+      "push": "Todas las notificaciones push",
+      "preview": "Mostrar contenido en la pantalla bloqueada",
+      "chat_push": "Push de mensajes de chat",
+      "system_push": "Avisos del servicio y novedades clave",
+      "marketing_push": "Eventos y promociones"
+    },
+    "action": {
+      "save": "Guardar",
+      "open_system": "Ajustes del sistema",
+      "cancel": "Cancelar",
+      "done": "Listo"
+    },
+    "time": {
+      "start": "Iniciar",
+      "end": "Fin",
+      "hour": "h",
+      "minute": "m",
+      "close": "Cerrar selector de hora",
+      "select": "Seleccionar {{label}} {{value}}",
+      "start_time": "Hora de inicio",
+      "end_time": "Hora de fin"
+    },
+    "alert": {
+      "table_missing_title": "Falta tabla de ajustes",
+      "table_missing_message": "Crea user_notification_settings.",
+      "load_fail": "No se pudo cargar",
+      "time_invalid_title": "Revisa la hora",
+      "time_invalid_message": "Selecciona la hora de nuevo.",
+      "save_success": "Guardado.",
+      "save_fail": "Error al guardar",
+      "open_settings_fail_title": "No se pudo abrir",
+      "open_settings_fail_message": "No se pudieron abrir los ajustes del sistema.",
+      "login_required": "Inicia sesión para continuar."
+    },
+    "in_app": {
+      "master": "Avisos en la app",
+      "master_help": "Se muestran en el buzón de la app",
+      "group": {
+        "social": "Social",
+        "chat": "Chat",
+        "beacon": "Beacons",
+        "schedule": "Planes",
+        "post": "Publicaciones"
+      },
+      "follow_created": "Nuevo seguidor",
+      "follow_created_help": "Cuando alguien te sigue",
+      "chat_reply": "Respuestas",
+      "chat_reply_help": "Cuando responden a tu mensaje",
+      "chat_mention": "Menciones",
+      "chat_mention_help": "Cuando te mencionan",
+      "beacon_join_request": "Solicitudes de entrada",
+      "beacon_join_request_help": "Cuando llega una solicitud para un beacon",
+      "beacon_join_approved": "Entrada aprobada",
+      "beacon_join_approved_help": "Cuando aprueban tu entrada a un beacon",
+      "beacon_friend_created": "Beacons de amigos",
+      "beacon_friend_created_help": "Cuando un amigo crea un beacon",
+      "schedule_created": "Nuevo plan",
+      "schedule_created_help": "Cuando se añade un plan a una sala unida",
+      "schedule_updated": "Cambios de plan",
+      "schedule_updated_help": "Cuando cambia un plan unido",
+      "schedule_cancelled": "Planes cancelados",
+      "schedule_cancelled_help": "Cuando se cancela un plan unido",
+      "post_like": "Me gusta",
+      "post_like_help": "Cuando tu publicación reúne me gusta",
+      "post_comment": "Comentarios",
+      "post_comment_help": "Cuando comentan tu publicación",
+      "post_reply": "Respuestas",
+      "post_reply_help": "Cuando responden a tu comentario",
+      "post_mention": "Menciones en publicaciones",
+      "post_mention_help": "Cuando te mencionan en una publicación o comentario"
+    }
+  },
+  "display": {
+    "title": "Pantalla e idioma"
+  },
+  "language": {
+    "title": "Idioma",
+    "select": "Selecciona language",
+    "inUse": "(En uso)"
+  },
+  "theme": {
+    "title": "Tema",
+    "caption": "Claro / oscuro",
+    "soon": "Próximamente.",
+    "header_title": "Tema",
+    "section_style": "Modo",
+    "mode": {
+      "system": "Sistema",
+      "system_desc": "Usar ajuste del dispositivo",
+      "light": "Ligero",
+      "light_desc": "Apariencia clara",
+      "dark": "Oscuro",
+      "dark_desc": "Apariencia oscura"
+    }
+  },
+  "chat": {
+    "title": "Chat"
+  },
+  "translate": {
+    "autoDefault": "Traducir mensajes automáticamente",
+    "autoDefaultHint": "Se usa por defecto en chats nuevos.",
+    "showOriginal": "Mostrar original con traducción",
+    "showOriginalHint": "Cuando está activo, el texto original aparece bajo la traducción."
+  },
+  "storage": {
+    "title": "Datos y almacenamiento",
+    "clearCache": "Limpiar caché",
+    "clearCacheHint": "Eliminar archivos temporales",
+    "soon": "Próximamente.",
+    "section": {
+      "ratio": "Proporción de datos",
+      "rooms": "Datos por sala"
+    },
+    "summary": {
+      "total_media": "Medios totales",
+      "saved_count": "{{count}} guardados"
+    },
+    "legend": {
+      "photo": "Fotos",
+      "video": "Videos",
+      "audio": "Audio",
+      "file": "Archivos",
+      "other": "Otros"
+    },
+    "action": {
+      "delete_all": "Eliminar todo",
+      "delete_all_with_size": "Eliminar todo ({{size}})",
+      "delete_room": "Eliminar",
+      "scroll_top": "Arriba"
+    },
+    "empty": {
+      "title": "Sin medios guardados",
+      "desc": "Los medios vistos aparecerán aquí."
+    },
+    "alert": {
+      "load_fail": "No se pudo cargar.",
+      "delete_fail": "No se pudo completar.",
+      "delete_all_title": "Eliminar todos los medios",
+      "delete_all_message": "Elimina medios de chat guardados en este dispositivo. Los archivos del servidor y la galería se mantienen.",
+      "delete_room_title": "Eliminar datos de {{room}}",
+      "delete_room_message": "Elimina los medios de esta sala guardados en este dispositivo. Los archivos del servidor y la galería se mantienen.",
+      "delete_all_success": "Eliminado.",
+      "delete_room_success": "Datos de {{room}} eliminados."
+    },
+    "room": {
+      "fallback_title": "Sala {{id}}",
+      "delete_accessibility": "Eliminar datos de {{room}}"
+    }
+  },
+  "support": {
+    "title": "Soporte",
+    "cs": "Centro de ayuda",
+    "notice": {
+      "title": "Avisos",
+      "eyebrow": "NOTICE",
+      "sectionTitle": "Avisos de {{category}}",
+      "markAll": "Marcar todo leído",
+      "markAllDone": "Marcado como leído.",
+      "loadFail": "No se pudieron cargar los avisos.",
+      "readFail": "No se pudo marcar como leído.",
+      "markAllFail": "No se pudo marcar como leído.",
+      "emptyTitle": "Sin avisos",
+      "emptyDesc": "Los nuevos avisos aparecerán aquí.",
+      "category": {
+        "normal": "General",
+        "important": "Importante",
+        "legal": "Legal",
+        "security": "Seguridad"
+      }
+    },
+    "guide": "Guía",
+    "soon": "Próximamente.",
+    "loading": "Cargando…",
+    "action": {
+      "ok": "OK"
+    },
+    "alert": {
+      "notice": "Aviso",
+      "error": "Error"
+    },
+    "center": {
+      "title": "Centro de ayuda",
+      "hero": "¿Cómo podemos ayudarte?",
+      "searchPlaceholder": "Buscar",
+      "faq": "Preguntas frecuentes",
+      "categories": "Temas de ayuda",
+      "contactTitle": "¿Necesitas ayuda?",
+      "emailDesc": "Responderemos por email.",
+      "aiTitle": "Soporte AI",
+      "aiDesc": "Disponible 24/7",
+      "policies": "Términos y políticas"
+    },
+    "contact": {
+      "title": "Contacto",
+      "guide": "Déjanos tu mensaje.\nResponderemos por email.",
+      "category": "Categoría",
+      "categoryLoading": "Cargando…",
+      "categoryPlaceholder": "Seleccionar categoría",
+      "categorySelect": "Categoría",
+      "email": "Email de respuesta",
+      "emailPlaceholder": "Dirección de email",
+      "content": "Mensaje",
+      "contentPlaceholder": "Escribe tu mensaje.",
+      "submit": "Enviar",
+      "required": "Ingresa your email and message.",
+      "categoryRequired": "Selecciona una categoría.",
+      "loadFail": "No se pudo cargar screen.",
+      "submitFail": "No se pudo enviar.",
+      "successTitle": "Enviado",
+      "successDesc": "Recibimos tu consulta."
+    },
+    "list": {
+      "all": "Todo",
+      "common": "General",
+      "result": "Resultados",
+      "empty": "Sin resultados."
+    },
+    "policy": {
+      "title": "Términos y políticas",
+      "effectiveDate": "Fecha de vigencia",
+      "summary": "Resumen",
+      "download": "Descargar",
+      "downloadStart": "Iniciando descarga.",
+      "empty": "No se pudo cargar el contenido.",
+      "versions": "Versiones anteriores",
+      "behaviorInfoTitle": "Recopilación y uso de datos de comportamiento",
+      "behaviorInfoDesc": "Solo recopilamos los datos mínimos para mejorar el servicio.",
+      "userControlTitle": "Opciones del usuario",
+      "userControlDesc": "Puedes cambiar anuncios personalizados en la app.",
+      "version": "Versión",
+      "language": "Idioma",
+      "loadFail": "No se pudo cargar policy documents.",
+      "summaryEmpty": "Sin resumen disponible.",
+      "downloadCancelledTitle": "Descarga cancelada",
+      "downloadCancelled": "No se eligió ubicación de guardado.",
+      "downloadSuccessTitle": "Descargado",
+      "downloadSuccess": "Documento guardado.",
+      "downloadFailTitle": "Error de descarga",
+      "downloadFail": "No se pudo guardar el documento.",
+      "privacyTitle": "Política de privacidad",
+      "termsTitle": "Términos de servicio de CO·ONN",
+      "marketingTitle": "Consentimiento de marketing"
+    },
+    "company": {
+      "ceo": "CEO",
+      "regNum": "N.º de registro comercial",
+      "businessNum": "N.º de comercio online",
+      "address": "Dirección",
+      "cs": "Atención al cliente",
+      "host": "Proveedor de hosting"
+    }
+  },
+  "labs": {
+    "title": "Labs",
+    "features": "Funciones Labs",
+    "caption": "Prueba nuevas funciones antes.",
+    "soon": "Labs estará disponible pronto.",
+    "subtitle": "Prueba nuevas funciones antes.",
+    "empty_title": "Sin funciones aún",
+    "empty_desc": "Las nuevas funciones aparecerán aquí antes del lanzamiento.",
+    "note": "Las funciones Labs pueden cambiar antes del lanzamiento oficial."
+  },
+  "admin": {
+    "title": "Admin",
+    "console": "Consola admin"
+  },
+  "open_profiles": {
+    "title": "Perfiles abiertos",
+    "subtitle": "Gestiona perfiles para chats abiertos.",
+    "header_title": "Perfiles abiertos",
+    "fallback_name": "Perfil abierto",
+    "default_badge": "Predeterminado",
+    "status_empty": "Sin mensaje de estado",
+    "room": {
+      "fallback_title": "Chat abierto",
+      "used_count": "Usado en {{count}} chats abiertos",
+      "empty": "Sin salas abiertas en uso"
+    },
+    "empty": {
+      "title": "Sin perfiles abiertos",
+      "desc": "Crea un perfil para chats abiertos."
+    },
+    "form": {
+      "create_title": "Crear perfil abierto",
+      "edit_title": "Editar perfil abierto",
+      "nickname": "Apodo",
+      "status_message": "Mensaje de estado",
+      "status_placeholder": "Preséntate brevemente.",
+      "default_profile": "Perfil abierto predeterminado",
+      "delete": "Eliminar perfil abierto",
+      "pick_avatar": "Elegir foto de perfil"
+    },
+    "alert": {
+      "load_fail": "No se pudieron cargar los perfiles abiertos.",
+      "nickname_required": "Ingresa un apodo.",
+      "create_fail": "Error al crear",
+      "save_fail": "Error al guardar",
+      "delete_title": "¿Eliminar perfil abierto?",
+      "delete_used_desc": "Los perfiles existentes en chats abiertos se conservarán.",
+      "delete_desc": "Los perfiles eliminados no se pueden restaurar.",
+      "delete_fail": "Error al eliminar"
+    },
+    "toast": {
+      "created": "Perfil abierto creado.",
+      "saved": "Guardado.",
+      "deleted": "Eliminado.",
+      "photo_applied": "Foto aplicada."
+    }
+  }
+}

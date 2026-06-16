@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.geniestudio.coonn",
+      "sha256_cert_fingerprints": [
+        "AF:B1:D8:F3:97:EA:2E:81:80:48:5E:0A:8E:8C:A4:F9:6B:FF:85:8B:EF:AE:4F:8E:B5:7E:A8:7E:0D:FB:C2:06"
+      ]
+    }
+  }
+]

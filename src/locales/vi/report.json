@@ -1,0 +1,28 @@
+{
+  "common": {
+    "title": "Báo cáo"
+  },
+  "reasonList": {
+    "title": "Chọn lý do báo cáo",
+    "guide": "Hướng dẫn sử dụng"
+  },
+  "reasonDetail": {
+    "submit": "Gửi",
+    "more": "Xem thêm",
+    "empty": "Không thể tải thông tin báo cáo."
+  },
+  "guide": {
+    "title": "Hướng dẫn",
+    "empty": "Không thể tải hướng dẫn."
+  },
+  "done": {
+    "title": "Báo cáo đã được gửi.",
+    "body": "Chúng tôi sẽ xem xét và xử lý nếu cần."
+  },
+  "alert": {
+    "loadFail": "Không thể tải",
+    "info": "Thông báo",
+    "linkOpenFail": "Không thể mở liên kết.",
+    "submitFail": "Gửi thất bại"
+  }
+}

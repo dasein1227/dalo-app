@@ -1,0 +1,27 @@
+{
+  "splash_loading": "Menyiapkan…",
+  "offline": "Anda sedang offline. Periksa jaringan Anda.",
+  "not_found": "Halaman tidak ditemukan.",
+  "notFound": {
+    "header": "Tidak Ditemukan",
+    "title": "Halaman tidak ditemukan",
+    "desc": "Layar yang diminta tidak ditemukan. Periksa jalur atau informasinya.",
+    "retry": "Coba Lagi",
+    "home": "Ke Beranda",
+    "homeShort": "Beranda",
+    "previous": "Kembali",
+    "quick": {
+      "friends": "Teman",
+      "settings": "Pengaturan"
+    }
+  },
+  "offlineScreen": {
+    "header": "Offline",
+    "title": "Anda sedang offline",
+    "desc": "Periksa koneksi jaringan Anda.\nWi-Fi atau data seluler mungkin dimatikan.",
+    "retry": "Coba Lagi",
+    "check": "Periksa Koneksi",
+    "openSettings": "Buka Pengaturan",
+    "home": "Beranda"
+  }
+}

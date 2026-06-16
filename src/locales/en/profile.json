@@ -1,0 +1,133 @@
+{
+  "view_title": "Profile",
+  "edit_title": "Edit profile",
+  "nickname": "Nickname",
+  "handle": "Handle",
+  "status_message": "Status",
+  "public_default": "Default public profile",
+  "save_done": "Saved.",
+  "no_name": "No name",
+  "no_id": "No ID",
+  "follow": "Follow",
+  "following": "Following",
+  "stat_posts": "Posts",
+  "stat_followers": "Followers",
+  "stat_following": "Following",
+  "empty_posts": "No posts",
+  "empty_posts_tab": "No posts",
+  "swipe": {
+    "new_post": "＋ New post",
+    "chat_1on1": "1:1 chat",
+    "chat_me": "Saved Messages",
+    "call": "Call",
+    "more": "More →"
+  },
+  "alert": {
+    "setting_soon": "Coming soon.",
+    "call_friend_only_title": "Call unavailable",
+    "call_friend_only_desc": "Available for friends only.",
+    "call_feature_soon": "Coming soon.",
+    "unfollow_title": "Unfollow",
+    "unfollow_desc": "Unfollow?",
+    "keep": "Keep",
+    "follow_fail": "Couldn’t follow.",
+    "unfollow_fail": "Couldn’t unfollow.",
+    "self_chat_fail": "Couldn’t start chat."
+  },
+  "edit": {
+    "error_permission": "You can edit only your own profile.",
+    "revert_title": "Discard changes",
+    "revert_msg": "Discard changes?",
+    "revert_action": "Discard",
+    "revert": "Discard changes",
+    "error_add_tab": "Couldn’t add tab.",
+    "confirm_delete_tab": "Delete “{{name}}” tab?",
+    "error_save": "Couldn’t save.",
+    "change_cover": "Change cover",
+    "status_placeholder": "Enter status",
+    "section_theme": "Style",
+    "theme_color": "Theme color",
+    "font_color": "Font color",
+    "statusbar": "Status bar",
+    "text_white": "White text",
+    "text_black": "Black text",
+    "section_tabs": "Tabs",
+    "tab_all": "All",
+    "tab_input_placeholder": "+ New tab",
+    "hue": "Hue",
+    "brightness": "Brightness",
+    "apply": "Apply",
+    "setting_tab": "“{{name}}” settings",
+    "move_up": "Move up",
+    "move_down": "Move down",
+    "visibility": "Visibility",
+    "current_vis": "Current: {{val}}",
+    "vis_public": "Public",
+    "vis_private": "Only me",
+    "vis_custom": "Selected",
+    "vis_friends": "Friends",
+    "vis_followers": "Followers",
+    "picker_avatar": "Choose profile photo",
+    "picker_cover": "Choose cover photo"
+  },
+  "menu": {
+    "settings": "Settings",
+    "message": "Message",
+    "unfollow": "Unfollow",
+    "hide": "Hide",
+    "hide_confirm": "Hide this user?",
+    "block": "Block",
+    "block_confirm": "Block this user?",
+    "report": "Report"
+  },
+  "followList": {
+    "title": "Follow",
+    "searchPlaceholder": "Search nickname or ID",
+    "searchHint": "Enter search term",
+    "searchEmpty": "No results",
+    "retry": "Reload",
+    "unfollowTitle": "Unfollow",
+    "unfollowMessage": "Unfollow {{name}}?",
+    "unfollowAction": "Unfollow",
+    "tab": {
+      "following": "Following",
+      "followers": "Followers",
+      "requests": "Requests"
+    },
+    "list": {
+      "following": "Following",
+      "followers": "Followers",
+      "requests": "Follow requests"
+    },
+    "section": {
+      "outgoing": "Sent requests",
+      "incoming": "Received requests"
+    },
+    "badge": {
+      "follower": "Follower",
+      "pending": "Pending"
+    },
+    "action": {
+      "accept": "Accept",
+      "decline": "Decline"
+    },
+    "empty": {
+      "followingTitle": "No following",
+      "followersTitle": "No followers",
+      "requestsTitle": "No requests",
+      "followingDesc": "Follow people you’re interested in.",
+      "followersDesc": "Share your profile.",
+      "requestsDesc": "Send or accept requests."
+    },
+    "error": {
+      "loadFollowing": "Couldn’t load following.",
+      "loadFollowers": "Couldn’t load followers.",
+      "loadRequests": "Couldn’t load requests.",
+      "loadList": "Couldn’t load list.",
+      "unfollow": "Couldn’t unfollow.",
+      "cancelRequest": "Couldn’t cancel request.",
+      "acceptRequest": "Couldn’t accept request.",
+      "rejectRequest": "Couldn’t decline request."
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "channel": {
+    "social_name": "اجتماعي",
+    "social_description": "إشعارات الأصدقاء والنشاط الاجتماعي",
+    "chat_name": "الدردشة",
+    "chat_description": "رسائل الدردشة وإشعارات المحادثات"
+  },
+  "summary": {
+    "social_title": "CO·ONN",
+    "social_body": "إشعار اجتماعي جديد",
+    "chat_title": "CO·ONN",
+    "chat_body": "إشعار دردشة جديد"
+  },
+  "actions": {
+    "read": "مقروء",
+    "reply": "رد"
+  },
+  "common": {
+    "someone": "شخص ما",
+    "new_notification": "إشعار جديد",
+    "new_notification_body": "وصلك إشعار جديد.",
+    "new_message": "رسالة جديدة"
+  },
+  "friend": {
+    "request_received_title": "طلب صداقة",
+    "request_received_subtitle": "{{actor}}",
+    "request_received_body": "أرسل {{actor}} طلب صداقة"
+  },
+  "chat": {
+    "dm_title": "{{sender}}",
+    "dm_subtitle": "",
+    "dm_body_text": "{{message}}",
+    "dm_body_image": "أرسل صورة",
+    "dm_body_video": "أرسل فيديو",
+    "dm_body_audio": "أرسل رسالة صوتية",
+    "dm_body_file": "أرسل ملفًا",
+    "dm_body_map": "شارك موقعًا",
+    "group_title": "{{room}}",
+    "group_subtitle": "{{sender}}",
+    "group_body_text": "{{sender}}: {{message}}",
+    "group_body_image": "أرسل {{sender}} صورة",
+    "group_body_video": "أرسل {{sender}} فيديو",
+    "group_body_audio": "أرسل {{sender}} رسالة صوتية",
+    "group_body_file": "أرسل {{sender}} ملفًا",
+    "group_body_map": "شارك {{sender}} موقعًا",
+    "reply_placeholder": "اكتب ردًا…"
+  }
+}

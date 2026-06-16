@@ -1,0 +1,525 @@
+{
+  "home_title": "Pengaturan",
+  "title": "Pengaturan",
+  "version": "Versi aplikasi",
+  "open": "Buka",
+  "change": "Ubah",
+  "run": "Jalankan",
+  "logout": "Keluar",
+  "logoutDone": "Anda telah keluar.",
+  "sections": {
+    "communication": "Komunikasi",
+    "general": "Umum",
+    "advanced": "Lanjutan",
+    "service_info": "Layanan",
+    "account": "Akun",
+    "notification": "Notifikasi",
+    "display_language": "Tampilan & bahasa",
+    "location": "Lokasi",
+    "data": "Data",
+    "support": "Bantuan",
+    "info": "Info"
+  },
+  "menus": {
+    "call": "Panggilan",
+    "etc": "Lainnya",
+    "app_manage": "Kelola aplikasi",
+    "version": "Versi aplikasi"
+  },
+  "alerts": {
+    "logout_title": "Keluar",
+    "logout_desc": "Pengaturan Keluar?",
+    "language_change_error": "Bahasa tidak dapat diubah.",
+    "logout_fail": "Tidak dapat keluar."
+  },
+  "search": {
+    "title": "Cari pengaturan",
+    "soon": "Pencarian pengaturan segera hadir."
+  },
+  "me": {
+    "noName": "Tanpa nama",
+    "profileManage": "Kelola profil",
+    "loadingAccount": "Memeriksa akun"
+  },
+  "account": {
+    "title": "Akun",
+    "editProfile": "Edit profil",
+    "profilePublicDefault": "Tampilkan profil saya secara default di beacon",
+    "profilePublicHint": "Digunakan sebagai default saat membuat beacon. Dapat diubah per beacon.",
+    "header_title": "Akun",
+    "section": {
+      "contact": "Kontak",
+      "identity": "Identitas",
+      "visibility": "Visibilitas",
+      "profile": "Profil",
+      "account_management": "Akun"
+    },
+    "field": {
+      "phone": "Telepon",
+      "email": "Email",
+      "id_label": "CO·ONN ID",
+      "friend_code": "Kode teman",
+      "show_nickname": "Tampilkan nama panggilan",
+      "profile_photo": "Foto profil",
+      "nickname": "Nama panggilan"
+    },
+    "value": {
+      "not_registered": "Belum terdaftar"
+    },
+    "badge": {
+      "verified": "Terverifikasi",
+      "verify": "Verifikasi"
+    },
+    "placeholder": {
+      "id": "ID",
+      "friend_code": "Kode teman",
+      "nickname": "Nama panggilan"
+    },
+    "help": {
+      "id_desc": "Akun",
+      "show_nickname_desc": "Tampilkan nama panggilan ke teman."
+    },
+    "error": {
+      "check_duplication": "Akun",
+      "id_taken": "Sudah digunakan.",
+      "code_taken": "Sudah digunakan.",
+      "check_failed": "Akun Gagal tidak dapat diproses.",
+      "invalid_id": "2–30 huruf kecil, angka, atau garis bawah",
+      "invalid_friend_code": "2–30 huruf kecil, angka, atau garis bawah",
+      "duplicate_exists": "Nilai ini sudah digunakan.",
+      "duplicate_check_required": "Wajib",
+      "duplicate_check_retry": "Selesaikan lagi cek duplikasi.",
+      "duplicate_value_retry": "Akun",
+      "nickname_required": "Masukkan nama panggilan.",
+      "nickname_too_long": "Nama panggilan maksimal 30 karakter."
+    },
+    "alert": {
+      "check_required": "Perlu pemeriksaan",
+      "save_success_title": "Tersimpan",
+      "save_success_desc": "Pengaturan akun disimpan.",
+      "save_fail_title": "Gagal menyimpan"
+    },
+    "action": {
+      "save": "Pengaturan Akun Simpan",
+      "check_duplicate_short": "Periksa",
+      "checking_short": "Pengaturan Akun",
+      "change_photo": "Ubah foto",
+      "remove_photo": "Hapus foto"
+    },
+    "status": {
+      "available_short": "Tersedia",
+      "duplicate_short": "Pengaturan Akun"
+    },
+    "picker": {
+      "profile_photo": "Pilih foto"
+    },
+    "withdrawal": {
+      "entryTitle": "Hapus akun",
+      "entryDescription": "Hapus akun dan data pribadi Anda.",
+      "noticeTitle": "Tinjau hal berikut sebelum melanjutkan.",
+      "noticeMessage": "Profil, teman, dan pengaturan Anda akan dihapus.",
+      "noticeItemProfile": "Sebagian riwayat chat dapat tetap ada untuk peserta lain sebagai pengguna yang dihapus.",
+      "noticeItemChat": "Anda tidak dapat mendaftar lagi dengan akun yang sama selama 7 hari.",
+      "noticeItemRejoin": "CO·ONN ID dan kode teman tidak dapat digunakan kembali selama 30 hari.",
+      "noticeItemIdentifier": "Saya telah meninjau semuanya dan ingin melanjutkan.",
+      "noticeAcknowledge": "Berikutnya",
+      "continue": "Batal",
+      "cancel": "Beri tahu alasan Anda pergi",
+      "surveyTitle": "Masukan Anda membantu kami meningkatkan CO·ONN.",
+      "surveyMessage": "Lanjutkan",
+      "surveyAction": "Masukkan alasan.",
+      "otherPlaceholder": "Pilih alasan.",
+      "reasonRequired": "Masukkan alasan.",
+      "otherRequired": "Memuat alasan.",
+      "reasonsLoading": "Tidak dapat memuat alasan.",
+      "reasonsEmpty": "Konfirmasi akhir",
+      "confirmTitle": "Akses akun akan segera dihentikan.",
+      "confirmMessage": "Ketik “{{keyword}}” di bawah.",
+      "confirmInstruction": "HAPUS",
+      "confirmKeyword": "HAPUS",
+      "confirmPlaceholder": "Hapus",
+      "confirmAction": "Permintaan penghapusan dikirim.",
+      "completed": "Tidak dapat menghapus akun."
+    }
+  },
+  "privacy": {
+    "title": "Privasi",
+    "header_title": "Privasi",
+    "section": {
+      "profile": "Profil",
+      "friend_req": "Permintaan teman",
+      "activity": "Aktivitas"
+    },
+    "field": {
+      "public_profile": "Profil publik",
+      "allow_search": "Izinkan pencarian",
+      "show_nickname": "Tampilkan nama panggilan",
+      "show_location": "Tampilkan lokasi",
+      "last_active": "Tampilkan terakhir aktif"
+    },
+    "help": {
+      "public_profile": "Pengguna lain dapat melihat profil Anda.",
+      "allow_search": "Cari",
+      "show_nickname": "Tampilkan nama panggilan ke teman.",
+      "show_location": "Tampilkan lokasi aktivitas Anda.",
+      "last_active": "Tampilkan waktu terakhir aktif."
+    },
+    "option": {
+      "all": "Pengaturan Privasi Semua",
+      "all_desc": "Siapa pun dapat mengirim permintaan",
+      "friends": "Teman dari teman",
+      "friends_desc": "Pengaturan Privasi Teman",
+      "none": "Tidak ada pengaturan privasi tidak ada.",
+      "none_desc": "Blokir permintaan teman"
+    },
+    "alert": {
+      "save_success": "Disimpan.",
+      "save_fail": "Privasi Simpan Gagal tidak dapat diproses.",
+      "load_fail": "Tidak dapat memuat.",
+      "login_required": "Login diperlukan."
+    }
+  },
+  "radius": {
+    "title": "Jangkauan sekitar",
+    "current": "Saat ini",
+    "desc": "Pengaturan",
+    "save_error": "Jangkauan sekitar tidak dapat disimpan."
+  },
+  "friends": {
+    "title": "Teman",
+    "manage": "Kelola teman",
+    "caption": "Blokir, rekomendasi, visibilitas",
+    "soon": "Segera hadir."
+  },
+  "notification": {
+    "title": "Notifikasi",
+    "manage": "Notifikasi",
+    "caption": "Push, notifikasi app, suara",
+    "soon": "Segera hadir.",
+    "section": {
+      "defaults": "Default",
+      "types": "Jenis",
+      "quiet": "Jam senyap",
+      "push_types": "Jenis push",
+      "in_app": "Notifikasi app"
+    },
+    "field": {
+      "push": "Notifikasi push",
+      "preview": "Pratinjau",
+      "sound": "Suara",
+      "vibrate": "Getar",
+      "chat": "Chat",
+      "system": "Info & sistem",
+      "marketing": "Marketing"
+    },
+    "help": {
+      "push": "Semua notifikasi push",
+      "preview": "Tampilkan isi di layar kunci",
+      "chat_push": "Push pesan chat",
+      "system_push": "Info layanan dan pengumuman penting",
+      "marketing_push": "Event dan promo"
+    },
+    "action": {
+      "save": "Pengaturan Notifikasi Simpan",
+      "open_system": "Pengaturan sistem",
+      "cancel": "Pengaturan Notifikasi Batal",
+      "done": "Selesai"
+    },
+    "time": {
+      "start": "Mulai",
+      "end": "Notifikasi Waktu Selesai",
+      "hour": "j",
+      "minute": "m",
+      "close": "Tutup pemilih waktu",
+      "select": "Pilih {{label}} {{value}}",
+      "start_time": "Waktu mulai",
+      "end_time": "Waktu selesai"
+    },
+    "alert": {
+      "table_missing_title": "Tabel pengaturan tidak ada",
+      "table_missing_message": "Buat user_notification_settings.",
+      "load_fail": "Notifikasi Muat Gagal tidak dapat diproses.",
+      "time_invalid_title": "Periksa waktu",
+      "time_invalid_message": "Pilih waktu lagi.",
+      "save_success": "Disimpan.",
+      "save_fail": "Gagal menyimpan",
+      "open_settings_fail_title": "Tidak dapat membuka",
+      "open_settings_fail_message": "Pengaturan sistem tidak dapat dibuka.",
+      "login_required": "Login diperlukan."
+    },
+    "in_app": {
+      "master": "Notifikasi app",
+      "master_help": "Tampil di kotak notifikasi app",
+      "group": {
+        "social": "Sosial",
+        "chat": "Chat",
+        "beacon": "Beacon",
+        "schedule": "Jadwal",
+        "post": "Postingan"
+      },
+      "follow_created": "Pengikut baru",
+      "follow_created_help": "Saat seseorang mengikuti Anda",
+      "chat_reply": "Balasan",
+      "chat_reply_help": "Saat pesan Anda dibalas",
+      "chat_mention": "Mention",
+      "chat_mention_help": "Saat Anda disebut",
+      "beacon_join_request": "Permintaan gabung",
+      "beacon_join_request_help": "Saat ada permintaan gabung beacon",
+      "beacon_join_approved": "Gabung disetujui",
+      "beacon_join_approved_help": "Saat gabung beacon Anda disetujui",
+      "beacon_friend_created": "Beacon teman",
+      "beacon_friend_created_help": "Saat teman membuat beacon",
+      "schedule_created": "Jadwal baru",
+      "schedule_created_help": "Saat jadwal ditambahkan di room yang diikuti",
+      "schedule_updated": "Jadwal berubah",
+      "schedule_updated_help": "Saat jadwal yang diikuti berubah",
+      "schedule_cancelled": "Jadwal batal",
+      "schedule_cancelled_help": "Saat jadwal yang diikuti dibatalkan",
+      "post_like": "Suka",
+      "post_like_help": "Saat postingan Anda mendapat suka",
+      "post_comment": "Komentar",
+      "post_comment_help": "Saat postingan Anda dikomentari",
+      "post_reply": "Balasan",
+      "post_reply_help": "Saat komentar Anda dibalas",
+      "post_mention": "Mention postingan",
+      "post_mention_help": "Saat Anda disebut di postingan atau komentar"
+    }
+  },
+  "display": {
+    "title": "Tampilan & bahasa"
+  },
+  "language": {
+    "title": "Bahasa",
+    "select": "Pilih pengaturan bahasa pilih.",
+    "inUse": "Bahasa"
+  },
+  "theme": {
+    "title": "Tema",
+    "caption": "Terang/Gelap",
+    "soon": "Segera hadir.",
+    "header_title": "Tema",
+    "section_style": "Mode",
+    "mode": {
+      "system": "Sistem",
+      "system_desc": "Mengikuti pengaturan perangkat",
+      "light": "Terang",
+      "light_desc": "Tampilan terang",
+      "dark": "Gelap",
+      "dark_desc": "Tampilan gelap"
+    }
+  },
+  "chat": {
+    "title": "Chat"
+  },
+  "translate": {
+    "autoDefault": "Terjemahkan pesan otomatis",
+    "autoDefaultHint": "Digunakan sebagai default untuk chat baru.",
+    "showOriginal": "Tampilkan asli bersama terjemahan",
+    "showOriginalHint": "Tampilkan Asli"
+  },
+  "storage": {
+    "title": "Data & penyimpanan",
+    "clearCache": "Bersihkan cache",
+    "clearCacheHint": "Hapus file sementara",
+    "soon": "Segera hadir.",
+    "section": {
+      "ratio": "Rasio data",
+      "rooms": "Pengaturan Penyimpanan"
+    },
+    "summary": {
+      "total_media": "Total media",
+      "saved_count": "{{count}} tersimpan"
+    },
+    "legend": {
+      "photo": "Foto",
+      "video": "Video",
+      "audio": "Penyimpanan Audio",
+      "file": "File",
+      "other": "Lainnya"
+    },
+    "action": {
+      "delete_all": "Hapus semua",
+      "delete_all_with_size": "{{size}} Semua",
+      "delete_room": "Hapus",
+      "scroll_top": "Penyimpanan"
+    },
+    "empty": {
+      "title": "Tidak ada media tersimpan",
+      "desc": "Pengaturan Penyimpanan"
+    },
+    "alert": {
+      "load_fail": "Tidak dapat memuat.",
+      "delete_fail": "Penyimpanan Hapus Gagal tidak dapat diproses.",
+      "delete_all_title": "Hapus semua media",
+      "delete_all_message": "Penyimpanan Hapus Semua",
+      "delete_room_title": "{{room}} Penyimpanan Hapus Ruang",
+      "delete_room_message": "Penyimpanan Hapus Ruang",
+      "delete_all_success": "Dihapus.",
+      "delete_room_success": "Data {{room}} dihapus."
+    },
+    "room": {
+      "fallback_title": "Ruang chat {{id}}",
+      "delete_accessibility": "Hapus data {{room}}"
+    }
+  },
+  "support": {
+    "title": "Bantuan",
+    "cs": "Pengaturan Bantuan",
+    "notice": {
+      "title": "Pengumuman",
+      "eyebrow": "NOTICE",
+      "sectionTitle": "Pengumuman {{category}}",
+      "markAll": "Tandai semua dibaca",
+      "markAllDone": "Ditandai dibaca.",
+      "loadFail": "Pengumuman Muat Gagal tidak dapat diproses.",
+      "readFail": "Tidak dapat ditandai dibaca.",
+      "markAllFail": "Tidak dapat ditandai dibaca.",
+      "emptyTitle": "Tidak ada pengumuman",
+      "emptyDesc": "Pengaturan Bantuan Pengumuman",
+      "category": {
+        "normal": "Umum",
+        "important": "Penting",
+        "legal": "Legal",
+        "security": "Keamanan"
+      }
+    },
+    "guide": "Panduan",
+    "soon": "Segera hadir.",
+    "loading": "Memuat…",
+    "action": {
+      "ok": "OK"
+    },
+    "alert": {
+      "notice": "Pengumuman",
+      "error": "Error"
+    },
+    "center": {
+      "title": "Pengaturan Bantuan Pusat",
+      "hero": "Ada yang bisa kami bantu?",
+      "searchPlaceholder": "Cari",
+      "faq": "FAQ",
+      "categories": "Topik bantuan",
+      "contactTitle": "Butuh bantuan?",
+      "emailDesc": "Kami akan membalas via email.",
+      "aiTitle": "Bantuan Pusat",
+      "aiDesc": "Tersedia 24/7",
+      "policies": "Syarat & kebijakan"
+    },
+    "contact": {
+      "title": "Pengaturan Bantuan Kontak",
+      "guide": "Tinggalkan pesan Anda.\nKami akan membalas via email.",
+      "category": "Kategori",
+      "categoryLoading": "Memuat…",
+      "categoryPlaceholder": "Pilih bantuan kontak kategori.",
+      "categorySelect": "Kategori",
+      "email": "Email balasan",
+      "emailPlaceholder": "Alamat email",
+      "content": "Pesan",
+      "contentPlaceholder": "Masukkan pesan Anda.",
+      "submit": "Bantuan Kontak",
+      "required": "Masukkan email dan pesan Anda.",
+      "categoryRequired": "Pilih kontak kategori wajib.",
+      "loadFail": "Layar tidak dapat dimuat.",
+      "submitFail": "Tidak dapat mengirim.",
+      "successTitle": "Terkirim",
+      "successDesc": "Bantuan Kontak Berhasil"
+    },
+    "list": {
+      "all": "Semua",
+      "common": "Umum",
+      "result": "Bantuan Daftar Hasil",
+      "empty": "Tidak ada hasil."
+    },
+    "policy": {
+      "title": "Syarat & kebijakan",
+      "effectiveDate": "Tanggal berlaku",
+      "summary": "Ringkasan",
+      "download": "Unduh",
+      "downloadStart": "Kebijakan Unduh Mulai",
+      "empty": "Konten tidak dapat dimuat.",
+      "versions": "Versi sebelumnya",
+      "behaviorInfoTitle": "Kebijakan Info",
+      "behaviorInfoDesc": "Kami hanya mengumpulkan data minimum untuk meningkatkan layanan.",
+      "userControlTitle": "Pilihan pengguna",
+      "userControlDesc": "Anda dapat mengubah pengaturan iklan personal di aplikasi.",
+      "version": "Versi",
+      "language": "Bahasa",
+      "loadFail": "Kebijakan Muat Gagal tidak dapat diproses.",
+      "summaryEmpty": "Tidak ada bantuan kebijakan ringkasan.",
+      "downloadCancelledTitle": "Unduhan dibatalkan",
+      "downloadCancelled": "Lokasi simpan belum dipilih.",
+      "downloadSuccessTitle": "Kebijakan Unduh Berhasil",
+      "downloadSuccess": "Dokumen kebijakan disimpan.",
+      "downloadFailTitle": "Unduhan gagal",
+      "downloadFail": "Dokumen kebijakan tidak dapat disimpan.",
+      "privacyTitle": "Bantuan Kebijakan Privasi",
+      "termsTitle": "Syarat Layanan CO·ONN",
+      "marketingTitle": "Bantuan Kebijakan"
+    },
+    "company": {
+      "ceo": "CEO",
+      "regNum": "Perusahaan",
+      "businessNum": "Perusahaan Bisnis",
+      "address": "Alamat",
+      "cs": "Pusat bantuan",
+      "host": "Penyedia hosting"
+    }
+  },
+  "labs": {
+    "title": "Labs",
+    "features": "Pengaturan",
+    "caption": "Coba fitur baru lebih dulu.",
+    "soon": "Pengaturan Segera segera hadir.",
+    "subtitle": "Coba fitur baru lebih dulu.",
+    "empty_title": "Tidak ada pengaturan.",
+    "empty_desc": "Pengaturan",
+    "note": "Pengaturan"
+  },
+  "admin": {
+    "title": "Admin",
+    "console": "Konsol admin"
+  },
+  "open_profiles": {
+    "title": "Open profile",
+    "subtitle": "Open Profil Subjudul",
+    "header_title": "Open profile",
+    "fallback_name": "Open profile",
+    "default_badge": "Default",
+    "status_empty": "Tidak ada status",
+    "room": {
+      "fallback_title": "Open chat",
+      "used_count": "Dipakai di {{count}} open chat",
+      "empty": "Tidak ada open profil ruang."
+    },
+    "empty": {
+      "title": "Tidak ada open profile",
+      "desc": "Pengaturan Open Profil"
+    },
+    "form": {
+      "create_title": "Buat open profile",
+      "edit_title": "Edit open profile",
+      "nickname": "Nama panggilan",
+      "status_message": "Status",
+      "status_placeholder": "Open Profil",
+      "default_profile": "Default Profil",
+      "delete": "Hapus open profile",
+      "pick_avatar": "Pilih item."
+    },
+    "alert": {
+      "load_fail": "Open profile tidak dapat dimuat.",
+      "nickname_required": "Masukkan nama panggilan.",
+      "create_fail": "Gagal membuat",
+      "save_fail": "Gagal menyimpan",
+      "delete_title": "Hapus open profile?",
+      "delete_used_desc": "Profil yang sudah dipakai di open chat tetap ada.",
+      "delete_desc": "Open Profil Hapus",
+      "delete_fail": "Gagal menghapus"
+    },
+    "toast": {
+      "created": "Open profile dibuat.",
+      "saved": "Disimpan.",
+      "deleted": "Dihapus.",
+      "photo_applied": "Foto diterapkan."
+    }
+  }
+}

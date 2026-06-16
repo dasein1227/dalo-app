@@ -1,0 +1,409 @@
+{
+  "create_title": "Crea Beacon",
+  "edit_title": "Modifica Beacon",
+  "detail_title": "Info Beacon",
+  "members_title": "Gestione Beacon",
+  "my_rooms_title": "I miei Beacon",
+  "join": "Partecipa",
+  "enter": "Entra",
+  "owner_tools": "Strumenti host",
+  "visibility": "Visibilità",
+  "status_message": "Messaggio di stato",
+  "public_profile": "Profilo pubblico",
+  "current_members": "Partecipanti attuali",
+  "age_range": "Fascia d’età",
+  "memo": "Memo",
+  "time_left": "Tempo rimasto",
+  "common": {
+    "beacon": "Beacon",
+    "noName": "Senza nome",
+    "anonymous": "Utente anonimo",
+    "loading": "Caricamento…",
+    "done": "Fine",
+    "confirm": "Conferma",
+    "cancel": "Annulla",
+    "save": "Salva",
+    "submit": "Invia",
+    "approve": "Approva",
+    "reject": "Rifiuta",
+    "block": "Blocca",
+    "kick": "Espelli",
+    "none": "Nessuno",
+    "unlimited": "Nessun limite"
+  },
+  "error": {
+    "invalidId": "ID non valido.",
+    "invalidAccess": "Accesso non valido.",
+    "loginRequired": "Accesso richiesto.",
+    "locationPermission": "Serve autorizzazione posizione.",
+    "locationUnavailable": "Impossibile verificare la posizione attuale.",
+    "locationLoadFail": "Impossibile caricare la posizione.",
+    "notFound": "Beacon non trovato.",
+    "detailNotFound": "Informazioni Beacon non trovate.",
+    "detailLoadFail": "Impossibile caricare il Beacon.",
+    "operationFail": "Operazione non completata."
+  },
+  "time": {
+    "am": "AM",
+    "pm": "PM",
+    "monthDay": "{{month}}/{{day}}",
+    "minute": "{{count}} min",
+    "hour": "{{count}} h",
+    "hourMinute": "{{hour}} h {{minute}} min",
+    "remainEnded": "Terminato",
+    "remainMinute": "{{count}} min rimasti",
+    "remainHour": "{{count}} h rimaste",
+    "remainHourMinute": "{{hour}} h {{minute}} min rimasti",
+    "justNow": "Adesso",
+    "agoMinute": "{{count}} min fa",
+    "agoHour": "{{count}} h fa",
+    "agoDay": "{{count}} g fa"
+  },
+  "unit": {
+    "people": "pers.",
+    "age": "anni",
+    "count": "",
+    "times": "volte",
+    "peopleCount": "{{count}} persone",
+    "ageCount": "{{count}} anni",
+    "retryLeft": "{{count}} rimasti"
+  },
+  "tabs": {
+    "dm": "Privato",
+    "group": "Gruppo",
+    "open": "Open",
+    "beacon": "Beacon"
+  },
+  "visibilityLabel": {
+    "public": "Pubblico",
+    "friends": "Amici",
+    "labels": "Gruppi",
+    "custom": "Personalizzato",
+    "publicCompact": "Pubblico",
+    "friendsCompact": "Amici",
+    "labelsCompact": "Gruppi",
+    "customCompact": "Personalizzato",
+    "publicExcludeFriends": "Escludi conoscenti"
+  },
+  "visibilityDesc": {
+    "public": "Visibile a tutti. Ingresso con approvazione predefinito.",
+    "friends": "Visibile solo agli amici. Ingresso libero predefinito.",
+    "labels": "Visibile solo ai gruppi selezionati. Ingresso libero predefinito.",
+    "custom": "Scegli amici e gruppi. Ingresso libero predefinito."
+  },
+  "gender": {
+    "any": "Qualsiasi genere",
+    "male": "Uomo",
+    "female": "Donna"
+  },
+  "myRooms": {
+    "headerTitle": "Chat",
+    "status": {
+      "pending": "In attesa",
+      "joined": "{{visibility}} · Partecipi",
+      "owner": "{{visibility}} · {{minutes}} min rimasti",
+      "host": "Host",
+      "waiting": "In attesa",
+      "member": "Partecipando"
+    },
+    "title": {
+      "mine": "I miei Beacon",
+      "fallback": "Beacon"
+    },
+    "empty": {
+      "title": "Nessuna conversazione.",
+      "beaconDesc": "Qui appaiono i tuoi Beacon e quelli a cui partecipi."
+    },
+    "error": {
+      "loadFail": "Impossibile caricare la lista."
+    },
+    "alert": {
+      "routeCreate": "Controlla la schermata Crea Beacon.",
+      "routeChatCreate": "La nuova chat è in preparazione.",
+      "routeBeaconSearch": "Controlla la schermata Cerca Beacon.",
+      "routeSearch": "Controlla la schermata di ricerca."
+    }
+  },
+  "form": {
+    "titlePlaceholder": "Scopo del Beacon",
+    "descPlaceholder": "Inserisci descrizione o regole",
+    "durationMin": "30 min",
+    "durationMax": "4 ore",
+    "minuteSuffix": "min",
+    "locationSelectTitle": "Posizione per amici",
+    "locationSelectHelper": "Entro 200 m dalla posizione attuale",
+    "locationPickFailTitle": "Posizione non selezionabile",
+    "selectedAddress": "Indirizzo selezionato",
+    "locationEmpty": "Nessuna posizione selezionata. Apri la mappa.",
+    "locationShortPlaceholder": "Posizione approssimativa",
+    "locationDetailPlaceholder": "Posizione dettagliata",
+    "conditionsTitle": "Condizioni",
+    "genderTitle": "Genere",
+    "quotaTitle": "Capienza",
+    "quotaDesc": "0 indica nessun limite. Tocca il numero per inserirlo.",
+    "ageLimitTitle": "Limite età",
+    "ageLimitDesc": "Predefinito: ±10 anni dalla tua età.",
+    "ageNoLimit": "Nessun limite",
+    "ageMin": "Età minima",
+    "ageMax": "Età massima",
+    "maleQuota": "Uomo",
+    "femaleQuota": "Donna",
+    "mixQuota": "Qualsiasi genere",
+    "selectGroups": "Gruppi visibili",
+    "selectFriends": "Amici visibili",
+    "friendSearch": "Cerca amici",
+    "emptyGroups": "Nessun gruppo.",
+    "emptyFriends": "Nessun amico.",
+    "protectionOff": "Nessuna protezione",
+    "protectionOffAlt": "Nessuna protezione",
+    "createButton": "Crea Beacon",
+    "saveButton": "Salva",
+    "durationTitle": "Durata",
+    "durationDesc": "Termina automaticamente dopo il tempo impostato.",
+    "locationProtectionTitle": "Protezione posizione",
+    "locationProtectionDesc": "Mostra la posizione in modo casuale entro il raggio impostato.",
+    "refreshLocation": "Ricontrolla posizione"
+  },
+  "create": {
+    "validation": {
+      "titleRequired": "Inserisci il nome incontro.",
+      "titleMax": "Nome incontro: max 80 caratteri.",
+      "duration": "Durata: 10–240 minuti.",
+      "ageRange": "Controlla la fascia d’età.",
+      "locationRequired": "Controlla la posizione attuale.",
+      "labelsRequired": "Seleziona un gruppo.",
+      "customRequired": "Seleziona amici o gruppi."
+    },
+    "alert": {
+      "labelLoadFailTitle": "Caricamento gruppi non riuscito",
+      "labelLoadFail": "Impossibile caricare i gruppi.",
+      "friendLoadFailTitle": "Caricamento amici non riuscito",
+      "friendLoadFail": "Impossibile caricare gli amici.",
+      "createFailTitle": "Creazione Beacon non riuscita",
+      "createFail": "Si è verificato un errore."
+    }
+  },
+  "edit": {
+    "validation": {
+      "titleRequired": "Inserisci il titolo stanza.",
+      "titleMax": "Titolo stanza: max 80 caratteri.",
+      "duration": "Durata: 10–240 minuti.",
+      "ageRange": "Controlla la fascia d’età.",
+      "labelsRequired": "Seleziona un gruppo.",
+      "customRequired": "Seleziona amici o gruppi."
+    },
+    "toast": {
+      "moved": "Spostato alla posizione attuale.",
+      "moveFail": "Impossibile spostare la posizione.",
+      "saved": "Salvato.",
+      "saveFail": "Si è verificato un errore."
+    }
+  },
+  "detail": {
+    "action": {
+      "ended": "Reclutamento chiuso",
+      "enter_chat": "Entra in chat",
+      "cancel_request": "Annulla richiesta",
+      "join_direct": "Partecipa",
+      "request_retry": "Richiedi di nuovo",
+      "request_join": "Richiedi accesso",
+      "forbidden": "Accesso limitato",
+      "full": "Capienza piena",
+      "closed": "Non disponibile"
+    },
+    "badge": {
+      "pending": "In attesa",
+      "rejected": "Rifiutato",
+      "approval": "Su approvazione",
+      "free": "Ingresso libero"
+    },
+    "empty": {
+      "deleted": "Questo Beacon non esiste.",
+      "back": "Indietro"
+    },
+    "fallbackTitle": "Beacon senza nome",
+    "info": {
+      "status": "Stato",
+      "capacity": "Capienza",
+      "audience": "Pubblico",
+      "retry": "Nuova richiesta"
+    },
+    "location": {
+      "title": "Luogo incontro",
+      "visible": "La posizione dettagliata è disponibile prima di partecipare.",
+      "hidden": "L’indirizzo esatto sarà condiviso in chat dopo l’accesso.",
+      "openMap": "Vedi sulla mappa ›"
+    },
+    "host": {
+      "settings": "Impostazioni Beacon",
+      "settingsDesc": "Modifica titolo, descrizione e visibilità",
+      "members": "Gestisci partecipanti",
+      "membersDesc": "Controlla ed espelli membri",
+      "close": "Chiudi Beacon",
+      "closeDesc": "Chiude il reclutamento e la chat."
+    },
+    "requests": {
+      "title": "Richieste in attesa",
+      "empty": "Nessuna richiesta in attesa.",
+      "messageTitle": "Messaggio richiesta",
+      "messageDesc": "Lascia un messaggio all’host. Facoltativo.",
+      "placeholder": "Es. Sono qui vicino.",
+      "send": "Invia richiesta",
+      "sending": "Invio…",
+      "code": "Codice {{code}}",
+      "temperature": "Temperatura {{temp}}°",
+      "rejectionCount": "Rifiuti precedenti {{count}}"
+    },
+    "alert": {
+      "editRoute": "Controlla la schermata modifica.",
+      "membersRoute": "Controlla la gestione membri.",
+      "loginTitle": "Accesso richiesto",
+      "loginDesc": "Per partecipare devi accedere.",
+      "chatNotFound": "Informazioni chat non trovate.",
+      "cancelTitle": "Annulla richiesta",
+      "cancelDesc": "Annullare la richiesta?",
+      "keep": "Mantieni",
+      "cancelFailTitle": "Annullamento non riuscito",
+      "cancelFail": "Impossibile annullare la richiesta.",
+      "fullTitle": "Capienza piena",
+      "fullDesc": "Capienza raggiunta.",
+      "forbiddenTitle": "Partecipazione limitata",
+      "forbiddenDesc": "Non puoi partecipare a questo Beacon.",
+      "endedTitle": "Reclutamento chiuso",
+      "endedDesc": "Questo Beacon è terminato.",
+      "unavailableTitle": "Avviso",
+      "unavailableDesc": "Al momento non puoi partecipare.",
+      "requestSentTitle": "Richiesta inviata",
+      "requestSentDesc": "Attendi l’approvazione dell’host.",
+      "requestFailTitle": "Invio non riuscito",
+      "requestFail": "Impossibile inviare la richiesta.",
+      "approveFailTitle": "Approvazione non riuscita",
+      "approveFail": "Impossibile approvare il partecipante.",
+      "rejectFailTitle": "Rifiuto non riuscito",
+      "rejectFail": "Impossibile rifiutare la richiesta.",
+      "closeTitle": "Chiudi Beacon",
+      "closeDesc": "Chiudere reclutamento e chat?",
+      "closeAction": "Chiudi",
+      "closeDoneTitle": "Chiuso",
+      "closeDoneDesc": "Beacon chiuso.",
+      "closeFailTitle": "Chiusura non riuscita",
+      "closeFail": "Impossibile chiudere il Beacon."
+    }
+  },
+  "members": {
+    "role": {
+      "host": "Host",
+      "mod": "Moderatore",
+      "member": "Partecipante"
+    },
+    "tab": {
+      "members": "Partecipante",
+      "requests": "Richieste {{count}}"
+    },
+    "meta": {
+      "joined": "Partecipato {{time}}",
+      "request": "Richiesta {{time}} · rifiuti precedenti {{count}}"
+    },
+    "hero": {
+      "titleFallback": "Beacon",
+      "approval": "Su approvazione",
+      "free": "Ingresso libero"
+    },
+    "empty": {
+      "members": "Ancora nessun partecipante.",
+      "requests": "Nessuna richiesta in attesa."
+    },
+    "alert": {
+      "loadFailTitle": "Caricamento non riuscito",
+      "loadFail": "Impossibile caricare le informazioni.",
+      "kickTitle": "Espelli partecipante",
+      "kickDesc": "Espellere {{name}}?",
+      "kickAction": "Espelli",
+      "alreadyHandled": "Già gestito o impossibile espellere.",
+      "kickFailTitle": "Non riuscito",
+      "kickFail": "Impossibile espellere il partecipante.",
+      "blockTitle": "Blocca partecipante",
+      "blockDesc": "Bloccare ed escludere {{name}}?\nNon vedrai più gli utenti bloccati.",
+      "blockFail": "Impossibile bloccare il partecipante.",
+      "approveTitle": "Approva partecipazione",
+      "approveDesc": "Approvare la partecipazione di {{name}}?",
+      "approveFailTitle": "Approvazione non riuscita",
+      "approveFail": "Impossibile approvare.",
+      "rejectTitle": "Rifiuta partecipazione",
+      "rejectDesc": "Rifiutare la richiesta di {{name}}?",
+      "rejectFailTitle": "Rifiuto non riuscito",
+      "rejectFail": "Impossibile rifiutare."
+    }
+  },
+  "main": {
+    "loadingMap": "Caricamento mappa…",
+    "listButton": "Lista",
+    "emptyRadius": "Nessun Beacon da mostrare.",
+    "card": {
+      "noTitle": "Senza titolo",
+      "meta": "{{distance}} m · raggio {{radius}} m · {{entry}}",
+      "endsAfterMinute": "Termina tra {{count}} min",
+      "endingSoon": "Termina a breve",
+      "always": "Sempre"
+    },
+    "toast": {
+      "movedHere": "Posizione aggiornata."
+    },
+    "error": {
+      "loadFail": "Impossibile caricare i Beacon vicini.",
+      "locationUnavailable": "Impossibile verificare la posizione.",
+      "noActiveBeacon": "Nessun Beacon attivo.",
+      "moveFail": "Impossibile aggiornare la posizione."
+    },
+    "accessibility": {
+      "detail": "Dettagli Beacon",
+      "create": "Crea nuovo Beacon"
+    }
+  },
+  "search": {
+    "title": "Cerca",
+    "placeholder": "Cerca un incontro",
+    "distance": "Distanza",
+    "target": "Pubblico",
+    "age": "Età",
+    "quick": {
+      "friendsOnly": "Solo amici",
+      "public": "Pubblico",
+      "tenMin": "10 min",
+      "twenties": "20 anni"
+    },
+    "visibility": {
+      "title": "Visibilità",
+      "any": "Tutto",
+      "public": "Pubblico",
+      "publicFiltered": "Non disponibile",
+      "friends": "Amici",
+      "labels": "Gruppo",
+      "custom": "Specifico"
+    },
+    "gender": {
+      "title": "Genere",
+      "any": "Tutto",
+      "male": "Uomo",
+      "female": "Donna",
+      "other": "Altro"
+    },
+    "distancePreset": {
+      "fiveMin": "Non disponibile",
+      "tenMin": "10 min",
+      "twentyMin": "Non disponibile",
+      "near": "Vicino"
+    },
+    "agePreset": {
+      "all": "Tutto",
+      "twenties": "20 anni",
+      "thirties": "30 anni",
+      "forties": "40 anni",
+      "fiftyPlus": "50+"
+    },
+    "action": {
+      "reset": "Reimposta",
+      "apply": "Applica"
+    }
+  }
+}

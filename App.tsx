@@ -1,82 +1,109 @@
-// App.tsx
 import 'react-native-gesture-handler';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LogBox } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
-
-import { SystemBars } from 'react-native-edge-to-edge';
+import * as SplashScreen from 'expo-splash-screen';
+import * as Font from 'expo-font';
+import Constants from 'expo-constants';
+import Mapbox from '@rnmapbox/maps';
 
 import RootNavigator from '@/navigation/RootNavigator';
-import { supabase } from '@/lib/supabase';
+import PushTokenBootstrap from '@/lib/push/PushTokenBootstrap';
+import PushNotificationRuntime from '@/lib/push/PushNotificationRuntime';
 import '@/lib/i18n';
-
-// ✅ Mapbox
-import Mapbox from '@rnmapbox/maps';
-import Constants from 'expo-constants';
+import { LocationProvider } from '@/context/LocationContext';
+import { ThemeProvider } from '@/theme/ThemeProvider';
+import { syncChatRooms } from '@/lib/chatSync/roomSync';
+import { useGlobalLifecycleSync } from '@/hooks/useGlobalLifecycleSync';
+import { SecureRuntimeBootstrap } from '@/lib/chatSecurity/secureRuntimeStore';
 
 const __EXTRA__ = (Constants.expoConfig?.extra ?? {}) as Record<string, any>;
-const MAPBOX_TOKEN_RAW = __EXTRA__.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN;
-const MAPBOX_ACCESS_TOKEN =
-  typeof MAPBOX_TOKEN_RAW === 'string' && MAPBOX_TOKEN_RAW.trim()
-    ? MAPBOX_TOKEN_RAW.trim()
-    : null;
+const tokenFromEnv = process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN;
+const tokenFromExtra = __EXTRA__.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN;
+const MAPBOX_ACCESS_TOKEN = (tokenFromEnv || tokenFromExtra || '').trim();
 
-// ✅ Mapbox token set (module scope에서 1회)
 if (MAPBOX_ACCESS_TOKEN) {
-  try {
-    Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
-
-    // 상용 앱 기준: 텔레메트리는 원하면 끌 수 있음(선택).
-    // Mapbox.setTelemetryEnabled(false);
-  } catch (e) {
-    // 초기화 실패는 앱 크래시보다 경고가 낫다
-    console.warn('[mapbox] setAccessToken failed', e);
-  }
+  Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 } else {
-  console.warn('[mapbox] missing EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN in expo.extra');
+  console.error('[Mapbox] Access Token이 없습니다.');
 }
 
 if (__DEV__) {
   LogBox.ignoreLogs(['Expected static flag was missing']);
-  if (!(global as any).__SILENCE_STATIC_FLAG_ONCE__) {
-    (global as any).__SILENCE_STATIC_FLAG_ONCE__ = true;
-    const origErr = console.error;
-    console.error = (...args: any[]) => {
-      const first = args?.[0];
-      if (typeof first === 'string' && first.includes('Expected static flag was missing')) return;
-      origErr(...args);
-    };
-  }
 }
 
-export default function App() {
+SplashScreen.preventAutoHideAsync();
+
+
+const AppContent = () => {
+  const [isReady, setIsReady] = useState(false);
+
+  useGlobalLifecycleSync(isReady);
+
   useEffect(() => {
-    let authSub: any = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let cancelled = false;
 
-    (async () => {
-      const { error } = await supabase.auth.getSession();
-      if (error) console.warn('getSession error', error);
+    async function prepare() {
+      try {
+        await Font.loadAsync({
+          'DS-DIGI': require('./assets/fonts/DS-DIGI.ttf'),
+        });
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        if (cancelled) return;
+        setIsReady(true);
+        await SplashScreen.hideAsync().catch(() => {});
+      }
+    }
 
-      const { data } = supabase.auth.onAuthStateChange(() => {});
-      authSub = data.subscription;
-    })();
+    void prepare();
+
+    timeoutId = setTimeout(() => {
+      SplashScreen.hideAsync().catch(() => {});
+    }, 3000);
 
     return () => {
-      if (authSub) authSub.unsubscribe();
+      cancelled = true;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
     };
   }, []);
 
+  useEffect(() => {
+    if (!isReady) return;
+
+    syncChatRooms({ reason: 'app_boot', force: false, minIntervalMs: 0 }).catch((e) => {
+      console.warn('[App Boot Sync] 채팅 목록 동기화 실패:', e);
+    });
+  }, [isReady]);
+
+  if (!isReady) return null;
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SystemBars style="light" />
-
       <SafeAreaProvider>
         <KeyboardProvider>
-          <RootNavigator />
+          <LocationProvider>
+            <PushTokenBootstrap />
+            <PushNotificationRuntime />
+            <SecureRuntimeBootstrap />
+            <RootNavigator />
+          </LocationProvider>
         </KeyboardProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
+  );
+};
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }

@@ -1,0 +1,14 @@
+{
+  "title": "画像編集",
+  "ratio_original": "オリジナル",
+  "ratio_free": "自由",
+  "rotate": "回転",
+  "ratio": "比率",
+  "invert": "縦横反転",
+  "orientation": "向き",
+  "reset": "リセット",
+  "error_load_title": "エラー",
+  "error_load_msg": "画像を読み込めません。",
+  "error_save_title": "保存失敗",
+  "error_save_msg": "もう一度お試しください。"
+}

@@ -1,0 +1,28 @@
+{
+  "common": {
+    "title": "Segnala"
+  },
+  "reasonList": {
+    "title": "Scegli un motivo",
+    "guide": "Guida"
+  },
+  "reasonDetail": {
+    "submit": "Invia",
+    "more": "Dettagli",
+    "empty": "Impossibile caricare la segnalazione."
+  },
+  "guide": {
+    "title": "Guida",
+    "empty": "Impossibile caricare la guida."
+  },
+  "done": {
+    "title": "Segnalazione inviata.",
+    "body": "La esamineremo e interverremo se necessario."
+  },
+  "alert": {
+    "loadFail": "Caricamento non riuscito",
+    "info": "Avviso",
+    "linkOpenFail": "Impossibile aprire il link.",
+    "submitFail": "Invio non riuscito"
+  }
+}

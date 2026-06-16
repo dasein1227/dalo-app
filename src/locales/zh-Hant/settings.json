@@ -1,0 +1,526 @@
+{
+  "home_title": "設定",
+  "title": "設定",
+  "version": "App 版本",
+  "open": "開啟",
+  "change": "變更",
+  "run": "執行",
+  "logout": "登出",
+  "logoutDone": "已登出。",
+  "sections": {
+    "communication": "通訊",
+    "general": "一般",
+    "advanced": "進階",
+    "service_info": "服務",
+    "account": "帳號",
+    "notification": "通知",
+    "display_language": "顯示與語言",
+    "location": "位置",
+    "data": "資料",
+    "support": "客服",
+    "info": "資訊"
+  },
+  "menus": {
+    "call": "通話",
+    "etc": "其他",
+    "app_manage": "App 管理",
+    "version": "App版本"
+  },
+  "alerts": {
+    "logout_title": "登出",
+    "logout_desc": "要登出嗎？",
+    "language_change_error": "無法變更語言。",
+    "logout_fail": "無法登出。"
+  },
+  "search": {
+    "title": "搜尋設定",
+    "soon": "搜尋設定功能即將推出。"
+  },
+  "me": {
+    "noName": "沒有名稱",
+    "profileManage": "管理個人檔案",
+    "loadingAccount": "正在確認帳號"
+  },
+  "account": {
+    "title": "帳號",
+    "editProfile": "編輯個人檔案",
+    "profilePublicDefault": "Beacon 預設公開我的個人檔案",
+    "profilePublicHint": "建立 Beacon 時作為預設值。可在個別 Beacon 變更。",
+    "header_title": "賬號",
+    "section": {
+      "contact": "聯絡方式",
+      "identity": "識別資訊",
+      "visibility": "公開",
+      "profile": "個人資料",
+      "account_management": "帳號管理"
+    },
+    "field": {
+      "phone": "電話號碼",
+      "email": "電子郵件",
+      "id_label": "CO·ONN ID",
+      "friend_code": "好友代碼",
+      "show_nickname": "顯示暱稱",
+      "profile_photo": "頭像",
+      "nickname": "暱稱"
+    },
+    "value": {
+      "not_registered": "未註冊"
+    },
+    "badge": {
+      "verified": "已驗證",
+      "verify": "驗證"
+    },
+    "placeholder": {
+      "id": "ID",
+      "friend_code": "好友代碼",
+      "nickname": "暱稱"
+    },
+    "help": {
+      "id_desc": "用於搜尋的唯一 ID。",
+      "show_nickname_desc": "向好友顯示暱稱。"
+    },
+    "error": {
+      "check_duplication": "需要檢查是否重複。",
+      "id_taken": "已被使用。",
+      "code_taken": "已被使用。",
+      "check_failed": "無法完成重複檢查。",
+      "invalid_id": "2–30 個小寫英文字母、數字或底線",
+      "invalid_friend_code": "2–30 個小寫英文字母、數字或底線",
+      "duplicate_exists": "此值已被使用。",
+      "duplicate_check_required": "儲存前請先完成重複檢查。",
+      "duplicate_check_retry": "請重新檢查可用性。",
+      "duplicate_value_retry": "賬號",
+      "nickname_required": "請輸入暱稱。",
+      "nickname_too_long": "暱稱最多30個字。"
+    },
+    "alert": {
+      "check_required": "需要確認",
+      "save_success_title": "已儲存",
+      "save_success_desc": "帳號設定已儲存。",
+      "save_fail_title": "儲存失敗"
+    },
+    "action": {
+      "save": "儲存",
+      "check_duplicate_short": "檢查",
+      "checking_short": "…",
+      "change_photo": "更換照片",
+      "remove_photo": "刪除照片"
+    },
+    "status": {
+      "available_short": "可使用",
+      "duplicate_short": "重複"
+    },
+    "picker": {
+      "profile_photo": "選擇照片"
+    },
+    "withdrawal": {
+      "entryTitle": "刪除帳號",
+      "entryDescription": "刪除帳號與個人資料。",
+      "noticeTitle": "刪除帳號",
+      "noticeMessage": "繼續前請確認以下事項。",
+      "noticeItemProfile": "個人資料、好友與設定將被刪除。",
+      "noticeItemChat": "部分聊天記錄可能為其他參與者保留，並顯示為已刪除用戶。",
+      "noticeItemRejoin": "刪除後7天內無法使用同一帳號重新註冊。",
+      "noticeItemIdentifier": "CO·ONN ID和好友代碼30天內不可重複使用。",
+      "noticeAcknowledge": "我已確認以上事項，並繼續刪除。",
+      "continue": "下一步",
+      "cancel": "取消",
+      "surveyTitle": "請告訴我們離開的原因",
+      "surveyMessage": "你的回饋將幫助我們改進CO·ONN。",
+      "surveyAction": "繼續",
+      "otherPlaceholder": "請輸入原因。",
+      "reasonRequired": "請選擇原因。",
+      "otherRequired": "請輸入原因。",
+      "reasonsLoading": "正在載入原因。",
+      "reasonsEmpty": "無法載入原因。",
+      "confirmTitle": "最後確認",
+      "confirmMessage": "帳號將立即停止使用。",
+      "confirmInstruction": "請在下方輸入「{{keyword}}」。",
+      "confirmKeyword": "刪除",
+      "confirmPlaceholder": "刪除",
+      "confirmAction": "刪除",
+      "completed": "刪除請求已提交。",
+      "failed": "刪除失敗。"
+    }
+  },
+  "privacy": {
+    "title": "隱私",
+    "header_title": "隱私",
+    "section": {
+      "profile": "個人檔案",
+      "friend_req": "好友請求",
+      "activity": "活動"
+    },
+    "field": {
+      "public_profile": "公開個人檔案",
+      "allow_search": "允許搜尋",
+      "show_nickname": "顯示暱稱",
+      "show_location": "顯示位置",
+      "last_active": "顯示最近上線"
+    },
+    "help": {
+      "public_profile": "其他使用者可以查看個人檔案。",
+      "allow_search": "可用暱稱與 ID 搜尋。",
+      "show_nickname": "向好友顯示暱稱。",
+      "show_location": "顯示你的活動位置。",
+      "last_active": "顯示最近上線時間。"
+    },
+    "option": {
+      "all": "全部允許",
+      "all_desc": "任何人都可以提出請求",
+      "friends": "好友的好友",
+      "friends_desc": "只有已連結的使用者可請求",
+      "none": "全部封鎖",
+      "none_desc": "封鎖好友請求"
+    },
+    "alert": {
+      "save_success": "已儲存。",
+      "save_fail": "無法儲存。",
+      "load_fail": "無法載入。",
+      "login_required": "需要登入。"
+    }
+  },
+  "radius": {
+    "title": "社區範圍",
+    "current": "目前",
+    "desc": "只顯示此範圍內的消息。",
+    "save_error": "無法儲存社區範圍。"
+  },
+  "friends": {
+    "title": "好友",
+    "manage": "好友管理",
+    "caption": "封鎖、推薦、公開範圍",
+    "soon": "即將推出。"
+  },
+  "notification": {
+    "title": "通知",
+    "manage": "通知",
+    "caption": "推播、應用內提醒、聲音",
+    "soon": "即將推出。",
+    "section": {
+      "defaults": "預設",
+      "types": "類型",
+      "quiet": "勿擾時間",
+      "push_types": "推播類型",
+      "in_app": "應用內提醒"
+    },
+    "field": {
+      "push": "推播通知",
+      "preview": "預覽",
+      "sound": "聲音",
+      "vibrate": "震動",
+      "chat": "聊天",
+      "system": "公告與系統",
+      "marketing": "行銷"
+    },
+    "help": {
+      "push": "全部推播通知",
+      "preview": "在鎖定畫面顯示內容",
+      "chat_push": "聊天訊息推播",
+      "system_push": "服務通知與重要公告",
+      "marketing_push": "活動與優惠"
+    },
+    "action": {
+      "save": "儲存",
+      "open_system": "系統設定",
+      "cancel": "取消",
+      "done": "完成"
+    },
+    "time": {
+      "start": "開始",
+      "end": "結束",
+      "hour": "時",
+      "minute": "分",
+      "close": "關閉時間選擇",
+      "select": "選擇 {{label}} {{value}}",
+      "start_time": "開始時間",
+      "end_time": "結束時間"
+    },
+    "alert": {
+      "table_missing_title": "沒有設定資料表",
+      "table_missing_message": "請建立 user_notification_settings。",
+      "load_fail": "無法載入。",
+      "time_invalid_title": "確認時間",
+      "time_invalid_message": "請重新選擇時間。",
+      "save_success": "已儲存。",
+      "save_fail": "儲存失敗",
+      "open_settings_fail_title": "開啟失敗",
+      "open_settings_fail_message": "無法開啟系統設定。",
+      "login_required": "需要登入。"
+    },
+    "in_app": {
+      "master": "應用內提醒",
+      "master_help": "顯示在應用內通知中心",
+      "group": {
+        "social": "社交",
+        "chat": "聊天",
+        "beacon": "Beacon",
+        "schedule": "行程",
+        "post": "貼文"
+      },
+      "follow_created": "新追蹤者",
+      "follow_created_help": "有人追蹤你時",
+      "chat_reply": "回覆",
+      "chat_reply_help": "有人回覆你的訊息時",
+      "chat_mention": "提及",
+      "chat_mention_help": "有人提及你時",
+      "beacon_join_request": "加入請求",
+      "beacon_join_request_help": "收到 Beacon 加入請求時",
+      "beacon_join_approved": "加入已核准",
+      "beacon_join_approved_help": "Beacon 加入被核准時",
+      "beacon_friend_created": "好友 Beacon",
+      "beacon_friend_created_help": "好友建立 Beacon 時",
+      "schedule_created": "新行程",
+      "schedule_created_help": "已加入聊天室新增行程時",
+      "schedule_updated": "行程變更",
+      "schedule_updated_help": "已加入行程變更時",
+      "schedule_cancelled": "行程取消",
+      "schedule_cancelled_help": "已加入行程取消時",
+      "post_like": "按讚",
+      "post_like_help": "你的貼文收到按讚時",
+      "post_comment": "留言",
+      "post_comment_help": "有人留言你的貼文時",
+      "post_reply": "回覆",
+      "post_reply_help": "有人回覆你的留言時",
+      "post_mention": "貼文提及",
+      "post_mention_help": "有人在貼文或留言中提及你時"
+    }
+  },
+  "display": {
+    "title": "顯示與語言"
+  },
+  "language": {
+    "title": "語言",
+    "select": "選擇語言",
+    "inUse": "（使用中）"
+  },
+  "theme": {
+    "title": "主題",
+    "caption": "淺色 / 深色",
+    "soon": "即將推出。",
+    "header_title": "主題",
+    "section_style": "模式",
+    "mode": {
+      "system": "系統",
+      "system_desc": "依裝置設定",
+      "light": "淺色",
+      "light_desc": "明亮畫面",
+      "dark": "深色",
+      "dark_desc": "深色畫面"
+    }
+  },
+  "chat": {
+    "title": "聊天"
+  },
+  "translate": {
+    "autoDefault": "自動翻譯訊息",
+    "autoDefaultHint": "作為新聊天的預設值。",
+    "showOriginal": "與翻譯一起顯示原文",
+    "showOriginalHint": "開啟後，原文會顯示在翻譯訊息下方。"
+  },
+  "storage": {
+    "title": "資料與儲存空間",
+    "clearCache": "清除快取",
+    "clearCacheHint": "刪除暫存檔",
+    "soon": "即將推出。",
+    "section": {
+      "ratio": "資料比例",
+      "rooms": "各聊天室資料"
+    },
+    "summary": {
+      "total_media": "所有媒體",
+      "saved_count": "已儲存 {{count}} 個"
+    },
+    "legend": {
+      "photo": "照片",
+      "video": "影片",
+      "audio": "語音",
+      "file": "檔案",
+      "other": "其他"
+    },
+    "action": {
+      "delete_all": "全部刪除",
+      "delete_all_with_size": "全部刪除（{{size}}）",
+      "delete_room": "刪除",
+      "scroll_top": "回到頂部"
+    },
+    "empty": {
+      "title": "沒有已儲存媒體",
+      "desc": "開啟過的媒體會顯示在這裡。"
+    },
+    "alert": {
+      "load_fail": "無法載入。",
+      "delete_fail": "無法刪除。",
+      "delete_all_title": "刪除所有媒體",
+      "delete_all_message": "刪除此裝置儲存的聊天媒體。伺服器與相簿會保留。",
+      "delete_room_title": "刪除 {{room}} 資料",
+      "delete_room_message": "刪除此聊天室在裝置上儲存的媒體。伺服器與相簿會保留。",
+      "delete_all_success": "已刪除。",
+      "delete_room_success": "已刪除 {{room}} 資料。"
+    },
+    "room": {
+      "fallback_title": "聊天室 {{id}}",
+      "delete_accessibility": "刪除 {{room}} 資料"
+    }
+  },
+  "support": {
+    "title": "客服",
+    "cs": "客服中心",
+    "notice": {
+      "title": "公告",
+      "eyebrow": "NOTICE",
+      "sectionTitle": "{{category}} 公告",
+      "markAll": "全部標為已讀",
+      "markAllDone": "已標為已讀。",
+      "loadFail": "無法載入公告。",
+      "readFail": "無法標為已讀。",
+      "markAllFail": "無法標為已讀。",
+      "emptyTitle": "沒有公告",
+      "emptyDesc": "新公告會顯示在這裡。",
+      "category": {
+        "normal": "一般",
+        "important": "重要",
+        "legal": "條款",
+        "security": "安全"
+      }
+    },
+    "guide": "使用指南",
+    "soon": "即將推出。",
+    "loading": "載入中…",
+    "action": {
+      "ok": "確定"
+    },
+    "alert": {
+      "notice": "通知",
+      "error": "錯誤"
+    },
+    "center": {
+      "title": "客服中心",
+      "hero": "需要什麼協助？",
+      "searchPlaceholder": "搜尋",
+      "faq": "常見問題",
+      "categories": "說明",
+      "contactTitle": "需要協助嗎？",
+      "emailDesc": "我們會以電子郵件回覆。",
+      "aiTitle": "AI 諮詢",
+      "aiDesc": "24 小時諮詢",
+      "policies": "條款與政策"
+    },
+    "contact": {
+      "title": "一對一諮詢",
+      "guide": "請留下諮詢內容。\n我們會以電子郵件回覆。",
+      "category": "諮詢類型",
+      "categoryLoading": "載入中…",
+      "categoryPlaceholder": "選擇諮詢類型",
+      "categorySelect": "諮詢類型",
+      "email": "回覆電子郵件",
+      "emailPlaceholder": "電子郵件地址",
+      "content": "諮詢內容",
+      "contentPlaceholder": "請輸入諮詢內容。",
+      "submit": "提交諮詢",
+      "required": "請輸入電子郵件與內容。",
+      "categoryRequired": "請選擇諮詢類型。",
+      "loadFail": "無法載入螢幕。",
+      "submitFail": "無法提交。",
+      "successTitle": "已提交",
+      "successDesc": "諮詢已送出。"
+    },
+    "list": {
+      "all": "全部",
+      "common": "常規",
+      "result": "結果",
+      "empty": "沒有結果。"
+    },
+    "policy": {
+      "title": "條款與政策",
+      "effectiveDate": "生效日",
+      "summary": "摘要",
+      "download": "下載",
+      "downloadStart": "開始下載。",
+      "empty": "無法載入內容。",
+      "versions": "舊版本",
+      "behaviorInfoTitle": "行為資訊蒐集與使用",
+      "behaviorInfoDesc": "僅蒐集服務改善所需的最低限度資訊。",
+      "userControlTitle": "使用者選擇權",
+      "userControlDesc": "可在 App 設定中變更個人化廣告接收。",
+      "version": "專案",
+      "language": "語言",
+      "loadFail": "無法載入政策檔案。",
+      "summaryEmpty": "尚無摘要。",
+      "downloadCancelledTitle": "下載取消",
+      "downloadCancelled": "尚未選擇儲存位置。",
+      "downloadSuccessTitle": "下載完成",
+      "downloadSuccess": "政策文件已儲存。",
+      "downloadFailTitle": "下載失敗",
+      "downloadFail": "無法儲存政策檔案。",
+      "privacyTitle": "隱私權政策",
+      "termsTitle": "CO·ONN 使用條款",
+      "marketingTitle": "行銷資訊接收同意"
+    },
+    "company": {
+      "ceo": "代表人",
+      "regNum": "商業登記號碼",
+      "businessNum": "通訊販售業申報號碼",
+      "address": "地址",
+      "cs": "客服中心",
+      "host": "主機服務商"
+    }
+  },
+  "labs": {
+    "title": "實驗室",
+    "features": "實驗功能",
+    "caption": "搶先使用新功能。",
+    "soon": "實驗室即將推出。",
+    "subtitle": "搶先使用新功能。",
+    "empty_title": "沒有準備中的功能",
+    "empty_desc": "新功能準備好後會先在這裡公開。",
+    "note": "實驗功能在正式推出前可能變更。"
+  },
+  "admin": {
+    "title": "管理員",
+    "console": "管理員主控台"
+  },
+  "open_profiles": {
+    "title": "公開個人檔案",
+    "subtitle": "管理公開聊天使用的個人檔案。",
+    "header_title": "公開個人檔案",
+    "fallback_name": "公開個人檔案",
+    "default_badge": "預設",
+    "status_empty": "沒有狀態訊息",
+    "room": {
+      "fallback_title": "公開聊天",
+      "used_count": "使用中的公開聊天 {{count}} 個",
+      "empty": "沒有使用中的公開聊天"
+    },
+    "empty": {
+      "title": "沒有公開個人檔案",
+      "desc": "建立新個人檔案並在公開聊天中使用。"
+    },
+    "form": {
+      "create_title": "建立公開個人檔案",
+      "edit_title": "編輯公開個人檔案",
+      "nickname": "暱稱",
+      "status_message": "狀態訊息",
+      "status_placeholder": "簡短介紹自己。",
+      "default_profile": "預設公開個人檔案",
+      "delete": "刪除公開個人檔案",
+      "pick_avatar": "選擇個人檔案照片"
+    },
+    "alert": {
+      "load_fail": "無法載入公開個人檔案。",
+      "nickname_required": "請輸入暱稱。",
+      "create_fail": "建立失敗",
+      "save_fail": "儲存失敗",
+      "delete_title": "要刪除公開個人檔案嗎？",
+      "delete_used_desc": "使用中的公開聊天會保留既有個人檔案。",
+      "delete_desc": "刪除後無法復原。",
+      "delete_fail": "刪除失敗"
+    },
+    "toast": {
+      "created": "公開個人檔案已建立。",
+      "saved": "已儲存。",
+      "deleted": "已刪除。",
+      "photo_applied": "照片已套用。"
+    }
+  }
+}

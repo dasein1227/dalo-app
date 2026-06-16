@@ -1,0 +1,526 @@
+{
+  "home_title": "Settings",
+  "title": "Settings",
+  "version": "App version",
+  "open": "Open",
+  "change": "Change",
+  "run": "Run",
+  "logout": "Log out",
+  "logoutDone": "Logged out.",
+  "sections": {
+    "communication": "Communication",
+    "general": "General",
+    "advanced": "Advanced",
+    "service_info": "Service",
+    "account": "Account",
+    "notification": "Notifications",
+    "display_language": "Display & language",
+    "location": "Location",
+    "data": "Data",
+    "support": "Support",
+    "info": "Info"
+  },
+  "menus": {
+    "call": "Call",
+    "etc": "Other",
+    "app_manage": "App management",
+    "version": "App version"
+  },
+  "alerts": {
+    "logout_title": "Log out",
+    "logout_desc": "Log out now?",
+    "language_change_error": "Could not change language.",
+    "logout_fail": "Could not log out."
+  },
+  "search": {
+    "title": "Search settings",
+    "soon": "Settings search is coming soon."
+  },
+  "me": {
+    "noName": "No name",
+    "profileManage": "Manage profile",
+    "loadingAccount": "Checking account"
+  },
+  "account": {
+    "title": "Account",
+    "editProfile": "Edit profile",
+    "profilePublicDefault": "Show my profile by default in beacons",
+    "profilePublicHint": "Used as the default when creating a beacon. You can change it per beacon.",
+    "header_title": "Account",
+    "section": {
+      "contact": "Contact",
+      "identity": "Identity",
+      "visibility": "Visibility",
+      "profile": "Profile",
+      "account_management": "Account"
+    },
+    "field": {
+      "phone": "Phone",
+      "email": "Email",
+      "id_label": "CO·ONN ID",
+      "friend_code": "Friend code",
+      "show_nickname": "Show nickname",
+      "profile_photo": "Profile photo",
+      "nickname": "Nickname"
+    },
+    "value": {
+      "not_registered": "Not registered"
+    },
+    "badge": {
+      "verified": "Verified",
+      "verify": "Verify"
+    },
+    "placeholder": {
+      "id": "ID",
+      "friend_code": "Friend code",
+      "nickname": "Nickname"
+    },
+    "help": {
+      "id_desc": "Your unique searchable ID.",
+      "show_nickname_desc": "Show your nickname to friends."
+    },
+    "error": {
+      "check_duplication": "Check availability first.",
+      "id_taken": "Already in use.",
+      "code_taken": "Already in use.",
+      "check_failed": "Could not check availability.",
+      "invalid_id": "2–30 lowercase letters, numbers, or underscores",
+      "invalid_friend_code": "2–30 lowercase letters, numbers, or underscores",
+      "duplicate_exists": "This value is already in use.",
+      "duplicate_check_required": "Complete the duplicate check before saving.",
+      "duplicate_check_retry": "Please check availability again.",
+      "duplicate_value_retry": "Already in use. Check again.",
+      "nickname_required": "Enter a nickname.",
+      "nickname_too_long": "Nickname can be up to 30 characters."
+    },
+    "alert": {
+      "check_required": "Check required",
+      "save_success_title": "Saved",
+      "save_success_desc": "Account settings saved.",
+      "save_fail_title": "Save failed"
+    },
+    "action": {
+      "save": "Save",
+      "check_duplicate_short": "Check",
+      "checking_short": "…",
+      "change_photo": "Change photo",
+      "remove_photo": "Remove photo"
+    },
+    "status": {
+      "available_short": "Available",
+      "duplicate_short": "Taken"
+    },
+    "picker": {
+      "profile_photo": "Select photo"
+    },
+    "withdrawal": {
+      "entryTitle": "Delete account",
+      "entryDescription": "Delete your account and personal data.",
+      "noticeTitle": "Delete account",
+      "noticeMessage": "Please review these items before continuing.",
+      "noticeItemProfile": "Your profile, friends, and settings will be deleted.",
+      "noticeItemChat": "Some chat history may remain for other participants and show as a deleted user.",
+      "noticeItemRejoin": "You cannot rejoin with the same account for 7 days.",
+      "noticeItemIdentifier": "Your CO·ONN ID and friend code cannot be reused for 30 days.",
+      "noticeAcknowledge": "I have reviewed the items above and want to continue.",
+      "continue": "Next",
+      "cancel": "Cancel",
+      "surveyTitle": "Tell us why you are leaving",
+      "surveyMessage": "Your feedback helps us improve CO·ONN.",
+      "surveyAction": "Continue",
+      "otherPlaceholder": "Enter your reason.",
+      "reasonRequired": "Select a reason.",
+      "otherRequired": "Enter your reason.",
+      "reasonsLoading": "Loading reasons.",
+      "reasonsEmpty": "Could not load reasons.",
+      "confirmTitle": "Final check",
+      "confirmMessage": "Your account access will stop immediately.",
+      "confirmInstruction": "Type “{{keyword}}” below.",
+      "confirmKeyword": "DELETE",
+      "confirmPlaceholder": "DELETE",
+      "confirmAction": "Delete",
+      "completed": "Deletion requested.",
+      "failed": "Could not delete your account."
+    }
+  },
+  "privacy": {
+    "title": "Privacy",
+    "header_title": "Privacy",
+    "section": {
+      "profile": "Profile",
+      "friend_req": "Friend requests",
+      "activity": "Activity"
+    },
+    "field": {
+      "public_profile": "Public profile",
+      "allow_search": "Allow search",
+      "show_nickname": "Show nickname",
+      "show_location": "Show location",
+      "last_active": "Show last active"
+    },
+    "help": {
+      "public_profile": "Other users can view your profile.",
+      "allow_search": "You can be found by nickname and ID.",
+      "show_nickname": "Show your nickname to friends.",
+      "show_location": "Show your activity location.",
+      "last_active": "Show your last active time."
+    },
+    "option": {
+      "all": "Everyone",
+      "all_desc": "Anyone can send requests",
+      "friends": "Friends of friends",
+      "friends_desc": "Only connected users can request",
+      "none": "No one",
+      "none_desc": "Block friend requests"
+    },
+    "alert": {
+      "save_success": "Saved.",
+      "save_fail": "Could not save.",
+      "load_fail": "Could not load.",
+      "login_required": "Login required."
+    }
+  },
+  "radius": {
+    "title": "Neighborhood range",
+    "current": "Current",
+    "desc": "Only updates within this range are shown.",
+    "save_error": "Could not save neighborhood range."
+  },
+  "friends": {
+    "title": "Friends",
+    "manage": "Manage friends",
+    "caption": "Blocks, recommendations, visibility",
+    "soon": "Coming soon."
+  },
+  "notification": {
+    "title": "Notifications",
+    "manage": "Notifications",
+    "caption": "Push, in-app alerts, sound",
+    "soon": "Coming soon.",
+    "section": {
+      "defaults": "Default",
+      "types": "Types",
+      "quiet": "Quiet hours",
+      "push_types": "Push types",
+      "in_app": "In-app alerts"
+    },
+    "field": {
+      "push": "Push notifications",
+      "preview": "Preview",
+      "sound": "Sound",
+      "vibrate": "Vibration",
+      "chat": "Chat",
+      "system": "Notices & system",
+      "marketing": "Marketing"
+    },
+    "help": {
+      "push": "All push notifications",
+      "preview": "Show content on lock screen",
+      "chat_push": "Chat message push",
+      "system_push": "Service notices and key updates",
+      "marketing_push": "Events and promotions"
+    },
+    "action": {
+      "save": "Save",
+      "open_system": "System settings",
+      "cancel": "Cancel",
+      "done": "Done"
+    },
+    "time": {
+      "start": "Start",
+      "end": "End",
+      "hour": "h",
+      "minute": "m",
+      "close": "Close time picker",
+      "select": "Select {{label}} {{value}}",
+      "start_time": "Start time",
+      "end_time": "End time"
+    },
+    "alert": {
+      "table_missing_title": "Settings table missing",
+      "table_missing_message": "Create user_notification_settings.",
+      "load_fail": "Could not load",
+      "time_invalid_title": "Check time",
+      "time_invalid_message": "Select the time again.",
+      "save_success": "Saved.",
+      "save_fail": "Save failed",
+      "open_settings_fail_title": "Could not open",
+      "open_settings_fail_message": "Could not open system settings.",
+      "login_required": "Login required."
+    },
+    "in_app": {
+      "master": "In-app alerts",
+      "master_help": "Shown in the app inbox",
+      "group": {
+        "social": "Social",
+        "chat": "Chat",
+        "beacon": "Beacons",
+        "schedule": "Schedules",
+        "post": "Posts"
+      },
+      "follow_created": "New follower",
+      "follow_created_help": "When someone follows you",
+      "chat_reply": "Replies",
+      "chat_reply_help": "When someone replies to your message",
+      "chat_mention": "Mentions",
+      "chat_mention_help": "When someone mentions you",
+      "beacon_join_request": "Join requests",
+      "beacon_join_request_help": "When a beacon join request arrives",
+      "beacon_join_approved": "Join approved",
+      "beacon_join_approved_help": "When your beacon join is approved",
+      "beacon_friend_created": "Friend beacons",
+      "beacon_friend_created_help": "When a friend creates a beacon",
+      "schedule_created": "New schedules",
+      "schedule_created_help": "When a schedule is added to a joined room",
+      "schedule_updated": "Schedule changes",
+      "schedule_updated_help": "When a joined schedule changes",
+      "schedule_cancelled": "Cancelled schedules",
+      "schedule_cancelled_help": "When a joined schedule is cancelled",
+      "post_like": "Likes",
+      "post_like_help": "When likes gather on your post",
+      "post_comment": "Comments",
+      "post_comment_help": "When someone comments on your post",
+      "post_reply": "Replies",
+      "post_reply_help": "When someone replies to your comment",
+      "post_mention": "Post mentions",
+      "post_mention_help": "When someone mentions you in a post or comment"
+    }
+  },
+  "display": {
+    "title": "Display & language"
+  },
+  "language": {
+    "title": "Language",
+    "select": "Select language",
+    "inUse": "(In use)"
+  },
+  "theme": {
+    "title": "Theme",
+    "caption": "Light / Dark",
+    "soon": "Coming soon.",
+    "header_title": "Theme",
+    "section_style": "Mode",
+    "mode": {
+      "system": "System",
+      "system_desc": "Use device setting",
+      "light": "Light",
+      "light_desc": "Light appearance",
+      "dark": "Dark",
+      "dark_desc": "Dark appearance"
+    }
+  },
+  "chat": {
+    "title": "Chat"
+  },
+  "translate": {
+    "autoDefault": "Auto-translate messages",
+    "autoDefaultHint": "Used as the default for new chats.",
+    "showOriginal": "Show original with translation",
+    "showOriginalHint": "When on, original text appears under translated messages."
+  },
+  "storage": {
+    "title": "Data & storage",
+    "clearCache": "Clear cache",
+    "clearCacheHint": "Delete temporary files",
+    "soon": "Coming soon.",
+    "section": {
+      "ratio": "Data ratio",
+      "rooms": "Data by Room"
+    },
+    "summary": {
+      "total_media": "Total media",
+      "saved_count": "{{count}} saved"
+    },
+    "legend": {
+      "photo": "Photos",
+      "video": "Videos",
+      "audio": "Audio",
+      "file": "Files",
+      "other": "Other"
+    },
+    "action": {
+      "delete_all": "Delete all",
+      "delete_all_with_size": "Delete All ({{size}})",
+      "delete_room": "Delete",
+      "scroll_top": "Top"
+    },
+    "empty": {
+      "title": "No saved media",
+      "desc": "Viewed media will appear here."
+    },
+    "alert": {
+      "load_fail": "Could not load.",
+      "delete_fail": "Could not delete.",
+      "delete_all_title": "Delete all media",
+      "delete_all_message": "Deletes chat media stored on this device. Server files and gallery items stay intact.",
+      "delete_room_title": "Delete {{room}} Data",
+      "delete_room_message": "Deletes this room’s media stored on this device. Server files and gallery items stay intact.",
+      "delete_all_success": "Deleted.",
+      "delete_room_success": "{{room}} data deleted."
+    },
+    "room": {
+      "fallback_title": "Chat room {{id}}",
+      "delete_accessibility": "Delete {{room}} data"
+    }
+  },
+  "support": {
+    "title": "Support",
+    "cs": "Help center",
+    "notice": {
+      "title": "Notices",
+      "eyebrow": "NOTICE",
+      "sectionTitle": "{{category}} Notices",
+      "markAll": "Mark all read",
+      "markAllDone": "Marked as read.",
+      "loadFail": "Could not load notices.",
+      "readFail": "Could not mark as read.",
+      "markAllFail": "Could not mark as read.",
+      "emptyTitle": "No notices",
+      "emptyDesc": "New notices will appear here.",
+      "category": {
+        "normal": "General",
+        "important": "Important",
+        "legal": "Legal",
+        "security": "Security"
+      }
+    },
+    "guide": "Guide",
+    "soon": "Coming soon.",
+    "loading": "Loading…",
+    "action": {
+      "ok": "OK"
+    },
+    "alert": {
+      "notice": "Notice",
+      "error": "Error"
+    },
+    "center": {
+      "title": "Help center",
+      "hero": "How can we help?",
+      "searchPlaceholder": "Search",
+      "faq": "FAQ",
+      "categories": "Help topics",
+      "contactTitle": "Need help?",
+      "emailDesc": "We’ll reply by email.",
+      "aiTitle": "AI support",
+      "aiDesc": "Available 24/7",
+      "policies": "Terms & policies"
+    },
+    "contact": {
+      "title": "Contact us",
+      "guide": "Leave your message.\nWe’ll reply by email.",
+      "category": "Category",
+      "categoryLoading": "Loading…",
+      "categoryPlaceholder": "Select category",
+      "categorySelect": "Category",
+      "email": "Reply email",
+      "emailPlaceholder": "Email address",
+      "content": "Message",
+      "contentPlaceholder": "Enter your message.",
+      "submit": "Submit",
+      "required": "Enter your email and message.",
+      "categoryRequired": "Select a category.",
+      "loadFail": "Could not load screen.",
+      "submitFail": "Could not submit.",
+      "successTitle": "Submitted",
+      "successDesc": "Your inquiry has been received."
+    },
+    "list": {
+      "all": "All",
+      "common": "General",
+      "result": "Results",
+      "empty": "No results."
+    },
+    "policy": {
+      "title": "Terms & policies",
+      "effectiveDate": "Effective date",
+      "summary": "Summary",
+      "download": "Download",
+      "downloadStart": "Starting download.",
+      "empty": "Could not load content.",
+      "versions": "Previous versions",
+      "behaviorInfoTitle": "Behavior data collection & use",
+      "behaviorInfoDesc": "We collect only the minimum data needed to improve the service.",
+      "userControlTitle": "User choice",
+      "userControlDesc": "You can change personalized ad settings in the app.",
+      "version": "Version",
+      "language": "Language",
+      "loadFail": "Could not load policy documents.",
+      "summaryEmpty": "No summary available.",
+      "downloadCancelledTitle": "Download canceled",
+      "downloadCancelled": "No save location selected.",
+      "downloadSuccessTitle": "Downloaded",
+      "downloadSuccess": "Policy document saved.",
+      "downloadFailTitle": "Download failed",
+      "downloadFail": "Could not save policy document.",
+      "privacyTitle": "Privacy policy",
+      "termsTitle": "CO·ONN Terms of Service",
+      "marketingTitle": "Marketing consent"
+    },
+    "company": {
+      "ceo": "CEO",
+      "regNum": "Business Registration No.",
+      "businessNum": "Mail-order Business No.",
+      "address": "Address",
+      "cs": "Customer support",
+      "host": "Hosting provider"
+    }
+  },
+  "labs": {
+    "title": "Labs",
+    "features": "Labs features",
+    "caption": "Try new features first.",
+    "soon": "Labs is coming soon.",
+    "subtitle": "Try new features first.",
+    "empty_title": "No features yet",
+    "empty_desc": "New features will appear here before launch.",
+    "note": "Labs features may change before official release."
+  },
+  "admin": {
+    "title": "Admin",
+    "console": "Admin console"
+  },
+  "open_profiles": {
+    "title": "Open profiles",
+    "subtitle": "Manage profiles for open chats.",
+    "header_title": "Open profiles",
+    "fallback_name": "Open profile",
+    "default_badge": "Default",
+    "status_empty": "No status message",
+    "room": {
+      "fallback_title": "Open chat",
+      "used_count": "Used in {{count}} open chat rooms",
+      "empty": "No open chat rooms in use"
+    },
+    "empty": {
+      "title": "No open profiles",
+      "desc": "Create a profile for open chats."
+    },
+    "form": {
+      "create_title": "Create open profile",
+      "edit_title": "Edit open profile",
+      "nickname": "Nickname",
+      "status_message": "Status message",
+      "status_placeholder": "Introduce yourself briefly.",
+      "default_profile": "Default open profile",
+      "delete": "Delete open profile",
+      "pick_avatar": "Choose profile photo"
+    },
+    "alert": {
+      "load_fail": "Could not load open profiles.",
+      "nickname_required": "Enter a nickname.",
+      "create_fail": "Create failed",
+      "save_fail": "Save failed",
+      "delete_title": "Delete open profile?",
+      "delete_used_desc": "Existing profiles in open chat rooms will remain.",
+      "delete_desc": "Deleted profiles cannot be restored.",
+      "delete_fail": "Delete failed"
+    },
+    "toast": {
+      "created": "Open profile created.",
+      "saved": "Saved.",
+      "deleted": "Deleted.",
+      "photo_applied": "Photo applied."
+    }
+  }
+}

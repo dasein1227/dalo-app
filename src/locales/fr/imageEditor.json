@@ -1,0 +1,14 @@
+{
+  "title": "Édition d’image",
+  "ratio_original": "Original",
+  "ratio_free": "Libre",
+  "rotate": "Pivoter",
+  "ratio": "Ratio",
+  "invert": "Inverser",
+  "orientation": "Swap",
+  "reset": "Réinitialiser",
+  "error_load_title": "Erreur",
+  "error_load_msg": "Impossible de charger l’image.",
+  "error_save_title": "Échec de l’enregistrement",
+  "error_save_msg": "Réessayez plus tard."
+}

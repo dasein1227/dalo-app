@@ -1,7 +1,8 @@
 // src/screens/business/components/ToggleRow.tsx
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, Text, Pressable } from 'react-native';
-import { styles } from './bizStyles';
+import { useBizStyles } from './bizStyles';
 
 export type ToggleRowProps = {
   label: string;
@@ -13,7 +14,11 @@ export const ToggleRow: React.FC<ToggleRowProps> = ({
   label,
   value,
   onChange,
-}) => (
+}) => {
+  const { t } = useTranslation();
+  const styles = useBizStyles();
+
+  return (
   <View style={styles.toggleRow}>
     <Text style={styles.toggleLabel}>{label}</Text>
     <View style={styles.toggleButtons}>
@@ -31,7 +36,7 @@ export const ToggleRow: React.FC<ToggleRowProps> = ({
             value === true && styles.toggleButtonTextActive,
           ]}
         >
-          예
+          {t('business:common.yes')}
         </Text>
       </Pressable>
 
@@ -49,7 +54,7 @@ export const ToggleRow: React.FC<ToggleRowProps> = ({
             value === false && styles.toggleButtonTextActive,
           ]}
         >
-          아니오
+          {t('business:common.no')}
         </Text>
       </Pressable>
 
@@ -67,9 +72,10 @@ export const ToggleRow: React.FC<ToggleRowProps> = ({
             value === null && styles.toggleButtonTextActiveLight,
           ]}
         >
-          미등록
+          {t('business:common.unset')}
         </Text>
       </Pressable>
     </View>
   </View>
-);
+  );
+};

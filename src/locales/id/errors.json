@@ -1,0 +1,16 @@
+{
+  "common": "Kesalahan",
+  "auth": {
+    "loginRequired": "Login diperlukan."
+  },
+  "unknown": "Terjadi kesalahan.",
+  "network": "Periksa koneksi jaringan Anda.",
+  "invalid_credentials": "Email atau kata sandi salah.",
+  "oauth_cancelled": "Login dibatalkan.",
+  "provider_config": "Periksa pengaturan penyedia autentikasi.",
+  "redirect_config": "Periksa pengaturan Redirect URL.",
+  "session_check_failed": "Sesi tidak dapat diverifikasi.",
+  "sms_required": "Masukkan kode verifikasi.",
+  "phone_format": "Masukkan nomor telepon dalam format internasional (+8210…).",
+  "email_format": "Format email tidak valid."
+}

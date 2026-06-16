@@ -1,4 +1,4 @@
-﻿// src/screens/Offline.tsx
+// src/screens/system/Offline.tsx
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
@@ -9,11 +9,11 @@ import {
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AppHeader from '@/components/AppHeader';
+import DetailHeader from '@/components/header/DetailHeader';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import { LinearGradient } from 'expo-linear-gradient';
-import { StatusBar } from 'expo-status-bar';
 
 type RetryRoute = { name: string; params?: Record<string, any> } | null;
 
@@ -26,6 +26,7 @@ type RetryRoute = { name: string; params?: Record<string, any> } | null;
 export default function Offline() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
+  const { t } = useTranslation('system');
 
   const reason: string | undefined = route?.params?.reason;
   const retryRoute: RetryRoute = route?.params?.retryRoute ?? null;
@@ -64,8 +65,8 @@ export default function Offline() {
 
   const desc = useMemo(() => {
     if (reason?.trim()) return reason.trim();
-    return '네트워크 연결을 확인해 주세요.\n와이파이 또는 모바일 데이터가 꺼져 있을 수 있어요.';
-  }, [reason]);
+    return t('offlineScreen.desc');
+  }, [reason, t]);
 
   const onRetry = async () => {
     try {
@@ -97,8 +98,6 @@ export default function Offline() {
 
   return (
     <View style={styles.root}>
-      {/* ✅ SplashGate/Login과 동일: StatusBar 투명 */}
-      <StatusBar translucent backgroundColor="transparent" style="light" />
 
       {/* ✅ 동일한 톤의 배경 그라데이션 */}
       <LinearGradient
@@ -112,11 +111,11 @@ export default function Offline() {
       <SafeAreaView style={styles.safe}>
         {/* 헤더가 흰 배경 전제일 수 있어 대비 보강 레이어 */}
         <View style={styles.headerBg}>
-          <AppHeader title="Offline" showBack />
+          <DetailHeader title={t('offlineScreen.header')} showBack />
         </View>
 
         <View style={s.wrap}>
-          <Text style={s.title}>오프라인 상태입니다</Text>
+          <Text style={s.title}>{t('offlineScreen.title')}</Text>
           <Text style={s.sub} numberOfLines={3}>
             {desc}
           </Text>
@@ -125,20 +124,20 @@ export default function Offline() {
 
           <Pressable style={[s.btn, s.primary]} onPress={onRetry}>
             <Text style={s.primaryTxt}>
-              {retryRoute?.name ? '다시 시도' : '연결 확인'}
+              {retryRoute?.name ? t('offlineScreen.retry') : t('offlineScreen.check')}
             </Text>
           </Pressable>
 
           <View style={{ height: 8 }} />
 
           <Pressable style={[s.btn, s.ghost]} onPress={openSettings}>
-            <Text style={s.ghostTxt}>설정 열기</Text>
+            <Text style={s.ghostTxt}>{t('offlineScreen.openSettings')}</Text>
           </Pressable>
 
           <View style={{ height: 8 }} />
 
           <Pressable style={[s.btn, s.ghost]} onPress={goHome}>
-            <Text style={s.ghostTxt}>홈으로</Text>
+            <Text style={s.ghostTxt}>{t('offlineScreen.home')}</Text>
           </Pressable>
 
           {!!__DEV__ && (

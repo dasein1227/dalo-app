@@ -1,0 +1,133 @@
+{
+  "view_title": "個人檔案",
+  "edit_title": "編輯個人檔案",
+  "nickname": "暱稱",
+  "handle": "帳號",
+  "status_message": "狀態訊息",
+  "public_default": "個人檔案預設公開",
+  "save_done": "已儲存。",
+  "no_name": "沒有名稱",
+  "no_id": "ID 未設定",
+  "follow": "追蹤",
+  "following": "追蹤中",
+  "stat_posts": "貼文",
+  "stat_followers": "追蹤者",
+  "stat_following": "追蹤中",
+  "empty_posts": "沒有貼文",
+  "empty_posts_tab": "沒有貼文",
+  "swipe": {
+    "new_post": "＋ 新貼文",
+    "chat_1on1": "1:1 聊天",
+    "chat_me": "給自己的聊天",
+    "call": "通話",
+    "more": "更多 →"
+  },
+  "alert": {
+    "setting_soon": "準備中。",
+    "call_friend_only_title": "無法通話",
+    "call_friend_only_desc": "僅提供給好友。",
+    "call_feature_soon": "準備中。",
+    "unfollow_title": "取消追蹤",
+    "unfollow_desc": "要取消追蹤嗎？",
+    "keep": "保留",
+    "follow_fail": "無法追蹤。",
+    "unfollow_fail": "無法取消。",
+    "self_chat_fail": "無法開始聊天。"
+  },
+  "edit": {
+    "error_permission": "只能編輯自己的個人檔案。",
+    "revert_title": "取消變更",
+    "revert_msg": "要取消變更嗎？",
+    "revert_action": "取消",
+    "revert": "取消變更",
+    "error_add_tab": "無法新增分頁。",
+    "confirm_delete_tab": "要刪除「{{name}}」分頁嗎？",
+    "error_save": "無法儲存。",
+    "change_cover": "變更背景",
+    "status_placeholder": "輸入狀態訊息",
+    "section_theme": "樣式",
+    "theme_color": "主題色",
+    "font_color": "字體色",
+    "statusbar": "狀態列",
+    "text_white": "白色文字",
+    "text_black": "黑色文字",
+    "section_tabs": "分頁管理",
+    "tab_all": "全部",
+    "tab_input_placeholder": "+ 新分頁",
+    "hue": "色相 (Hue)",
+    "brightness": "亮度 (Brightness)",
+    "apply": "套用",
+    "setting_tab": "「{{name}}」設定",
+    "move_up": "上移",
+    "move_down": "下移",
+    "visibility": "公開範圍",
+    "current_vis": "目前：{{val}}",
+    "vis_public": "全部",
+    "vis_private": "僅自己",
+    "vis_custom": "自訂",
+    "vis_friends": "好友",
+    "vis_followers": "追蹤者",
+    "picker_avatar": "選擇個人照片",
+    "picker_cover": "選擇背景照片"
+  },
+  "menu": {
+    "settings": "設定",
+    "message": "訊息",
+    "unfollow": "取消追蹤",
+    "hide": "隱藏",
+    "hide_confirm": "要隱藏這位使用者嗎？",
+    "block": "封鎖",
+    "block_confirm": "要封鎖這位使用者嗎？",
+    "report": "檢舉"
+  },
+  "followList": {
+    "title": "追蹤",
+    "searchPlaceholder": "搜尋暱稱或 ID",
+    "searchHint": "輸入搜尋詞",
+    "searchEmpty": "沒有搜尋結果",
+    "retry": "重新載入",
+    "unfollowTitle": "取消追蹤",
+    "unfollowMessage": "要取消追蹤 {{name}} 嗎？",
+    "unfollowAction": "取消",
+    "tab": {
+      "following": "追蹤中",
+      "followers": "追蹤者",
+      "requests": "邀請"
+    },
+    "list": {
+      "following": "追蹤中列表",
+      "followers": "追蹤者列表",
+      "requests": "追蹤邀請"
+    },
+    "section": {
+      "outgoing": "送出的邀請",
+      "incoming": "收到的邀請"
+    },
+    "badge": {
+      "follower": "追蹤者",
+      "pending": "邀請中"
+    },
+    "action": {
+      "accept": "接受",
+      "decline": "拒絕"
+    },
+    "empty": {
+      "followingTitle": "沒有追蹤中",
+      "followersTitle": "沒有追蹤者",
+      "requestsTitle": "沒有邀請",
+      "followingDesc": "追蹤感興趣的人吧。",
+      "followersDesc": "分享你的個人檔案吧。",
+      "requestsDesc": "送出或接受邀請吧。"
+    },
+    "error": {
+      "loadFollowing": "無法載入追蹤中列表。",
+      "loadFollowers": "無法載入追蹤者。",
+      "loadRequests": "無法載入邀請。",
+      "loadList": "無法載入列表。",
+      "unfollow": "無法取消。",
+      "cancelRequest": "無法取消邀請。",
+      "acceptRequest": "無法接受邀請。",
+      "rejectRequest": "無法拒絕邀請。"
+    }
+  }
+}

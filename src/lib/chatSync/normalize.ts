@@ -10,6 +10,9 @@ export type NormalizedRow = {
   kind: string | null;
   createdAt: number;
   isNotice: boolean | null;
+  noticePinnedAt: number | null;
+  // ✅ [FIX] 번역 필드 추가 (UI 렌더링용)
+  translatedText: string | null;
 };
 
 // Supabase → LocalDB 정상화
@@ -36,5 +39,8 @@ export function normalizeRow(row: ChatMessageRow): NormalizedRow {
     kind: row.kind ?? 'text',
     createdAt,
     isNotice: row.is_notice ?? null,
+    noticePinnedAt: row.notice_pinned_at ? new Date(row.notice_pinned_at).getTime() : null,
+    // ✅ [FIX] DB 필드 매핑
+    translatedText: row.translated_text ?? null, 
   };
 }

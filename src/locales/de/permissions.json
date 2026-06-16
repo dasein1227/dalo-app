@@ -1,0 +1,35 @@
+{
+  "title": "Berechtigungen",
+  "subtitle": "Erlaube die benötigten Berechtigungen.",
+  "location_title": "Standortzugriff",
+  "location_desc": "Erforderlich für Beacons in der Nähe und die Karte.",
+  "notifications_title": "Benachrichtigungen (optional)",
+  "notifications_desc": "Erhalte Beacon-Einladungen, Chats und Hinweise.",
+  "allow_now": "Jetzt erlauben",
+  "allowed": "Erlaubt",
+  "open_settings": "Einstellungen öffnen",
+  "continue_without_location": "Später einrichten",
+  "background_location_title": "Standort im Hintergrund (optional)",
+  "background_location_desc": "Erhalte Beacon- und Standortmeldungen, auch wenn die App geschlossen ist.",
+  "background_location_hint": "Kann den Akkuverbrauch erhöhen. Du kannst es jederzeit ändern.",
+  "gallery": {
+    "title": "Fotozugriff erforderlich",
+    "description": "Zum Auswählen von Fotos ist Zugriff erforderlich."
+  },
+  "camera": {
+    "title": "Kamerazugriff erforderlich",
+    "description": "Zum Aufnehmen ist Kamerazugriff erforderlich."
+  },
+  "location": {
+    "title": "Standortzugriff erforderlich",
+    "description": "Zum Ermitteln deines Standorts ist Zugriff erforderlich."
+  },
+  "notification": {
+    "title": "Benachrichtigungen",
+    "description": "Zum Erhalten von Meldungen ist die Berechtigung erforderlich."
+  },
+  "action": {
+    "openSettings": "Einstellungen öffnen",
+    "notNow": "Später"
+  }
+}

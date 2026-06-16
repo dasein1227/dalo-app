@@ -1,6 +1,7 @@
 // src/screens/chat/components/MessageActions/DeleteTypeModal.tsx
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { Modal, View, Text, StyleSheet, Pressable, Platform } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Picker } from '@react-native-picker/picker';
 import type { ChatTheme } from '@/screens/chat/theme/chatTheme';
 
@@ -18,6 +19,7 @@ type Props = {
   // ✅ eligibility (computed by parent)
   canDeleteAll: boolean;
   canMomentDelete: boolean;
+  allowReadBased?: boolean;
 
   onDeleteMine: () => void;
   onDeleteAll: () => void;
@@ -26,15 +28,15 @@ type Props = {
 
 type DeleteChoice = 'MINE' | 'ALL' | 'MOMENT';
 
-function formatDelay(totalSeconds: number) {
+function formatDelay(totalSeconds: number, labels: { hour: string; minute: string; second: string }) {
   const s = Math.max(0, Math.floor(totalSeconds));
   const h = Math.floor(s / 3600);
   const m = Math.floor((s % 3600) / 60);
   const ss = s % 60;
 
-  if (h > 0) return `${h}시간 ${m}분`;
-  if (m > 0) return `${m}분`;
-  return `${ss}초`;
+  if (h > 0) return `${h}${labels.hour} ${m}${labels.minute}`;
+  if (m > 0) return `${m}${labels.minute}`;
+  return `${ss}${labels.second}`;
 }
 
 function withAlpha(hex: string, alpha: number) {
@@ -66,10 +68,22 @@ export default function DeleteTypeModal({
   theme,
   canDeleteAll,
   canMomentDelete,
+  allowReadBased = true,
   onDeleteMine,
   onDeleteAll,
   onConfirmMoment,
 }: Props) {
+  const { t } = useTranslation();
+
+  const delayLabels = useMemo(
+    () => ({
+      hour: t('chat:deleteModal.unit.hour'),
+      minute: t('chat:deleteModal.unit.minute'),
+      second: t('chat:deleteModal.unit.second'),
+    }),
+    [t],
+  );
+
   const hours = useMemo(() => Array.from({ length: 24 }, (_, i) => i), []);
   const mins = useMemo(() => Array.from({ length: 60 }, (_, i) => i), []);
 
@@ -80,6 +94,10 @@ export default function DeleteTypeModal({
 
   // cancel confirm
   const [cancelConfirmVisible, setCancelConfirmVisible] = useState(false);
+
+  useEffect(() => {
+    if (!allowReadBased && readBased) setReadBased(false);
+  }, [allowReadBased, readBased]);
 
   // reset on open
   useEffect(() => {
@@ -102,10 +120,11 @@ export default function DeleteTypeModal({
   const delaySeconds = useMemo(() => hour * 3600 + min * 60, [hour, min]);
 
   const momentLabel = useMemo(() => {
-    if (delaySeconds <= 0) return '시간을 선택하세요';
-    if (readBased) return `읽은 후 ${formatDelay(delaySeconds)} 뒤 삭제`;
-    return `${formatDelay(delaySeconds)} 후 삭제`;
-  }, [delaySeconds, readBased]);
+    if (delaySeconds <= 0) return t('chat:deleteModal.selectTime');
+    const delay = formatDelay(delaySeconds, delayLabels);
+    if (readBased && allowReadBased) return t('chat:deleteModal.readAfterWithDelay', { delay });
+    return t('chat:deleteModal.afterDelete', { delay });
+  }, [delaySeconds, readBased, allowReadBased, delayLabels, t]);
 
   const isAllEnabled = canDeleteAll;
   const isMomentEnabled = canMomentDelete;
@@ -230,7 +249,7 @@ export default function DeleteTypeModal({
         style={styles.toggleRow}
         hitSlop={8}
       >
-        <Text style={[styles.toggleLabel, { color: theme.headerText }]}>읽은 뒤에 삭제</Text>
+        <Text style={[styles.toggleLabel, { color: theme.headerText }]}>{t('chat:deleteModal.readBased')}</Text>
 
         <View
           style={[
@@ -253,7 +272,7 @@ export default function DeleteTypeModal({
         </View>
       </Pressable>
     );
-  }, [readBased, theme.headerText, theme.inputBg]);
+  }, [readBased, theme.headerText, theme.inputBg, t]);
 
   const tint = theme.headerText;
   const cardBg = theme.inputFieldBg ?? withAlpha(tint, 0.06);
@@ -266,20 +285,20 @@ export default function DeleteTypeModal({
 
         <View style={styles.centerWrap} pointerEvents="box-none">
           <View style={[styles.sheet, { backgroundColor: theme.inputBg }]}>
-            <Text style={[styles.title, { color: theme.headerText }]}>삭제</Text>
+            <Text style={[styles.title, { color: theme.headerText }]}>{t('chat:deleteModal.title')}</Text>
 
             {/* ✅ 라디오 박스 영역 */}
             <View style={styles.list}>
-              <RadioRow label="나에게만 삭제" value="MINE" />
-              <RadioRow label="모두에게 삭제" value="ALL" disabled={!isAllEnabled} />
-              <RadioRow label="모먼트 삭제" value="MOMENT" disabled={!isMomentEnabled} />
+              <RadioRow label={t('chat:deleteModal.mine')} value="MINE" />
+              <RadioRow label={t('chat:deleteModal.all')} value="ALL" disabled={!isAllEnabled} />
+              <RadioRow label={t('chat:deleteModal.moment')} value="MOMENT" disabled={!isMomentEnabled} />
             </View>
 
             {/* ✅ 모먼트 삭제 선택 시 자동 확장 / 비활성화 시 축소 */}
             {momentExpanded && (
               <View style={[styles.momentBox, { backgroundColor: cardBg, borderColor: cardBorder }]}>
-                {/* 타이머(시간설정) */}
-                <Text style={[styles.sectionTitle, { color: theme.headerText }]}>타이머</Text>
+                {/* 삭제 시점 설정 */}
+                <Text style={[styles.sectionTitle, { color: theme.headerText }]}>{t('chat:deleteModal.sectionTitle')}</Text>
 
                 <View style={styles.pickerRow}>
                   <View
@@ -299,7 +318,7 @@ export default function DeleteTypeModal({
                         <Picker.Item key={`h_${h}`} label={`${String(h).padStart(2, '0')}`} value={h} />
                       ))}
                     </Picker>
-                    <Text style={[styles.unit, { color: theme.headerText }]}>시간</Text>
+                    <Text style={[styles.unit, { color: theme.headerText }]}>{t('chat:deleteModal.unit.hour')}</Text>
                   </View>
 
                   <View
@@ -319,12 +338,13 @@ export default function DeleteTypeModal({
                         <Picker.Item key={`m_${m}`} label={`${String(m).padStart(2, '0')}`} value={m} />
                       ))}
                     </Picker>
-                    <Text style={[styles.unit, { color: theme.headerText }]}>분</Text>
+                    <Text style={[styles.unit, { color: theme.headerText }]}>{t('chat:deleteModal.unit.minute')}</Text>
                   </View>
                 </View>
 
-                {/* 읽은뒤 삭제 on/off 버튼 */}
-                <View style={styles.toggleWrap}>{ToggleRow}</View>
+                {allowReadBased ? (
+                  <View style={styles.toggleWrap}>{ToggleRow}</View>
+                ) : null}
 
                 <Text style={[styles.momentLabel, { color: theme.headerText }]}>{momentLabel}</Text>
               </View>
@@ -339,7 +359,7 @@ export default function DeleteTypeModal({
                 ]}
                 onPress={attemptClose}
               >
-                <Text style={[styles.bottomBtnText, { color: theme.headerText }]}>취소</Text>
+                <Text style={[styles.bottomBtnText, { color: theme.headerText }]}>{t('common:cancel')}</Text>
               </Pressable>
 
               <Pressable
@@ -354,7 +374,7 @@ export default function DeleteTypeModal({
                 disabled={!canSubmit}
                 onPress={handleSubmit}
               >
-                <Text style={[styles.bottomBtnText, { color: theme.headerText }]}>확인</Text>
+                <Text style={[styles.bottomBtnText, { color: theme.headerText }]}>{t('common:ok')}</Text>
               </Pressable>
             </View>
           </View>
@@ -372,9 +392,9 @@ export default function DeleteTypeModal({
 
         <View style={styles.centerWrap} pointerEvents="box-none">
           <View style={[styles.confirmSheet, { backgroundColor: theme.inputBg }]}>
-            <Text style={[styles.confirmTitle, { color: theme.headerText }]}>취소하시겠어요?</Text>
+            <Text style={[styles.confirmTitle, { color: theme.headerText }]}>{t('chat:deleteModal.cancelTitle')}</Text>
             <Text style={[styles.confirmDesc, { color: withAlpha(theme.headerText, 0.78) }]}>
-              선택한 설정은 저장되지 않습니다.
+              {t('chat:deleteModal.cancelDesc')}
             </Text>
 
             <View style={styles.confirmRow}>
@@ -385,7 +405,7 @@ export default function DeleteTypeModal({
                 ]}
                 onPress={() => setCancelConfirmVisible(false)}
               >
-                <Text style={[styles.confirmBtnText, { color: theme.headerText }]}>계속 설정</Text>
+                <Text style={[styles.confirmBtnText, { color: theme.headerText }]}>{t('chat:deleteModal.keepEditing')}</Text>
               </Pressable>
 
               <Pressable
@@ -398,7 +418,7 @@ export default function DeleteTypeModal({
                   onClose();
                 }}
               >
-                <Text style={[styles.confirmBtnText, { color: theme.headerText }]}>취소하기</Text>
+                <Text style={[styles.confirmBtnText, { color: theme.headerText }]}>{t('chat:deleteModal.discard')}</Text>
               </Pressable>
             </View>
           </View>

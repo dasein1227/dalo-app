@@ -1,0 +1,48 @@
+{
+  "channel": {
+    "social_name": "Social",
+    "social_description": "Notificaciones de amigos y actividad social",
+    "chat_name": "Chats",
+    "chat_description": "Mensajes y alertas de chat"
+  },
+  "summary": {
+    "social_title": "CO·ONN",
+    "social_body": "Nueva notificación social",
+    "chat_title": "CO·ONN",
+    "chat_body": "Nueva notificación de chat"
+  },
+  "actions": {
+    "read": "Leído",
+    "reply": "Responder"
+  },
+  "common": {
+    "someone": "Alguien",
+    "new_notification": "Nueva notificación",
+    "new_notification_body": "Tienes una nueva notificación.",
+    "new_message": "Nuevo mensaje"
+  },
+  "friend": {
+    "request_received_title": "Solicitud de amistad",
+    "request_received_subtitle": "{{actor}}",
+    "request_received_body": "{{actor}} te envió una solicitud de amistad"
+  },
+  "chat": {
+    "dm_title": "{{sender}}",
+    "dm_subtitle": "",
+    "dm_body_text": "{{message}}",
+    "dm_body_image": "Envió una foto",
+    "dm_body_video": "Envió un video",
+    "dm_body_audio": "Envió un mensaje de voz",
+    "dm_body_file": "Envió un archivo",
+    "dm_body_map": "Compartió una ubicación",
+    "group_title": "{{room}}",
+    "group_subtitle": "{{sender}}",
+    "group_body_text": "{{sender}}: {{message}}",
+    "group_body_image": "{{sender}} envió una foto",
+    "group_body_video": "{{sender}} envió un video",
+    "group_body_audio": "{{sender}} envió un mensaje de voz",
+    "group_body_file": "{{sender}} envió un archivo",
+    "group_body_map": "{{sender}} compartió una ubicación",
+    "reply_placeholder": "Escribe una respuesta…"
+  }
+}

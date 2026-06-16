@@ -1,0 +1,28 @@
+{
+  "common": {
+    "title": "檢舉"
+  },
+  "reasonList": {
+    "title": "選擇檢舉原因",
+    "guide": "使用指南"
+  },
+  "reasonDetail": {
+    "submit": "提交",
+    "more": "查看更多",
+    "empty": "無法載入檢舉資訊。"
+  },
+  "guide": {
+    "title": "指南",
+    "empty": "無法載入指南。"
+  },
+  "done": {
+    "title": "檢舉已提交。",
+    "body": "我們會審查後採取必要措施。"
+  },
+  "alert": {
+    "loadFail": "載入失敗",
+    "info": "提示",
+    "linkOpenFail": "無法開啟連結。",
+    "submitFail": "提交失敗"
+  }
+}

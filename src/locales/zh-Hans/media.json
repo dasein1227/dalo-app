@@ -1,0 +1,14 @@
+{
+  "recent": "最近项目",
+  "select_photo": "选择照片",
+  "max_select": "最多 {{count}} 张",
+  "processing_error": "处理失败。",
+  "select_to_edit": "请选择要编辑的照片。",
+  "video_edit_warning": "无法编辑视频。",
+  "bundle_photos": "合并发送",
+  "quality_settings": "画质",
+  "quality_original": "原图",
+  "quality_standard": "标准",
+  "quality_low": "省流量",
+  "quality_high": "高清"
+}

@@ -1,0 +1,409 @@
+{
+  "create_title": "Tạo Beacon",
+  "edit_title": "Sửa Beacon",
+  "detail_title": "Thông tin Beacon",
+  "members_title": "Quản lý Beacon",
+  "my_rooms_title": "Beacon của tôi",
+  "join": "Tham gia",
+  "enter": "Vào",
+  "owner_tools": "Công cụ chủ phòng",
+  "visibility": "Phạm vi hiển thị",
+  "status_message": "Trạng thái",
+  "public_profile": "Công khai hồ sơ",
+  "current_members": "Số người hiện tại",
+  "age_range": "Độ tuổi",
+  "memo": "Ghi chú",
+  "time_left": "Thời gian còn lại",
+  "common": {
+    "beacon": "Beacon",
+    "noName": "Chưa có tên",
+    "anonymous": "Người dùng ẩn danh",
+    "loading": "Đang tải…",
+    "done": "Xong",
+    "confirm": "OK",
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "submit": "Gửi",
+    "approve": "Duyệt",
+    "reject": "Từ chối",
+    "block": "Chặn",
+    "kick": "Mời ra",
+    "none": "Không có",
+    "unlimited": "Không giới hạn"
+  },
+  "error": {
+    "invalidId": "ID không hợp lệ.",
+    "invalidAccess": "Truy cập không hợp lệ.",
+    "loginRequired": "Cần đăng nhập.",
+    "locationPermission": "Cần quyền vị trí.",
+    "locationUnavailable": "Không thể xác định vị trí hiện tại.",
+    "locationLoadFail": "Không thể tải vị trí.",
+    "notFound": "Không tìm thấy Beacon.",
+    "detailNotFound": "Không tìm thấy thông tin Beacon.",
+    "detailLoadFail": "Không thể tải thông tin Beacon.",
+    "operationFail": "Không thể hoàn tất thao tác."
+  },
+  "time": {
+    "am": "SA",
+    "pm": "CH",
+    "monthDay": "{{day}}/{{month}}",
+    "minute": "{{count}} phút",
+    "hour": "{{count}} giờ",
+    "hourMinute": "{{hour}} giờ {{minute}} phút",
+    "remainEnded": "Đã kết thúc",
+    "remainMinute": "Còn {{count}} phút",
+    "remainHour": "Còn {{count}} giờ",
+    "remainHourMinute": "Còn {{hour}} giờ {{minute}} phút",
+    "justNow": "Vừa xong",
+    "agoMinute": "{{count}} phút trước",
+    "agoHour": "{{count}} giờ trước",
+    "agoDay": "{{count}} ngày trước"
+  },
+  "unit": {
+    "people": "người",
+    "age": "tuổi",
+    "count": "mục",
+    "times": "lần",
+    "peopleCount": "{{count}} người",
+    "ageCount": "{{count}} tuổi",
+    "retryLeft": "Còn {{count}} lần"
+  },
+  "tabs": {
+    "dm": "Riêng",
+    "group": "Nhóm",
+    "open": "Mở",
+    "beacon": "Beacon"
+  },
+  "visibilityLabel": {
+    "public": "Công khai",
+    "friends": "Bạn bè",
+    "labels": "Nhóm",
+    "custom": "Tùy chỉnh",
+    "publicCompact": "Công khai",
+    "friendsCompact": "Bạn bè",
+    "labelsCompact": "Nhóm",
+    "customCompact": "Tùy chỉnh",
+    "publicExcludeFriends": "Trừ người quen"
+  },
+  "visibilityDesc": {
+    "public": "Hiển thị với mọi người. Mặc định cần duyệt để vào.",
+    "friends": "Chỉ hiển thị với bạn bè. Mặc định vào tự do.",
+    "labels": "Chỉ hiển thị với nhóm đã chọn. Mặc định vào tự do.",
+    "custom": "Chọn trực tiếp bạn bè và nhóm. Mặc định vào tự do."
+  },
+  "gender": {
+    "any": "Không giới hạn giới tính",
+    "male": "Nam",
+    "female": "Nữ"
+  },
+  "myRooms": {
+    "headerTitle": "Trò chuyện",
+    "status": {
+      "pending": "Chờ duyệt",
+      "joined": "{{visibility}} · Đang tham gia",
+      "owner": "{{visibility}} · còn {{minutes}} phút",
+      "host": "Chủ phòng",
+      "waiting": "Đang chờ",
+      "member": "Đang tham gia"
+    },
+    "title": {
+      "mine": "Beacon của tôi",
+      "fallback": "Beacon"
+    },
+    "empty": {
+      "title": "Chưa có cuộc trò chuyện.",
+      "beaconDesc": "Beacon của bạn và Beacon đang tham gia sẽ hiển thị tại đây."
+    },
+    "error": {
+      "loadFail": "Không thể tải danh sách."
+    },
+    "alert": {
+      "routeCreate": "Vui lòng kiểm tra màn hình tạo Beacon.",
+      "routeChatCreate": "Tạo chat mới đang chuẩn bị.",
+      "routeBeaconSearch": "Vui lòng kiểm tra màn hình tìm Beacon.",
+      "routeSearch": "Vui lòng kiểm tra màn hình tìm kiếm."
+    }
+  },
+  "form": {
+    "titlePlaceholder": "Mục đích Beacon",
+    "descPlaceholder": "Nhập mô tả hoặc quy tắc",
+    "durationMin": "30 phút",
+    "durationMax": "4 giờ",
+    "minuteSuffix": "phút",
+    "locationSelectTitle": "Vị trí hiển thị với bạn bè",
+    "locationSelectHelper": "Trong 200m từ vị trí hiện tại",
+    "locationPickFailTitle": "Không thể chọn vị trí",
+    "selectedAddress": "Địa chỉ đã chọn",
+    "locationEmpty": "Chưa chọn vị trí. Vui lòng mở bản đồ.",
+    "locationShortPlaceholder": "Vị trí gần đúng",
+    "locationDetailPlaceholder": "Vị trí chi tiết",
+    "conditionsTitle": "Điều kiện tham gia",
+    "genderTitle": "Giới tính",
+    "quotaTitle": "Số người",
+    "quotaDesc": "0 nghĩa là không giới hạn. Có thể nhấn số để nhập trực tiếp.",
+    "ageLimitTitle": "Giới hạn tuổi",
+    "ageLimitDesc": "Mặc định là ±10 tuổi so với tuổi của bạn.",
+    "ageNoLimit": "Không giới hạn",
+    "ageMin": "Tuổi tối thiểu",
+    "ageMax": "Tuổi tối đa",
+    "maleQuota": "Nam",
+    "femaleQuota": "Nữ",
+    "mixQuota": "Không giới hạn",
+    "selectGroups": "Nhóm hiển thị",
+    "selectFriends": "Bạn bè hiển thị",
+    "friendSearch": "Tìm bạn bè",
+    "emptyGroups": "Chưa có nhóm.",
+    "emptyFriends": "Chưa có bạn bè.",
+    "protectionOff": "Không bảo vệ",
+    "protectionOffAlt": "Không bảo vệ",
+    "createButton": "Tạo Beacon",
+    "saveButton": "Lưu",
+    "durationTitle": "Thời lượng",
+    "durationDesc": "Tự động kết thúc sau thời gian đã chọn.",
+    "locationProtectionTitle": "Bảo vệ vị trí",
+    "locationProtectionDesc": "Hiển thị vị trí ngẫu nhiên trong phạm vi đã đặt.",
+    "refreshLocation": "Kiểm tra lại vị trí hiện tại"
+  },
+  "create": {
+    "validation": {
+      "titleRequired": "Vui lòng nhập tên cuộc gặp.",
+      "titleMax": "Tên cuộc gặp tối đa 80 ký tự.",
+      "duration": "Thời lượng phải từ 10–240 phút.",
+      "ageRange": "Vui lòng kiểm tra khoảng tuổi.",
+      "locationRequired": "Vui lòng xác nhận vị trí hiện tại.",
+      "labelsRequired": "Vui lòng chọn nhóm.",
+      "customRequired": "Vui lòng chọn bạn bè hoặc nhóm."
+    },
+    "alert": {
+      "labelLoadFailTitle": "Tải nhóm thất bại",
+      "labelLoadFail": "Không thể tải danh sách nhóm.",
+      "friendLoadFailTitle": "Tải bạn bè thất bại",
+      "friendLoadFail": "Không thể tải danh sách bạn bè.",
+      "createFailTitle": "Tạo Beacon thất bại",
+      "createFail": "Đã xảy ra lỗi."
+    }
+  },
+  "edit": {
+    "validation": {
+      "titleRequired": "Vui lòng nhập tiêu đề phòng.",
+      "titleMax": "Tiêu đề phòng tối đa 80 ký tự.",
+      "duration": "Thời lượng phải từ 10–240 phút.",
+      "ageRange": "Vui lòng kiểm tra khoảng tuổi.",
+      "labelsRequired": "Vui lòng chọn nhóm.",
+      "customRequired": "Vui lòng chọn bạn bè hoặc nhóm."
+    },
+    "toast": {
+      "moved": "Đã chuyển tới vị trí hiện tại.",
+      "moveFail": "Không thể chuyển vị trí.",
+      "saved": "Đã lưu.",
+      "saveFail": "Đã xảy ra lỗi."
+    }
+  },
+  "detail": {
+    "action": {
+      "ended": "Đã đóng tuyển",
+      "enter_chat": "Vào phòng chat",
+      "cancel_request": "Hủy yêu cầu",
+      "join_direct": "Tham gia",
+      "request_retry": "Yêu cầu lại",
+      "request_join": "Yêu cầu tham gia",
+      "forbidden": "Bị giới hạn",
+      "full": "Đã đủ chỗ",
+      "closed": "Không thể tham gia"
+    },
+    "badge": {
+      "pending": "Chờ duyệt",
+      "rejected": "Đã từ chối",
+      "approval": "Cần duyệt",
+      "free": "Vào tự do"
+    },
+    "empty": {
+      "deleted": "Beacon không tồn tại.",
+      "back": "Quay lại"
+    },
+    "fallbackTitle": "Beacon chưa đặt tên",
+    "info": {
+      "status": "Trạng thái",
+      "capacity": "Số người",
+      "audience": "Đối tượng hiển thị",
+      "retry": "Cơ hội gửi lại"
+    },
+    "location": {
+      "title": "Vị trí gặp",
+      "visible": "Vị trí chi tiết sẽ được cung cấp trước khi tham gia.",
+      "hidden": "Địa chỉ chính xác sẽ được chia sẻ trong chat sau khi tham gia.",
+      "openMap": "Xem trên bản đồ ›"
+    },
+    "host": {
+      "settings": "Cài đặt Beacon",
+      "settingsDesc": "Đổi tiêu đề, giới thiệu, phạm vi hiển thị",
+      "members": "Quản lý người tham gia",
+      "membersDesc": "Xem thành viên và mời ra",
+      "close": "Kết thúc Beacon",
+      "closeDesc": "Đóng tuyển và đóng phòng chat"
+    },
+    "requests": {
+      "title": "Đang chờ tham gia",
+      "empty": "Không có yêu cầu đang chờ.",
+      "messageTitle": "Tin nhắn yêu cầu tham gia",
+      "messageDesc": "Để lại lời nhắn cho chủ phòng. Không bắt buộc.",
+      "placeholder": "VD: Tôi đang ở gần.",
+      "send": "Gửi yêu cầu",
+      "sending": "Đang gửi…",
+      "code": "Mã {{code}}",
+      "temperature": "Nhiệt độ {{temp}}°",
+      "rejectionCount": "Từ chối trước đó {{count}} lần"
+    },
+    "alert": {
+      "editRoute": "Vui lòng kiểm tra màn hình sửa.",
+      "membersRoute": "Vui lòng kiểm tra màn hình quản lý thành viên.",
+      "loginTitle": "Cần đăng nhập",
+      "loginDesc": "Cần đăng nhập để tham gia.",
+      "chatNotFound": "Không tìm thấy thông tin phòng chat.",
+      "cancelTitle": "Hủy yêu cầu",
+      "cancelDesc": "Hủy yêu cầu tham gia?",
+      "keep": "Giữ",
+      "cancelFailTitle": "Hủy thất bại",
+      "cancelFail": "Không thể hủy yêu cầu.",
+      "fullTitle": "Đã đủ chỗ",
+      "fullDesc": "Số người tuyển đã đủ.",
+      "forbiddenTitle": "Giới hạn tham gia",
+      "forbiddenDesc": "Bạn không thể tham gia Beacon này.",
+      "endedTitle": "Đã đóng tuyển",
+      "endedDesc": "Beacon đã kết thúc.",
+      "unavailableTitle": "Thông báo",
+      "unavailableDesc": "Hiện không thể tham gia.",
+      "requestSentTitle": "Đã gửi yêu cầu",
+      "requestSentDesc": "Vui lòng chờ chủ phòng duyệt.",
+      "requestFailTitle": "Gửi thất bại",
+      "requestFail": "Không thể gửi yêu cầu.",
+      "approveFailTitle": "Duyệt thất bại",
+      "approveFail": "Không thể duyệt người tham gia.",
+      "rejectFailTitle": "Từ chối thất bại",
+      "rejectFail": "Không thể từ chối yêu cầu tham gia.",
+      "closeTitle": "Kết thúc Beacon",
+      "closeDesc": "Kết thúc tuyển và đóng phòng chat?",
+      "closeAction": "Kết thúc",
+      "closeDoneTitle": "Đã kết thúc",
+      "closeDoneDesc": "Beacon đã kết thúc.",
+      "closeFailTitle": "Kết thúc thất bại",
+      "closeFail": "Không thể kết thúc Beacon."
+    }
+  },
+  "members": {
+    "role": {
+      "host": "Chủ phòng",
+      "mod": "Điều hành",
+      "member": "Thành viên"
+    },
+    "tab": {
+      "members": "Người tham gia",
+      "requests": "Yêu cầu {{count}}"
+    },
+    "meta": {
+      "joined": "Tham gia {{time}}",
+      "request": "Yêu cầu {{time}} · từ chối trước đó {{count}} lần"
+    },
+    "hero": {
+      "titleFallback": "Beacon",
+      "approval": "Cần duyệt",
+      "free": "Vào tự do"
+    },
+    "empty": {
+      "members": "Chưa có người tham gia.",
+      "requests": "Không có yêu cầu đang chờ."
+    },
+    "alert": {
+      "loadFailTitle": "Tải thất bại",
+      "loadFail": "Không thể tải thông tin.",
+      "kickTitle": "Mời người tham gia ra",
+      "kickDesc": "Mời {{name}} ra?",
+      "kickAction": "Mời ra",
+      "alreadyHandled": "Đã xử lý hoặc không thể mời ra.",
+      "kickFailTitle": "Thất bại",
+      "kickFail": "Không thể mời người tham gia ra.",
+      "blockTitle": "Chặn người tham gia",
+      "blockDesc": "Chặn và loại {{name}}?\nNgười bị chặn sẽ không hiển thị lại.",
+      "blockFail": "Không thể chặn người tham gia.",
+      "approveTitle": "Duyệt tham gia",
+      "approveDesc": "Duyệt {{name}} tham gia?",
+      "approveFailTitle": "Duyệt thất bại",
+      "approveFail": "Không thể duyệt.",
+      "rejectTitle": "Từ chối tham gia",
+      "rejectDesc": "Từ chối yêu cầu tham gia của {{name}}?",
+      "rejectFailTitle": "Từ chối thất bại",
+      "rejectFail": "Không thể từ chối."
+    }
+  },
+  "main": {
+    "loadingMap": "Đang tải bản đồ…",
+    "listButton": "Danh sách",
+    "emptyRadius": "Không có Beacon để hiển thị.",
+    "card": {
+      "noTitle": "Chưa có tiêu đề",
+      "meta": "Cách {{distance}}m · bán kính {{radius}}m · {{entry}}",
+      "endsAfterMinute": "Kết thúc sau {{count}} phút",
+      "endingSoon": "Sắp kết thúc",
+      "always": "Luôn mở"
+    },
+    "toast": {
+      "movedHere": "Đã cập nhật vị trí hiện tại."
+    },
+    "error": {
+      "loadFail": "Không thể tải Beacon gần bạn.",
+      "locationUnavailable": "Không thể xác định vị trí.",
+      "noActiveBeacon": "Không có Beacon đang hoạt động.",
+      "moveFail": "Không thể cập nhật vị trí."
+    },
+    "accessibility": {
+      "detail": "Xem chi tiết Beacon",
+      "create": "Tạo Beacon mới"
+    }
+  },
+  "search": {
+    "title": "Tìm kiếm",
+    "placeholder": "Cuộc gặp bạn muốn tìm",
+    "distance": "Khoảng cách",
+    "target": "Đối tượng",
+    "age": "Tuổi",
+    "quick": {
+      "friendsOnly": "Chỉ bạn bè",
+      "public": "Công khai",
+      "tenMin": "10 phút",
+      "twenties": "20s"
+    },
+    "visibility": {
+      "title": "Phạm vi hiển thị",
+      "any": "Tất cả",
+      "public": "Công khai",
+      "publicFiltered": "Công khai · trừ bạn bè",
+      "friends": "Bạn bè",
+      "labels": "Nhóm",
+      "custom": "Chỉ định"
+    },
+    "gender": {
+      "title": "Giới tính",
+      "any": "Tất cả",
+      "male": "Nam",
+      "female": "Nữ",
+      "other": "Khác"
+    },
+    "distancePreset": {
+      "fiveMin": "5 phút",
+      "tenMin": "10 phút",
+      "twentyMin": "20 phút",
+      "near": "Gần"
+    },
+    "agePreset": {
+      "all": "Tất cả",
+      "twenties": "20s",
+      "thirties": "30s",
+      "forties": "40s",
+      "fiftyPlus": "50+"
+    },
+    "action": {
+      "reset": "Đặt lại",
+      "apply": "Áp dụng"
+    }
+  }
+}

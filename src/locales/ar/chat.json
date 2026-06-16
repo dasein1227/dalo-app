@@ -1,0 +1,1293 @@
+{
+  "title": "الدردشة",
+  "send": "إرسال",
+  "attach": "ملف",
+  "gallery": "المعرض",
+  "invite": "دعوة",
+  "manage": "إدارة",
+  "members": "الأعضاء",
+  "placeholder": "أدخل رسالة…",
+  "date": {
+    "today": "اليوم",
+    "yesterday": "أمس",
+    "separatorLabel": "{{weekday}}, {{month}} {{day}}, {{year}}",
+    "floatingLabel": "{{weekday}}, {{month}} {{day}}, {{year}}"
+  },
+  "all": "الكل",
+  "and_others_n": "وآخرون",
+  "others_suffix": "آخرون",
+  "anonymous": "مجهول",
+  "message": "رسالة",
+  "message_search": "بحث الرسائل",
+  "message_send": "إرسال رسالة",
+  "message_send_failed": "فشل إرسال الرسالة",
+  "message_delete_failed": "تعذر حذف الرسالة.",
+  "message_deleted": "تم حذف الرسالة.",
+  "new_message_one": "رسالة جديدة واحدة",
+  "new_messages_count": "{{count}} رسائل جديدة",
+  "chat_with_me": "دردشة معي",
+  "self_badge": "أنا",
+  "chat_room_title": "غرفة الدردشة",
+  "one_to_one_chat": "دردشة فردية",
+  "group_chat_title": "دردشة جماعية",
+  "open_chat_title": "دردشة مفتوحة",
+  "beacon_chat_title": "دردشة بيكون",
+  "room_not_found": "معلومات الغرفة غير متاحة.",
+  "chat_room_not_found": "تعذر العثور على غرفة الدردشة.",
+  "conversation_partner": "الطرف الآخر",
+  "audio_send_failed": "فشل إرسال الصوت",
+  "video": "فيديو",
+  "photo": "صورة",
+  "file_label": "ملف",
+  "open_file": "فتح الملف",
+  "play_video": "تشغيل الفيديو",
+  "voice_message": "رسالة صوتية",
+  "share_location": "مشاركة الموقع",
+  "map_location_shared_title": "تمت مشاركة الموقع",
+  "map_tap_to_open": "اضغط لفتح الخريطة.",
+  "cannot_open_map": "تعذر فتح الخريطة.",
+  "no_coordinate_info": "لا توجد إحداثيات",
+  "send_failed": "فشل الإرسال",
+  "share": "مشاركة",
+  "share_failed": "فشلت المشاركة",
+  "delete_failed": "فشل الحذف",
+  "upload_failed": "فشل الرفع",
+  "selection_mode": "وضع التحديد",
+  "selection_mode_hint": "اضغط الرسائل لحذفها.",
+  "selection_clear": "مسح التحديد",
+  "delete_dialog_title": "حذف الرسالة",
+  "delete_dialog_desc": "اختر طريقة الحذف.",
+  "delete_for_everyone": "حذف للجميع",
+  "delete_hide_for_everyone": "إخفاء للجميع",
+  "delete_for_me": "حذف لدي فقط",
+  "delete_for_me_hint": "يمكن حذف الرسائل المحددة لديك فقط.",
+  "reply": "رد",
+  "reply_to_me": "رد على رسالتي",
+  "reply_to_user": "رد على {{nickname}}",
+  "msg_deleted_by_user": "حذف {{nickname}} رسالة.",
+  "notice": "إشعار",
+  "notice_coming_soon": "قريباً.",
+  "korean_label": "كوري",
+  "auto_translate_paid_only": "الترجمة التلقائية متاحة مع Standard أو Premium.",
+  "translation_paid_only": "الترجمة متاحة للأعضاء المدفوعين فقط.",
+  "premium_only": "للمميز فقط",
+  "premium_only_feature_hint": "متاح مع Premium.",
+  "tone_neutral": "محايد",
+  "tone_casual": "ودّي",
+  "tone_formal": "رسمي",
+  "tone_business": "أعمال",
+  "tone_playful": "مرح",
+  "tone_change_premium_only": "إعدادات النبرة متاحة مع Premium.",
+  "tone_premium_only_hint": "متاح مع ترجمة Premium.",
+  "login_required": "تسجيل الدخول مطلوب.",
+  "no_permission_send_rls": "ليست لديك صلاحية إرسال الرسائل. (RLS)\n",
+  "rls_help_chat_members": "→ تحقق من وجودك في chat_members وراجع سياسات chat_messages.",
+  "search_placeholder": "أدخل كلمة بحث",
+  "search_result_count": "{{count}} نتيجة",
+  "show_original": "عرض الأصل",
+  "show_translation": "عرض الترجمة",
+  "translating": "جارٍ الترجمة…",
+  "input": {
+    "placeholder": "إرسال رسالة",
+    "placeholderLong": "أدخل رسالة…"
+  },
+  "hold_to_unlock": "اضغط مطولاً لفتح الإدخال",
+  "error": {
+    "loginRequired": "تسجيل الدخول مطلوب.",
+    "roomNotFound": "تعذر العثور على غرفة الدردشة.",
+    "createRoomTitle": "تعذر فتح غرفة الدردشة.",
+    "createRoomMessage": "حاول لاحقاً."
+  },
+  "sheet": {
+    "moreActions": "إجراءات إضافية",
+    "media": "صور/فيديوهات",
+    "file": "ملف",
+    "location": "مشاركة الموقع",
+    "inviteFriend": "دعوة صديق",
+    "inviteLink": "رابط الدعوة",
+    "translate": "ترجمة"
+  },
+  "translate": {
+    "title": "ترجمة",
+    "current_lang_prefix": "الحالي: {{code}}",
+    "tone_label": "النبرة",
+    "toneNeutral": "محايد",
+    "toneNeutralDesc": "ترجمة طبيعية افتراضية",
+    "toneCasual": "ودّي",
+    "toneCasualDesc": "للدردشات الودّية",
+    "toneFormal": "رسمي",
+    "toneFormalDesc": "مهذبة ومحترمة",
+    "toneBusiness": "أعمال",
+    "toneBusinessDesc": "للعمل والبريد والتقارير",
+    "tonePlayful": "مرح",
+    "tonePlayfulDesc": "للمزاح الخفيف والميمز"
+  },
+  "unknown": "غير معروف",
+  "voice": "صوت",
+  "list": {
+    "tab": {
+      "chat": "الدردشة",
+      "open": "فتح",
+      "beacon": "بيكون",
+      "business": "أعمال"
+    },
+    "empty": {
+      "chatTitle": "لا توجد دردشات",
+      "chatSub": "ابدأ محادثة مع صديق.",
+      "openTitle": "لا توجد دردشات مفتوحة",
+      "openSub": "ابحث عن مواضيع تهمك.",
+      "beaconTitle": "لا توجد بيكونات مشاركة",
+      "beaconSub": "استكشف البيكونات القريبة.",
+      "businessTitle": "لا توجد دردشات أعمال",
+      "businessSub": "سيظهر سجل الاستشارات هنا."
+    },
+    "leaveConfirmTitle": "مغادرة المحادثة؟",
+    "leaveConfirmMessage": "ستختفي هذه المحادثة من قائمتك.",
+    "leaveConfirmAction": "مغادرة"
+  },
+  "menu": {
+    "title": "قائمة الدردشة",
+    "joinedDate": "انضممت {{date}}",
+    "media": "صور/فيديوهات",
+    "mediaEmpty": "ستظهر الوسائط الحديثة هنا.",
+    "noticeSchedule": "الإشعارات والجداول",
+    "me": "أنا"
+  },
+  "membersScreen": {
+    "title": "الأعضاء",
+    "loading": "جارٍ التحميل…",
+    "empty": "لا يوجد أعضاء",
+    "owner": "المضيف",
+    "participant": "مشارك",
+    "remove": "إزالة",
+    "removeTitle": "إزالة",
+    "removeMessage": "إزالة {{name}}؟",
+    "loadFail": "تعذر التحميل",
+    "noName": "بلا اسم"
+  },
+  "inviteScreen": {
+    "title": "دعوة الأصدقاء",
+    "roomMissingTitle": "معلومات الغرفة غير موجودة",
+    "roomMissingMessage": "ادخل مجدداً ثم حاول.",
+    "tryAgain": "حاول لاحقاً.",
+    "loadFailTitle": "تعذر تحميل الأصدقاء.",
+    "selectFriend": "اختر صديقاً.",
+    "selectForAdd": "اختر أصدقاء لإضافتهم.",
+    "selectForNewGroup": "اختر أصدقاء للانضمام.",
+    "addSuccessTitle": "تمت إضافة الأصدقاء.",
+    "addSuccessMessage": "تمت إضافة {{count}}.",
+    "addFailTitle": "تعذر إضافة الأصدقاء.",
+    "createFailTitle": "تعذر إنشاء الدردشة الجماعية.",
+    "friendRowAdd": "إضافة إلى هذه المجموعة",
+    "friendRowNewGroup": "تضمين في مجموعة جديدة",
+    "groupAddTitle": "إضافة أصدقاء إلى المجموعة",
+    "newGroupTitle": "دردشة جماعية جديدة",
+    "groupAddDesc": "أضف الأصدقاء المحددين إلى هذه المجموعة.",
+    "newGroupDesc": "أنشئ مجموعة جديدة مع الأصدقاء المحددين.",
+    "loading": "جارٍ تحميل الأصدقاء",
+    "emptyTitle": "لا يوجد أصدقاء لدعوتهم",
+    "emptyDesc": "تم استبعاد الأصدقاء الموجودين في الغرفة.",
+    "addCount": "إضافة {{count}}",
+    "makeGroupCount": "إنشاء مجموعة مع {{count}}",
+    "noName": "بلا اسم",
+    "groupFallbackTitle": "دردشة جماعية",
+    "groupTitleWithOthers": "{{names}} + {{count}}"
+  },
+  "roomEdit": {
+    "title": "معلومات غرفة الدردشة",
+    "nameLabel": "اسم غرفة الدردشة",
+    "hidePhoto": "إخفاء الصورة",
+    "hidePhotoDesc": "إظهار الصورة الافتراضية في القوائم.",
+    "helperLine1": "الصورة والاسم اللذان تحددهما يظهران لك فقط.",
+    "helperLine2": "لا يؤثران في الطرف الآخر.",
+    "alertTitle": "إشعار",
+    "unhideBeforeChange": "أوقف إخفاء الصورة قبل تغييرها.",
+    "saveFail": "فشل الحفظ"
+  },
+  "roomData": {
+    "title": "إدارة البيانات",
+    "ratioTitle": "البيانات حسب النوع",
+    "noMedia": "لا توجد وسائط محفوظة",
+    "savedCount": "{{value}} محفوظ",
+    "deleteAllWithSize": "حذف كل الوسائط ({{size}})",
+    "photoData": "بيانات الصور",
+    "videoData": "بيانات الفيديو",
+    "audioData": "بيانات الصوت",
+    "fileData": "بيانات الملفات",
+    "storageCenter": "تخزين CO·ONN",
+    "loadFail": "تعذر تحميل معلومات البيانات.",
+    "actionFail": "تعذر إكمال الإجراء.",
+    "clear": {
+      "photoTitle": "حذف بيانات الصور",
+      "photoMessage": "يحذف بيانات الصور المحفوظة على هذا الجهاز. تبقى الرسائل وعناصر المعرض كما هي.",
+      "photoSuccess": "تم حذف بيانات الصور.",
+      "videoTitle": "حذف بيانات الفيديو",
+      "videoMessage": "يحذف بيانات الفيديو المحفوظة على هذا الجهاز. تبقى الرسائل وعناصر المعرض كما هي.",
+      "videoSuccess": "تم حذف بيانات الفيديو.",
+      "audioTitle": "حذف بيانات الصوت",
+      "audioMessage": "يحذف بيانات الصوت المحفوظة على هذا الجهاز. تبقى الرسائل كما هي.",
+      "audioSuccess": "تم حذف بيانات الصوت.",
+      "fileTitle": "حذف بيانات الملفات",
+      "fileMessage": "يحذف بيانات الملفات المحفوظة على هذا الجهاز. تبقى الرسائل كما هي.",
+      "fileSuccess": "تم حذف بيانات الملفات.",
+      "allTitle": "حذف كل الوسائط",
+      "allMessage": "يحذف الصور والفيديوهات والصوت والملفات المحفوظة على هذا الجهاز. تبقى الرسائل وعناصر المعرض كما هي.",
+      "allSuccess": "تم حذف بيانات الوسائط."
+    }
+  },
+  "collection": {
+    "title": "المجموعة",
+    "count": "{{count}}",
+    "total": "الإجمالي {{value}}",
+    "tabs": {
+      "links": "الروابط",
+      "schedules": "الجداول",
+      "bookmarks": "الإشارات المرجعية"
+    },
+    "empty": {
+      "media": "لا توجد صور أو فيديوهات",
+      "files": "لا توجد ملفات",
+      "links": "لا توجد روابط",
+      "notices": "لا توجد إشعارات",
+      "schedules": "لا توجد جداول",
+      "bookmarks": "لا توجد إشارات مرجعية"
+    },
+    "noDate": "لا يوجد تاريخ",
+    "tapToView": "اضغط للعرض",
+    "bookmarkMissingMessage": "لم يتم العثور على هذه الرسالة على هذا الجهاز.",
+    "scheduleEmptyBody": "لا توجد تفاصيل للجدول.",
+    "secureRecovery": {
+      "completedBody": "تم استيراد مفاتيح الأمان السابقة.",
+      "rejectedBody": "تم رفض طلب مفتاح الأمان السابق."
+    },
+    "scheduleStatus": {
+      "cancelled": "ملغى",
+      "completed": "مكتمل",
+      "joined": "مشارك",
+      "joinedOngoing": "مشارك"
+    },
+    "section": {
+      "latestNotice": "أحدث إشعار",
+      "previousNotice": "إشعارات سابقة",
+      "activeSchedules": "نشط / مفتوح",
+      "closedSchedules": "مكتمل / ملغى"
+    }
+  },
+  "settings": {
+    "title": "إعدادات غرفة الدردشة",
+    "memberCount": "{{count}} عضو",
+    "startedAt": "بدأت {{date}}",
+    "inputLock": "قفل الإدخال",
+    "theme": {
+      "title": "سمة غرفة الدردشة",
+      "default": "افتراضي",
+      "byRoomType": "حسب نوع الغرفة"
+    },
+    "themePreview": {
+      "other": "حسناً",
+      "mine": "فهمت"
+    },
+    "translation": {
+      "title": "إعدادات الترجمة"
+    },
+    "sound": {
+      "title": "صوت الإشعار",
+      "default": "افتراضي",
+      "clear": "واضح",
+      "calm": "هادئ",
+      "short": "قصير",
+      "soft": "ناعم",
+      "quiet": "منخفض",
+      "deep": "عميق",
+      "light": "فاتح",
+      "mute": "كتم"
+    },
+    "data": {
+      "section": "البيانات",
+      "manage": "إدارة البيانات"
+    },
+    "export": {
+      "title": "تصدير الدردشة",
+      "message": "تصدير الدردشات المحفوظة على هذا الجهاز كملف نصي.",
+      "saveFile": "حفظ الملف",
+      "share": "مشاركة",
+      "saveSuccess": "تم الحفظ كملف.",
+      "shareSuccess": "تم فتح شاشة المشاركة.",
+      "saveCancelled": "تم إلغاء الحفظ.",
+      "fail": "تعذر التصدير.",
+      "deletedMessage": "[رسالة محذوفة]",
+      "secureExcluded": "[رسالة آمنة - مستبعدة]",
+      "imageLabel": "[صورة]",
+      "videoLabel": "[فيديو]",
+      "audioLabel": "[صوت]",
+      "fileLabel": "[ملف]",
+      "unknownSender": "غير معروف",
+      "meSender": "أنا",
+      "userSender": "مستخدم",
+      "fileTitle": "تصدير دردشة CO·ONN",
+      "roomLine": "غرفة الدردشة: {{roomTitle}}",
+      "exportedAtLine": "تم التصدير في: {{exportedAt}}",
+      "noteLocal": "※ يعتمد هذا الملف على الدردشات المحفوظة على هذا الجهاز.",
+      "noteText": "※ تُصدّر رسائلك كنص أصلي، ورسائل الآخرين كنص ظاهر حالياً.",
+      "noteSecure": "※ لا يتم تصدير محتوى الرسائل الآمنة أو بيانات المفاتيح.",
+      "noteGallery": "※ الملفات المحفوظة في المعرض تُدار بشكل منفصل عن ذاكرة التطبيق.",
+      "attachmentLine": "- مرفق: {{type}}{{fileNamePart}}{{mimePart}}",
+      "shareDialogTitle": "مشاركة الدردشة"
+    },
+    "leave": {
+      "title": "مغادرة غرفة الدردشة",
+      "action": "مغادرة",
+      "rejectInvite": "رفض الدعوة والمغادرة",
+      "reportAndLeave": "إبلاغ ومغادرة",
+      "groupMessage": "يمكنك مغادرة الغرفة أو رفض الدعوة.",
+      "reportMessage": "يمكنك مغادرة هذه الغرفة أو الإبلاغ عنها.",
+      "defaultMessage": "مغادرة غرفة الدردشة؟ ستختفي من قائمة الدردشات.",
+      "fail": "تعذر مغادرة غرفة الدردشة.",
+      "selfBlocked": "لا يمكنك مغادرة الدردشة مع نفسك."
+    },
+    "secure": {
+      "section": "مفاتيح الأمان",
+      "me": "أنا",
+      "peer": "الطرف الآخر",
+      "authCancelled": "تم إلغاء المصادقة.",
+      "decline": "رفض",
+      "newKey": "إنشاء مفتاح أمان جديد",
+      "newKeyDesc": "إنشاء مفتاح جديد للاستخدام القادم.",
+      "newKeyConfirmTitle": "إنشاء مفتاح أمان جديد؟",
+      "newKeyConfirmMessage": "سيُستخدم مفتاح جديد من الآن فصاعداً. تُحفظ المفاتيح السابقة.",
+      "create": "إنشاء",
+      "newKeySuccessTitle": "تم إنشاء مفتاح أمان جديد",
+      "newKeySuccessMessage": "سيتم تشفير الرسائل بمفتاح الأمان epoch {{epoch}}.",
+      "newKeyFailTitle": "فشل إنشاء المفتاح",
+      "newKeyFail": "تعذر إنشاء مفتاح أمان جديد.",
+      "historyRequest": "طلب مفاتيح سابقة",
+      "historyRequestDesc": "طلب مفاتيح الرسائل السابقة.",
+      "historyRequestConfirmTitle": "طلب مفاتيح أمان سابقة؟",
+      "historyRequestConfirmMessage": "طلب مفاتيح الرسائل السابقة من أطراف الدردشة.",
+      "request": "طلب",
+      "historyRequestSuccessTitle": "تم إرسال الطلب",
+      "historyRequestSuccessMessage": "تم الطلب من {{count}} شخص.",
+      "historyRequestEmpty": "لا يوجد أطراف دردشة للطلب منهم.",
+      "historyRequestFailTitle": "فشل الطلب",
+      "historyRequestFail": "تعذر طلب مفاتيح أمان سابقة.",
+      "claimApproved": "استيراد المفاتيح المعتمدة",
+      "claimApprovedDesc": "حفظ المفاتيح السابقة المعتمدة.",
+      "claimSuccessTitle": "تم استيراد مفاتيح الأمان",
+      "claimSuccessMessage": "تم استيراد {{imported}} · موجود {{skipped}}{{conflictText}}",
+      "claimFailTitle": "فشل الاستيراد",
+      "claimFail": "تعذر استيراد مفاتيح الأمان المعتمدة.",
+      "incomingRequestTitle": "{{name}} طلب مفاتيح أمان سابقة",
+      "shareApprovedDesc": "وافق لمشاركة المفاتيح السابقة.",
+      "historyShareConfirmTitle": "مشاركة مفاتيح أمان سابقة؟",
+      "historyShareConfirmMessage": "مشاركة مفاتيح الأمان السابقة مع {{name}}.",
+      "historyShareSuccessTitle": "تمت المشاركة",
+      "historyShareSuccessMessage": "تمت المشاركة مع {{name}}.",
+      "historyShareFailTitle": "فشلت المشاركة",
+      "historyShareFail": "تعذر مشاركة مفاتيح الأمان السابقة.",
+      "historyRejectConfirmTitle": "رفض الطلب؟",
+      "historyRejectConfirmMessage": "رفض طلب {{name}}.",
+      "rejectSuccessTitle": "تم الرفض",
+      "rejectSuccessMessage": "تم رفض طلب {{name}}.",
+      "rejectFailTitle": "فشل الرفض",
+      "rejectFail": "تعذر رفض طلب مفتاح الأمان السابق.",
+      "backupSection": "نسخة احتياطية لمفاتيح الأمان",
+      "backup": "نسخ مفاتيح الأمان احتياطياً",
+      "backupSummary": "تم النسخ · {{rooms}} غرف · {{keys}} مفاتيح",
+      "noBackup": "لا توجد نسخة احتياطية",
+      "backupConfirmTitle": "نسخ مفاتيح الأمان احتياطياً؟",
+      "backupCreateMessage": "يُحفظ على الخادم نسخ احتياطي مشفّر فقط. يظهر رمز الاسترداد مرة واحدة.",
+      "backupReplaceMessage": "إنشاء نسخة جديدة يستبدل النسخة الحالية. احفظ رمز الاسترداد الجديد.",
+      "backupAction": "نسخ احتياطي",
+      "backupFailTitle": "فشل النسخ الاحتياطي",
+      "backupCreateFail": "تعذر إنشاء نسخة احتياطية لمفاتيح الأمان.",
+      "restore": "استعادة نسخة المفاتيح",
+      "restoreDesc": "استيراد المفاتيح السابقة برمز الاسترداد.",
+      "restoreMessage": "أدخل رمز الاسترداد الذي حصلت عليه عند إنشاء النسخة الاحتياطية.",
+      "restoreAction": "استعادة",
+      "restoreCodeRequired": "أدخل رمز الاسترداد.",
+      "restoreSuccessTitle": "اكتملت الاستعادة",
+      "restoreSuccessMessage": "تم استيراد {{imported}} مفتاح · موجود {{skipped}}{{conflictText}}",
+      "restoreFail": "تعذر استعادة نسخة مفاتيح الأمان.",
+      "conflictText": " · تعارضات {{conflicts}}\nتم الاحتفاظ بالمفاتيح المحلية الحالية عند التعارض.",
+      "conflictShort": " · تعارضات {{conflicts}}",
+      "recoveryCodeTitle": "رمز استرداد مفاتيح الأمان",
+      "recoveryCodeMessage": "لن يظهر رمز الاسترداد مرة أخرى. احتفظ به في مكان آمن.",
+      "copyRecoveryCode": "نسخ رمز الاسترداد",
+      "codeStored": "تم حفظ رمز الاسترداد.",
+      "codeCopied": "تم نسخ رمز الاسترداد.",
+      "codeCopyFail": "تعذر النسخ.",
+      "codeConfirmRequired": "انسخ رمز الاسترداد أو أكد أنك حفظته.",
+      "deleteServerBackup": "حذف النسخة الاحتياطية من الخادم",
+      "deleteServerBackupDesc": "يحذف النسخة الاحتياطية المشفّرة على الخادم فقط.",
+      "backupDeleteConfirmTitle": "حذف نسخة مفاتيح الأمان؟",
+      "backupDeleteConfirmMessage": "سيتم حذف النسخة الاحتياطية المشفّرة على الخادم. تبقى مفاتيح الأمان على هذا الجهاز.",
+      "backupDeleteSuccessTitle": "تم حذف النسخة الاحتياطية",
+      "backupDeleteSuccessMessage": "تم حذف نسخة الخادم. مفاتيح الأمان على هذا الجهاز محفوظة.",
+      "backupDeleteFailTitle": "فشل حذف النسخة الاحتياطية",
+      "backupDeleteFail": "تعذر حذف نسخة مفاتيح الأمان."
+    },
+    "openProfileEditAccessibility": "تعديل معلومات الدردشة المفتوحة العامة"
+  },
+  "me": "أنا",
+  "noticePromote": {
+    "unsupported": "لا يمكن رفعها كإشعار.",
+    "ownerOnly": "يمكن للمضيف فقط رفع الإشعارات.",
+    "noPermission": "ليست لديك صلاحية الإشعار.",
+    "secureBlocked": "لا يمكن تحويل الرسائل الآمنة إلى إشعارات.",
+    "systemBlocked": "لا يمكن تحويل رسائل النظام إلى إشعارات.",
+    "deletedBlocked": "لا يمكن تحويل الرسائل المحذوفة إلى إشعارات.",
+    "missingMessage": "تعذر التحقق من الرسالة."
+  },
+  "secure": {
+    "promptAuth": "صادِق لإرسال رسالة آمنة.",
+    "on": "وضع الأمان مفعّل",
+    "off": "وضع الأمان متوقف",
+    "readyFail": "فشل تجهيز وضع الأمان",
+    "sendReadyFail": "فشل تجهيز الإرسال الآمن",
+    "mediaUnsupported": "غير مدعوم حالياً في وضع الأمان.",
+    "fileUnsupported": "إرسال الملفات غير مدعوم في وضع الأمان.",
+    "content": {
+      "image": "🔐 صورة مشفّرة",
+      "video": "🔐 فيديو مشفّر",
+      "audio": "🔐 صوت مشفّر",
+      "location": "🔐 موقع مشفّر"
+    },
+    "enabled": "وضع الأمان مفعّل",
+    "disabled": "وضع الأمان متوقف",
+    "lockedLabel": "🔐 رسالة مشفّرة",
+    "prompt": {
+      "keyUse": "صادِق لاستخدام مفاتيح الرسائل الآمنة.",
+      "deviceRegister": "صادِق لتسجيل جهاز آمن.",
+      "backupCreate": "صادِق لنسخ مفاتيح الأمان احتياطياً.",
+      "backupRestore": "صادِق لاستعادة مفاتيح الأمان.",
+      "newRoomKey": "صادِق لإنشاء مفتاح أمان جديد.",
+      "historyRequest": "صادِق لطلب مفاتيح سابقة.",
+      "historyShare": "صادِق لمشاركة مفاتيح سابقة.",
+      "historyReject": "صادِق لرفض طلب مفتاح سابق.",
+      "historyClaim": "صادِق لاستيراد المفاتيح السابقة المعتمدة.",
+      "decrypt": "صادِق لعرض الرسالة الآمنة."
+    },
+    "error": {
+      "loginRequired": "تسجيل الدخول مطلوب.",
+      "backupEmpty": "لا توجد مفاتيح أمان لنسخها احتياطياً. حاول بعد استخدام الرسائل الآمنة.",
+      "backupMissing": "لا توجد نسخة احتياطية محفوظة لمفاتيح الأمان.",
+      "backupWrongAccount": "نسخة مفاتيح الأمان هذه لا تخص هذا الحساب.",
+      "requesterDeviceMissing": "تعذر العثور على جهاز الطالب الآمن النشط.",
+      "noHistoryKeyToShare": "لا توجد مفاتيح أمان سابقة على هذا الجهاز لمشاركتها.",
+      "parcelCreateFailed": "تعذر إنشاء بيانات مفاتيح الأمان للمشاركة."
+    }
+  },
+  "jump": {
+    "newMessage": "رسالة جديدة",
+    "newMessageAccessibility": "الانتقال إلى الرسالة الجديدة",
+    "latestAccessibility": "الانتقال إلى أحدث رسالة"
+  },
+  "permission": {
+    "cameraTitle": "الإذن مطلوب",
+    "cameraMessage": "يلزم إذن الوصول إلى الكاميرا.",
+    "contactsTitle": "الإذن مطلوب",
+    "contactsMessage": "يلزم إذن الوصول إلى جهات الاتصال."
+  },
+  "filePick": {
+    "failTitle": "فشل اختيار الملف",
+    "failMessage": "تعذر اختيار الملف."
+  },
+  "newChat": {
+    "title": "دردشة جديدة",
+    "create": "إنشاء",
+    "start": "بدء",
+    "noName": "بلا اسم",
+    "selectPartnerRequired": "اختر طرف المحادثة.",
+    "openTitleRequired": "أدخل اسم الدردشة المفتوحة.",
+    "modeNormal": "عادي",
+    "modeOpen": "فتح",
+    "openSectionTitle": "إنشاء دردشة مفتوحة",
+    "openNamePlaceholder": "اسم الدردشة المفتوحة",
+    "openHelper": "أنشئ غرفة دردشة عامة دون اختيار أصدقاء.",
+    "partnerSectionTitle": "اختر طرف الدردشة",
+    "groupTitlePlaceholder": "اسم الدردشة الجماعية",
+    "searchNamePlaceholder": "بحث بالاسم",
+    "emptyFriends": "لا يوجد أصدقاء",
+    "userFallback": "مستخدم",
+    "privateChatTitle": "دردشة خاصة",
+    "groupChatTitle": "دردشة جماعية",
+    "openChatTitle": "دردشة مفتوحة",
+    "coverPhoto": "صورة الغلاف",
+    "selectPhoto": "اختيار صورة",
+    "openDescriptionPlaceholder": "وصف الغرفة",
+    "openTagsPlaceholder": "مثال: الحي، القهوة، الجري",
+    "searchVisible": "قابل للبحث",
+    "searchVisibleDesc": "يمكن العثور على هذه الغرفة بالاسم والوصف والوسوم.",
+    "groupModeTitle": "دردشة جماعية",
+    "groupModeAutoDesc": "اختيار شخصين أو أكثر ينشئ مجموعة.",
+    "groupModeSingleDesc": "يمكنك إنشاء مجموعة مع اختيار شخص واحد."
+  },
+  "menuModal": {
+    "markRead": "تحديد كمقروء",
+    "roomInfo": "معلومات غرفة الدردشة",
+    "pin": "تثبيت",
+    "unpin": "إلغاء التثبيت",
+    "mute": "كتم",
+    "unmute": "إلغاء الكتم",
+    "leave": "مغادرة",
+    "selfRoomTitle": "دردشة معي"
+  },
+  "roomCard": {
+    "pending": "قيد الانتظار",
+    "emptyMessage": "لا توجد رسائل",
+    "messageFallback": "رسالة",
+    "am": "ص",
+    "pm": "م",
+    "date": "{{month}}/{{day}}",
+    "preview": {
+      "image": "[صورة]",
+      "video": "[فيديو]",
+      "audio": "[صوت]",
+      "file": "[ملف]",
+      "map": "[موقع]",
+      "notice": "[إشعار]"
+    }
+  },
+  "searchModal": {
+    "rooms": "غرف الدردشة",
+    "messages": "الرسائل",
+    "placeholder": "بحث",
+    "emptyTitle": "بحث",
+    "emptyDesc": "ابحث في غرف الدردشة والرسائل.",
+    "noResultTitle": "لا توجد نتائج",
+    "noResultDesc": "جرّب كلمة أخرى.",
+    "roomPrefix": "غرفة الدردشة",
+    "visibleName": "اسم العرض",
+    "messageSender": "المرسل",
+    "filterNormal": "عادي",
+    "filterOpen": "فتح",
+    "filterBeacon": "بيكون",
+    "filterBusiness": "أعمال",
+    "dateAll": "الكل",
+    "dateToday": "اليوم",
+    "date7d": "7 أيام",
+    "date30d": "30 يوماً",
+    "tabChat": "الدردشة",
+    "tabParticipant": "الأعضاء",
+    "tabOpen": "الدردشات المفتوحة",
+    "participants": "الأعضاء",
+    "openRooms": "دردشات مفتوحة",
+    "participantEmptyTitle": "بحث الأعضاء",
+    "participantEmptyDesc": "ابحث في أسماء العرض داخل غرف الدردشة.",
+    "participantNoResultTitle": "لا يوجد أعضاء",
+    "participantNoResultDesc": "جرّب اسماً آخر.",
+    "openEmptyTitle": "بحث الدردشات المفتوحة",
+    "openEmptyDesc": "ابحث باسم الغرفة أو الوصف أو الوسوم.",
+    "openNoResultTitle": "لا توجد دردشات مفتوحة",
+    "openNoResultDesc": "جرّب كلمة أخرى.",
+    "typeFilter": "النوع",
+    "dateFilter": "التاريخ",
+    "openJoined": "مشارك",
+    "openPublic": "دردشة مفتوحة",
+    "participatingRoom": "غرفة مشاركة"
+  },
+  "location": {
+    "fallbackTitle": "الموقع",
+    "selectMapApp": "اختر تطبيق الخرائط",
+    "openMapHint": "اضغط الخريطة للاتجاهات"
+  },
+  "translationPanel": {
+    "title": "إعدادات الترجمة",
+    "subtitle": "ينطبق على هذه الغرفة فقط.",
+    "autoTranslate": {
+      "title": "ترجمة تلقائية",
+      "desc": "عرض الرسائل المستلمة باللغة التي اخترتها."
+    },
+    "showTranslatedOnly": {
+      "title": "الترجمة فقط",
+      "desc": "إعطاء الأولوية للنص المترجم."
+    },
+    "tier": {
+      "title": "الخطة",
+      "desc": "اختر جودة الترجمة.",
+      "upgrade": "ترقية",
+      "options": {
+        "free": {
+          "label": "أساسي",
+          "desc": "ترجمة أساسية"
+        },
+        "mid": {
+          "label": "قياسي",
+          "desc": "ترجمة محادثة طبيعية"
+        },
+        "high": {
+          "label": "مميز",
+          "desc": "يراعي السياق والنبرة"
+        }
+      }
+    },
+    "tone": {
+      "title": "النبرة",
+      "desc": "إعدادات نبرة Premium",
+      "disabled": "متاح مع Premium.",
+      "options": {
+        "business": {
+          "label": "أعمال",
+          "desc": "أسلوب عملي ومنظّم"
+        },
+        "polite": {
+          "label": "مهذب",
+          "desc": "ناعم ومحترم"
+        },
+        "casual": {
+          "label": "ودّي",
+          "desc": "أسلوب يومي طبيعي"
+        },
+        "neutral": {
+          "label": "محايد",
+          "desc": "وضوح المعنى أولاً"
+        },
+        "creative": {
+          "label": "إبداعي",
+          "desc": "تعبير أغنى"
+        }
+      }
+    },
+    "sendLang": {
+      "title": "لغة الإرسال",
+      "desc": "التلقائي يتبع لغة الاستلام لدى الطرف الآخر.",
+      "auto": "تلقائي",
+      "autoDesc": "يطابق تلقائياً لغة الطرف الآخر.",
+      "autoPeerDesc": "الطرف الحالي: {{label}} ({{code}})",
+      "peerBase": "حسب الطرف الآخر",
+      "peerDefault": "افتراضي الطرف الآخر"
+    },
+    "receiveLang": {
+      "title": "لغة الاستلام",
+      "desc": "عرض الرسائل المستلمة بهذه اللغة."
+    },
+    "status": {
+      "off": "إيقاف",
+      "on": "تشغيل",
+      "auto": "تلقائي",
+      "receive": "استلام",
+      "send": "إرسال",
+      "translatedOnly": "الترجمة فقط"
+    },
+    "language": {
+      "EN": "الإنجليزية",
+      "ES": "الإسبانية",
+      "FR": "الفرنسية",
+      "DE": "الألمانية",
+      "IT": "الإيطالية",
+      "PT": "البرتغالية",
+      "NL": "الهولندية",
+      "PL": "البولندية",
+      "RU": "الروسية",
+      "JA": "اليابانية",
+      "KO": "الكورية",
+      "ZH": "الصينية",
+      "TR": "التركية",
+      "SV": "السويدية",
+      "ID": "الإندونيسية",
+      "TH": "التايلاندية",
+      "UK": "الأوكرانية",
+      "RO": "الرومانية",
+      "CS": "التشيكية",
+      "DA": "الدنماركية",
+      "EL": "اليونانية",
+      "FI": "الفنلندية",
+      "HU": "المجرية",
+      "SK": "السلوفاكية",
+      "SL": "السلوفينية",
+      "BG": "البلغارية",
+      "ET": "الإستونية",
+      "LT": "الليتوانية",
+      "LV": "اللاتفية",
+      "AR": "العربية",
+      "ZH_HANS": "الصينية المبسطة",
+      "ZH_HANT": "الصينية التقليدية",
+      "VI": "الفيتنامية",
+      "HI": "الهندية",
+      "HE": "العبرية"
+    }
+  },
+  "header": {
+    "searchPlaceholder": "بحث الدردشات",
+    "advanced": "متقدم",
+    "sender": "المرسل",
+    "date": "التاريخ"
+  },
+  "attachment": {
+    "photo": "صورة",
+    "camera": "الكاميرا",
+    "call": "اتصال",
+    "pay": "دفع",
+    "map": "خريطة",
+    "music": "موسيقى",
+    "file": "ملف",
+    "cloud": "السحابة",
+    "contact": "جهة الاتصال",
+    "recentPhotos": "الصور الحديثة",
+    "send": "إرسال",
+    "photoPermissionRequired": "يلزم إذن الوصول إلى الصور.",
+    "openSettings": "فتح الإعدادات",
+    "callUnavailable": "تعذر بدء الاتصال.",
+    "phoneMissing": "لا يوجد رقم هاتف مسجل.",
+    "phoneOpenFail": "تعذر بدء المكالمة.",
+    "voiceCallUnavailable": "المكالمة الصوتية قريباً.",
+    "contactEmpty": "لا توجد معلومات جهة اتصال لمشاركتها.",
+    "contactShareTitle": "جهة الاتصال",
+    "contactName": "الاسم",
+    "contactPhone": "الهاتف",
+    "contactShareFail": "تعذر مشاركة جهة الاتصال.",
+    "voiceMessage": "صوت",
+    "capture": "التقاط",
+    "schedule": "الجدول"
+  },
+  "accessibility": {
+    "attachmentClose": "إغلاق المرفقات",
+    "attachmentOpen": "فتح المرفقات",
+    "messageInput": "إدخال الرسالة",
+    "sendMessage": "إرسال رسالة",
+    "voiceMessage": "رسالة صوتية"
+  },
+  "replyPreview": {
+    "peer": "الطرف الآخر",
+    "replyTo": "رد على {{name}}",
+    "cancel": "إلغاء الرد"
+  },
+  "mediaKind": {
+    "image": "صورة",
+    "video": "فيديو",
+    "audio": "رسالة صوتية",
+    "file": "ملف",
+    "map": "الموقع",
+    "notice": "إشعار",
+    "text": "نص"
+  },
+  "deleteModal": {
+    "title": "حذف",
+    "mine": "حذف لدي فقط",
+    "all": "حذف للجميع",
+    "moment": "حذف مؤقت",
+    "sectionTitle": "وقت الحذف",
+    "selectTime": "اختر وقت الحذف.",
+    "readBased": "حذف بعد القراءة",
+    "readAfterWithDelay": "بعد القراءة +{{delay}}",
+    "afterDelete": "حذف بعد {{delay}}",
+    "unit": {
+      "hour": "س",
+      "minute": "د",
+      "second": "ثانية"
+    },
+    "cancelTitle": "إلغاء؟",
+    "cancelDesc": "لن يتم حفظ الإعدادات المحددة.",
+    "keepEditing": "متابعة التعديل",
+    "discard": "إلغاء"
+  },
+  "messageAction": {
+    "copy": "نسخ",
+    "selectCopy": "تحديد ونسخ",
+    "reply": "رد",
+    "share": "مشاركة",
+    "toMe": "إلى نفسي",
+    "notice": "إشعار",
+    "highlight": "إشارة مرجعية",
+    "capture": "التقاط",
+    "delete": "حذف",
+    "cancelMoment": "إلغاء إعداد الحذف",
+    "viewOriginalTranslation": "الأصل / الترجمة",
+    "translateOther": "ترجمة إلى لغة أخرى",
+    "reactors": "التفاعلات",
+    "shareToMe": "مشاركة معي",
+    "unhighlight": "إزالة الإشارة المرجعية"
+  },
+  "moment": {
+    "title": "حذف مؤقت",
+    "cancel": "إلغاء إعداد الحذف",
+    "expiredMessage": "رسالة منتهية"
+  },
+  "noticeBanner": {
+    "open": "عرض الإشعار",
+    "close": "إغلاق الإشعار"
+  },
+  "newMessagePill": {
+    "label": "{{count}} رسائل جديدة",
+    "accessibility": "عرض {{count}} رسائل جديدة"
+  },
+  "search": {
+    "sender": "المرسل",
+    "senderFilter": "فلتر المرسل",
+    "dateFilter": "فلتر التاريخ",
+    "prevResult": "النتيجة السابقة",
+    "nextResult": "النتيجة التالية",
+    "close": "إغلاق البحث",
+    "clearSender": "مسح فلتر المرسل",
+    "placeholder": "بحث",
+    "inputAccessibility": "حقل البحث",
+    "clearKeyword": "مسح كلمة البحث",
+    "bookmarkFilter": "فلتر الإشارات المرجعية"
+  },
+  "datePicker": {
+    "title": "اختيار التاريخ",
+    "clear": "مسح",
+    "prevMonth": "الشهر السابق",
+    "nextMonth": "الشهر التالي",
+    "monthTitle": "{{month}} {{year}}",
+    "weekday": {
+      "sun": "الأحد",
+      "mon": "الإثنين",
+      "tue": "الثلاثاء",
+      "wed": "الأربعاء",
+      "thu": "الخميس",
+      "fri": "الجمعة",
+      "sat": "السبت"
+    },
+    "dayAccessibility": "{{day}}",
+    "selected": "محدد",
+    "none": "لا يوجد"
+  },
+  "selection": {
+    "title": "حذف",
+    "selectAll": "تحديد الكل",
+    "deleteCount": "حذف {{count}}"
+  },
+  "noticeModel": {
+    "fallback": "يرجى التحقق من الرسالة.",
+    "scheduleTitle": "الجدول",
+    "media": {
+      "image": "صورة",
+      "video": "فيديو",
+      "audio": "رسالة صوتية",
+      "file": "ملف",
+      "map": "الموقع"
+    },
+    "secureRecovery": {
+      "requestCreated": {
+        "title": "طلب مفتاح سابق",
+        "body": "طلب مشاركة مفاتيح سابقة."
+      },
+      "approved": {
+        "title": "تم اعتماد مفتاح سابق",
+        "body": "يمكنك استيراد المفاتيح السابقة المعتمدة."
+      },
+      "completed": {
+        "title": "تمت استعادة المفاتيح السابقة",
+        "body": "يمكنك فتح الرسائل السابقة مجدداً."
+      },
+      "rejected": {
+        "title": "تم رفض طلب المفتاح السابق",
+        "body": "لا يمكن فتح الرسائل السابقة بهذا الطلب."
+      }
+    },
+    "scheduleTitleWithPrefix": "[جدول] جدول",
+    "weekday": {
+      "sun": "الأحد",
+      "mon": "الإثنين",
+      "tue": "الثلاثاء",
+      "wed": "الأربعاء",
+      "thu": "الخميس",
+      "fri": "الجمعة",
+      "sat": "السبت"
+    }
+  },
+  "messageItem": {
+    "noticeFallback": "هذه رسالة إشعار.",
+    "secureLinkFallback": "رابط",
+    "mapAddressFallback": "معلومات الموقع",
+    "secure": {
+      "genericTitle": "طلب أمان",
+      "genericBody": "تم تحديث حالة طلب الأمان.",
+      "fileFallback": "ملف آمن"
+    },
+    "tombstone": {
+      "deleted": "تم حذف هذه الرسالة.",
+      "expired": "انتهت صلاحية هذه الرسالة."
+    },
+    "longMessage": {
+      "viewAll": "عرض الكل"
+    },
+    "action": {
+      "confirm": "حسناً"
+    }
+  },
+  "linkPreview": {
+    "link": "رابط",
+    "web": "ويب",
+    "searchTitle": "بحث {{query}}",
+    "searchTitleWithProvider": "بحث {{query}} · {{provider}}",
+    "searchResult": "نتائج البحث عن {{query}}",
+    "searchResultWithProvider": "نتائج البحث عن {{query}} · {{provider}}",
+    "provider": {
+      "naver": "Naver",
+      "google": "Google",
+      "daum": "Daum"
+    }
+  },
+  "messageMeta": {
+    "deleteSuffix": "حذف",
+    "cancelMoment": "إلغاء الحذف المؤقت"
+  },
+  "messageBody": {
+    "link": "رابط",
+    "secureMessage": "رسالة مشفّرة",
+    "file": "ملف",
+    "tapToOpen": "اضغط للفتح",
+    "locationInfo": "معلومات الموقع",
+    "secureFile": "ملف آمن"
+  },
+  "replyBlock": {
+    "peer": "الطرف الآخر",
+    "replyTo": "رد على {{name}}"
+  },
+  "voiceRecorder": {
+    "totalDuration": "الإجمالي {{duration}}"
+  },
+  "actions": {
+    "momentCancelFailTitle": "تعذر إلغاء الحذف المؤقت",
+    "tryAgain": "حاول لاحقاً.",
+    "deleteFailTitle": "فشل الحذف",
+    "missingServerMessage": "تعذر التحقق من معرّف رسالة الخادم.",
+    "deleteNetworkFail": "تعذر حذف الرسالة بسبب خطأ في الشبكة.",
+    "momentSetFailTitle": "فشل إعداد الحذف المؤقت",
+    "momentSetNetworkFail": "تعذر إعداد الحذف المؤقت بسبب خطأ في الشبكة.",
+    "uploadFailTitle": "فشل الرفع",
+    "imageUploadFail": "تعذر رفع الصورة إلى الخادم.",
+    "errorTitle": "خطأ",
+    "mediaSendFail": "حدث خطأ أثناء إرسال الوسائط.",
+    "voiceUploadFail": "فشل رفع الرسالة الصوتية.",
+    "fileUploadFail": "فشل رفع الملف."
+  },
+  "bridge": {
+    "messageNotFound": "تعذر العثور على هذه الرسالة محلياً.",
+    "editedImageSent": "تم إرسال الصورة المعدّلة.",
+    "editedImageSendFail": "تعذر إرسال الصورة المعدّلة."
+  },
+  "capture": {
+    "title": "اختيار الالتقاط",
+    "desc": "اختر نطاق الرسائل",
+    "exit": "إنهاء الالتقاط",
+    "clear": "مسح",
+    "share": "مشاركة",
+    "save": "حفظ",
+    "shareCapture": "مشاركة الالتقاط",
+    "saveCapture": "حفظ الالتقاط",
+    "anonymousOn": "تشغيل المجهول",
+    "anonymousOff": "إيقاف المجهول",
+    "anonymousUser": "المستخدم {{index}}",
+    "error": {
+      "secureBlocked": "لا يمكن التقاط الدردشات الآمنة.",
+      "messageNotFound": "لم يتم العثور على الرسالة.",
+      "areaNotFound": "لم يتم العثور على منطقة الالتقاط.",
+      "selectedAreaNotFound": "لم يتم العثور على المنطقة المحددة.",
+      "areaCalcFailed": "تعذر حساب المنطقة.",
+      "outOfView": "النطاق المحدد خارج الشاشة.",
+      "imageCreateFailed": "تعذر إنشاء صورة الالتقاط.",
+      "emptySelection": "لم يتم تحديد رسائل.",
+      "permissionRequired": "يلزم إذن حفظ الصور.",
+      "saveFailed": "تعذر الحفظ.",
+      "shareUnavailable": "المشاركة غير متاحة.",
+      "shareFailed": "تعذر المشاركة."
+    },
+    "success": {
+      "saved": "تم حفظ الالتقاط.",
+      "savedPartial": "تم حفظ جزء من النطاق.",
+      "savedVisibleOnly": "تم حفظ النطاق الظاهر فقط."
+    },
+    "anonymousInitial": "م"
+  },
+  "schedule": {
+    "common": {
+      "title": "الجدول",
+      "fallbackTitle": "بلا عنوان",
+      "roomFallback": "غرفة الدردشة",
+      "participantFallback": "مشارك",
+      "confirm": "حسناً",
+      "cancel": "إلغاء",
+      "close": "إغلاق",
+      "delete": "حذف",
+      "done": "تم",
+      "save": "حفظ",
+      "saving": "جارٍ الحفظ",
+      "select": "اختيار",
+      "weekdays": {
+        "sun": "الأحد",
+        "mon": "الإثنين",
+        "tue": "الثلاثاء",
+        "wed": "الأربعاء",
+        "thu": "الخميس",
+        "fri": "الجمعة",
+        "sat": "السبت"
+      },
+      "period": {
+        "am": "ص",
+        "pm": "م"
+      },
+      "date": "{{month}}/{{day}} ({{weekday}})",
+      "compactDate": "{{month}}/{{day}} {{weekday}}",
+      "timeWithPeriod": "{{period}} {{hour}}:{{minute}}",
+      "participantCount": "{{count}} مشارك",
+      "participantCountShort": "{{count}} مشارك",
+      "participantCountCompact": "{{count}} مشارك",
+      "openDetail": "عرض تفاصيل {{title}}"
+    },
+    "reminder": {
+      "off": "إيقاف",
+      "before30m": "قبل 30 دقيقة",
+      "before1h": "قبل ساعة",
+      "before3h": "قبل 3 ساعات",
+      "before1d": "قبل يوم",
+      "afterJoin": "متاح بعد المشاركة"
+    },
+    "api": {
+      "messageTitle": "جدول · {{title}}",
+      "calendarDefaultTitle": "جدول CO·ONN",
+      "calendarPlace": "المكان: {{place}}",
+      "calendarAddress": "العنوان: {{address}}",
+      "calendarNoteFooter": "جدول CO·ONN",
+      "notificationChannel": "الجداول",
+      "reminderTimeBody": "يبدأ جدولك في {{time}}.",
+      "reminderSoonBody": "سيبدأ جدولك قريباً.",
+      "reminderTitle": "تذكير الجدول"
+    },
+    "detail": {
+      "notFound": "تعذر العثور على الجدول.",
+      "cancelled": "جدول ملغى",
+      "completed": "جدول مكتمل",
+      "directions": "الاتجاهات",
+      "notification": "إشعار",
+      "appPush": "إشعار التطبيق",
+      "calendar": "التقويم",
+      "syncCalendar": "مزامنة مع تقويمي",
+      "synced": "تمت المزامنة",
+      "notSynced": "غير متزامن",
+      "join": "انضمام",
+      "leave": "إلغاء",
+      "noticeBadge": "إشعار",
+      "noParticipants": "لا يوجد مشاركون بعد.",
+      "moveToChat": "الانتقال إلى الدردشة",
+      "menu": {
+        "edit": "تعديل الجدول",
+        "cancel": "إلغاء الجدول",
+        "complete": "إكمال"
+      },
+      "alert": {
+        "processFailTitle": "تعذرت المعالجة",
+        "joinChangeFail": "تعذر تغيير حالة المشاركة.",
+        "participantSettingTitle": "إعدادات المشارك",
+        "promoteNotice": "تعيين كإشعار",
+        "removeNotice": "إزالة الإشعار",
+        "promoteNoticeMessage": "تمييز {{name}}؟",
+        "removeNoticeMessage": "إزالة التمييز من {{name}}؟",
+        "settingFailTitle": "فشل الإعداد",
+        "participantSettingFail": "تعذر تغيير إعدادات المشارك.",
+        "reminderFailTitle": "فشل إعداد التذكير",
+        "calendarReminderFailTitle": "فشل تذكير التقويم",
+        "calendarSyncFailTitle": "فشل مزامنة التقويم",
+        "calendarDeleteFailTitle": "فشل حذف التقويم",
+        "cancelTitle": "إلغاء الجدول",
+        "cancelMessage": "إلغاء هذا الجدول؟\nسيراه المشاركون كملغى.",
+        "cancelAction": "إلغاء الجدول",
+        "cancelFailTitle": "فشل الإلغاء",
+        "cancelFail": "تعذر إلغاء الجدول.",
+        "completeTitle": "إكمال الجدول",
+        "completeMessage": "وضع هذا الجدول كمكتمل؟\nتظهر الجداول المكتملة في الأسفل.",
+        "completeFailTitle": "فشل الإكمال",
+        "completeFail": "تعذر إكمال الجدول.",
+        "calendarRemoveTitle": "إزالة من التقويم",
+        "calendarRemoveMessage": "إزالة الجدول المتزامن من تقويم الجهاز؟"
+      },
+      "error": {
+        "calendarPermissionDenied": "يلزم إذن التقويم.",
+        "calendarNotFound": "لا يوجد تقويم متاح للإضافة.",
+        "invalidScheduleTime": "تعذر التحقق من وقت الجدول.",
+        "calendarApiUnavailable": "التقويم غير متاح على هذا الجهاز.",
+        "calendarDefault": "تعذر إكمال إجراء التقويم.",
+        "notificationPermissionDenied": "يلزم إذن الإشعارات.",
+        "reminderTimePast": "وقت التذكير قد مضى.",
+        "reminderDefault": "تعذر إعداد التذكير."
+      }
+    },
+    "editor": {
+      "createTitle": "إنشاء جدول",
+      "editTitle": "تعديل الجدول",
+      "titlePlaceholder": "العنوان",
+      "allDay": "طوال اليوم",
+      "startDate": "تاريخ البدء",
+      "endDate": "تاريخ الانتهاء",
+      "place": "المكان",
+      "map": "خريطة",
+      "placeNamePlaceholder": "اسم المكان",
+      "memoPlaceholder": "أدخل ملاحظة",
+      "cancelledLocked": "لا يمكن تعديل الجداول الملغاة.",
+      "locationPickerTitle": "اختيار مكان",
+      "locationPickerHelper": "حرّك مركز الخريطة إلى المكان المطلوب ثم اختر.",
+      "validation": {
+        "titleRequired": "أدخل عنواناً.",
+        "startInvalid": "تحقق من وقت البدء.",
+        "endInvalid": "تحقق من وقت الانتهاء.",
+        "endBeforeStart": "وقت الانتهاء قبل وقت البدء.",
+        "roomMissing": "معلومات غرفة الدردشة غير موجودة."
+      }
+    },
+    "listScreen": {
+      "loadFail": "تعذر تحميل الجداول.",
+      "roomMissing": "معلومات غرفة الدردشة غير موجودة.",
+      "createAccessibility": "إنشاء جدول",
+      "retry": "إعادة المحاولة",
+      "activeCount": "{{count}} نشط",
+      "summary": "جداول تُدار معاً داخل غرفة الدردشة هذه.",
+      "emptyTitle": "لا توجد جداول بعد",
+      "emptyDesc": "أنشئ جدولاً للمشاركة.",
+      "beaconUnavailableTitle": "الجداول غير متاحة في دردشات البيكون",
+      "beaconUnavailableDesc": "لا تظهر عناصر الجدول في دردشات البيكون.",
+      "create": "إنشاء جدول",
+      "joined": "مشارك",
+      "notJoined": "غير مشارك",
+      "cancelled": "ملغى",
+      "completed": "مكتمل",
+      "past": "جداول سابقة"
+    },
+    "messageCard": {
+      "cancelled": "ملغى",
+      "completed": "مكتمل"
+    }
+  },
+  "openProfile": {
+    "common": {
+      "confirm": "حسناً",
+      "cancel": "إلغاء",
+      "save": "حفظ",
+      "delete": "حذف",
+      "default": "افتراضي",
+      "user": "مستخدم",
+      "openChat": "دردشة مفتوحة",
+      "business": "أعمال",
+      "openTalk": "دردشة مفتوحة",
+      "fallbackName": "ملف مفتوح",
+      "statusEmpty": "لا توجد رسالة حالة",
+      "selectPhoto": "اختيار صورة الملف",
+      "photoApplied": "تم تطبيق الصورة.",
+      "saved": "تم الحفظ.",
+      "deleted": "تم الحذف.",
+      "tryAgain": "حاول لاحقاً.",
+      "notice": "إشعار",
+      "actionFailed": "تعذرت المعالجة.",
+      "saveFailed": "تعذر الحفظ.",
+      "profileSaveFailed": "تعذر حفظ الملف."
+    },
+    "list": {
+      "title": "الملفات المفتوحة",
+      "loadFailed": "تعذر تحميل الملفات المفتوحة.",
+      "nicknameRequired": "أدخل اسماً مستعاراً.",
+      "createSuccess": "تم إنشاء الملف المفتوح.",
+      "createFailed": "فشل الإنشاء",
+      "saveFailed": "فشل الحفظ",
+      "deleteFailed": "فشل الحذف",
+      "deleteTitle": "حذف الملف المفتوح؟",
+      "deleteDescInUse": "ستبقى الملفات الحالية في غرف الدردشة المفتوحة.",
+      "deleteDescDefault": "لا يمكن استخدام الملفات المحذوفة مجدداً.",
+      "editAccessibility": "تعديل الملف المفتوح",
+      "usedRoomsCount": "مستخدم في {{count}} غرفة دردشة مفتوحة",
+      "usedRoomsEmpty": "لا توجد غرف دردشة مفتوحة قيد الاستخدام.",
+      "emptyTitle": "لا توجد ملفات مفتوحة.",
+      "emptyDesc": "اضغط + في أعلى اليمين لإنشاء واحد."
+    },
+    "viewer": {
+      "action": {
+        "transferOwner": "نقل المضيف",
+        "promoteManager": "تعيين مدير",
+        "demoteManager": "إزالة المدير",
+        "kick": "طرد",
+        "block": "حظر",
+        "unblock": "إلغاء الحظر",
+        "release": "إزالة",
+        "delegate": "نقل",
+        "appoint": "تعيين",
+        "changePhoto": "تغيير الصورة",
+        "showPhoto": "إظهار الصورة"
+      },
+      "confirm": {
+        "blockMessage": "إخفاء رسائل هذا المستخدم القادمة من شاشتك؟",
+        "unblockMessage": "إظهار رسائل هذا المستخدم مجدداً؟",
+        "transferOwnerMessage": "نقل دور المضيف إلى {{name}}؟",
+        "promoteManagerMessage": "منح دور المدير إلى {{name}}؟",
+        "demoteManagerMessage": "إزالة دور المدير من {{name}}؟",
+        "kickMessage": "طرد {{name}}؟ لا يمكن للمستخدم المطرود الانضمام مجدداً."
+      },
+      "accessibility": {
+        "save": "حفظ"
+      },
+      "placeholder": {
+        "status": "رسالة الحالة"
+      }
+    },
+    "edit": {
+      "loadFailed": "تعذر تحميل معلومات الدردشة المفتوحة.",
+      "titleRequired": "أدخل اسم الغرفة.",
+      "saveFailed": "تعذر الحفظ. حاول لاحقاً.",
+      "categoryFallback": "دردشة مفتوحة",
+      "titlePlaceholder": "اسم الدردشة المفتوحة",
+      "changePhoto": "تغيير الصورة",
+      "descriptionPlaceholder": "عرّف بالغرفة.",
+      "tagsPlaceholder": "أدخل الوسوم  مثال: الحي، القهوة، الجري",
+      "publicTitle": "عام",
+      "publicDesc": "يمكن العثور على هذه الغرفة بالاسم والوصف والوسوم.",
+      "selectCover": "اختيار صورة"
+    },
+    "gate": {
+      "loadFailed": "تعذر تحميل المعلومات.",
+      "joinFailed": "تعذر الدخول بالملف المفتوح. حاول لاحقاً.",
+      "enterChat": "دخول الدردشة",
+      "startConsult": "بدء الاستشارة",
+      "selectProfileEnter": "اختر ملفاً للدخول",
+      "joinOpenChat": "الانضمام إلى الدردشة المفتوحة",
+      "openNow": "فتح",
+      "closed": "مغلق",
+      "participants": "{{count}} مشارك",
+      "participantsWithMax": "{{count}}/{{max}} مشارك",
+      "createdAt": "تم الإنشاء {{date}}",
+      "host": "المضيف",
+      "introEmpty": "لا توجد نبذة بعد."
+    }
+  },
+  "userFallback": "مستخدم",
+  "room": {
+    "deletedReadonly": "تم حذف هذه الغرفة. يمكنك عرض سجل الدردشة فقط.",
+    "leftReadonly": "لقد غادرت غرفة الدردشة.",
+    "kickedTitle": "تمت إزالتك.",
+    "kickedMessage": "لم يعد بإمكانك استخدام غرفة الدردشة هذه."
+  },
+  "toast": {
+    "selectCopySecureBlocked": "لا يمكن تحديد الرسائل الآمنة ونسخها.",
+    "selectCopyUnsupported": "لا يمكن تحديد هذه الرسالة ونسخها.",
+    "shareToSelfSuccess": "تمت المشاركة إلى دردشة معي.",
+    "shareSecureBlocked": "لا يمكن مشاركة الرسائل الآمنة.",
+    "shareUnsupported": "لا يمكن مشاركة هذه الرسالة.",
+    "shareSelfRoomUnavailable": "تعذر تجهيز دردشة معي.",
+    "shareFailed": "تعذر المشاركة.",
+    "noticeNoPermission": "ليست لديك صلاحية نشر الإشعارات.",
+    "copied": "تم النسخ."
+  },
+  "longMessage": {
+    "message": "رسالة",
+    "translation": "الترجمة",
+    "original": "الأصل"
+  },
+  "selectCopy": {
+    "titleFallback": "رسالة",
+    "translated": "الترجمة",
+    "original": "الأصل",
+    "hint": "اضغط مطولاً لتحديد النص",
+    "copied": "تم النسخ",
+    "copyAll": "نسخ الكل",
+    "empty": "لا يوجد نص للتحديد"
+  },
+  "system": {
+    "notice": "تحديث في المحادثة",
+    "memberJoined": "انضم {{name}}.",
+    "memberLeft": "غادر {{name}}.",
+    "memberKicked": "تمت إزالة {{name}}.",
+    "managerPromoted": "أصبح {{name}} مشرفًا.",
+    "managerDemoted": "لم يعد {{name}} مشرفًا.",
+    "ownerTransferred": "أصبح {{name}} مالك الغرفة.",
+    "roomDeleted": "تم حذف الغرفة."
+  },
+  "cancel": "إلغاء"
+}

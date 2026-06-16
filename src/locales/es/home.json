@@ -1,0 +1,183 @@
+{
+  "briefing_title": "Hoy",
+  "briefing_toggle_show": "Mostrar",
+  "briefing_toggle_hide": "Ocultar",
+  "briefing_unread_chat": "Chats sin leer",
+  "briefing_nearby_beacon": "Beacons cercanos",
+  "briefing_new_friend_post": "Publicaciones de amigos",
+  "briefing_new_follower": "Nuevos seguidores",
+  "briefing_count_unit": "",
+  "briefing_people_unit": "",
+  "tabs": {
+    "friends": "Amigos",
+    "following": "Siguiendo",
+    "local": "Local"
+  },
+  "banner_headerTitle": "Cerca",
+  "banner_fallback_title": "Recomendaciones cercanas",
+  "banner_fallback_desc": "Buscando lugares cerca",
+  "banner_default_headline": "Lugar de hoy",
+  "banner_unknown_place": "Lugar desconocido",
+  "banner_status_open": "Abierto",
+  "banner_status_closed": "Cerrado",
+  "banner_tag_fallback": "Recomendado",
+  "empty_feed": "No hay feed para mostrar.",
+  "scroll_top": "Arriba",
+  "briefing_nearby_beacon_title": "Beacons cercanos",
+  "briefing_today_schedule_title": "Agenda",
+  "briefing_continue_chat_title": "Continuar chat",
+  "briefing_near_news_title": "Noticias cercanas",
+  "unknown_user": "Desconocido",
+  "near_news": {
+    "filters": {
+      "all": "Todo",
+      "post": "Feed",
+      "event": "Evento",
+      "notice": "Aviso"
+    },
+    "kind": {
+      "post": "Feed",
+      "event": "Evento",
+      "notice": "Aviso"
+    },
+    "kind_en": {
+      "post": "FEED",
+      "event": "EVENT",
+      "notice": "NOTICE"
+    },
+    "masthead_overline": "CO·ONN LOCAL JOURNAL",
+    "masthead_title": "NEARBY NEWS",
+    "edition_line": "EDICIÓN LOCAL · {{distance}}",
+    "count_line": "FEED {{post}} · EVENTO {{event}} · AVISO {{notice}}",
+    "self": "Yo",
+    "unknown_user": "Desconocido",
+    "unknown_place": "Lugar cercano",
+    "distance_pending": "Calculando distancia",
+    "just_now": "Ahora",
+    "minutes_ago": "hace {{value}} min",
+    "hours_ago": "hace {{value}} h",
+    "days_ago": "hace {{value}} d",
+    "always": "Siempre",
+    "until": "Hasta {{date}}",
+    "ongoing": "En curso",
+    "category": {
+      "restaurant": "Restaurante",
+      "cafe": "Cafetería",
+      "bakery": "Panadería",
+      "market": "Mercado",
+      "drink": "Pub",
+      "store": "Tienda"
+    },
+    "place": "Lugar",
+    "nearby_place": "Lugar cercano",
+    "nearby_feed": "Feed cercano",
+    "event_title": "Evento",
+    "notice_title": "Aviso",
+    "event_body": "Hay un nuevo evento.",
+    "notice_body": "Se publicó un nuevo aviso.",
+    "load_error": "No se pudieron cargar noticias cercanas.",
+    "collection_title": "Noticias cercanas",
+    "media_title": "Noticias cercanas",
+    "empty_title": "Sin noticias",
+    "empty_desc": "Aquí aparecerán publicaciones y novedades cercanas.",
+    "editing": "Preparando la página",
+    "load_failed": "No se pudo cargar",
+    "retry": "Reintentar",
+    "local_note": "NOTA LOCAL",
+    "by_prefix": "POR "
+  },
+  "schedule_sheet": {
+    "weekdays": {
+      "sun": "Dom",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mié",
+      "thu": "Jue",
+      "fri": "Vie",
+      "sat": "Sáb"
+    },
+    "date_title": "{{day}}/{{month}} ({{weekday}})",
+    "period": {
+      "am": "a. m.",
+      "pm": "p. m."
+    },
+    "time_range_cross_day": "{{start}} - {{date}} {{end}}",
+    "default_room_title": "Sala",
+    "participation": {
+      "joined": "Unido",
+      "pending": "Sin unir"
+    },
+    "search_placeholder": {
+      "joined": "Buscar agendas unidas",
+      "pending": "Buscar agendas disponibles"
+    },
+    "load_error": "No se pudieron cargar las agendas.",
+    "people_count": "{{value}} personas",
+    "default_title": "Agenda",
+    "time_unknown": "Hora por definir",
+    "today_title": "Agenda",
+    "today_empty": "Sin agenda hoy",
+    "count": "{{value}}",
+    "header_title": "Agenda",
+    "empty": {
+      "load_failed_title": "No se pudo cargar",
+      "load_failed_desc": "Vuelve a revisar más tarde.",
+      "joined_title": "Sin agendas unidas",
+      "joined_desc": "Aquí aparecerán las agendas a las que te unas.",
+      "pending_title": "Sin agendas abiertas",
+      "pending_desc": "Aquí aparecerán agendas disponibles."
+    }
+  },
+  "notifications": {
+    "header_title": "Notificaciones",
+    "mark_all_read": "Marcar todo leído",
+    "follow_back": "Seguir también",
+    "following": "Siguiendo",
+    "retry": "Recargar",
+    "empty_title": "Sin notificaciones",
+    "empty_desc": "Aquí aparecerán nuevas novedades.",
+    "fallback_actor": "Alguien",
+    "fallback_schedule": "Agenda",
+    "fallback_beacon": "Beacon",
+    "fallback_room": "Sala",
+    "fallback_notification": "Nueva notificación",
+    "sections": {
+      "today": "Hoy",
+      "recent": "Reciente",
+      "unread": "Sin leer",
+      "earlier": "Antes",
+      "this_week": "Esta semana",
+      "older": "Antes",
+      "thisWeek": "Esta semana"
+    },
+    "time": {
+      "just_now": "Ahora",
+      "minutes": "{{value}} min",
+      "hours": "{{value}} h",
+      "days": "{{value}} d",
+      "weeks": "{{value}} sem",
+      "months": "{{value}} mes",
+      "years": "{{value}} a"
+    },
+    "copy": {
+      "others": " y {{value}} más",
+      "follow_created": "{{name}} te siguió",
+      "chat_reply_created": "{{name}} respondió",
+      "chat_mention_created": "{{name}} te mencionó",
+      "beacon_join_request_created": "{{name}} solicitó unirse al beacon",
+      "beacon_join_approved": "Solicitud de beacon aprobada",
+      "beacon_friend_created": "{{name}} creó un nuevo beacon",
+      "schedule_created": "{{room}} · {{target}} creada",
+      "schedule_updated": "{{room}} · {{target}} actualizada",
+      "schedule_cancelled": "{{room}} · {{target}} cancelada",
+      "post_like_grouped": "A {{name}}{{others}} les gustó tu publicación",
+      "post_comment_grouped": "{{name}}{{others}} comentó",
+      "post_reply_grouped": "{{name}}{{others}} respondió a tu comentario",
+      "post_mention_grouped": "{{name}}{{others}} te mencionó"
+    },
+    "error": {
+      "load_failed": "No se pudieron cargar las notificaciones."
+    },
+    "loading_short": "…"
+  }
+}

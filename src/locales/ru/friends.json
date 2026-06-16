@@ -1,0 +1,253 @@
+{
+  "title": "Друзья",
+  "requests": "Запросы",
+  "requests_empty": "Новых запросов нет.",
+  "requests_received": "Полученные",
+  "requests_sent": "Отправленные",
+  "add_friend": "Добавить друга",
+  "send_request": "Отправить запрос",
+  "request_sent": "Запрос отправлен.",
+  "request_send_failed": "Не удалось отправить запрос.",
+  "request_cancel": "Отменить запрос",
+  "request_canceled": "Запрос отменен.",
+  "request_cancel_failed": "Не удалось отменить запрос.",
+  "accept": "Принять",
+  "decline": "Отклонить",
+  "accepted": "Запрос принят.",
+  "declined": "Запрос отклонен.",
+  "accept_failed": "Не удалось принять запрос.",
+  "decline_failed": "Не удалось отклонить запрос.",
+  "remove_friend": "Удалить друга",
+  "remove_friend_confirm": "Удалить этого друга?",
+  "remove_friend_done": "Друг удален.",
+  "remove_friend_failed": "Не удалось удалить друга.",
+  "blocked": "Заблокирован",
+  "block": "Заблокировать",
+  "unblock": "Разблокировать",
+  "block_done": "Пользователь заблокирован.",
+  "unblock_done": "Блокировка снята.",
+  "search_placeholder": "Никнейм, ID или код друга",
+  "code_placeholder": "Введите код друга",
+  "already_friends": "Уже в друзьях.",
+  "already_requested": "Запрос уже отправлен.",
+  "self_not_allowed": "Нельзя отправить запрос себе.",
+  "hidden": "Скрыт",
+  "favorite": "Избранное",
+  "memo": "Заметка",
+  "alias": "Имя",
+  "group": {
+    "title": "Группы",
+    "manageTitle": "Группы друзей",
+    "createTitle": "Новая группа",
+    "createDesc": "Введите название группы.",
+    "createPlaceholder": "Напр.: коллеги, соседи, учеба",
+    "createAction": "Создать",
+    "createFail": "Не удалось создать",
+    "editTitle": "Изменить название",
+    "editDesc": "Введите новое название.",
+    "editPlaceholder": "Название группы",
+    "saveAction": "Сохранить",
+    "renameFail": "Не удалось изменить",
+    "nameRequired": "Введите название группы.",
+    "deleteTitle": "Удалить группу",
+    "deleteMessage": "Удалить группу «{{name}}»?",
+    "emptyTitle": "Групп нет",
+    "emptyDesc": "Создайте новую группу.",
+    "memberEmpty": "В группе нет участников.",
+    "addTitle": "Добавить друга",
+    "addSuccess": "Добавлено.",
+    "addFail": "Не удалось добавить",
+    "addEmpty": "Некого добавить.",
+    "removeSuccess": "Удалено из группы.",
+    "removeFail": "Не удалось удалить",
+    "memberCount": "{{count}} чел."
+  },
+  "userFallback": "Пользователь",
+  "list": {
+    "favoriteFriendsCount": "Избранное {{count}}",
+    "friendsCount": "Друзья {{count}}"
+  },
+  "tabs": {
+    "friends": "Друзья",
+    "groups": "Группы"
+  },
+  "search": {
+    "placeholder": "Введите запрос",
+    "friendPlaceholder": "Имя друга или ID",
+    "groupPlaceholder": "Группа или участник",
+    "namePlaceholder": "Поиск имени",
+    "friendPickerPlaceholder": "Поиск друзей",
+    "contactsPlaceholder": "Имя или номер",
+    "waitTitle": "Введите данные",
+    "waitCaption": "Введите информацию для поиска.",
+    "emptyTitle": "Ничего не найдено",
+    "emptyCaption": "Совпадений нет.",
+    "contactEmptyTitle": "Контактов нет",
+    "contactEmptyCaption": "Подходящих контактов нет.",
+    "groupNamePlaceholder": "Поиск группы"
+  },
+  "action": {
+    "favoriteAdd": "В избранное",
+    "favoriteRemove": "Убрать",
+    "manageFriend": "Управление другом",
+    "manageGroup": "Управление группой",
+    "contact": "Связаться",
+    "create": "Создать",
+    "save": "Сохранить",
+    "add": "Добавить",
+    "remove": "Убрать",
+    "select": "Выбрать",
+    "search": "Поиск",
+    "processing": "Обработка",
+    "saving": "Сохранение"
+  },
+  "alert": {
+    "notice": "Уведомление",
+    "fail": "Ошибка",
+    "loadFail": "Не удалось загрузить",
+    "deleteFail": "Не удалось удалить",
+    "profileRouteMissing": "Экран профиля не найден.",
+    "chatRouteMissing": "Экран чата не найден.",
+    "phoneMissing": "Номер телефона отсутствует.",
+    "phoneOpenFail": "Не удалось открыть приложение звонков.",
+    "removeFriendTitle": "Удалить друга",
+    "removeFriendMessage": "Удалить {{name}}?",
+    "blockTitle": "Заблокировать",
+    "blockMessage": "Заблокировать {{name}}?",
+    "blockFail": "Не удалось заблокировать",
+    "friendEditRouteMissing": "Экран управления другом не найден."
+  },
+  "add": {
+    "title": "Добавить друга",
+    "loginRequired": "Необходим вход.",
+    "contactSearch": "Найти в контактах",
+    "userFallback": "Пользователь {{id}}",
+    "noName": "Без имени",
+    "myProfile": "Мой профиль",
+    "notSet": "Не задано",
+    "friendCodeLabel": "Код друга",
+    "qrOfflineHint": "QR-код подключает напрямую.",
+    "shareLink": "Поделиться ссылкой",
+    "scanQr": "Сканировать QR",
+    "qrTitle": "Мой код",
+    "qrDesc": "Отсканируйте,\nчтобы подключиться.",
+    "scanGuide": "Сканируйте QR другого пользователя.",
+    "contactsTitle": "Найти по контактам",
+    "contactsDesc": "Выберите контакт из адресной книги.",
+    "mode": {
+      "coonnIdTitle": "CO·ONN ID",
+      "coonnIdHint": "Введите публичный ID.",
+      "coonnIdPlaceholder": "Введите ID",
+      "friendCodeTitle": "Код друга",
+      "friendCodeHint": "Введите код друга.",
+      "friendCodePlaceholder": "Введите код",
+      "phoneTitle": "Контакт",
+      "phoneHint": "Поиск по номеру телефона.",
+      "phonePlaceholder": "Введите номер"
+    },
+    "result": {
+      "noPublicId": "Нет публичного ID",
+      "friendCodeVerified": "Код подтвержден",
+      "friendCodeMatched": "Код совпал",
+      "contact": "Контакт · {{phone}}",
+      "added": "Добавлен",
+      "limited": "Ограничено",
+      "add": "Добавить"
+    },
+    "share": {
+      "myId": "Мой ID",
+      "friendCode": "Код друга",
+      "title": "Поделиться ссылкой CO·ONN",
+      "message": "[CO·ONN] Давайте подключимся.{{idText}}{{codeText}}\n\nОткройте ссылку, чтобы перейти к добавлению друга.\n{{url}}"
+    },
+    "toast": {
+      "added": "Добавлено в друзья."
+    },
+    "alert": {
+      "permissionRequired": "Нужно разрешение",
+      "cameraPermissionRequired": "Нужен доступ к камере.",
+      "contactsPermissionRequired": "Нужен доступ к контактам.",
+      "contactsLoadFail": "Не удалось загрузить контакты",
+      "searchFail": "Ошибка поиска",
+      "addFail": "Не удалось добавить"
+    },
+    "error": {
+      "invalidUser": "Недействительный пользователь.",
+      "selfQr": "Это ваш QR.",
+      "userNotFound": "Пользователь не найден.",
+      "invalidQr": "Недействительный код.",
+      "minLength": "Введите минимум {{count}} символа."
+    },
+    "findTitle": "Найти друзей",
+    "card": {
+      "idTitle": "По ID",
+      "idDesc": "Поиск CO·ONN ID",
+      "codeTitle": "По коду",
+      "codeDesc": "Поиск кода друга",
+      "contactsTitle": "Контакты",
+      "contactsDesc": "По адресной книге"
+    },
+    "digitalCardTitle": "Моя карточка"
+  },
+  "communication": {
+    "noPhone": "Нет номера",
+    "phoneCall": "Обычный звонок",
+    "voiceCall": "Голосовой звонок",
+    "comingSoon": "Скоро"
+  },
+  "edit": {
+    "title": "Настройки друга",
+    "unknownUser": "Неизвестно",
+    "none": "Нет",
+    "field": {
+      "name": "Имя"
+    },
+    "placeholder": {
+      "alias": "Введите имя",
+      "memo": "Введите заметку"
+    },
+    "helper": {
+      "friendName": "Имя друга · {{name}}",
+      "privateMemo": "Видно только вам."
+    },
+    "section": {
+      "groups": "Группы",
+      "security": "Безопасность"
+    },
+    "state": {
+      "on": "Вкл.",
+      "off": "Выкл.",
+      "hidden": "Скрыт",
+      "visible": "Виден",
+      "blocked": "Заблокирован",
+      "unblocked": "Не заблокирован"
+    },
+    "toast": {
+      "saved": "Сохранено."
+    },
+    "alert": {
+      "loadFail": "Не удалось загрузить",
+      "saveFail": "Не удалось сохранить",
+      "removeFail": "Не удалось удалить",
+      "userLoadFail": "Не удалось загрузить пользователя.",
+      "blockedByPeer": "Пользователь вас заблокировал."
+    },
+    "remove": {
+      "title": "Удалить друга",
+      "message": "Удалить {{name}}?"
+    },
+    "unsaved": {
+      "title": "Изменения",
+      "message": "Есть несохраненные изменения.",
+      "discard": "Не сохранять"
+    },
+    "groups": {
+      "title": "Управление группами",
+      "subtitle": "Выберите группы.",
+      "selectedCount": "Выбрано {{count}}",
+      "inGroup": "Уже в группе",
+      "addHint": "Нажмите, чтобы добавить",
+      "emptySearch": "Попробуйте другое название."
+    }
+  }
+}

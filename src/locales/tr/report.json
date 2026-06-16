@@ -1,0 +1,28 @@
+{
+  "common": {
+    "title": "Şikayet"
+  },
+  "reasonList": {
+    "title": "Şikayet nedeni",
+    "guide": "Kullanım rehberi"
+  },
+  "reasonDetail": {
+    "submit": "Gönder",
+    "more": "Detaylar",
+    "empty": "Şikayet bilgisi yüklenemedi."
+  },
+  "guide": {
+    "title": "Rehber",
+    "empty": "Rehber yüklenemedi."
+  },
+  "done": {
+    "title": "Şikayet alındı.",
+    "body": "İnceleme sonrası gerekli adımlar atılacaktır."
+  },
+  "alert": {
+    "loadFail": "Yüklenemedi",
+    "info": "Bilgi",
+    "linkOpenFail": "Bağlantı açılamıyor.",
+    "submitFail": "Gönderilemedi"
+  }
+}

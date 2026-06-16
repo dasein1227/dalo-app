@@ -1,0 +1,35 @@
+{
+  "title": "Permissões",
+  "subtitle": "Permita as permissões necessárias.",
+  "location_title": "Permissão de localização",
+  "location_desc": "Necessária para mostrar beacons próximos e o mapa.",
+  "notifications_title": "Permissões de notificação (opcional)",
+  "notifications_desc": "Receba convites de beacon, chats e alertas.",
+  "allow_now": "Permitir agora",
+  "allowed": "Permitido",
+  "open_settings": "Abrir configurações",
+  "continue_without_location": "Configurar depois e continuar",
+  "background_location_title": "Localização em segundo plano (opcional)",
+  "background_location_desc": "Receba beacons próximos e alertas por localização mesmo sem abrir o app.",
+  "background_location_hint": "Pode aumentar o uso da bateria. Você pode alterar isso nas configurações.",
+  "gallery": {
+    "title": "Acesso a fotos necessário",
+    "description": "Permita o acesso para escolher fotos."
+  },
+  "camera": {
+    "title": "Acesso à câmera necessário",
+    "description": "Permita o acesso para tirar fotos."
+  },
+  "location": {
+    "title": "Acesso à localização necessário",
+    "description": "Permita o acesso para verificar sua localização."
+  },
+  "notification": {
+    "title": "Permissões de notificação",
+    "description": "Permita notificações para receber alertas."
+  },
+  "action": {
+    "openSettings": "Abrir configurações",
+    "notNow": "Agora não"
+  }
+}

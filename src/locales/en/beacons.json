@@ -1,0 +1,421 @@
+{
+  "create_title": "Create Beacon",
+  "edit_title": "Edit Beacon",
+  "detail_title": "Beacon Info",
+  "members_title": "Manage Beacon",
+  "my_rooms_title": "My Beacons",
+  "join": "Join",
+  "enter": "Enter",
+  "owner_tools": "Owner tools",
+  "visibility": "Visibility",
+  "status_message": "Status",
+  "public_profile": "Public profile",
+  "current_members": "Members",
+  "age_range": "Age range",
+  "memo": "Memo",
+  "time_left": "Time left",
+  "common": {
+    "beacon": "Beacon",
+    "noName": "No name",
+    "anonymous": "Anonymous",
+    "loading": "Loading…",
+    "done": "Done",
+    "confirm": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "submit": "Send",
+    "approve": "Approve",
+    "reject": "Decline",
+    "block": "Block",
+    "kick": "Remove",
+    "none": "None",
+    "unlimited": "Unlimited"
+  },
+  "error": {
+    "invalidId": "Invalid ID.",
+    "invalidAccess": "Invalid access.",
+    "loginRequired": "Log in required.",
+    "locationPermission": "Location permission required.",
+    "locationUnavailable": "Couldn’t find your location.",
+    "locationLoadFail": "Couldn’t load location.",
+    "notFound": "Beacon not found.",
+    "detailNotFound": "Beacon info not found.",
+    "detailLoadFail": "Couldn’t load beacon info.",
+    "operationFail": "Couldn’t complete action."
+  },
+  "time": {
+    "am": "AM",
+    "pm": "PM",
+    "monthDay": "{{month}}/{{day}}",
+    "minute": "{{count}} min",
+    "hour": "{{count}} hr",
+    "hourMinute": "{{hour}} hr {{minute}} min",
+    "remainEnded": "Ended",
+    "remainMinute": "{{count}} min left",
+    "remainHour": "{{count}} hr left",
+    "remainHourMinute": "{{hour}} hr {{minute}} min left",
+    "justNow": "Just now",
+    "agoMinute": "{{count}} min ago",
+    "agoHour": "{{count}} hr ago",
+    "agoDay": "{{count}} days ago"
+  },
+  "unit": {
+    "people": "people",
+    "age": "years old",
+    "count": "items",
+    "times": "times",
+    "peopleCount": "{{count}} people",
+    "ageCount": "{{count}} years old",
+    "retryLeft": "{{count}} left"
+  },
+  "tabs": {
+    "dm": "Direct",
+    "group": "Group",
+    "open": "Open",
+    "beacon": "Beacon"
+  },
+  "visibilityLabel": {
+    "public": "Public",
+    "friends": "Friends",
+    "labels": "Groups",
+    "custom": "Custom",
+    "publicCompact": "Public",
+    "friendsCompact": "Friends",
+    "labelsCompact": "Groups",
+    "customCompact": "Custom",
+    "publicExcludeFriends": "Public · exclude friends"
+  },
+  "visibilityDesc": {
+    "public": "Visible to anyone nearby. Approval is required by default.",
+    "friends": "Visible to friends only. Open join by default.",
+    "labels": "Visible to selected groups only. Open join by default.",
+    "custom": "Choose friends and groups directly. Open join by default."
+  },
+  "gender": {
+    "any": "Any gender",
+    "male": "Men",
+    "female": "Women"
+  },
+  "myRooms": {
+    "headerTitle": "Chat",
+    "status": {
+      "pending": "Pending",
+      "joined": "{{visibility}} · Joined",
+      "owner": "{{visibility}} · {{minutes}} min left",
+      "host": "Owner",
+      "waiting": "Waiting",
+      "member": "Joined"
+    },
+    "title": {
+      "mine": "My Beacons",
+      "fallback": "Beacon"
+    },
+    "empty": {
+      "title": "No conversations",
+      "beaconDesc": "Your beacons and joined beacons will appear here."
+    },
+    "error": {
+      "loadFail": "Couldn’t load list."
+    },
+    "alert": {
+      "routeCreate": "Check the beacon creation screen.",
+      "routeChatCreate": "New chat is coming soon.",
+      "routeBeaconSearch": "Check the beacon search screen.",
+      "routeSearch": "Check the search screen."
+    }
+  },
+  "form": {
+    "titlePlaceholder": "Beacon purpose",
+    "descPlaceholder": "Description or rules",
+    "durationMin": "30 min",
+    "durationMax": "4 hr",
+    "minuteSuffix": "min",
+    "locationSelectTitle": "Friends-only location",
+    "locationSelectHelper": "Within 200 m of your current location",
+    "locationPickFailTitle": "Can’t choose location",
+    "selectedAddress": "Selected address",
+    "locationEmpty": "No location selected. Open the map.",
+    "locationShortPlaceholder": "Approximate location",
+    "locationDetailPlaceholder": "Location detail",
+    "conditionsTitle": "Join conditions",
+    "genderTitle": "Gender",
+    "quotaTitle": "Capacity",
+    "quotaDesc": "0 means unlimited. Tap the number to enter manually.",
+    "ageLimitTitle": "Age limit",
+    "ageLimitDesc": "Default is ±10 years from your age.",
+    "ageNoLimit": "No limit",
+    "ageMin": "Min age",
+    "ageMax": "Max age",
+    "maleQuota": "Men",
+    "femaleQuota": "Women",
+    "mixQuota": "Any gender",
+    "selectGroups": "Visible groups",
+    "selectFriends": "Visible friends",
+    "friendSearch": "Search friends",
+    "emptyGroups": "No groups",
+    "emptyFriends": "No friends",
+    "protectionOff": "No protection",
+    "protectionOffAlt": "No protection",
+    "createButton": "Create Beacon",
+    "saveButton": "Save",
+    "durationTitle": "Duration",
+    "durationDesc": "The beacon ends automatically after the set time.",
+    "locationProtectionTitle": "Location protection",
+    "locationProtectionDesc": "Your location is shown randomly within the selected range.",
+    "refreshLocation": "Refresh current location",
+    "meetingTitle": "What is this beacon for?",
+    "requireApprovalTitle": "Require approval",
+    "requireApprovalDesc": "Only people approved by the host can join.",
+    "hideFromFriendsTitle": "Hide from my friends",
+    "hideFromFriendsDesc": "Publicly visible, but hidden from your contacts.",
+    "selectedGroupsCount": "{{count}} groups selected",
+    "selectedFriendsCount": "{{count}} friends selected",
+    "friendLocationDesc": "A location note shown only to the selected audience. Choose within 200m of your current location.",
+    "locationPickTitle": "Choose on map",
+    "locationPickHint": "The selected address will appear below.",
+    "friendLocationEmpty": "No location selected. Open the map with the button on the right.",
+    "moveToCurrentLocation": "Use current location"
+  },
+  "create": {
+    "validation": {
+      "titleRequired": "Enter a title.",
+      "titleMax": "Title must be 80 characters or less.",
+      "duration": "Duration must be 10–240 minutes.",
+      "ageRange": "Check age range.",
+      "locationRequired": "Check your current location.",
+      "labelsRequired": "Select a group.",
+      "customRequired": "Select friends or groups."
+    },
+    "alert": {
+      "labelLoadFailTitle": "Couldn’t load groups",
+      "labelLoadFail": "Couldn’t load group list.",
+      "friendLoadFailTitle": "Couldn’t load friends",
+      "friendLoadFail": "Couldn’t load friend list.",
+      "createFailTitle": "Couldn’t create beacon",
+      "createFail": "Something went wrong."
+    }
+  },
+  "edit": {
+    "validation": {
+      "titleRequired": "Enter a room title.",
+      "titleMax": "Room title must be 80 characters or less.",
+      "duration": "Duration must be 10–240 minutes.",
+      "ageRange": "Check age range.",
+      "labelsRequired": "Select a group.",
+      "customRequired": "Select friends or groups."
+    },
+    "toast": {
+      "moved": "Moved to current location.",
+      "moveFail": "Couldn’t move location.",
+      "saved": "Saved.",
+      "saveFail": "Something went wrong."
+    }
+  },
+  "detail": {
+    "action": {
+      "ended": "Closed",
+      "enter_chat": "Enter chat",
+      "cancel_request": "Cancel request",
+      "join_direct": "Join",
+      "request_retry": "Request again",
+      "request_join": "Request to join",
+      "forbidden": "Restricted",
+      "full": "Full",
+      "closed": "Unavailable"
+    },
+    "badge": {
+      "pending": "Pending",
+      "rejected": "Declined",
+      "approval": "Approval",
+      "free": "Open join"
+    },
+    "empty": {
+      "deleted": "This beacon no longer exists.",
+      "back": "Back"
+    },
+    "fallbackTitle": "Untitled Beacon",
+    "info": {
+      "status": "Status",
+      "capacity": "Capacity",
+      "audience": "Audience",
+      "retry": "Retry"
+    },
+    "location": {
+      "title": "Meeting location",
+      "visible": "Detailed location is available before joining.",
+      "hidden": "Exact address is shared in chat after joining.",
+      "openMap": "Open in map ›"
+    },
+    "host": {
+      "settings": "Beacon settings",
+      "settingsDesc": "Edit title, intro, and visibility",
+      "members": "Manage members",
+      "membersDesc": "View and remove members",
+      "close": "Close beacon",
+      "closeDesc": "End recruitment and close the room"
+    },
+    "requests": {
+      "title": "Join requests",
+      "empty": "No pending requests.",
+      "messageTitle": "Request message",
+      "messageDesc": "Leave a note for the owner. Optional.",
+      "placeholder": "e.g. I’m nearby.",
+      "send": "Send request",
+      "sending": "Sending…",
+      "code": "Code {{code}}",
+      "temperature": "Temp {{temp}}°",
+      "rejectionCount": "Previous declines {{count}}"
+    },
+    "alert": {
+      "editRoute": "Check the edit screen.",
+      "membersRoute": "Check the member management screen.",
+      "loginTitle": "Log in required",
+      "loginDesc": "Log in to join.",
+      "chatNotFound": "Chat room not found.",
+      "cancelTitle": "Cancel request",
+      "cancelDesc": "Cancel your join request?",
+      "keep": "Keep",
+      "cancelFailTitle": "Couldn’t cancel",
+      "cancelFail": "Couldn’t cancel request.",
+      "fullTitle": "Full",
+      "fullDesc": "This beacon is full.",
+      "forbiddenTitle": "Restricted",
+      "forbiddenDesc": "You can’t join this beacon.",
+      "endedTitle": "Closed",
+      "endedDesc": "This beacon has ended.",
+      "unavailableTitle": "Notice",
+      "unavailableDesc": "You can’t join right now.",
+      "requestSentTitle": "Request sent",
+      "requestSentDesc": "Waiting for owner approval.",
+      "requestFailTitle": "Couldn’t send",
+      "requestFail": "Couldn’t send request.",
+      "approveFailTitle": "Approval failed",
+      "approveFail": "Couldn’t approve member.",
+      "rejectFailTitle": "Decline failed",
+      "rejectFail": "Couldn’t decline request.",
+      "closeTitle": "Close beacon",
+      "closeDesc": "Close recruitment and the chat room?",
+      "closeAction": "Close",
+      "closeDoneTitle": "Closed",
+      "closeDoneDesc": "Beacon closed.",
+      "closeFailTitle": "Couldn’t close",
+      "closeFail": "Couldn’t close beacon."
+    }
+  },
+  "members": {
+    "role": {
+      "host": "Owner",
+      "mod": "Moderator",
+      "member": "Member"
+    },
+    "tab": {
+      "members": "Members",
+      "requests": "Requests {{count}}"
+    },
+    "meta": {
+      "joined": "Joined {{time}}",
+      "request": "Requested {{time}} · Previous declines {{count}}"
+    },
+    "hero": {
+      "titleFallback": "Beacon",
+      "approval": "Approval",
+      "free": "Open join"
+    },
+    "empty": {
+      "members": "No members yet.",
+      "requests": "No pending requests."
+    },
+    "alert": {
+      "loadFailTitle": "Couldn’t load",
+      "loadFail": "Couldn’t load info.",
+      "kickTitle": "Remove member",
+      "kickDesc": "Remove {{name}}?",
+      "kickAction": "Remove",
+      "alreadyHandled": "Already handled or can’t remove.",
+      "kickFailTitle": "Failed",
+      "kickFail": "Couldn’t remove member.",
+      "blockTitle": "Block member",
+      "blockDesc": "Block and remove {{name}}?\nBlocked users won’t be shown again.",
+      "blockFail": "Couldn’t block member.",
+      "approveTitle": "Approve join",
+      "approveDesc": "Approve {{name}}?",
+      "approveFailTitle": "Approval failed",
+      "approveFail": "Couldn’t approve.",
+      "rejectTitle": "Decline join",
+      "rejectDesc": "Decline {{name}}’s request?",
+      "rejectFailTitle": "Decline failed",
+      "rejectFail": "Couldn’t decline."
+    }
+  },
+  "main": {
+    "loadingMap": "Loading map…",
+    "listButton": "List",
+    "emptyRadius": "No beacons to show.",
+    "card": {
+      "noTitle": "Untitled",
+      "meta": "{{distance}}m away · {{radius}}m radius · {{entry}}",
+      "endsAfterMinute": "Ends in {{count}} min",
+      "endingSoon": "Ending soon",
+      "always": "Always"
+    },
+    "toast": {
+      "movedHere": "Updated to current location."
+    },
+    "error": {
+      "loadFail": "Couldn’t load nearby beacons.",
+      "locationUnavailable": "Couldn’t find location.",
+      "noActiveBeacon": "No active beacon.",
+      "moveFail": "Couldn’t update location."
+    },
+    "accessibility": {
+      "detail": "View beacon details",
+      "create": "Create new beacon"
+    }
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "What are you looking for?",
+    "distance": "Distance",
+    "target": "Audience",
+    "age": "Age",
+    "quick": {
+      "friendsOnly": "Friends only",
+      "public": "Public",
+      "tenMin": "10 min",
+      "twenties": "20s"
+    },
+    "visibility": {
+      "title": "Visibility",
+      "any": "All",
+      "public": "Public",
+      "publicFiltered": "Public · exclude friends",
+      "friends": "Friends",
+      "labels": "Groups",
+      "custom": "Selected"
+    },
+    "gender": {
+      "title": "Gender",
+      "any": "All",
+      "male": "Men",
+      "female": "Women",
+      "other": "Other"
+    },
+    "distancePreset": {
+      "fiveMin": "5 min",
+      "tenMin": "10 min",
+      "twentyMin": "20 min",
+      "near": "Nearby"
+    },
+    "agePreset": {
+      "all": "All",
+      "twenties": "20s",
+      "thirties": "30s",
+      "forties": "40s",
+      "fiftyPlus": "50+"
+    },
+    "action": {
+      "reset": "Reset",
+      "apply": "Apply"
+    }
+  }
+}

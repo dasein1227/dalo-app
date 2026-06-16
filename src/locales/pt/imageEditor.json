@@ -1,0 +1,14 @@
+{
+  "title": "Editar imagem",
+  "ratio_original": "Original",
+  "ratio_free": "Livre",
+  "rotate": "Girar",
+  "ratio": "Proporção",
+  "invert": "Horizontal/vertical",
+  "orientation": "Orientação",
+  "reset": "Redefinir",
+  "error_load_title": "Erro",
+  "error_load_msg": "Não foi possível carregar a imagem.",
+  "error_save_title": "Falha ao salvar",
+  "error_save_msg": "Tente novamente em instantes."
+}

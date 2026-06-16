@@ -1,0 +1,1293 @@
+{
+  "title": "聊天",
+  "send": "傳送",
+  "attach": "檔案",
+  "gallery": "相簿",
+  "invite": "邀請",
+  "manage": "管理",
+  "members": "成員",
+  "placeholder": "輸入訊息…",
+  "date": {
+    "today": "今天",
+    "yesterday": "昨天",
+    "separatorLabel": "{{year}}年{{month}}月{{day}}日 {{weekday}}",
+    "floatingLabel": "{{year}}.{{month}}.{{day}} {{weekday}}"
+  },
+  "all": "全部",
+  "and_others_n": "另 N 位",
+  "others_suffix": "等",
+  "anonymous": "匿名",
+  "message": "訊息",
+  "message_search": "搜尋訊息",
+  "message_send": "傳送訊息",
+  "message_send_failed": "訊息傳送失敗",
+  "message_delete_failed": "訊息刪除失敗。",
+  "message_deleted": "訊息已刪除。",
+  "new_message_one": "1 則新訊息",
+  "new_messages_count": "{{count}} 則新訊息",
+  "chat_with_me": "與自己的聊天",
+  "self_badge": "我",
+  "chat_room_title": "聊天室",
+  "one_to_one_chat": "一對一聊天",
+  "group_chat_title": "群組聊天",
+  "open_chat_title": "公開聊天",
+  "beacon_chat_title": "Beacon 聊天",
+  "room_not_found": "沒有房間資訊。",
+  "chat_room_not_found": "找不到聊天室。",
+  "conversation_partner": "聊天對象",
+  "audio_send_failed": "語音傳送失敗",
+  "video": "影片",
+  "photo": "照片",
+  "file_label": "檔案",
+  "open_file": "開啟檔案",
+  "play_video": "播放影片",
+  "voice_message": "語音訊息",
+  "share_location": "分享位置",
+  "map_location_shared_title": "位置分享",
+  "map_tap_to_open": "點一下開啟地圖。",
+  "cannot_open_map": "無法開啟地圖。",
+  "no_coordinate_info": "沒有座標資訊",
+  "send_failed": "傳送失敗",
+  "share": "分享",
+  "share_failed": "分享失敗",
+  "delete_failed": "刪除失敗",
+  "upload_failed": "上傳失敗",
+  "selection_mode": "選擇模式",
+  "selection_mode_hint": "點選要刪除的訊息。",
+  "selection_clear": "清除選擇",
+  "delete_dialog_title": "刪除訊息",
+  "delete_dialog_desc": "選擇刪除方式。",
+  "delete_for_everyone": "對所有人刪除",
+  "delete_hide_for_everyone": "對所有人隱藏",
+  "delete_for_me": "只為我刪除",
+  "delete_for_me_hint": "所選訊息只能從你這邊刪除。",
+  "reply": "回覆",
+  "reply_to_me": "回覆我的訊息",
+  "reply_to_user": "回覆 {{nickname}}",
+  "msg_deleted_by_user": "{{nickname}} 已刪除訊息。",
+  "notice": "公告",
+  "notice_coming_soon": "即將推出。",
+  "korean_label": "韓文",
+  "auto_translate_paid_only": "自動翻譯僅限 Standard / Premium 翻譯方案使用。",
+  "translation_paid_only": "翻譯僅限付費會員使用。",
+  "premium_only": "Premium 專屬",
+  "premium_only_feature_hint": "Premium 會員可使用此功能。",
+  "tone_neutral": "中性",
+  "tone_casual": "自然",
+  "tone_formal": "正式",
+  "tone_business": "商務",
+  "tone_playful": "輕鬆",
+  "tone_change_premium_only": "翻譯語氣僅限 Premium 翻譯會員使用。",
+  "tone_premium_only_hint": "Premium 翻譯可用。",
+  "login_required": "需要登入。",
+  "no_permission_send_rls": "你沒有傳送訊息的權限。(RLS)\n",
+  "rls_help_chat_members": "→ 請確認你已加入 chat_members，並檢查 chat_messages 規則。",
+  "search_placeholder": "輸入搜尋字詞",
+  "search_result_count": "{{count}} 筆結果",
+  "show_original": "查看原文",
+  "show_translation": "查看翻譯",
+  "translating": "翻譯中…",
+  "input": {
+    "placeholder": "傳送訊息",
+    "placeholderLong": "輸入訊息…"
+  },
+  "hold_to_unlock": "長按解鎖輸入",
+  "error": {
+    "loginRequired": "需要登入。",
+    "roomNotFound": "找不到聊天室。",
+    "createRoomTitle": "無法開啟聊天室。",
+    "createRoomMessage": "建立房間訊息"
+  },
+  "sheet": {
+    "moreActions": "更多操作",
+    "media": "照片/影片",
+    "file": "檔案",
+    "location": "分享位置",
+    "inviteFriend": "邀請好友",
+    "inviteLink": "邀請連結",
+    "translate": "專案"
+  },
+  "translate": {
+    "title": "標題",
+    "current_lang_prefix": "目前：{{code}}",
+    "tone_label": "語氣",
+    "toneNeutral": "中性",
+    "toneNeutralDesc": "自然的基本翻譯",
+    "toneCasual": "輕鬆",
+    "toneCasualDesc": "適合朋友聊天",
+    "toneFormal": "正式",
+    "toneFormalDesc": "禮貌正式的語氣",
+    "toneBusiness": "店家",
+    "toneBusinessDesc": "適合工作與報告",
+    "tonePlayful": "活潑",
+    "tonePlayfulDesc": "適合輕鬆玩笑"
+  },
+  "unknown": "未知",
+  "voice": "語音",
+  "list": {
+    "tab": {
+      "chat": "聊天",
+      "open": "公開",
+      "beacon": "Beacon",
+      "business": "商家"
+    },
+    "empty": {
+      "chatTitle": "沒有聊天",
+      "chatSub": "向好友打聲招呼。",
+      "openTitle": "沒有公開聊天",
+      "openSub": "找找感興趣的主題。",
+      "beaconTitle": "尚未加入 Beacon",
+      "beaconSub": "看看附近的 Beacon。",
+      "businessTitle": "沒有商家聊天",
+      "businessSub": "諮詢紀錄會顯示在這裡。"
+    },
+    "leaveConfirmTitle": "離開聊天？",
+    "leaveConfirmMessage": "此聊天將從列表中消失。",
+    "leaveConfirmAction": "離開"
+  },
+  "menu": {
+    "title": "聊天選單",
+    "joinedDate": "{{date}} 加入",
+    "media": "照片/影片",
+    "mediaEmpty": "最近媒體會顯示在這裡。",
+    "noticeSchedule": "公告與行程",
+    "me": "我"
+  },
+  "membersScreen": {
+    "title": "成員",
+    "loading": "載入中…",
+    "empty": "沒有成員",
+    "owner": "房主",
+    "participant": "成員",
+    "remove": "移除",
+    "removeTitle": "移除",
+    "removeMessage": "要移除 {{name}} 嗎？",
+    "loadFail": "無法載入。",
+    "noName": "沒有名稱"
+  },
+  "inviteScreen": {
+    "title": "邀請好友",
+    "roomMissingTitle": "沒有房間資訊",
+    "roomMissingMessage": "請重新進入後再試。",
+    "tryAgain": "請稍後再試。",
+    "loadFailTitle": "無法載入好友清單。",
+    "selectFriend": "請選擇好友。",
+    "selectForAdd": "請選擇要新增的好友。",
+    "selectForNewGroup": "請選擇一起加入的好友。",
+    "addSuccessTitle": "已新增好友。",
+    "addSuccessMessage": "已新增 {{count}} 人。",
+    "addFailTitle": "無法新增好友。",
+    "createFailTitle": "無法建立群聊。",
+    "friendRowAdd": "加入目前群組",
+    "friendRowNewGroup": "加入新群組",
+    "groupAddTitle": "新增好友到群組",
+    "newGroupTitle": "新群組聊天",
+    "groupAddDesc": "將所選好友新增到目前群組。",
+    "newGroupDesc": "與所選好友建立新群組。",
+    "loading": "正在載入好友",
+    "emptyTitle": "沒有可邀請的好友",
+    "emptyDesc": "已加入的好友會自動排除。",
+    "addCount": "新增 {{count}} 人",
+    "makeGroupCount": "與 {{count}} 人建立群組",
+    "noName": "無名稱",
+    "groupFallbackTitle": "群組聊天",
+    "groupTitleWithOthers": "{{names}} 等 {{count}} 人"
+  },
+  "roomEdit": {
+    "title": "聊天室資訊",
+    "nameLabel": "聊天室名稱",
+    "hidePhoto": "隱藏照片",
+    "hidePhotoDesc": "在清單中顯示預設圖片。",
+    "helperLine1": "你設定的照片與名稱只會對你顯示。",
+    "helperLine2": "不會影響對方。",
+    "alertTitle": "公告",
+    "unhideBeforeChange": "請先關閉隱藏照片後再更改。",
+    "saveFail": "儲存失敗"
+  },
+  "roomData": {
+    "title": "資料管理",
+    "ratioTitle": "項目資料",
+    "noMedia": "沒有已儲存媒體",
+    "savedCount": "已儲存 {{value}}",
+    "deleteAllWithSize": "全部刪除媒體（{{size}}）",
+    "photoData": "照片資料",
+    "videoData": "影片資料",
+    "audioData": "語音資料",
+    "fileData": "檔案資料",
+    "storageCenter": "CO·ONN 儲存空間管理",
+    "loadFail": "無法載入資料資訊。",
+    "actionFail": "無法完成操作。",
+    "clear": {
+      "photoTitle": "刪除照片資料",
+      "photoMessage": "刪除此裝置儲存的照片資料。訊息和相簿內容會保留。",
+      "photoSuccess": "照片資料已刪除。",
+      "videoTitle": "刪除影片資料",
+      "videoMessage": "刪除此裝置儲存的影片資料。訊息和相簿內容會保留。",
+      "videoSuccess": "影片資料已刪除。",
+      "audioTitle": "刪除語音資料",
+      "audioMessage": "刪除此裝置儲存的語音資料。訊息會保留。",
+      "audioSuccess": "語音資料已刪除。",
+      "fileTitle": "刪除檔案資料",
+      "fileMessage": "刪除此裝置儲存的檔案資料。訊息會保留。",
+      "fileSuccess": "檔案資料已刪除。",
+      "allTitle": "刪除所有媒體",
+      "allMessage": "刪除此裝置儲存的照片、影片、語音和檔案。訊息和相簿內容會保留。",
+      "allSuccess": "媒體資料已刪除。"
+    }
+  },
+  "collection": {
+    "title": "總覽",
+    "count": "{{count}} 個",
+    "total": "共 {{value}}",
+    "tabs": {
+      "links": "連結",
+      "schedules": "行程",
+      "bookmarks": "書籤"
+    },
+    "empty": {
+      "media": "尚無照片或影片",
+      "files": "尚無檔案",
+      "links": "尚無連結",
+      "notices": "尚無公告",
+      "schedules": "沒有行程",
+      "bookmarks": "沒有書籤"
+    },
+    "noDate": "尚無日期",
+    "tapToView": "專案",
+    "bookmarkMissingMessage": "此裝置上找不到該訊息。",
+    "scheduleEmptyBody": "沒有行程內容。",
+    "secureRecovery": {
+      "completedBody": "歷史安全金鑰已匯入。",
+      "rejectedBody": "歷史安全金鑰請求已被拒絕。"
+    },
+    "scheduleStatus": {
+      "cancelled": "已取消",
+      "completed": "已完成",
+      "joined": "已參加",
+      "joinedOngoing": "參加中"
+    },
+    "section": {
+      "latestNotice": "最新公告",
+      "previousNotice": "過往公告",
+      "activeSchedules": "進行/招募中",
+      "closedSchedules": "完成/取消"
+    }
+  },
+  "settings": {
+    "title": "聊天室設定",
+    "memberCount": "{{count}} 人",
+    "startedAt": "聊天開始於 {{date}}",
+    "inputLock": "鎖定輸入欄",
+    "theme": {
+      "title": "聊天室主題",
+      "default": "預設",
+      "byRoomType": "依房間類型"
+    },
+    "themePreview": {
+      "other": "好的",
+      "mine": "知道了"
+    },
+    "translation": {
+      "title": "翻譯設定"
+    },
+    "sound": {
+      "title": "通知音",
+      "default": "預設音",
+      "clear": "清亮提示",
+      "calm": "平靜提示",
+      "short": "短提示",
+      "soft": "柔和提示",
+      "quiet": "安靜提示",
+      "deep": "低沉提示",
+      "light": "輕提示",
+      "mute": "靜音"
+    },
+    "data": {
+      "section": "資料",
+      "manage": "資料管理"
+    },
+    "export": {
+      "title": "匯出聊天",
+      "message": "將此裝置上的聊天匯出為文字檔。",
+      "saveFile": "儲存檔案",
+      "share": "分享",
+      "saveSuccess": "已儲存為檔案。",
+      "shareSuccess": "已開啟分享介面。",
+      "saveCancelled": "已取消儲存。",
+      "fail": "無法匯出。",
+      "deletedMessage": "[已刪除訊息]",
+      "secureExcluded": "[安全訊息 - 已排除]",
+      "imageLabel": "[圖片]",
+      "videoLabel": "[影片]",
+      "audioLabel": "[語音]",
+      "fileLabel": "[檔案]",
+      "unknownSender": "未知",
+      "meSender": "我",
+      "userSender": "使用者",
+      "fileTitle": "CO·ONN 聊天匯出",
+      "roomLine": "聊天室：{{roomTitle}}",
+      "exportedAtLine": "匯出時間：{{exportedAt}}",
+      "noteLocal": "※ 此檔案以目前裝置儲存的聊天為準。",
+      "noteText": "※ 我的訊息以原文匯出，對方訊息以目前顯示內容匯出。",
+      "noteSecure": "※ 不會匯出安全模式訊息內容與金鑰資訊。",
+      "noteGallery": "※ 已存到相簿的檔案與 App 快取分開管理。",
+      "attachmentLine": "- 附件：{{type}}{{fileNamePart}}{{mimePart}}",
+      "shareDialogTitle": "分享聊天內容"
+    },
+    "leave": {
+      "title": "退出聊天室",
+      "action": "退出",
+      "rejectInvite": "拒絕邀請並退出",
+      "reportAndLeave": "檢舉並退出",
+      "groupMessage": "你可以退出房間或拒絕邀請。",
+      "reportMessage": "你可以退出或舉報此房間。",
+      "defaultMessage": "要退出聊天室嗎？它會從聊天清單中消失。",
+      "fail": "無法退出聊天室。",
+      "selfBlocked": "不能退出與自己的聊天。"
+    },
+    "secure": {
+      "section": "安全金鑰",
+      "me": "我",
+      "peer": "對方",
+      "authCancelled": "認證已取消。",
+      "decline": "拒絕",
+      "newKey": "建立新安全金鑰",
+      "newKeyDesc": "建立之後使用的新金鑰。",
+      "newKeyConfirmTitle": "要建立新安全金鑰嗎？",
+      "newKeyConfirmMessage": "將建立之後使用的新安全金鑰。歷史金鑰會保留。",
+      "create": "建立",
+      "newKeySuccessTitle": "新安全金鑰已建立",
+      "newKeySuccessMessage": "之後將使用安全金鑰 epoch {{epoch}} 加密。",
+      "newKeyFailTitle": "金鑰建立失敗",
+      "newKeyFail": "無法建立新安全金鑰。",
+      "historyRequest": "請求歷史安全金鑰",
+      "historyRequestDesc": "請求歷史訊息金鑰。",
+      "historyRequestConfirmTitle": "要請求歷史安全金鑰嗎？",
+      "historyRequestConfirmMessage": "將向聊天對象請求歷史訊息金鑰。",
+      "request": "請求",
+      "historyRequestSuccessTitle": "請求已傳送",
+      "historyRequestSuccessMessage": "已向 {{count}} 人傳送請求。",
+      "historyRequestEmpty": "沒有可請求的聊天物件。",
+      "historyRequestFailTitle": "請求失敗",
+      "historyRequestFail": "無法請求歷史安全金鑰。",
+      "claimApproved": "匯入已核准金鑰",
+      "claimApprovedDesc": "儲存已核准的歷史金鑰。",
+      "claimSuccessTitle": "安全金鑰已匯入",
+      "claimSuccessMessage": "已儲存 {{imported}} 個 · 既有 {{skipped}} 個{{conflictText}}",
+      "claimFailTitle": "匯入失敗",
+      "claimFail": "無法匯入已批准的安全金鑰。",
+      "incomingRequestTitle": "{{name}} 請求歷史安全金鑰",
+      "shareApprovedDesc": "核准後會分享歷史金鑰。",
+      "historyShareConfirmTitle": "要分享歷史安全金鑰嗎？",
+      "historyShareConfirmMessage": "將歷史安全金鑰分享給 {{name}}。",
+      "historyShareSuccessTitle": "已分享",
+      "historyShareSuccessMessage": "已分享給 {{name}}。",
+      "historyShareFailTitle": "分享失敗",
+      "historyShareFail": "無法分享歷史安全金鑰。",
+      "historyRejectConfirmTitle": "要拒絕請求嗎？",
+      "historyRejectConfirmMessage": "將拒絕 {{name}} 的請求。",
+      "rejectSuccessTitle": "設定",
+      "rejectSuccessMessage": "已拒絕 {{name}} 的請求。",
+      "rejectFailTitle": "拒絕失敗",
+      "rejectFail": "無法拒絕歷史安全金鑰請求。",
+      "backupSection": "安全金鑰備份",
+      "backup": "備份安全金鑰",
+      "backupSummary": "已備份 · {{rooms}} 個房間 · {{keys}} 把金鑰",
+      "noBackup": "沒有備份",
+      "backupConfirmTitle": "要備份安全金鑰嗎？",
+      "backupCreateMessage": "伺服器只會儲存加密備份。復原碼只會顯示一次。",
+      "backupReplaceMessage": "建立新備份會取代既有備份。請儲存新的復原碼。",
+      "backupAction": "備份",
+      "backupFailTitle": "備份失敗",
+      "backupCreateFail": "無法建立安全金鑰備份。",
+      "restore": "還原安全金鑰備份",
+      "restoreDesc": "用復原碼匯入歷史金鑰。",
+      "restoreMessage": "請輸入建立備份時取得的復原碼。",
+      "restoreAction": "恢復",
+      "restoreCodeRequired": "請輸入復原碼。",
+      "restoreSuccessTitle": "恢復完成",
+      "restoreSuccessMessage": "已匯入 {{imported}} 個 · 既有 {{skipped}} 個{{conflictText}}",
+      "restoreFail": "無法恢復安全金鑰備份。",
+      "conflictText": " · 衝突 {{conflicts}} 個\n衝突金鑰已保留此裝置既有金鑰。",
+      "conflictShort": " · 衝突 {{conflicts}} 個",
+      "recoveryCodeTitle": "安全金鑰復原碼",
+      "recoveryCodeMessage": "復原碼不會再次顯示。請保存在安全位置。",
+      "copyRecoveryCode": "複製復原碼",
+      "codeStored": "復原碼已儲存。",
+      "codeCopied": "復原碼已複製。",
+      "codeCopyFail": "無法複製。",
+      "codeConfirmRequired": "請複製復原碼或勾選已儲存。",
+      "deleteServerBackup": "刪除伺服器備份",
+      "deleteServerBackupDesc": "只刪除伺服器上的加密備份。",
+      "backupDeleteConfirmTitle": "要刪除安全金鑰備份嗎？",
+      "backupDeleteConfirmMessage": "伺服器上的加密備份會被刪除。此裝置的安全金鑰會保留。",
+      "backupDeleteSuccessTitle": "備份已刪除",
+      "backupDeleteSuccessMessage": "已刪除伺服器備份。此裝置的安全金鑰會保留。",
+      "backupDeleteFailTitle": "刪除備份失敗",
+      "backupDeleteFail": "無法刪除安全金鑰備份。"
+    },
+    "openProfileEditAccessibility": "編輯公開聊天公開資訊"
+  },
+  "me": "我",
+  "noticePromote": {
+    "unsupported": "無法設為公告。",
+    "ownerOnly": "只有房主可以設為公告。",
+    "noPermission": "沒有公告權限。",
+    "secureBlocked": "安全訊息不能設為公告。",
+    "systemBlocked": "系統訊息不能設為公告。",
+    "deletedBlocked": "已刪除訊息不能設為公告。",
+    "missingMessage": "無法認證訊息。"
+  },
+  "secure": {
+    "promptAuth": "請完成驗證以傳送安全訊息。",
+    "on": "安全模式已開啟",
+    "off": "安全模式已關閉",
+    "readyFail": "安全模式準備失敗",
+    "sendReadyFail": "安全傳送準備失敗",
+    "mediaUnsupported": "安全模式目前不支援此項目。",
+    "fileUnsupported": "安全模式不支援檔案傳送。",
+    "content": {
+      "image": "🔐 加密圖片",
+      "video": "🔐 加密影片",
+      "audio": "🔐 加密語音",
+      "location": "🔐 加密位置"
+    },
+    "enabled": "安全模式已開啟",
+    "disabled": "安全模式已關閉",
+    "lockedLabel": "🔐 加密訊息",
+    "prompt": {
+      "keyUse": "請認證後使用安全訊息金鑰。",
+      "deviceRegister": "請認證後註冊安全裝置。",
+      "backupCreate": "請認證後備份安全金鑰。",
+      "backupRestore": "請認證後恢復安全金鑰。",
+      "newRoomKey": "請認證後建立新安全金鑰。",
+      "historyRequest": "請認證後請求歷史金鑰。",
+      "historyShare": "請認證後共享歷史金鑰。",
+      "historyReject": "請認證後拒絕歷史金鑰請求。",
+      "historyClaim": "請認證後匯入已批准的歷史金鑰。",
+      "decrypt": "請認證後檢視安全訊息。"
+    },
+    "error": {
+      "loginRequired": "需要登入。",
+      "backupEmpty": "沒有可備份的安全金鑰。使用安全訊息後再試。",
+      "backupMissing": "沒有已儲存的安全金鑰備份。",
+      "backupWrongAccount": "這不是此帳號的安全金鑰備份。",
+      "requesterDeviceMissing": "找不到請求者的有效安全裝置。",
+      "noHistoryKeyToShare": "此裝置沒有可共享的歷史安全金鑰。",
+      "parcelCreateFailed": "無法建立要共享的安全金鑰資料。"
+    }
+  },
+  "jump": {
+    "newMessage": "新訊息",
+    "newMessageAccessibility": "前往新訊息",
+    "latestAccessibility": "前往最新訊息"
+  },
+  "permission": {
+    "cameraTitle": "需要許可權",
+    "cameraMessage": "需要相機訪問許可權。",
+    "contactsTitle": "需要許可權",
+    "contactsMessage": "需要通訊錄訪問許可權。"
+  },
+  "filePick": {
+    "failTitle": "檔案選擇失敗",
+    "failMessage": "無法選擇檔案。"
+  },
+  "newChat": {
+    "title": "新聊天",
+    "create": "建立",
+    "start": "開始",
+    "noName": "無名稱",
+    "selectPartnerRequired": "請選擇聊天物件。",
+    "openTitleRequired": "請輸入公開聊天名稱。",
+    "modeNormal": "一般",
+    "modeOpen": "公開",
+    "openSectionTitle": "建立公開聊天",
+    "openNamePlaceholder": "公開聊天名稱",
+    "openHelper": "不選好友也可以建立公開聊天室。",
+    "partnerSectionTitle": "選擇聊天對象",
+    "groupTitlePlaceholder": "群組聊天室名稱",
+    "searchNamePlaceholder": "搜尋名稱",
+    "emptyFriends": "尚無好友",
+    "userFallback": "專案",
+    "privateChatTitle": "私人聊天",
+    "groupChatTitle": "群聊",
+    "openChatTitle": "公開聊天",
+    "coverPhoto": "封面照片",
+    "selectPhoto": "選擇照片",
+    "openDescriptionPlaceholder": "房間介紹",
+    "openTagsPlaceholder": "例如：社區、咖啡、跑步",
+    "searchVisible": "顯示於搜尋",
+    "searchVisibleDesc": "可通過房名、介紹和標籤搜尋到此房間。",
+    "groupModeTitle": "群組聊天",
+    "groupModeAutoDesc": "選擇 2 人以上會建立群組。",
+    "groupModeSingleDesc": "只選 1 人也能建立群組。"
+  },
+  "menuModal": {
+    "markRead": "標為已讀",
+    "roomInfo": "聊天室資訊",
+    "pin": "釘選",
+    "unpin": "取消釘選",
+    "mute": "關閉通知",
+    "unmute": "取消關閉通知",
+    "leave": "退出",
+    "selfRoomTitle": "與自己的聊天"
+  },
+  "roomCard": {
+    "pending": "等待接受",
+    "emptyMessage": "沒有訊息",
+    "messageFallback": "訊息",
+    "am": "上午",
+    "pm": "下午",
+    "date": "{{month}}月{{day}}日",
+    "preview": {
+      "image": "[照片]",
+      "video": "[影片]",
+      "audio": "[語音]",
+      "file": "[檔案]",
+      "map": "[位置]",
+      "notice": "[公告]"
+    }
+  },
+  "searchModal": {
+    "rooms": "聊天室",
+    "messages": "聊天內容",
+    "placeholder": "搜尋",
+    "emptyTitle": "搜尋",
+    "emptyDesc": "搜尋聊天室與訊息。",
+    "noResultTitle": "沒有結果",
+    "noResultDesc": "換個關鍵詞試試。",
+    "roomPrefix": "聊天室",
+    "visibleName": "顯示名稱",
+    "messageSender": "傳送者",
+    "filterNormal": "一般",
+    "filterOpen": "公開",
+    "filterBeacon": "Beacon",
+    "filterBusiness": "商家",
+    "dateAll": "全部",
+    "dateToday": "今天",
+    "date7d": "7 天",
+    "date30d": "30 天",
+    "tabChat": "聊天",
+    "tabParticipant": "成員",
+    "tabOpen": "公開聊天",
+    "participants": "成員",
+    "openRooms": "公開聊天",
+    "participantEmptyTitle": "搜尋成員",
+    "participantEmptyDesc": "按聊天室內的顯示名搜尋。",
+    "participantNoResultTitle": "尚無成員",
+    "participantNoResultDesc": "換個名字試試。",
+    "openEmptyTitle": "搜尋公開聊天",
+    "openEmptyDesc": "用房間名稱、介紹或標籤搜尋。",
+    "openNoResultTitle": "沒有公開聊天",
+    "openNoResultDesc": "換個關鍵詞試試。",
+    "typeFilter": "型別",
+    "dateFilter": "日期",
+    "openJoined": "已參加",
+    "openPublic": "公開聊天",
+    "participatingRoom": "已參加的房間"
+  },
+  "location": {
+    "fallbackTitle": "位置",
+    "selectMapApp": "選擇地圖 App",
+    "openMapHint": "點一下地圖查看路線"
+  },
+  "translationPanel": {
+    "title": "翻譯設定",
+    "subtitle": "只套用於此房間。",
+    "autoTranslate": {
+      "title": "自動翻譯",
+      "desc": "將收到的訊息顯示為設定語言。"
+    },
+    "showTranslatedOnly": {
+      "title": "只看翻譯",
+      "desc": "優先顯示翻譯。"
+    },
+    "tier": {
+      "title": "方案",
+      "desc": "選擇翻譯品質。",
+      "upgrade": "升級",
+      "options": {
+        "free": {
+          "label": "Basic",
+          "desc": "基本翻譯"
+        },
+        "mid": {
+          "label": "Standard",
+          "desc": "自然的聊天翻譯"
+        },
+        "high": {
+          "label": "Premium",
+          "desc": "理解脈絡與語氣"
+        }
+      }
+    },
+    "tone": {
+      "title": "語氣",
+      "desc": "Premium 專屬語氣設定",
+      "disabled": "Premium 方案可使用。",
+      "options": {
+        "business": {
+          "label": "店家",
+          "desc": "語氣"
+        },
+        "polite": {
+          "label": "禮貌",
+          "desc": "柔和且禮貌"
+        },
+        "casual": {
+          "label": "輕鬆",
+          "desc": "語氣輕鬆"
+        },
+        "neutral": {
+          "label": "中性",
+          "desc": "語氣中性"
+        },
+        "creative": {
+          "label": "創意",
+          "desc": "語氣創意"
+        }
+      }
+    },
+    "sendLang": {
+      "title": "傳送語言",
+      "desc": "自動時會依對方的接收語言選擇。",
+      "auto": "專案",
+      "autoDesc": "依對方語言自動選擇。",
+      "autoPeerDesc": "目前依對方設定：{{label}}（{{code}}）",
+      "peerBase": "依對方",
+      "peerDefault": "對方預設"
+    },
+    "receiveLang": {
+      "title": "接收語言",
+      "desc": "將收到的訊息顯示為此語言。"
+    },
+    "status": {
+      "off": "專案",
+      "on": "ON",
+      "auto": "專案",
+      "receive": "專案",
+      "send": "傳送",
+      "translatedOnly": "只看翻譯"
+    },
+    "language": {
+      "EN": "英語",
+      "ES": "西班牙語",
+      "FR": "法語",
+      "DE": "德語",
+      "IT": "義大利語",
+      "PT": "葡萄牙語",
+      "NL": "荷蘭語",
+      "PL": "波蘭語",
+      "RU": "俄語",
+      "JA": "日語",
+      "KO": "韓語",
+      "ZH": "中文",
+      "TR": "土耳其語",
+      "SV": "瑞典語",
+      "ID": "印尼語",
+      "TH": "泰語",
+      "UK": "烏克蘭語",
+      "RO": "羅馬尼亞語",
+      "CS": "捷克語",
+      "DA": "丹麥語",
+      "EL": "希臘語",
+      "FI": "芬蘭語",
+      "HU": "匈牙利語",
+      "SK": "斯洛伐克語",
+      "SL": "斯洛維尼亞語",
+      "BG": "保加利亞語",
+      "ET": "愛沙尼亞語",
+      "LT": "立陶宛語",
+      "LV": "拉脫維亞語",
+      "AR": "阿拉伯語",
+      "ZH_HANS": "簡體中文",
+      "ZH_HANT": "繁體中文",
+      "VI": "越南語",
+      "HI": "印地語",
+      "HE": "希伯來語"
+    }
+  },
+  "header": {
+    "searchPlaceholder": "搜尋聊天",
+    "advanced": "進階",
+    "sender": "傳送者",
+    "date": "日期"
+  },
+  "attachment": {
+    "photo": "照片",
+    "camera": "相機",
+    "call": "通話",
+    "pay": "付款",
+    "map": "地圖",
+    "music": "音樂",
+    "file": "檔案",
+    "cloud": "雲端",
+    "contact": "聯絡人",
+    "recentPhotos": "最近照片",
+    "send": "傳送",
+    "photoPermissionRequired": "需要照片訪問許可權。",
+    "openSettings": "前往設定",
+    "callUnavailable": "無法發起通話。",
+    "phoneMissing": "沒有已註冊電話號碼。",
+    "phoneOpenFail": "無法撥打電話。",
+    "voiceCallUnavailable": "語音通話即將推出。",
+    "contactEmpty": "沒有可分享的聯絡人資訊。",
+    "contactShareTitle": "聯絡人",
+    "contactName": "名稱",
+    "contactPhone": "電話",
+    "contactShareFail": "無法分享聯絡人。",
+    "voiceMessage": "語音",
+    "capture": "截圖",
+    "schedule": "行程"
+  },
+  "accessibility": {
+    "attachmentClose": "關閉附件",
+    "attachmentOpen": "開啟附件",
+    "messageInput": "訊息輸入",
+    "sendMessage": "傳送訊息",
+    "voiceMessage": "語音訊息"
+  },
+  "replyPreview": {
+    "peer": "對方",
+    "replyTo": "回覆 {{name}}",
+    "cancel": "取消回覆"
+  },
+  "mediaKind": {
+    "image": "照片",
+    "video": "影片",
+    "audio": "語音訊息",
+    "file": "檔案",
+    "map": "位置",
+    "notice": "公告",
+    "text": "文字"
+  },
+  "deleteModal": {
+    "title": "刪除",
+    "mine": "只為我刪除",
+    "all": "對所有人刪除",
+    "moment": "定時刪除",
+    "sectionTitle": "刪除時間",
+    "selectTime": "選擇刪除時間。",
+    "readBased": "已讀後刪除",
+    "readAfterWithDelay": "已讀後 +{{delay}}",
+    "afterDelete": "{{delay}} 後刪除",
+    "unit": {
+      "hour": "時",
+      "minute": "分",
+      "second": "秒"
+    },
+    "cancelTitle": "要取消嗎？",
+    "cancelDesc": "所選設定不會儲存。",
+    "keepEditing": "繼續設定",
+    "discard": "取消"
+  },
+  "messageAction": {
+    "copy": "複製",
+    "selectCopy": "選取複製",
+    "reply": "回覆",
+    "share": "分享",
+    "toMe": "傳給自己",
+    "notice": "公告",
+    "highlight": "加入書籤",
+    "capture": "截圖",
+    "delete": "刪除",
+    "cancelMoment": "取消刪除設定",
+    "viewOriginalTranslation": "原文 / 翻譯",
+    "translateOther": "翻譯成其他語言",
+    "reactors": "按讚的好友",
+    "shareToMe": "分享給自己",
+    "unhighlight": "移除書籤"
+  },
+  "moment": {
+    "title": "定時刪除",
+    "cancel": "取消刪除設定",
+    "expiredMessage": "已過期訊息"
+  },
+  "noticeBanner": {
+    "open": "檢視公告",
+    "close": "關閉公告"
+  },
+  "newMessagePill": {
+    "label": "{{count}} 則新訊息",
+    "accessibility": "查看 {{count}} 則新訊息"
+  },
+  "search": {
+    "sender": "傳送者",
+    "senderFilter": "傳送者篩選",
+    "dateFilter": "日期篩選",
+    "prevResult": "上一個結果",
+    "nextResult": "下一個結果",
+    "close": "關閉搜尋",
+    "clearSender": "清除傳送者篩選",
+    "placeholder": "搜尋",
+    "inputAccessibility": "搜尋輸入",
+    "clearKeyword": "清除搜尋詞",
+    "bookmarkFilter": "搜尋"
+  },
+  "datePicker": {
+    "title": "選擇日期",
+    "clear": "清除選擇",
+    "prevMonth": "上個月",
+    "nextMonth": "專案",
+    "monthTitle": "{{year}}年{{month}}月",
+    "weekday": {
+      "sun": "專案",
+      "mon": "專案",
+      "tue": "專案",
+      "wed": "專案",
+      "thu": "專案",
+      "fri": "專案",
+      "sat": "專案"
+    },
+    "dayAccessibility": "{{day}}日",
+    "selected": "專案",
+    "none": "無"
+  },
+  "selection": {
+    "title": "刪除",
+    "selectAll": "全選",
+    "deleteCount": "刪除 {{count}}"
+  },
+  "noticeModel": {
+    "fallback": "請確認訊息。",
+    "scheduleTitle": "行程",
+    "media": {
+      "image": "照片",
+      "video": "影片",
+      "audio": "語音訊息",
+      "file": "檔案",
+      "map": "位置"
+    },
+    "secureRecovery": {
+      "requestCreated": {
+        "title": "歷史安全金鑰請求",
+        "body": "請求分享歷史金鑰。"
+      },
+      "approved": {
+        "title": "歷史安全金鑰已核准",
+        "body": "可以匯入已核准的歷史金鑰。"
+      },
+      "completed": {
+        "title": "歷史安全金鑰已復原",
+        "body": "可以重新開啟歷史訊息。"
+      },
+      "rejected": {
+        "title": "歷史安全金鑰請求已拒絕",
+        "body": "此請求無法開啟歷史訊息。"
+      }
+    },
+    "scheduleTitleWithPrefix": "[行程] 行程",
+    "weekday": {
+      "sun": "專案",
+      "mon": "專案",
+      "tue": "專案",
+      "wed": "專案",
+      "thu": "專案",
+      "fri": "專案",
+      "sat": "專案"
+    }
+  },
+  "messageItem": {
+    "noticeFallback": "這是一則公告訊息。",
+    "secureLinkFallback": "連結",
+    "mapAddressFallback": "位置資訊",
+    "secure": {
+      "genericTitle": "安全請求",
+      "genericBody": "安全請求狀態已更新。",
+      "fileFallback": "安全檔案"
+    },
+    "tombstone": {
+      "deleted": "已刪除的訊息。",
+      "expired": "已過期的訊息。"
+    },
+    "longMessage": {
+      "viewAll": "查看全部"
+    },
+    "action": {
+      "confirm": "確定"
+    }
+  },
+  "linkPreview": {
+    "link": "連結",
+    "web": "Web",
+    "searchTitle": "搜尋 {{query}}",
+    "searchTitleWithProvider": "用 {{provider}} 搜尋 {{query}}",
+    "searchResult": "{{query}} 的搜尋結果",
+    "searchResultWithProvider": "{{query}} · {{provider}} 搜尋結果",
+    "provider": {
+      "naver": "Naver",
+      "google": "Google",
+      "daum": "Daum"
+    }
+  },
+  "messageMeta": {
+    "deleteSuffix": "刪除",
+    "cancelMoment": "取消定時刪除"
+  },
+  "messageBody": {
+    "link": "連結",
+    "secureMessage": "加密訊息",
+    "file": "檔案",
+    "tapToOpen": "點按開啟",
+    "locationInfo": "位置資訊",
+    "secureFile": "安全檔案"
+  },
+  "replyBlock": {
+    "peer": "對方",
+    "replyTo": "回覆 {{name}}"
+  },
+  "voiceRecorder": {
+    "totalDuration": "總長 {{duration}}"
+  },
+  "actions": {
+    "momentCancelFailTitle": "取消定時刪除失敗",
+    "tryAgain": "請稍後再試。",
+    "deleteFailTitle": "刪除失敗",
+    "missingServerMessage": "無法確認伺服器訊息 ID。",
+    "deleteNetworkFail": "網路錯誤，無法刪除訊息。",
+    "momentSetFailTitle": "定時刪除設定失敗",
+    "momentSetNetworkFail": "網路錯誤，無法設定定時刪除。",
+    "uploadFailTitle": "上傳失敗",
+    "imageUploadFail": "無法將圖片上傳到伺服器。",
+    "errorTitle": "錯誤",
+    "mediaSendFail": "傳送媒體時發生問題。",
+    "voiceUploadFail": "語音訊息上傳失敗",
+    "fileUploadFail": "檔案上傳失敗"
+  },
+  "bridge": {
+    "messageNotFound": "在此裝置找不到該訊息。",
+    "editedImageSent": "已傳送編輯後的圖片。",
+    "editedImageSendFail": "無法傳送編輯後的圖片。"
+  },
+  "capture": {
+    "title": "選擇截圖",
+    "desc": "選擇訊息範圍",
+    "exit": "結束截圖",
+    "clear": "截圖",
+    "share": "分享",
+    "save": "儲存",
+    "shareCapture": "分享截圖",
+    "saveCapture": "儲存截圖",
+    "anonymousOn": "開啟匿名",
+    "anonymousOff": "關閉匿名",
+    "anonymousUser": "使用者 {{index}}",
+    "error": {
+      "secureBlocked": "安全聊天不能截圖。",
+      "messageNotFound": "找不到訊息。",
+      "areaNotFound": "找不到截圖區域。",
+      "selectedAreaNotFound": "找不到選取區域。",
+      "areaCalcFailed": "無法計算區域。",
+      "outOfView": "所選範圍在螢幕之外。",
+      "imageCreateFailed": "無法建立截圖圖片。",
+      "emptySelection": "未選擇訊息。",
+      "permissionRequired": "需要照片儲存權限。",
+      "saveFailed": "無法儲存。",
+      "shareUnavailable": "無法使用分享。",
+      "shareFailed": "無法分享。"
+    },
+    "success": {
+      "saved": "截圖已儲存。",
+      "savedPartial": "已儲存部分範圍。",
+      "savedVisibleOnly": "只儲存可見範圍。"
+    },
+    "anonymousInitial": "使"
+  },
+  "schedule": {
+    "common": {
+      "title": "行程",
+      "fallbackTitle": "無標題",
+      "roomFallback": "聊天室",
+      "participantFallback": "成員",
+      "confirm": "確定",
+      "cancel": "取消",
+      "close": "關閉",
+      "delete": "刪除",
+      "done": "完成",
+      "save": "儲存",
+      "saving": "儲存中",
+      "select": "選擇",
+      "weekdays": {
+        "sun": "行程",
+        "mon": "行程",
+        "tue": "行程",
+        "wed": "行程",
+        "thu": "行程",
+        "fri": "行程",
+        "sat": "行程"
+      },
+      "period": {
+        "am": "上午",
+        "pm": "下午"
+      },
+      "date": "{{month}}月{{day}}日（{{weekday}}）",
+      "compactDate": "{{month}}.{{day}} {{weekday}}",
+      "timeWithPeriod": "{{period}} {{hour}}:{{minute}}",
+      "participantCount": "{{count}} 位參加者",
+      "participantCountShort": "參加 {{count}} 人",
+      "participantCountCompact": "參加 {{count}}",
+      "openDetail": "查看 {{title}} 詳情"
+    },
+    "reminder": {
+      "off": "關閉",
+      "before30m": "30 分鐘前",
+      "before1h": "1 小時前",
+      "before3h": "3 小時前",
+      "before1d": "1 天前",
+      "afterJoin": "參加後可設定"
+    },
+    "api": {
+      "messageTitle": "行程 · {{title}}",
+      "calendarDefaultTitle": "CO·ONN 行程",
+      "calendarPlace": "地點：{{place}}",
+      "calendarAddress": "地址：{{address}}",
+      "calendarNoteFooter": "CO·ONN 行程",
+      "notificationChannel": "行程",
+      "reminderTimeBody": "行程將於 {{time}} 開始。",
+      "reminderSoonBody": "行程即將開始。",
+      "reminderTitle": "行程提醒"
+    },
+    "detail": {
+      "notFound": "找不到行程。",
+      "cancelled": "已取消行程",
+      "completed": "已完成行程",
+      "directions": "路線",
+      "notification": "通知",
+      "appPush": "App 推播",
+      "calendar": "行事曆",
+      "syncCalendar": "同步到我的行事曆",
+      "synced": "已同步",
+      "notSynced": "未同步",
+      "join": "參加",
+      "leave": "取消",
+      "noticeBadge": "重點",
+      "noParticipants": "尚無參加者。",
+      "moveToChat": "前往聊天",
+      "menu": {
+        "edit": "編輯行程",
+        "cancel": "取消行程",
+        "complete": "完成"
+      },
+      "alert": {
+        "processFailTitle": "處理失敗",
+        "joinChangeFail": "無法變更參加狀態。",
+        "participantSettingTitle": "成員設定",
+        "promoteNotice": "設為重點",
+        "removeNotice": "取消重點",
+        "promoteNoticeMessage": "要將 {{name}} 標為重點參加者嗎？",
+        "removeNoticeMessage": "要取消 {{name}} 的重點標記嗎？",
+        "settingFailTitle": "設定失敗",
+        "participantSettingFail": "無法更改參加者設定。",
+        "reminderFailTitle": "提醒設定失敗",
+        "calendarReminderFailTitle": "行事曆提醒失敗",
+        "calendarSyncFailTitle": "行事曆同步失敗",
+        "calendarDeleteFailTitle": "行事曆刪除失敗",
+        "cancelTitle": "取消行程",
+        "cancelMessage": "要取消行程嗎？\n參加者會看到取消狀態。",
+        "cancelAction": "取消行程",
+        "cancelFailTitle": "取消失敗",
+        "cancelFail": "無法取消行程。",
+        "completeTitle": "完成行程",
+        "completeMessage": "要將行程標記為完成嗎？\n已完成行程會顯示在下方。",
+        "completeFailTitle": "完成失敗",
+        "completeFail": "無法完成行程。",
+        "calendarRemoveTitle": "從行事曆刪除",
+        "calendarRemoveMessage": "要刪除已同步到裝置行事曆的行程嗎？"
+      },
+      "error": {
+        "calendarPermissionDenied": "需要行事曆權限。",
+        "calendarNotFound": "找不到可新增的行事曆。",
+        "invalidScheduleTime": "無法確認行程時間。",
+        "calendarApiUnavailable": "此裝置無法使用行事曆功能。",
+        "calendarDefault": "無法完成行事曆操作。",
+        "notificationPermissionDenied": "需要通知許可權。",
+        "reminderTimePast": "提醒時間已過。",
+        "reminderDefault": "無法設定提醒。"
+      }
+    },
+    "editor": {
+      "createTitle": "建立行程",
+      "editTitle": "編輯行程",
+      "titlePlaceholder": "標題",
+      "allDay": "全天",
+      "startDate": "開始日",
+      "endDate": "結束日",
+      "place": "地點",
+      "map": "地圖",
+      "placeNamePlaceholder": "地點名稱",
+      "memoPlaceholder": "輸入備註",
+      "cancelledLocked": "已取消行程無法編輯。",
+      "locationPickerTitle": "選擇地點",
+      "locationPickerHelper": "將地圖中心移到想要的位置後選擇。",
+      "validation": {
+        "titleRequired": "請輸入標題。",
+        "startInvalid": "請確認開始時間。",
+        "endInvalid": "請確認結束時間。",
+        "endBeforeStart": "結束時間早於開始時間。",
+        "roomMissing": "找不到聊天室資訊。"
+      }
+    },
+    "listScreen": {
+      "loadFail": "無法載入行程。",
+      "roomMissing": "找不到聊天室資訊。",
+      "createAccessibility": "建立行程",
+      "retry": "重試",
+      "activeCount": "進行中 {{count}} 個",
+      "summary": "與聊天室一起管理的行程。",
+      "emptyTitle": "還沒有行程",
+      "emptyDesc": "建立大家一起看的行程。",
+      "beaconUnavailableTitle": "Beacon 聊天不能使用行程",
+      "beaconUnavailableDesc": "Beacon 聊天不顯示行程。",
+      "create": "建立行程",
+      "joined": "已參加",
+      "notJoined": "未參加",
+      "cancelled": "已取消",
+      "completed": "已完成",
+      "past": "過往行程"
+    },
+    "messageCard": {
+      "cancelled": "取消",
+      "completed": "完成"
+    }
+  },
+  "openProfile": {
+    "common": {
+      "confirm": "確定",
+      "cancel": "取消",
+      "save": "儲存",
+      "delete": "刪除",
+      "default": "預設",
+      "user": "公開個人檔案",
+      "openChat": "公開聊天",
+      "business": "店家",
+      "openTalk": "公開聊天",
+      "fallbackName": "公開個人檔案",
+      "statusEmpty": "沒有狀態訊息",
+      "selectPhoto": "選擇個人檔案照片",
+      "photoApplied": "照片已套用。",
+      "saved": "已儲存。",
+      "deleted": "已刪除。",
+      "tryAgain": "請稍後再試。",
+      "notice": "公告",
+      "actionFailed": "處理失敗。",
+      "saveFailed": "無法儲存。",
+      "profileSaveFailed": "無法儲存資料。"
+    },
+    "list": {
+      "title": "公開個人檔案",
+      "loadFailed": "無法載入公開個人檔案。",
+      "nicknameRequired": "請輸入暱稱。",
+      "createSuccess": "公開個人檔案已建立。",
+      "createFailed": "建立失敗",
+      "saveFailed": "儲存失敗",
+      "deleteFailed": "刪除失敗",
+      "deleteTitle": "要刪除公開個人檔案嗎？",
+      "deleteDescInUse": "正在使用的公開聊天會保留既有個人檔案。",
+      "deleteDescDefault": "刪除後無法再次使用。",
+      "editAccessibility": "編輯公開個人檔案",
+      "usedRoomsCount": "使用中的公開聊天 {{count}} 個",
+      "usedRoomsEmpty": "沒有使用中的公開聊天。",
+      "emptyTitle": "沒有公開個人檔案。",
+      "emptyDesc": "點一下右上角 + 建立新個人檔案。"
+    },
+    "viewer": {
+      "action": {
+        "transferOwner": "轉讓房主",
+        "promoteManager": "設為副房主",
+        "demoteManager": "解除副房主",
+        "kick": "踢出",
+        "block": "拉黑",
+        "unblock": "解除拉黑",
+        "release": "公開個人檔案",
+        "delegate": "轉讓",
+        "appoint": "任命",
+        "changePhoto": "更換照片",
+        "showPhoto": "顯示照片"
+      },
+      "confirm": {
+        "blockMessage": "要在你的螢幕中隱藏此使用者之後的訊息嗎？",
+        "unblockMessage": "要重新顯示此使用者的訊息嗎？",
+        "transferOwnerMessage": "要將房主轉讓給 {{name}} 嗎？",
+        "promoteManagerMessage": "要授予 {{name}} 副房主權限嗎？",
+        "demoteManagerMessage": "要解除 {{name}} 的副房主權限嗎？",
+        "kickMessage": "要將 {{name}} 踢出嗎？被踢出的使用者無法再次加入。"
+      },
+      "accessibility": {
+        "save": "儲存"
+      },
+      "placeholder": {
+        "status": "狀態訊息"
+      }
+    },
+    "edit": {
+      "loadFailed": "無法載入公開聊天資訊。",
+      "titleRequired": "請輸入房間名稱。",
+      "saveFailed": "無法儲存。請稍後再試。",
+      "categoryFallback": "公開聊天",
+      "titlePlaceholder": "公開聊天名稱",
+      "changePhoto": "更換照片",
+      "descriptionPlaceholder": "介紹這個房間。",
+      "tagsPlaceholder": "輸入標籤  例：社區、咖啡、跑步",
+      "publicTitle": "公開",
+      "publicDesc": "可用房間名稱、介紹、標籤搜尋。",
+      "selectCover": "選擇照片"
+    },
+    "gate": {
+      "loadFailed": "無法載入資訊。",
+      "joinFailed": "無法用公開個人檔案進入。請稍後再試。",
+      "enterChat": "進入聊天室",
+      "startConsult": "開始諮詢",
+      "selectProfileEnter": "選擇個人檔案後進入",
+      "joinOpenChat": "加入公開聊天",
+      "openNow": "營業中",
+      "closed": "已打烊",
+      "participants": "參加者 {{count}}",
+      "participantsWithMax": "參加者 {{count}}/{{max}}",
+      "createdAt": "建立日 {{date}}",
+      "host": "房主",
+      "introEmpty": "尚無介紹。"
+    }
+  },
+  "userFallback": "使用者",
+  "room": {
+    "deletedReadonly": "已刪除的房間。只能查看聊天內容。",
+    "leftReadonly": "已退出的聊天室。",
+    "kickedTitle": "你已被踢出。",
+    "kickedMessage": "你無法再使用此聊天室。"
+  },
+  "toast": {
+    "selectCopySecureBlocked": "安全訊息不能選擇複製。",
+    "selectCopyUnsupported": "此訊息不能選擇複製。",
+    "shareToSelfSuccess": "已分享到與自己的聊天。",
+    "shareSecureBlocked": "安全訊息不能分享。",
+    "shareUnsupported": "此訊息不能分享。",
+    "shareSelfRoomUnavailable": "無法準備與自己的聊天。",
+    "shareFailed": "無法分享。",
+    "noticeNoPermission": "你沒有釋出公告的許可權。",
+    "copied": "已複製。"
+  },
+  "longMessage": {
+    "message": "訊息",
+    "translation": "翻譯",
+    "original": "原文"
+  },
+  "selectCopy": {
+    "titleFallback": "訊息",
+    "translated": "翻譯",
+    "original": "原文",
+    "hint": "長按選取需要的部分",
+    "copied": "已複製",
+    "copyAll": "全部複製",
+    "empty": "沒有可選取的文字"
+  },
+  "system": {
+    "notice": "聊天室更新",
+    "memberJoined": "{{name}}已加入。",
+    "memberLeft": "{{name}}已離開。",
+    "memberKicked": "{{name}}已被移出。",
+    "managerPromoted": "{{name}}已成為管理員。",
+    "managerDemoted": "{{name}}不再是管理員。",
+    "ownerTransferred": "{{name}}已成為房主。",
+    "roomDeleted": "此聊天室已刪除。"
+  },
+  "cancel": "取消"
+}

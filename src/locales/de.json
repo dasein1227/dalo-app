@@ -1,1 +1,14 @@
-{}
+{
+  "chat": {
+    "roomCard": {
+      "preview": {
+        "image": "[Foto]",
+        "video": "[Video]",
+        "audio": "[Audio]",
+        "file": "[Datei]",
+        "map": "[Standort]",
+        "notice": "[Hinweis]"
+      }
+    }
+  }
+}

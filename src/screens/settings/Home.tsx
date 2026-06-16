@@ -1,807 +1,1253 @@
 // src/screens/settings/Home.tsx
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import {
   View,
   Text,
   Image,
   Pressable,
   StyleSheet,
-  Alert,
-  Switch,
-  ActivityIndicator,
   ScrollView,
   Platform,
-  Modal,
+  Dimensions,
+  Animated,
+  StatusBar,
+  TextInput,
+  Keyboard,
+  TouchableWithoutFeedback,
+  BackHandler,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import i18n from '../../lib/i18n';
-import { getInitialLang, saveLang, AppLang } from '../../lib/lang';
+import { getInitialLang, applyLanguage, LANGS, AppLang } from '../../lib/lang';
 import { supabase } from '../../lib/supabase';
+import { disableCurrentPushTokenBeforeSignOut } from '@/lib/push/registerPushToken';
+import Slider from '@react-native-community/slider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { useAppTheme } from '@/theme/useAppTheme';
+import SafeScreen from '@/components/layout/SafeScreen';
+import { GlobalHeader, HeaderIconButton } from '@/components/GlobalHeader';
+import { createSettingsHomeTheme } from './Home.theme';
+import CoonnAlert, { type CoonnAlertVariant } from '@/components/CoonnAlert';
 import {
-  Search as SearchIcon,
   ChevronRight,
   ChevronLeft,
+  UserCheck,
+  Users,
+  Bell,
+  Database,
+  Palette,
+  Globe,
+  FlaskConical,
+  Megaphone,
+  Headphones,
+  Info,
+  LogOut,
+  MapPin,
+  X,
+  LucideIcon,
+  Lock,
+  Brain,
 } from 'lucide-react-native';
 
+const { height } = Dimensions.get('window');
+
 type ProfileRow = {
-  id: string; // auth uid
+  id: string;
   user_id?: string | null;
   nickname: string | null;
   avatar_url: string | null;
+  private_avatar_url?: string | null;
+  status_message?: string | null;
+  cover_image_url?: string | null;
+  theme_color?: string | null;
+  font_color?: string | null;
+  status_bar_style?: 'light-content' | 'dark-content' | null;
+  hide_all_tab?: boolean | null;
   preferred_lang?: string | null;
-
-  auto_translate_default?: boolean | null;
-  show_original_default?: boolean | null;
-  beacon_profile_public_default?: boolean | null;
-
-  terms_accepted?: boolean | null;
-  is_admin?: boolean | null;
-
-  translation_plan?: 'free' | 'basic' | 'premium' | null;
+  user_tier?: string | null;
+  neighborhood_radius_m?: number | null;
 };
 
-const ACCENT = '#FF5A7A';
-const HAIRLINE = '#ECEFF4';
-const BG = '#F7F8FA';
-
-const LANGS: { code: AppLang | string; native: string }[] = [
-  { code: 'ar', native: 'العربية' },
-  { code: 'de', native: 'Deutsch' },
-  { code: 'en', native: 'English' },
-  { code: 'es', native: 'Español' },
-  { code: 'fr', native: 'Français' },
-  { code: 'hi', native: 'हिन्दी' },
-  { code: 'id', native: 'Bahasa Indonesia' },
-  { code: 'ja', native: '日本語' },
-  { code: 'ko', native: '한국어' },
-  { code: 'pt', native: 'Português' },
-  { code: 'ru', native: 'Русский' },
-  { code: 'zh', native: '中文' },
-];
-
-function splitLangs(selected: string) {
-  const cur = LANGS.find(l => l.code === selected);
-  const rest = LANGS.filter(l => l.code !== selected);
-  return { current: cur, others: rest };
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <View style={styles.card}>{children}</View>
-    </View>
-  );
-}
-
-function ListRow({
-  left,
-  right,
-  onPress,
-  last,
-  disabled,
-}: {
-  left: React.ReactNode;
-  right?: React.ReactNode;
+type MenuItem = {
+  id: string;
+  icon: LucideIcon;
+  title: string;
+  subtitle?: string;
+  value?: string;
+  badge?: boolean;
   onPress?: () => void;
-  last?: boolean;
-  disabled?: boolean;
-}) {
+  rightElement?: React.ReactNode;
+};
+
+type MenuSectionType = {
+  title?: string;
+  items: MenuItem[];
+};
+
+type SettingsHomeAlertState = {
+  visible: boolean;
+  title: string;
+  message?: string;
+  variant: CoonnAlertVariant;
+  singleButton: boolean;
+  confirmText: string;
+  cancelText: string;
+  onConfirm?: () => void | Promise<void>;
+};
+
+
+type ProfileSnapshotRow = Pick<
+  ProfileRow,
+  | 'id'
+  | 'user_id'
+  | 'nickname'
+  | 'avatar_url'
+  | 'private_avatar_url'
+  | 'status_message'
+  | 'cover_image_url'
+  | 'theme_color'
+  | 'font_color'
+  | 'status_bar_style'
+  | 'hide_all_tab'
+  | 'preferred_lang'
+  | 'user_tier'
+  | 'neighborhood_radius_m'
+> & {
+  cached_at?: number;
+};
+
+const SETTINGS_HOME_PROFILE_SNAPSHOT_PREFIX = '@coonn/settings_home/profile_snapshot/v1:';
+
+const getSettingsHomeProfileSnapshotKey = (userId: string) =>
+  `${SETTINGS_HOME_PROFILE_SNAPSHOT_PREFIX}${userId}`;
+
+const normalizeProfileSnapshot = (userId: string, value: unknown): ProfileRow | null => {
+  if (!value || typeof value !== 'object') return null;
+
+  const row = value as Partial<ProfileSnapshotRow>;
+  const id = typeof row.id === 'string' && row.id.trim() ? row.id : userId;
+  const rowUserId = typeof row.user_id === 'string' && row.user_id.trim() ? row.user_id : userId;
+  if (rowUserId !== userId) return null;
+
+  return {
+    id,
+    user_id: rowUserId,
+    nickname: typeof row.nickname === 'string' ? row.nickname : null,
+    avatar_url: typeof row.avatar_url === 'string' ? row.avatar_url : null,
+    private_avatar_url: typeof row.private_avatar_url === 'string' ? row.private_avatar_url : null,
+    status_message: typeof row.status_message === 'string' ? row.status_message : null,
+    cover_image_url: typeof row.cover_image_url === 'string' ? row.cover_image_url : null,
+    theme_color: typeof row.theme_color === 'string' ? row.theme_color : null,
+    font_color: typeof row.font_color === 'string' ? row.font_color : null,
+    status_bar_style:
+      row.status_bar_style === 'dark-content' || row.status_bar_style === 'light-content'
+        ? row.status_bar_style
+        : null,
+    hide_all_tab: typeof row.hide_all_tab === 'boolean' ? row.hide_all_tab : null,
+    preferred_lang: typeof row.preferred_lang === 'string' ? row.preferred_lang : null,
+    user_tier: typeof row.user_tier === 'string' ? row.user_tier : null,
+    neighborhood_radius_m:
+      typeof row.neighborhood_radius_m === 'number' && Number.isFinite(row.neighborhood_radius_m)
+        ? row.neighborhood_radius_m
+        : null,
+  };
+};
+
+const readSettingsHomeProfileSnapshot = async (userId: string): Promise<ProfileRow | null> => {
+  try {
+    const raw = await AsyncStorage.getItem(getSettingsHomeProfileSnapshotKey(userId));
+    if (!raw) return null;
+    return normalizeProfileSnapshot(userId, JSON.parse(raw));
+  } catch (error) {
+    console.warn('[settings-home][profile_snapshot_read_failed]', error);
+    return null;
+  }
+};
+
+const writeSettingsHomeProfileSnapshot = async (userId: string, profile: ProfileRow | null) => {
+  try {
+    if (!profile) {
+      await AsyncStorage.removeItem(getSettingsHomeProfileSnapshotKey(userId));
+      return;
+    }
+
+    const snapshot: ProfileSnapshotRow = {
+      id: profile.id || userId,
+      user_id: profile.user_id || userId,
+      nickname: profile.nickname ?? null,
+      avatar_url: profile.avatar_url ?? null,
+      private_avatar_url: profile.private_avatar_url ?? null,
+      status_message: profile.status_message ?? null,
+      cover_image_url: profile.cover_image_url ?? null,
+      theme_color: profile.theme_color ?? null,
+      font_color: profile.font_color ?? null,
+      status_bar_style: profile.status_bar_style ?? null,
+      hide_all_tab: profile.hide_all_tab ?? null,
+      preferred_lang: profile.preferred_lang ?? null,
+      user_tier: profile.user_tier ?? null,
+      neighborhood_radius_m: profile.neighborhood_radius_m ?? null,
+      cached_at: Date.now(),
+    };
+
+    await AsyncStorage.setItem(getSettingsHomeProfileSnapshotKey(userId), JSON.stringify(snapshot));
+  } catch (error) {
+    console.warn('[settings-home][profile_snapshot_write_failed]', error);
+  }
+};
+
+const EMPTY_SETTINGS_HOME_ALERT: SettingsHomeAlertState = {
+  visible: false,
+  title: '',
+  message: undefined,
+  variant: 'default',
+  singleButton: true,
+  confirmText: '',
+  cancelText: '',
+};
+
+const generateAllowedRadiusValues = () => {
+  const steps: number[] = [];
+  for (let i = 50; i <= 100; i += 10) steps.push(i);
+  for (let i = 150; i <= 500; i += 50) steps.push(i);
+  for (let i = 600; i <= 1000; i += 100) steps.push(i);
+  for (let i = 1500; i <= 5000; i += 500) steps.push(i);
+  for (let i = 6000; i <= 10000; i += 1000) steps.push(i);
+  return steps;
+};
+const RADIUS_STEPS = generateAllowedRadiusValues();
+const RADIUS_PRESETS = [100, 250, 500, 1000, 3000, 5000, 10000];
+
+const formatDistance = (m: number) => {
+  if (m >= 1000) return `${(m / 1000).toFixed(1).replace(/\.0$/, '')}km`;
+  return `${m}m`;
+};
+
+/* ==================== UI 컴포넌트 ==================== */
+
+const BouncyPressable = ({ onPress, style, children, disabled }: any) => {
+  const scaleValue = useRef(new Animated.Value(1)).current;
+  const onPressIn = () =>
+    Animated.spring(scaleValue, {
+      toValue: 0.96,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 6,
+    }).start();
+  const onPressOut = () =>
+    Animated.spring(scaleValue, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 6,
+    }).start();
+
   return (
     <Pressable
       onPress={onPress}
-      disabled={!onPress || disabled}
-      style={({ pressed }) => [
-        styles.row,
-        !last && styles.rowDivider,
-        pressed && onPress && { opacity: 0.6 },
-      ]}
+      onPressIn={disabled ? undefined : onPressIn}
+      onPressOut={disabled ? undefined : onPressOut}
+      disabled={disabled}
+      style={{ width: '100%' }}
     >
-      <View style={{ flex: 1 }}>{left}</View>
-      {right}
+      <Animated.View style={[style, { transform: [{ scale: scaleValue }] }]}>
+        {children}
+      </Animated.View>
     </Pressable>
   );
-}
+};
 
+const MenuSection = React.memo(
+  ({
+    title,
+    children,
+  }: {
+    title?: string;
+    children: React.ReactNode;
+    isDark?: boolean;
+  }) => {
+    const appTheme = useAppTheme();
+    const C = useMemo(() => createSettingsHomeTheme(appTheme), [appTheme]);
+
+    return (
+      <View style={styles.section}>
+        {title && <Text style={[styles.sectionTitle, { color: C.sectionTitle }]}>{title}</Text>}
+        <View
+          style={[
+            styles.sectionCard,
+            {
+              backgroundColor: C.sectionBg,
+              borderColor: C.sectionBorder,
+            },
+          ]}
+        >
+          {children}
+        </View>
+      </View>
+    );
+  },
+);
+
+const MenuRow = React.memo(
+  ({
+    icon: Icon,
+    title,
+    subtitle,
+    rightElement,
+    onPress,
+    isLast = false,
+    value,
+    badge,
+  }: any) => {
+    const appTheme = useAppTheme();
+    const C = useMemo(() => createSettingsHomeTheme(appTheme), [appTheme]);
+
+    return (
+      <BouncyPressable
+        onPress={onPress}
+        disabled={!onPress}
+        style={[
+          styles.row,
+          !isLast && styles.rowBorder,
+          {
+            backgroundColor: C.rowBg,
+            borderBottomColor: C.rowBorder,
+          },
+        ]}
+      >
+        <View
+          style={[
+            styles.iconWrapper,
+            {
+              backgroundColor: C.menuIconBg,
+              borderColor: C.menuIconBorder,
+            },
+          ]}
+        >
+          <Icon size={17} color={C.menuIcon} strokeWidth={1.9} />
+        </View>
+        <View style={styles.rowContent}>
+          <View style={styles.rowTitleContainer}>
+            <Text style={[styles.rowTitle, { color: C.rowTitle }]} numberOfLines={1}>
+              {title}
+            </Text>
+            {badge && (
+              <View style={[styles.newBadge, { backgroundColor: C.badgeBg }]}>
+                <Text style={[styles.newBadgeText, { color: C.badgeText }]}>N</Text>
+              </View>
+            )}
+          </View>
+          {subtitle && (
+            <Text style={[styles.rowSubtitle, { color: C.rowSubtitle }]} numberOfLines={1}>
+              {subtitle}
+            </Text>
+          )}
+        </View>
+        <View style={styles.rowRight}>
+          {value && <Text style={[styles.rowValueText, { color: C.rowValue }]}>{value}</Text>}
+          {rightElement ? rightElement : onPress ? <ChevronRight size={16} color={C.chevron} /> : null}
+        </View>
+      </BouncyPressable>
+    );
+  },
+);
+
+/* ==================== 메인 화면 ==================== */
 export default function SettingsHome() {
   const { t } = useTranslation();
   const navigation = useNavigation<any>();
+  const appTheme = useAppTheme();
+  const { preference, isDark } = appTheme;
+  const C = useMemo(() => createSettingsHomeTheme(appTheme), [appTheme]);
+  const insets = useSafeAreaInsets();
+  const alertTheme = isDark ? 'coonn_dark' : 'coonn_light';
+
+  const [alertState, setAlertState] = useState<SettingsHomeAlertState>(EMPTY_SETTINGS_HOME_ALERT);
+
+  const closeAlert = useCallback(() => {
+    setAlertState((prev) => ({ ...prev, visible: false, onConfirm: undefined }));
+  }, []);
+
+  const showInfoAlert = useCallback((title: string, message?: string, variant: CoonnAlertVariant = 'default') => {
+    setAlertState({
+      visible: true,
+      title,
+      message,
+      variant,
+      singleButton: true,
+      confirmText: t('common:ok'),
+      cancelText: t('common:cancel'),
+      onConfirm: closeAlert,
+    });
+  }, [closeAlert, t]);
+
+  const showConfirmAlert = useCallback((params: {
+    title: string;
+    message?: string;
+    confirmText?: string;
+    cancelText?: string;
+    variant?: CoonnAlertVariant;
+    onConfirm: () => void | Promise<void>;
+  }) => {
+    setAlertState({
+      visible: true,
+      title: params.title,
+      message: params.message,
+      variant: params.variant ?? 'default',
+      singleButton: false,
+      confirmText: params.confirmText ?? t('common:ok'),
+      cancelText: params.cancelText ?? t('common:cancel'),
+      onConfirm: params.onConfirm,
+    });
+  }, [t]);
 
   const [meId, setMeId] = useState<string>('');
   const [prof, setProf] = useState<ProfileRow | null>(null);
   const [authEmail, setAuthEmail] = useState<string | null>(null);
+  const [avatarReady, setAvatarReady] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
-  const [loading, setLoading] = useState<boolean>(true);
-  const [saving, setSaving] = useState<boolean>(false);
-
-  // 언어
-  const [lang, setLang] = useState<AppLang | string>('en');
+  const [lang, setLang] = useState<AppLang | string>('ko');
   const [langOpen, setLangOpen] = useState(false);
 
-  // DB 토글 상태
-  const [profilePublicDefault, setProfilePublicDefault] = useState(false);
-  const [autoTranslateDefault, setAutoTranslateDefault] = useState(false);
-  const [showOriginalDefault, setShowOriginalDefault] = useState(true);
+  // 📍 반경 설정 상태
+  const [radiusOpen, setRadiusOpen] = useState(false);
+  const [radius, setRadius] = useState<number>(1000);
+  const [radiusInput, setRadiusInput] = useState<string>('1000');
+  const [isEditingRadius, setIsEditingRadius] = useState(false);
 
-  const [isAdmin, setIsAdmin] = useState(false);
+  // ✅ 공지사항 N 배지 상태
+  const [hasNewNotice, setHasNewNotice] = useState(false);
+  const [latestNoticeDate, setLatestNoticeDate] = useState<string | null>(null);
+
+  /* ⚡️ 상단바 정책 */
+  const applyStatusBar = useCallback(() => {
+    try {
+      navigation.setOptions?.({
+        headerShown: false,
+        statusBarColor: 'transparent',
+        statusBarStyle: isDark ? 'light' : 'dark',
+        statusBarTranslucent: true,
+      });
+    } catch {}
+
+    if (Platform.OS === 'android') {
+      try {
+        StatusBar.setTranslucent(true);
+        StatusBar.setBackgroundColor('transparent', true);
+        StatusBar.setBarStyle(isDark ? 'light-content' : 'dark-content', true);
+      } catch {}
+    } else {
+      try {
+        StatusBar.setBarStyle(isDark ? 'light-content' : 'dark-content', true);
+      } catch {}
+    }
+  }, [navigation, isDark]);
+
+  useFocusEffect(
+    useCallback(() => {
+      applyStatusBar();
+      let t1: any = null;
+      try {
+        requestAnimationFrame(() => applyStatusBar());
+      } catch {}
+      t1 = setTimeout(() => applyStatusBar(), 0);
+      return () => {
+        if (t1) clearTimeout(t1);
+      };
+    }, [applyStatusBar]),
+  );
+
+  useEffect(() => {
+    applyStatusBar();
+  }, [applyStatusBar]);
 
   const load = useCallback(async () => {
-    try {
-      setLoading(true);
+    const initialLangPromise = getInitialLang().catch(() => null);
+    const lastReadNoticeDatePromise = AsyncStorage.getItem('LAST_READ_NOTICE_DATE').catch(() => null);
 
+    try {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (!user) throw new Error(t('errors.auth.loginRequired', '로그인이 필요합니다.'));
+
+      const initialLang = await initialLangPromise;
+
+      if (!user) {
+        setMeId('');
+        setAuthEmail(null);
+        setProf(null);
+        setLang(initialLang || 'ko');
+        return;
+      }
 
       setMeId(user.id);
       setAuthEmail(user.email ?? null);
+      setLang(initialLang || 'ko');
 
-      const { data: p, error } = await supabase
+      const cachedProfile = await readSettingsHomeProfileSnapshot(user.id);
+      if (cachedProfile) {
+        setProf(cachedProfile);
+
+        if (cachedProfile.neighborhood_radius_m) {
+          setRadius(cachedProfile.neighborhood_radius_m);
+          setRadiusInput(String(cachedProfile.neighborhood_radius_m));
+        }
+      }
+
+      const profilePromise = supabase
         .from('profiles')
-        .select(
-          [
-            'id',
-            'user_id',
-            'nickname',
-            'avatar_url',
-            'preferred_lang',
-            'auto_translate_default',
-            'show_original_default',
-            'beacon_profile_public_default',
-            'terms_accepted',
-            'is_admin',
-          ].join(','),
-        )
-        .eq('id', user.id)
+        .select('id, user_id, nickname, avatar_url, private_avatar_url, status_message, cover_image_url, theme_color, font_color, status_bar_style, hide_all_tab, preferred_lang, user_tier, neighborhood_radius_m')
+        .eq('user_id', user.id)
         .maybeSingle();
 
-      if (error) throw error;
+      const latestNoticePromise = supabase
+        .from('notices')
+        .select('created_at')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
-      const row = (p ?? null) as ProfileRow | null;
-      setProf(row);
+      const [profileResult, noticeResult, lastReadDate] = await Promise.all([
+        profilePromise,
+        latestNoticePromise,
+        lastReadNoticeDatePromise,
+      ]);
 
-      setProfilePublicDefault(!!row?.beacon_profile_public_default);
-      setAutoTranslateDefault(!!row?.auto_translate_default);
-      setShowOriginalDefault(
-        row?.show_original_default === undefined || row?.show_original_default === null
-          ? true
-          : !!row.show_original_default,
-      );
-      setIsAdmin(!!row?.is_admin);
+      if (profileResult.error) throw profileResult.error;
 
-      // 언어 초기화 (스토리지 → DB → i18n 순)
-      const initial = await getInitialLang();
-      setLang(String(initial || row?.preferred_lang || i18n.language || 'en'));
-    } catch (e: any) {
-      Alert.alert(t('errors.common', '오류'), e?.message ?? String(e));
-    } finally {
-      setLoading(false);
+      const p = profileResult.data as ProfileRow | null;
+      setProf(p);
+      void writeSettingsHomeProfileSnapshot(user.id, p);
+
+      if (p?.neighborhood_radius_m) {
+        setRadius(p.neighborhood_radius_m);
+        setRadiusInput(String(p.neighborhood_radius_m));
+      }
+
+      if (noticeResult.error) {
+        console.warn('[settings-home][notice_load_failed]', noticeResult.error);
+        return;
+      }
+
+      const noticeData = noticeResult.data;
+      if (noticeData) {
+        setLatestNoticeDate(noticeData.created_at);
+
+        if (!lastReadDate || new Date(noticeData.created_at) > new Date(lastReadDate)) {
+          setHasNewNotice(true);
+        }
+      }
+    } catch (e) {
+      console.error(e);
     }
-  }, [t]);
-
+  }, []);
   useEffect(() => {
     load();
   }, [load]);
 
-  const updateProfileFlags = async (patch: Partial<ProfileRow>) => {
-    if (!meId) return;
-    const prev = {
-      beacon_profile_public_default: profilePublicDefault,
-      auto_translate_default: autoTranslateDefault,
-      show_original_default: showOriginalDefault,
-    };
+  const changeLanguage = async (code: AppLang) => {
+    const previousLang = lang;
 
-    try {
-      setSaving(true);
-      await supabase.from('profiles').update(patch).eq('id', meId);
-    } catch (e: any) {
-      // 롤백
-      setProfilePublicDefault(!!prev.beacon_profile_public_default);
-      setAutoTranslateDefault(!!prev.auto_translate_default);
-      setShowOriginalDefault(!!prev.auto_translate_default);
-      Alert.alert(t('errors.common', '오류'), e?.message ?? String(e));
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const toggleProfilePublic = async (next: boolean) => {
-    setProfilePublicDefault(next);
-    await updateProfileFlags({ beacon_profile_public_default: next });
-  };
-
-  const toggleAutoTranslate = async (next: boolean) => {
-    setAutoTranslateDefault(next);
-    await updateProfileFlags({ auto_translate_default: next });
-  };
-
-  const toggleShowOriginal = async (next: boolean) => {
-    setShowOriginalDefault(next);
-    await updateProfileFlags({ show_original_default: next });
-  };
-
-  const changeLanguage = async (code: string) => {
     try {
       setLang(code);
-      await i18n.changeLanguage(code);
-      await saveLang(code as AppLang);
       setLangOpen(false);
 
+      const appliedLang = await applyLanguage(code);
+
       if (meId) {
-        await supabase.from('profiles').update({ preferred_lang: code }).eq('id', meId);
+        void supabase
+          .from('profiles')
+          .update({ preferred_lang: appliedLang })
+          .eq('user_id', meId)
+          .then(({ error }) => {
+            if (error) {
+              console.warn('[settings-home][preferred_lang_update_failed]', error);
+            }
+          });
       }
-    } catch (e: any) {
-      Alert.alert(t('errors.common', '오류'), e?.message ?? String(e));
+    } catch (e) {
+      setLang(previousLang);
+      showInfoAlert(t('common:error'), t('settings:alerts.language_change_error'), 'danger');
     }
   };
 
-  const signOut = async () => {
+  const saveRadius = async (newRadius: number) => {
+    setRadius(newRadius);
+    setRadiusInput(String(newRadius));
     try {
-      await supabase.auth.signOut();
-      Alert.alert(t('settings.logout', '로그아웃'), t('settings.logoutDone', '로그아웃되었습니다.'));
-      navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
-    } catch (e: any) {
-      Alert.alert(t('errors.common', '오류'), e?.message ?? String(e));
+      if (meId) {
+        await supabase
+          .from('profiles')
+          .update({ neighborhood_radius_m: newRadius })
+          .eq('user_id', meId);
+        setProf((prev) => (prev ? { ...prev, neighborhood_radius_m: newRadius } : null));
+      }
+    } catch (e) {
+      console.error('Failed to save radius', e);
+      showInfoAlert(t('common:error'), t('settings:radius.save_error'), 'danger');
     }
   };
 
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator />
-        <Text style={styles.loadingText}>{t('common.loading', '불러오는 중…')}</Text>
-      </SafeAreaView>
-    );
-  }
+  const handleSliderChange = (val: number) => {
+    const index = Math.round(val);
+    const actualValue = RADIUS_STEPS[index];
+    if (actualValue) {
+      setRadius(actualValue);
+      setRadiusInput(String(actualValue));
+    }
+  };
 
-  const { current, others } = splitLangs(String(lang));
+  const handleSliderComplete = (val: number) => {
+    const index = Math.round(val);
+    const actualValue = RADIUS_STEPS[index];
+    if (actualValue) saveRadius(actualValue);
+  };
+
+  const handleRadiusInputSubmit = () => {
+    setIsEditingRadius(false);
+    let val = parseInt(radiusInput.replace(/[^0-9]/g, ''), 10);
+    if (isNaN(val)) val = 1000;
+    if (val < 50) val = 50;
+    if (val > 10000) val = 10000;
+
+    const closest = RADIUS_STEPS.reduce((prev, curr) =>
+      Math.abs(curr - val) < Math.abs(prev - val) ? curr : prev,
+    );
+    saveRadius(closest);
+  };
+
+  const performSignOut = useCallback(async () => {
+    if (signingOut) return;
+
+    setSigningOut(true);
+    try {
+      await disableCurrentPushTokenBeforeSignOut('signed_out');
+
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw error;
+      }
+
+      navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+    } catch (error) {
+      console.warn('[SettingsHome] signOut failed:', error);
+      showInfoAlert(t('common:error'), t('settings:alerts.logout_fail'), 'danger');
+    } finally {
+      setSigningOut(false);
+    }
+  }, [navigation, showInfoAlert, signingOut, t]);
+
+  const signOut = useCallback(() => {
+    showConfirmAlert({
+      title: t('settings:logout'),
+      message: t('settings:alerts.logout_desc'),
+      confirmText: t('settings:logout'),
+      cancelText: t('common:cancel'),
+      variant: 'danger',
+      onConfirm: () => {
+        closeAlert();
+        void performSignOut();
+      },
+    });
+  }, [closeAlert, performSignOut, showConfirmAlert, t]);
+
+  // SafeScreen already owns the bottom safe-area inset.
+  // Match the original bottom sheet breathing room.
+  // Do not add insets.bottom here because SafeScreen already owns the safe-area offset.
+  const sheetBottomPadding = 40;
+
+  const closeOpenSheet = useCallback(() => {
+    if (radiusOpen) {
+      Keyboard.dismiss();
+      setIsEditingRadius(false);
+      setRadiusOpen(false);
+      return true;
+    }
+
+    if (langOpen) {
+      setLangOpen(false);
+      return true;
+    }
+
+    return false;
+  }, [langOpen, radiusOpen]);
+
+  useEffect(() => {
+    if (!langOpen && !radiusOpen) return;
+
+    const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      closeOpenSheet();
+      return true;
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [closeOpenSheet, langOpen, radiusOpen]);
+
+  useEffect(() => {
+    if (!langOpen && !radiusOpen) return;
+
+    const unsubscribe = navigation.addListener?.('beforeRemove', (event: any) => {
+      event.preventDefault?.();
+      closeOpenSheet();
+    });
+
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
+  }, [closeOpenSheet, langOpen, navigation, radiusOpen]);
+
+  const profileAvatarUrl = prof?.avatar_url ?? null;
+
+  useEffect(() => {
+    setAvatarReady(false);
+  }, [profileAvatarUrl]);
+
+  const initialProfileForView = useMemo(() => {
+    if (!meId || !prof) return null;
+
+    const resolvedUserId = String(prof.user_id || prof.id || meId);
+
+    return {
+      user_id: resolvedUserId,
+      id: prof.id ?? resolvedUserId,
+      nickname: prof.nickname ?? null,
+      avatar_url: prof.avatar_url ?? null,
+      private_avatar_url: prof.private_avatar_url ?? null,
+      status_message: prof.status_message ?? null,
+      follow_id: null,
+      cover_image_url: prof.cover_image_url ?? null,
+      hide_all_tab: prof.hide_all_tab ?? false,
+      theme_color: prof.theme_color ?? null,
+      font_color: prof.font_color ?? null,
+      status_bar_style:
+        prof.status_bar_style === 'dark-content' || prof.status_bar_style === 'light-content'
+          ? prof.status_bar_style
+          : null,
+    };
+  }, [meId, prof]);
+
+  const currentSliderIndex = useMemo(() => {
+    const idx = RADIUS_STEPS.indexOf(radius);
+    if (idx !== -1) return idx;
+    let minDiff = Infinity;
+    let closestIdx = 0;
+    RADIUS_STEPS.forEach((step, i) => {
+      const diff = Math.abs(step - radius);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIdx = i;
+      }
+    });
+    return closestIdx;
+  }, [radius]);
+
+  const getThemeLabel = (pref: string) => {
+    switch (pref) {
+      case 'light':
+        return t('settings:theme.mode.light');
+      case 'dark':
+        return t('settings:theme.mode.dark');
+      default:
+        return t('settings:theme.mode.system');
+    }
+  };
+
+  /* ⚡️ 메뉴 구성 */
+  const menuSections = useMemo<MenuSectionType[]>(
+    () => [
+      {
+        title: t('settings:sections.account'),
+        items: [
+          {
+            id: 'account',
+            title: t('settings:account.title'),
+            icon: UserCheck,
+            onPress: () => navigation.navigate('AccountSettings'),
+          },
+          {
+            id: 'personalityType',
+            title: String(t('settings:personality.title', { defaultValue: 'Personality Type' })),
+            subtitle: String(
+              t('settings:personality.subtitle', {
+                defaultValue: '모임과 장소 추천에 활용돼요',
+              }),
+            ),
+            icon: Brain,
+            onPress: () => navigation.navigate('PersonalityType'),
+          },
+          {
+            id: 'openProfiles',
+            title: t('settings:open_profiles.title'),
+            subtitle: t('settings:open_profiles.subtitle'),
+            icon: Users,
+            onPress: () => navigation.navigate('OpenProfileList'),
+          },
+          {
+            id: 'privacy',
+            title: t('settings:privacy.title'),
+            icon: Lock,
+            onPress: () => navigation.navigate('SettingsPrivacy'),
+          },
+        ],
+      },
+      {
+        title: t('settings:sections.notification'),
+        items: [
+          {
+            id: 'noti',
+            title: t('settings:notification.title'),
+            icon: Bell,
+            onPress: () => navigation.navigate('SettingsNotification'),
+          },
+        ],
+      },
+      {
+        title: t('settings:sections.display_language'),
+        items: [
+          {
+            id: 'theme',
+            title: t('settings:theme.title'),
+            icon: Palette,
+            value: getThemeLabel(preference),
+            onPress: () => navigation.navigate('ThemeSettings'),
+          },
+          {
+            id: 'lang',
+            title: t('settings:language.title'),
+            icon: Globe,
+            value: LANGS.find((l) => l.code === lang)?.native,
+            onPress: () => setLangOpen(true),
+          },
+        ],
+      },
+      {
+        title: t('settings:sections.location'),
+        items: [
+          {
+            id: 'radius',
+            title: t('settings:radius.title'),
+            subtitle: `${t('settings:radius.current')}: ${formatDistance(radius)}`,
+            icon: MapPin,
+            value: formatDistance(radius),
+            onPress: () => setRadiusOpen(true),
+          },
+        ],
+      },
+      {
+        title: t('settings:sections.data'),
+        items: [
+          {
+            id: 'data',
+            title: t('settings:storage.title'),
+            icon: Database,
+            onPress: () => navigation.navigate('DataStorageCenter'),
+          },
+        ],
+      },
+      {
+        title: t('settings:sections.advanced'),
+        items: [
+          {
+            id: 'labs',
+            title: t('settings:labs.title'),
+            subtitle: t('settings:labs.subtitle'),
+            icon: FlaskConical,
+            onPress: () => navigation.navigate('SettingsLabs'),
+          },
+        ],
+      },
+      {
+        title: t('settings:sections.support'),
+        items: [
+          {
+            id: 'notice',
+            title: t('settings:support.notice.title'),
+            icon: Megaphone,
+            badge: hasNewNotice,
+            onPress: async () => {
+              if (latestNoticeDate) {
+                await AsyncStorage.setItem('LAST_READ_NOTICE_DATE', latestNoticeDate);
+                setHasNewNotice(false);
+              }
+              navigation.navigate('NoticeList');
+            },
+          },
+          {
+            id: 'cs',
+            title: t('settings:support.cs'),
+            icon: Headphones,
+            onPress: () => navigation.navigate('CustomerCenterHome'),
+          },
+        ],
+      },
+      {
+        title: t('settings:sections.info'),
+        items: [
+          {
+            id: 'version',
+            title: t('settings:menus.version'),
+            icon: Info,
+            value: '25.11.2',
+          },
+        ],
+      },
+    ],
+    [lang, navigation, t, radius, preference, hasNewNotice, latestNoticeDate],
+  );
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* 상단 헤더 */}
-      <View style={styles.header}>
-        <Pressable
-          onPress={() => navigation.goBack()}
-          hitSlop={8}
-          style={styles.headerLeft}
-        >
-          <ChevronLeft size={22} color="#111827" />
-        </Pressable>
-        <Text style={styles.headerTitle}>{t('settings.home_title', '설정')}</Text>
-        <Pressable
-          onPress={() =>
-            Alert.alert(
-              t('settings.search.title', '설정 검색'),
-              t('settings.search.soon', '설정 검색 기능은 곧 제공될 예정입니다.'),
-            )
-          }
-          hitSlop={8}
-          style={styles.headerRight}
-        >
-          <SearchIcon size={20} color="#111827" />
-        </Pressable>
-      </View>
+    <SafeScreen
+      backgroundColor={C.bg}
+      includeTopInset={false}
+      includeBottomInset
+      contentStyle={{ paddingLeft: insets.left, paddingRight: insets.right }}
+    >
+      <GlobalHeader
+        style={{ backgroundColor: C.headerBg, borderBottomColor: C.headerBorder }}
+        titleComponent={
+          <View style={styles.commonHeaderTitleRow}>
+            <HeaderIconButton onPress={() => navigation.goBack()}>
+              <ChevronLeft size={22} color={C.headerIcon} strokeWidth={2} />
+            </HeaderIconButton>
+            <Text style={[styles.commonHeaderTitle, { color: C.headerTitle }]}>
+              {t('settings:home_title')}
+            </Text>
+          </View>
+        }
+      />
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
-        {/* 프로필 카드 - 여기에서 AccountSettings로 이동 */}
-        <Pressable
-          style={styles.profile}
-          onPress={() =>
-            navigation.navigate('AccountSettings', {
-              user_id: meId,
-              isMe: true,
-            })
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <BouncyPressable
+          onPress={
+            meId
+              ? () =>
+                  navigation.navigate('ProfileView', {
+                    user_id: meId,
+                    isMe: true,
+                    initialProfile: initialProfileForView,
+                  })
+              : undefined
           }
+          disabled={!meId}
         >
-          {prof?.avatar_url ? (
-            <Image source={{ uri: prof.avatar_url }} style={styles.avatar} />
-          ) : (
-            <View style={[styles.avatar, styles.avatarFallback]}>
-              <Text style={styles.avatarInitial}>
-                {prof?.nickname?.trim()?.[0]?.toUpperCase() || '?'}
+          <View
+            style={[
+              styles.profileHero,
+              {
+                backgroundColor: C.profileBg,
+                borderColor: C.profileBorder,
+              },
+            ]}
+          >
+            <View style={styles.avatarContainer}>
+              <View style={[styles.avatarFallback, { backgroundColor: C.avatarBg }]}>
+                <Text style={[styles.avatarInitial, { color: C.avatarText }]}>
+                  {prof?.nickname?.[0] || '?'}
+                </Text>
+              </View>
+              {profileAvatarUrl ? (
+                <Image
+                  key={profileAvatarUrl}
+                  source={{ uri: profileAvatarUrl }}
+                  style={[styles.avatarImg, !avatarReady && styles.avatarImgHidden]}
+                  onLoad={() => setAvatarReady(true)}
+                  onError={() => setAvatarReady(false)}
+                />
+              ) : null}
+            </View>
+            <View style={styles.profileInfo}>
+              <Text style={[styles.heroName, { color: C.text }]}>
+                {prof?.nickname || t('settings:me.noName')}
+              </Text>
+              <Text style={[styles.heroEmail, { color: C.sub }]}>
+                {authEmail || t('settings:me.loadingAccount')}
               </Text>
             </View>
-          )}
-          <View style={{ flex: 1 }}>
-            <Text style={styles.name}>
-              {prof?.nickname?.trim() || t('settings.me.noName', '(이름 없음)')}
-            </Text>
-            {authEmail ? (
-              <Text style={styles.subName}>{authEmail}</Text>
-            ) : (
-              <Text style={styles.subName}>
-                {t('settings.me.profileManage', '프로필 관리')}
-              </Text>
-            )}
+            <ChevronRight size={20} color={C.chevron} />
           </View>
-          <Text style={styles.chev}>{t('common.manage', '관리')}</Text>
-        </Pressable>
+        </BouncyPressable>
 
-        {/* 1. 계정 / 보안 */}
-        <Section title={t('settings.account.title', '개인 / 보안')}>
-          <ListRow
-            left={
-              <View style={styles.rowLeft}>
-                <Text style={styles.rowTitle}>{t('settings.account.editProfile', '프로필 편집')}</Text>
-              </View>
-            }
-            right={<ChevronRight size={18} color="#D1D5DB" />}
-            onPress={() => navigation.navigate('Edit')}
-          />
-          <ListRow
-            left={
-              <View>
-                <Text style={styles.rowTitle}>
-                  {t('settings.account.profilePublicDefault', '비콘에서 내 프로필 기본 공개')}
-                </Text>
-                <Text style={styles.rowCaption}>
-                  {t(
-                    'settings.account.profilePublicHint',
-                    '비콘 생성 시 기본값으로 사용됩니다. 개별 비콘에서 변경 가능.',
-                  )}
-                </Text>
-              </View>
-            }
-            right={
-              <View style={styles.switchWrap}>
-                <Switch
-                  value={profilePublicDefault}
-                  onValueChange={toggleProfilePublic}
-                  trackColor={{ false: '#E5E7EB', true: ACCENT }}
-                  thumbColor={Platform.OS === 'android' ? '#fff' : undefined}
-                  ios_backgroundColor="#E5E7EB"
-                  disabled={saving}
-                />
-              </View>
-            }
-            last
-          />
-        </Section>
+        {menuSections.map((section, sIdx) => (
+          <MenuSection key={sIdx} title={section.title} isDark={isDark}>
+            {section.items.map((item, iIdx) => (
+              <MenuRow key={item.id} {...item} isLast={iIdx === section.items.length - 1} />
+            ))}
+          </MenuSection>
+        ))}
 
-        {/* 2. 친구 / 소셜 */}
-        <Section title={t('settings.friends.title', '친구')}>
-          <ListRow
-            left={
-              <View>
-                <Text style={styles.rowTitle}>
-                  {t('settings.friends.manage', '친구 관리')}
-                </Text>
-                <Text style={styles.rowCaption}>
-                  {t('settings.friends.caption', '차단, 추천 친구, 공개 범위')}
-                </Text>
-              </View>
-            }
-            right={<ChevronRight size={18} color="#D1D5DB" />}
-            last
-            onPress={() =>
-              Alert.alert(
-                t('settings.friends.title', '친구'),
-                t('settings.friends.soon', '친구 설정 화면은 추후 제공될 예정입니다.'),
-              )
-            }
-          />
-        </Section>
-
-        {/* 3. 알림 */}
-        <Section title={t('settings.notification.title', '알림')}>
-          <ListRow
-            left={
-              <View>
-                <Text style={styles.rowTitle}>
-                  {t('settings.notification.manage', '알림 설정')}
-                </Text>
-                <Text style={styles.rowCaption}>
-                  {t('settings.notification.caption', '푸시, 소리, 진동')}
-                </Text>
-              </View>
-            }
-            right={<ChevronRight size={18} color="#D1D5DB" />}
-            last
-            onPress={() =>
-              Alert.alert(
-                t('settings.notification.title', '알림'),
-                t('settings.notification.soon', '알림 설정 화면은 추후 연결될 예정입니다.'),
-              )
-            }
-          />
-        </Section>
-
-        {/* 4. 화면 / 테마 / 언어 */}
-        <Section title={t('settings.display.title', '화면 및 언어')}>
-          {/* 언어 */}
-          <ListRow
-            left={
-              <View>
-                <Text style={styles.rowTitle}>{t('settings.language.title', '언어')}</Text>
-                <Text style={styles.rowValue}>{current?.native || lang}</Text>
-              </View>
-            }
-            right={<ChevronRight size={18} color="#D1D5DB" />}
-            onPress={() => setLangOpen(true)}
-          />
-
-          {/* 테마 */}
-          <ListRow
-            left={
-              <View>
-                <Text style={styles.rowTitle}>{t('settings.theme.title', '테마')}</Text>
-                <Text style={styles.rowCaption}>
-                  {t('settings.theme.caption', '라이트 / 다크 모드')}
-                </Text>
-              </View>
-            }
-            right={<ChevronRight size={18} color="#D1D5DB" />}
-            last
-            onPress={() => navigation.navigate('ThemeSettings')}
-          />
-        </Section>
-
-        {/* 5. 채팅 (번역 기본값) */}
-        <Section title={t('settings.chat.title', '채팅')}>
-          <ListRow
-            left={
-              <View>
-                <Text style={styles.rowTitle}>
-                  {t('settings.translate.autoDefault', '메시지 자동 번역')}
-                </Text>
-                <Text style={styles.rowCaption}>
-                  {t('settings.translate.autoDefaultHint', '새 채팅의 기본값으로 사용됩니다.')}
-                </Text>
-              </View>
-            }
-            right={
-              <View style={styles.switchWrap}>
-                <Switch
-                  value={autoTranslateDefault}
-                  onValueChange={toggleAutoTranslate}
-                  trackColor={{ false: '#E5E7EB', true: ACCENT }}
-                  thumbColor={Platform.OS === 'android' ? '#fff' : undefined}
-                  ios_backgroundColor="#E5E7EB"
-                  disabled={saving}
-                />
-              </View>
-            }
-          />
-
-          <ListRow
-            left={
-              <View>
-                <Text style={styles.rowTitle}>
-                  {t('settings.translate.showOriginal', '번역과 함께 원문 표시')}
-                </Text>
-                <Text style={styles.rowCaption}>
-                  {t(
-                    'settings.translate.showOriginalHint',
-                    '켜 두면 번역 메시지 아래에 원문이 함께 표시됩니다.',
-                  )}
-                </Text>
-              </View>
-            }
-            right={
-              <View style={styles.switchWrap}>
-                <Switch
-                  value={showOriginalDefault}
-                  onValueChange={toggleShowOriginal}
-                  trackColor={{ false: '#E5E7EB', true: ACCENT }}
-                  thumbColor={Platform.OS === 'android' ? '#fff' : undefined}
-                  ios_backgroundColor="#E5E7EB"
-                  disabled={saving}
-                />
-              </View>
-            }
-            last
-          />
-        </Section>
-
-        {/* 6. 데이터 & 저장공간 */}
-        <Section title={t('settings.storage.title', '데이터 및 저장공간')}>
-          <ListRow
-            left={
-              <View>
-                <Text style={styles.rowTitle}>
-                  {t('settings.storage.clearCache', '캐시 정리')}
-                </Text>
-                <Text style={styles.rowCaption}>
-                  {t('settings.storage.clearCacheHint', '임시파일 삭제')}
-                </Text>
-              </View>
-            }
-            right={<ChevronRight size={18} color="#D1D5DB" />}
-            last
-            onPress={() =>
-              Alert.alert(
-                t('settings.storage.clearCache', '캐시 정리'),
-                t(
-                  'settings.storage.soon',
-                  '캐시 삭제 로직은 아직 연결되지 않았습니다. 추후 업데이트될 예정입니다.',
-                ),
-              )
-            }
-          />
-        </Section>
-
-        {/* 7. 실험실 */}
-        <Section title={t('settings.labs.title', '실험실')}>
-          <ListRow
-            left={
-              <View>
-                <Text style={styles.rowTitle}>{t('settings.labs.features', '실험실 기능')}</Text>
-                <Text style={styles.rowCaption}>
-                  {t('settings.labs.caption', '새로운 기능을 먼저 사용해 보세요.')}
-                </Text>
-              </View>
-            }
-            right={<ChevronRight size={18} color="#D1D5DB" />}
-            last
-            onPress={() =>
-              Alert.alert(
-                t('settings.labs.title', '실험실'),
-                t('settings.labs.soon', '실험실 기능 화면은 준비 중입니다.'),
-              )
-            }
-          />
-        </Section>
-
-        {/* 8. 고객지원 / 로그아웃 / 버전 */}
-        <Section title={t('settings.support.title', '고객지원')}>
-          <ListRow
-            left={
-              <Text style={styles.rowTitle}>
-                {t('settings.support.notice', '공지사항')}
-              </Text>
-            }
-            right={<ChevronRight size={18} color="#D1D5DB" />}
-            onPress={() =>
-              Alert.alert(
-                t('settings.support.notice', '공지사항'),
-                t('settings.support.soon', '공지사항 화면은 추후 연결될 예정입니다.'),
-              )
-            }
-          />
-          <ListRow
-            left={
-              <Text style={styles.rowTitle}>
-                {t('settings.support.guide', '앱 안내 가이드')}
-              </Text>
-            }
-            right={<ChevronRight size={18} color="#D1D5DB" />}
-            onPress={() =>
-              Alert.alert(
-                t('settings.support.guide', '앱 안내 가이드'),
-                t('settings.support.soon', '앱 가이드는 준비 중입니다.'),
-              )
-            }
-          />
-          <ListRow
-            left={
-              <Text style={styles.rowTitle}>
-                {t('settings.support.cs', '고객센터 / 운영정책')}
-              </Text>
-            }
-            right={<ChevronRight size={18} color="#D1D5DB" />}
-            onPress={() =>
-              Alert.alert(
-                t('settings.support.cs', '고객센터 / 운영정책'),
-                t('settings.support.soon', '고객센터 화면은 추후 연결될 예정입니다.'),
-              )
-            }
-          />
-          <ListRow
-            left={
-              <Text style={[styles.rowTitle, { color: ACCENT }]}>
-                {t('settings.logout', '로그아웃')}
-              </Text>
-            }
+        <View style={styles.footer}>
+          <BouncyPressable
             onPress={signOut}
-            last
-          />
-          <Text style={styles.versionTxt}>
-            {t('settings.version', '앱 버전')} 1.0.0
-          </Text>
-        </Section>
-
-        {/* 관리자 섹션 */}
-        {isAdmin && (
-          <Section title={t('settings.admin.title', '관리자')}>
-            <ListRow
-              left={
-                <Text style={styles.rowTitle}>
-                  {t('settings.admin.console', '관리자 콘솔')}
-                </Text>
-              }
-              right={<ChevronRight size={18} color="#D1D5DB" />}
-              last
-              onPress={() =>
-                Alert.alert('Admin', '관리자 전용 화면은 라우팅 준비 후 연결할게요.')
-              }
-            />
-          </Section>
-        )}
+            disabled={signingOut}
+            style={[styles.logoutBtn, signingOut && { opacity: 0.5 }]}
+          >
+            <LogOut size={16} color={C.logoutText} />
+            <Text style={[styles.logoutText, { color: C.logoutText }]}>
+              {signingOut ? `${t('settings:logout')}...` : t('settings:logout')}
+            </Text>
+          </BouncyPressable>
+        </View>
       </ScrollView>
 
-      {/* 언어 선택 모달 */}
-      <Modal
-        visible={langOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setLangOpen(false)}
-      >
-        <Pressable style={styles.modalBackdrop} onPress={() => setLangOpen(false)}>
-          <Pressable style={styles.sheet} onPress={() => {}}>
-            <Text style={styles.sheetTitle}>
-              {t('settings.language.select', '언어 선택')}
+      {/* 언어 설정 시트: RN Modal 대신 화면 내부 overlay 사용 */}
+      {langOpen ? (
+        <View pointerEvents="box-none" style={styles.modalPortal}>
+          <Pressable
+            style={[styles.modalBackdrop, { backgroundColor: C.overlay }]}
+            onPress={() => setLangOpen(false)}
+          />
+          <View
+            style={[
+              styles.bottomSheet,
+              {
+                backgroundColor: C.sheetBg,
+                borderColor: C.sheetBorder,
+                paddingBottom: sheetBottomPadding,
+              },
+            ]}
+          >
+            <View style={[styles.sheetHandle, { backgroundColor: C.sheetHandle }]} />
+            <Text style={[styles.sheetTitle, { color: C.sheetTitle }]}> 
+              {t('settings:language.select')}
             </Text>
-
-            {current && (
-              <View style={styles.langRow}>
-                <Text style={styles.langLabel}>
-                  {current.native}{' '}
-                  <Text style={{ color: '#9CA3AF' }}>
-                    {t('settings.language.inUse', '(사용 중)')}
-                  </Text>
-                </Text>
-                <Text style={styles.redDot}>●</Text>
-              </View>
-            )}
-            <View style={styles.hr} />
-
-            {others.map((l, idx) => {
-              const lastRow = idx === others.length - 1;
-              return (
+            <ScrollView style={{ maxHeight: height * 0.5 }}>
+              {LANGS.map((item) => (
                 <Pressable
-                  key={String(l.code)}
-                  onPress={() => changeLanguage(String(l.code))}
-                  style={({ pressed }) => [
-                    styles.langRow,
-                    !lastRow && styles.rowDivider,
-                    pressed && { opacity: 0.7 },
+                  key={item.code}
+                  style={[
+                    styles.langItem,
+                    lang === item.code && { backgroundColor: C.langActiveBg },
                   ]}
+                  onPress={() => changeLanguage(item.code)}
                 >
-                  <Text style={styles.langLabel}>{l.native}</Text>
+                  <Text
+                    style={[
+                      styles.langText,
+                      { color: C.text },
+                      lang === item.code && { color: C.activeText, fontWeight: '700' },
+                    ]}
+                  >
+                    {item.native}
+                  </Text>
+                  {lang === item.code && <View style={[styles.activeDot, { backgroundColor: C.activeDot }]} />}
                 </Pressable>
-              );
-            })}
-          </Pressable>
-        </Pressable>
-      </Modal>
-    </SafeAreaView>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      ) : null}
+
+      {/* 📍 반경 설정 시트: RN Modal 대신 화면 내부 overlay 사용 */}
+      {radiusOpen ? (
+        <View pointerEvents="box-none" style={styles.modalPortal}>
+          <Pressable
+            style={[styles.modalBackdrop, { backgroundColor: C.overlay }]}
+            onPress={() => {
+              if (!isEditingRadius) setRadiusOpen(false);
+              else {
+                Keyboard.dismiss();
+                setIsEditingRadius(false);
+              }
+            }}
+          />
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View
+              style={[
+                styles.bottomSheet,
+                {
+                  backgroundColor: C.sheetBg,
+                  borderColor: C.sheetBorder,
+                  paddingBottom: sheetBottomPadding,
+                },
+              ]}
+            >
+              <View style={styles.sheetHeaderRow}>
+                <Text style={[styles.sheetTitle, { color: C.sheetTitle }]}> 
+                  {t('settings:radius.title')}
+                </Text>
+                <Pressable onPress={() => setRadiusOpen(false)} style={{ padding: 4 }}>
+                  <X size={24} color={C.sheetIcon} />
+                </Pressable>
+              </View>
+
+              <View style={styles.radiusDisplayContainer}>
+                {isEditingRadius ? (
+                  <View style={[styles.radiusInputWrapper, { borderBottomColor: C.radiusInputBorder }]}> 
+                    <TextInput
+                      style={[styles.radiusInput, { color: C.radiusMain }]}
+                      value={radiusInput}
+                      onChangeText={setRadiusInput}
+                      keyboardType="number-pad"
+                      autoFocus
+                      onBlur={handleRadiusInputSubmit}
+                      onSubmitEditing={handleRadiusInputSubmit}
+                      maxLength={5}
+                      placeholderTextColor={C.muted}
+                    />
+                    <Text style={[styles.radiusUnit, { color: C.radiusSub }]}>m</Text>
+                  </View>
+                ) : (
+                  <Pressable onPress={() => setIsEditingRadius(true)}>
+                    <Text style={[styles.radiusBigText, { color: C.radiusMain }]}>{formatDistance(radius)}</Text>
+                  </Pressable>
+                )}
+                <Text style={[styles.radiusDesc, { color: C.radiusSub }]}> 
+                  {t('settings:radius.desc')}
+                </Text>
+              </View>
+
+              <View style={styles.sliderContainer}>
+                <View style={styles.sliderLabelRow}>
+                  <Text style={[styles.sliderLabel, { color: C.muted }]}>50m</Text>
+                  <Text style={[styles.sliderLabel, { color: C.muted }]}>10km</Text>
+                </View>
+                <Slider
+                  style={{ width: '100%', height: 40 }}
+                  minimumValue={0}
+                  maximumValue={RADIUS_STEPS.length - 1}
+                  step={1}
+                  value={currentSliderIndex}
+                  onValueChange={handleSliderChange}
+                  onSlidingComplete={handleSliderComplete}
+                  minimumTrackTintColor={C.radiusMain}
+                  maximumTrackTintColor={C.radiusTrack}
+                  thumbTintColor={C.radiusMain}
+                />
+              </View>
+
+              <View style={styles.presetContainer}>
+                {RADIUS_PRESETS.map((preset) => (
+                  <Pressable
+                    key={preset}
+                    style={[
+                      styles.presetChip,
+                      {
+                        backgroundColor: C.presetBg,
+                        borderColor: C.presetBorder,
+                      },
+                      radius === preset && {
+                        backgroundColor: C.presetActiveBg,
+                        borderColor: C.presetActiveBorder,
+                      },
+                    ]}
+                    onPress={() => saveRadius(preset)}
+                  >
+                    <Text
+                      style={[
+                        styles.presetText,
+                        { color: C.presetText },
+                        radius === preset && { color: C.presetActiveText, fontWeight: '700' },
+                      ]}
+                    >
+                      {formatDistance(preset)}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+
+              <View style={{ height: 20 }} />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      ) : null}
+
+      <CoonnAlert
+        visible={alertState.visible}
+        theme={alertTheme}
+        variant={alertState.variant}
+        title={alertState.title}
+        message={alertState.message}
+        confirmText={alertState.confirmText}
+        cancelText={alertState.cancelText}
+        singleButton={alertState.singleButton}
+        dismissOnBackdrop={alertState.singleButton}
+        dismissOnBackButton={alertState.singleButton}
+        onConfirm={alertState.onConfirm ?? closeAlert}
+        onCancel={closeAlert}
+      />
+    </SafeScreen>
   );
 }
 
-/* ==================== Styles ==================== */
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: BG },
+  container: { flex: 1 },
+  scrollContent: { paddingBottom: 40 },
 
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: BG,
-  },
-  loadingText: { marginTop: 8, color: '#6b7280' },
+  commonHeaderTitleRow: { flexDirection: 'row', alignItems: 'center' },
+  commonHeaderTitle: { fontSize: 21, lineHeight: 27, fontWeight: '600', marginLeft: 4 },
 
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: HAIRLINE,
+  profileHero: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#fff',
+    padding: 16,
+    marginHorizontal: 16,
+    marginTop: 14,
+    marginBottom: 20,
+    borderRadius: 20,
+    borderWidth: StyleSheet.hairlineWidth,
   },
-  headerTitle: { fontSize: 18, fontWeight: '800', color: '#111827' },
-  headerLeft: {
-    width: 40,
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-  },
-  headerRight: {
-    width: 40,
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-  },
-
-  profile: {
-    marginTop: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    backgroundColor: '#fff',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: HAIRLINE,
-  },
-  avatar: { width: 60, height: 60, borderRadius: 30, backgroundColor: '#e5e7eb' },
-  avatarFallback: {
-    backgroundColor: '#111827',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarInitial: { color: '#fff', fontWeight: '800', fontSize: 20 },
-  name: { fontSize: 16, fontWeight: '800', color: '#111827' },
-  subName: { color: '#9CA3AF', fontSize: 13, marginTop: 2 },
-  chev: { color: '#9ca3af', fontWeight: '800' },
-
-  section: {
-    marginTop: 12,
-  },
-  sectionTitle: {
-    paddingHorizontal: 16,
-    paddingTop: 6,
-    paddingBottom: 4,
-    backgroundColor: BG,
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#6B7280',
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: HAIRLINE,
+  avatarContainer: { position: 'relative', width: 52, height: 52 },
+  avatarImg: { ...StyleSheet.absoluteFillObject, width: 52, height: 52, borderRadius: 19 },
+  avatarImgHidden: { opacity: 0 },
+  avatarFallback: { width: 52, height: 52, borderRadius: 19, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
+  avatarInitial: { fontSize: 20, fontWeight: '600' },
+  profileInfo: { marginLeft: 14, flex: 1 },
+  heroName: { fontSize: 17, lineHeight: 22, fontWeight: '600' },
+  heroEmail: { fontSize: 13, lineHeight: 18, marginTop: 2 },
+  section: { marginBottom: 22, paddingHorizontal: 16 },
+  sectionTitle: { fontSize: 12, lineHeight: 16, fontWeight: '500', marginBottom: 9, marginLeft: 4, letterSpacing: 0.1 },
+  sectionCard: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    borderWidth: StyleSheet.hairlineWidth,
   },
 
-  row: {
-    minHeight: 56,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#fff',
-  },
-  rowDivider: { borderBottomWidth: StyleSheet.hairlineWidth, borderColor: HAIRLINE },
-  rowTitle: { fontSize: 15, fontWeight: '700', color: '#111827' },
-  rowCaption: { marginTop: 2, color: '#6b7280', fontSize: 13 },
-  rowValue: { marginTop: 2, fontWeight: '700', color: '#111827', fontSize: 14 },
-  rowLeft: { flexDirection: 'row', alignItems: 'center' },
+  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 15, paddingHorizontal: 16 },
+  rowBorder: { borderBottomWidth: StyleSheet.hairlineWidth },
+  iconWrapper: { width: 32, height: 32, borderRadius: 11, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center' },
+  rowContent: { flex: 1, marginLeft: 13 },
+  rowTitleContainer: { flexDirection: 'row', alignItems: 'center' },
+  rowTitle: { fontSize: 15, lineHeight: 20, fontWeight: '500' },
+  newBadge: { borderRadius: 6, paddingHorizontal: 4, paddingVertical: 2, marginLeft: 6 },
+  newBadgeText: { color: '#FFF', fontSize: 9, fontWeight: '800' },
+  rowSubtitle: { fontSize: 12, lineHeight: 16, marginTop: 2 },
+  rowRight: { flexDirection: 'row', alignItems: 'center' },
+  rowValueText: { fontSize: 13, lineHeight: 18, marginRight: 6, fontWeight: '400' },
 
-  go: { color: ACCENT, fontWeight: '800' },
-  versionTxt: {
-    marginTop: 10,
-    textAlign: 'center',
-    color: '#9AA1AB',
-    fontSize: 12,
-    paddingBottom: 8,
-  },
+  footer: { marginTop: 8, alignItems: 'center', paddingBottom: 20 },
 
-  switchWrap: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  logoutBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, padding: 12, opacity: 0.8 },
+  logoutText: { fontSize: 14, fontWeight: '500' },
 
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.25)',
-    justifyContent: 'flex-end',
-  },
-  sheet: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    paddingTop: 12,
-    paddingBottom: 24,
-  },
-  sheetTitle: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#111827',
-    paddingHorizontal: 16,
-    paddingBottom: 8,
-  },
-  hr: { height: StyleSheet.hairlineWidth, backgroundColor: HAIRLINE, marginBottom: 6 },
+  modalPortal: { ...StyleSheet.absoluteFillObject, justifyContent: 'flex-end', zIndex: 100 },
+  modalBackdrop: { ...StyleSheet.absoluteFillObject },
+  bottomSheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 18, paddingBottom: 40, paddingHorizontal: 20 },
+  sheetHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
+  sheetHandle: { width: 40, height: 5, borderRadius: 10, alignSelf: 'center', marginBottom: 20 },
+  sheetTitle: { fontSize: 18, fontWeight: '600' },
+  langItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 16, paddingHorizontal: 12, borderRadius: 16 },
+  langItemActive: {},
+  langText: { fontSize: 15, fontWeight: '400' },
+  langTextActive: { fontWeight: '700' },
+  activeDot: { width: 8, height: 8, borderRadius: 4 },
 
-  langRow: {
-    minHeight: 52,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#fff',
-  },
-  langLabel: { fontSize: 15, color: '#111827', fontWeight: '700' },
-  redDot: { color: ACCENT, fontSize: 12, fontWeight: '800' },
+  radiusDisplayContainer: { alignItems: 'center', marginBottom: 30 },
+  radiusBigText: { fontSize: 40, fontWeight: '700', letterSpacing: -0.8 },
+  radiusInputWrapper: { flexDirection: 'row', alignItems: 'flex-end', borderBottomWidth: 2, paddingBottom: 4 },
+  radiusInput: { fontSize: 40, fontWeight: '700', padding: 0, minWidth: 100, textAlign: 'center' },
+  radiusUnit: { fontSize: 23, fontWeight: '600', marginBottom: 8, marginLeft: 4 },
+  radiusDesc: { fontSize: 14, marginTop: 8 },
+  sliderContainer: { width: '100%', marginBottom: 30, paddingHorizontal: 10 },
+  sliderLabelRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
+  sliderLabel: { fontSize: 12, color: '#9CA3AF', fontWeight: '500' },
+  presetContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' },
+  presetChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: StyleSheet.hairlineWidth },
+  presetChipActive: {},
+  presetText: { fontSize: 13, color: '#4B5563', fontWeight: '500' },
+  presetTextActive: { fontWeight: '700' },
 });

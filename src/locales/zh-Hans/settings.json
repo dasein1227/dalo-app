@@ -1,0 +1,526 @@
+{
+  "home_title": "设置",
+  "title": "设置",
+  "version": "应用版本",
+  "open": "打开",
+  "change": "更改",
+  "run": "运行",
+  "logout": "退出登录",
+  "logoutDone": "已退出登录。",
+  "sections": {
+    "communication": "沟通",
+    "general": "常规",
+    "advanced": "高级",
+    "service_info": "服务",
+    "account": "账号",
+    "notification": "通知",
+    "display_language": "显示与语言",
+    "location": "位置",
+    "data": "数据",
+    "support": "支持",
+    "info": "信息"
+  },
+  "menus": {
+    "call": "电话",
+    "etc": "其他",
+    "app_manage": "应用管理",
+    "version": "应用版本"
+  },
+  "alerts": {
+    "logout_title": "退出登录",
+    "logout_desc": "要退出登录吗？",
+    "language_change_error": "无法更改语言。",
+    "logout_fail": "无法退出登录。"
+  },
+  "search": {
+    "title": "搜索设置",
+    "soon": "设置搜索即将推出。"
+  },
+  "me": {
+    "noName": "无名称",
+    "profileManage": "管理资料",
+    "loadingAccount": "正在确认账号"
+  },
+  "account": {
+    "title": "账号",
+    "editProfile": "编辑资料",
+    "profilePublicDefault": "在 Beacon 中默认公开我的资料",
+    "profilePublicHint": "创建 Beacon 时作为默认值。可在每个 Beacon 中更改。",
+    "header_title": "账号",
+    "section": {
+      "contact": "联系人",
+      "identity": "账号",
+      "visibility": "账号",
+      "profile": "个人资料",
+      "account_management": "账号管理"
+    },
+    "field": {
+      "phone": "电话",
+      "email": "邮箱",
+      "id_label": "CO·ONN ID",
+      "friend_code": "好友代码",
+      "show_nickname": "显示昵称",
+      "profile_photo": "头像",
+      "nickname": "昵称"
+    },
+    "value": {
+      "not_registered": "未登记"
+    },
+    "badge": {
+      "verified": "已认证",
+      "verify": "认证"
+    },
+    "placeholder": {
+      "id": "ID",
+      "friend_code": "好友代码",
+      "nickname": "昵称"
+    },
+    "help": {
+      "id_desc": "用于搜索的唯一 ID。",
+      "show_nickname_desc": "向好友显示昵称。"
+    },
+    "error": {
+      "check_duplication": "请先检查是否可用。",
+      "id_taken": "已被使用。",
+      "code_taken": "已被使用。",
+      "check_failed": "无法检查可用性。",
+      "invalid_id": "2–30 个小写字母、数字或下划线",
+      "invalid_friend_code": "2–30 个小写字母、数字或下划线",
+      "duplicate_exists": "账号",
+      "duplicate_check_required": "保存前请完成重复检查。",
+      "duplicate_check_retry": "请重新检查可用性。",
+      "duplicate_value_retry": "账号",
+      "nickname_required": "请输入昵称。",
+      "nickname_too_long": "昵称最多30个字符。"
+    },
+    "alert": {
+      "check_required": "需要确认",
+      "save_success_title": "已保存",
+      "save_success_desc": "账号设置已保存。",
+      "save_fail_title": "保存失败"
+    },
+    "action": {
+      "save": "保存",
+      "check_duplicate_short": "检查",
+      "checking_short": "…",
+      "change_photo": "更换照片",
+      "remove_photo": "删除照片"
+    },
+    "status": {
+      "available_short": "可用",
+      "duplicate_short": "已占用"
+    },
+    "picker": {
+      "profile_photo": "选择照片"
+    },
+    "withdrawal": {
+      "entryTitle": "删除账号",
+      "entryDescription": "删除账号和个人信息。",
+      "noticeTitle": "删除账号",
+      "noticeMessage": "继续前请确认以下事项。",
+      "noticeItemProfile": "个人资料、好友和设置将被删除。",
+      "noticeItemChat": "部分聊天记录可能为其他参与者保留，并显示为已删除用户。",
+      "noticeItemRejoin": "删除后7天内不能使用同一账号重新注册。",
+      "noticeItemIdentifier": "CO·ONN ID和好友代码30天内不可重复使用。",
+      "noticeAcknowledge": "我已确认以上事项，并继续删除。",
+      "continue": "下一步",
+      "cancel": "取消",
+      "surveyTitle": "请告诉我们离开的原因",
+      "surveyMessage": "你的反馈将帮助我们改进CO·ONN。",
+      "surveyAction": "继续",
+      "otherPlaceholder": "请输入原因。",
+      "reasonRequired": "请选择原因。",
+      "otherRequired": "请输入原因。",
+      "reasonsLoading": "正在加载原因。",
+      "reasonsEmpty": "无法加载原因。",
+      "confirmTitle": "最后确认",
+      "confirmMessage": "账号将立即停止使用。",
+      "confirmInstruction": "请在下方输入“{{keyword}}”。",
+      "confirmKeyword": "删除",
+      "confirmPlaceholder": "删除",
+      "confirmAction": "删除",
+      "completed": "删除请求已提交。",
+      "failed": "删除失败。"
+    }
+  },
+  "privacy": {
+    "title": "隐私",
+    "header_title": "隐私",
+    "section": {
+      "profile": "资料",
+      "friend_req": "好友请求",
+      "activity": "项目"
+    },
+    "field": {
+      "public_profile": "公开资料",
+      "allow_search": "允许搜索",
+      "show_nickname": "显示昵称",
+      "show_location": "显示位置",
+      "last_active": "显示最近上线"
+    },
+    "help": {
+      "public_profile": "其他用户可以查看你的资料。",
+      "allow_search": "别人可通过昵称和 ID 搜索到你。",
+      "show_nickname": "向好友显示昵称。",
+      "show_location": "显示你的活动位置。",
+      "last_active": "显示最近上线时间。"
+    },
+    "option": {
+      "all": "所有人",
+      "all_desc": "任何人都可以发送请求",
+      "friends": "好友的好友",
+      "friends_desc": "仅已连接用户可以请求",
+      "none": "全部阻止",
+      "none_desc": "阻止好友请求"
+    },
+    "alert": {
+      "save_success": "已保存。",
+      "save_fail": "无法保存。",
+      "load_fail": "无法加载。",
+      "login_required": "需要登录。"
+    }
+  },
+  "radius": {
+    "title": "邻里范围",
+    "current": "当前",
+    "desc": "仅显示此范围内的内容。",
+    "save_error": "无法保存邻里范围。"
+  },
+  "friends": {
+    "title": "好友",
+    "manage": "好友管理",
+    "caption": "拉黑、推荐、可见范围",
+    "soon": "即将推出。"
+  },
+  "notification": {
+    "title": "通知",
+    "manage": "通知",
+    "caption": "推送、应用内提醒、声音",
+    "soon": "即将推出。",
+    "section": {
+      "defaults": "默认",
+      "types": "类型",
+      "quiet": "免打扰时间",
+      "push_types": "推送类型",
+      "in_app": "应用内提醒"
+    },
+    "field": {
+      "push": "推送通知",
+      "preview": "预览",
+      "sound": "声音",
+      "vibrate": "振动",
+      "chat": "聊天",
+      "system": "公告与系统",
+      "marketing": "营销"
+    },
+    "help": {
+      "push": "全部推送通知",
+      "preview": "在锁屏显示内容",
+      "chat_push": "聊天消息推送",
+      "system_push": "服务通知和重要公告",
+      "marketing_push": "活动和优惠"
+    },
+    "action": {
+      "save": "保存",
+      "open_system": "系统设置",
+      "cancel": "取消",
+      "done": "完成"
+    },
+    "time": {
+      "start": "开始",
+      "end": "结束",
+      "hour": "时",
+      "minute": "分",
+      "close": "关闭时间选择",
+      "select": "选择 {{label}} {{value}}",
+      "start_time": "开始时间",
+      "end_time": "结束时间"
+    },
+    "alert": {
+      "table_missing_title": "设置表不存在",
+      "table_missing_message": "请创建 user_notification_settings。",
+      "load_fail": "无法加载。",
+      "time_invalid_title": "检查时间",
+      "time_invalid_message": "请重新选择时间。",
+      "save_success": "已保存。",
+      "save_fail": "保存失败",
+      "open_settings_fail_title": "无法打开。",
+      "open_settings_fail_message": "无法打开系统设置。",
+      "login_required": "需要登录。"
+    },
+    "in_app": {
+      "master": "应用内提醒",
+      "master_help": "显示在应用通知中心",
+      "group": {
+        "social": "社交",
+        "chat": "聊天",
+        "beacon": "Beacon",
+        "schedule": "日程",
+        "post": "帖子"
+      },
+      "follow_created": "新关注者",
+      "follow_created_help": "有人关注你时",
+      "chat_reply": "回复",
+      "chat_reply_help": "有人回复你的消息时",
+      "chat_mention": "提及",
+      "chat_mention_help": "有人提及你时",
+      "beacon_join_request": "加入请求",
+      "beacon_join_request_help": "收到 Beacon 加入请求时",
+      "beacon_join_approved": "加入已批准",
+      "beacon_join_approved_help": "Beacon 加入被批准时",
+      "beacon_friend_created": "好友 Beacon",
+      "beacon_friend_created_help": "好友创建 Beacon 时",
+      "schedule_created": "新日程",
+      "schedule_created_help": "已加入房间新增日程时",
+      "schedule_updated": "日程变更",
+      "schedule_updated_help": "已加入日程变更时",
+      "schedule_cancelled": "日程取消",
+      "schedule_cancelled_help": "已加入日程取消时",
+      "post_like": "点赞",
+      "post_like_help": "你的帖子收到点赞时",
+      "post_comment": "评论",
+      "post_comment_help": "有人评论你的帖子时",
+      "post_reply": "回复",
+      "post_reply_help": "有人回复你的评论时",
+      "post_mention": "帖子提及",
+      "post_mention_help": "有人在帖子或评论中提及你时"
+    }
+  },
+  "display": {
+    "title": "显示与语言"
+  },
+  "language": {
+    "title": "语言",
+    "select": "选择语言",
+    "inUse": "语言"
+  },
+  "theme": {
+    "title": "主题",
+    "caption": "浅色 / 深色",
+    "soon": "即将推出。",
+    "header_title": "主题",
+    "section_style": "项目",
+    "mode": {
+      "system": "项目",
+      "system_desc": "使用设备设置",
+      "light": "浅色",
+      "light_desc": "浅色外观",
+      "dark": "深色",
+      "dark_desc": "深色外观"
+    }
+  },
+  "chat": {
+    "title": "聊天"
+  },
+  "translate": {
+    "autoDefault": "自动翻译消息",
+    "autoDefaultHint": "作为新聊天的默认设置。",
+    "showOriginal": "译文下显示原文",
+    "showOriginalHint": "开启后，原文会显示在译文下方。"
+  },
+  "storage": {
+    "title": "数据与存储",
+    "clearCache": "清理缓存",
+    "clearCacheHint": "删除临时文件",
+    "soon": "即将推出。",
+    "section": {
+      "ratio": "数据占比",
+      "rooms": "按聊天室统计"
+    },
+    "summary": {
+      "total_media": "全部媒体",
+      "saved_count": "已保存 {{count}} 个"
+    },
+    "legend": {
+      "photo": "照片",
+      "video": "视频",
+      "audio": "音频",
+      "file": "文件",
+      "other": "其他"
+    },
+    "action": {
+      "delete_all": "全部删除",
+      "delete_all_with_size": "删除全部 ({{size}})",
+      "delete_room": "删除",
+      "scroll_top": "项目"
+    },
+    "empty": {
+      "title": "无已保存媒体",
+      "desc": "查看过的媒体会显示在这里。"
+    },
+    "alert": {
+      "load_fail": "无法加载。",
+      "delete_fail": "无法删除。",
+      "delete_all_title": "删除全部媒体",
+      "delete_all_message": "删除本机保存的聊天媒体。服务器文件和相册内容会保留。",
+      "delete_room_title": "删除{{room}} 数据",
+      "delete_room_message": "删除此房间在本机保存的媒体。服务器文件和相册内容会保留。",
+      "delete_all_success": "已删除。",
+      "delete_room_success": "已删除 {{room}} 数据。"
+    },
+    "room": {
+      "fallback_title": "聊天室 {{id}}",
+      "delete_accessibility": "删除 {{room}} 数据"
+    }
+  },
+  "support": {
+    "title": "支持",
+    "cs": "帮助中心",
+    "notice": {
+      "title": "公告",
+      "eyebrow": "NOTICE",
+      "sectionTitle": "{{category}} 公告",
+      "markAll": "全部已读",
+      "markAllDone": "已标为已读。",
+      "loadFail": "无法加载公告。",
+      "readFail": "无法标记为已读。",
+      "markAllFail": "无法标记为已读。",
+      "emptyTitle": "暂无公告",
+      "emptyDesc": "新公告会显示在这里。",
+      "category": {
+        "normal": "常规",
+        "important": "重要",
+        "legal": "法律",
+        "security": "安全"
+      }
+    },
+    "guide": "项目",
+    "soon": "即将推出。",
+    "loading": "加载中…",
+    "action": {
+      "ok": "确定"
+    },
+    "alert": {
+      "notice": "公告",
+      "error": "错误"
+    },
+    "center": {
+      "title": "帮助中心",
+      "hero": "需要什么帮助？",
+      "searchPlaceholder": "搜索",
+      "faq": "常见问题",
+      "categories": "帮助主题",
+      "contactTitle": "需要帮助？",
+      "emailDesc": "我们会通过邮件回复。",
+      "aiTitle": "AI 咨询",
+      "aiDesc": "24 小时可用",
+      "policies": "条款与政策"
+    },
+    "contact": {
+      "title": "联系我们",
+      "guide": "请留下咨询内容。\n我们会通过邮件回复。",
+      "category": "分类",
+      "categoryLoading": "加载中…",
+      "categoryPlaceholder": "选择分类",
+      "categorySelect": "分类",
+      "email": "回复邮箱",
+      "emailPlaceholder": "邮箱地址",
+      "content": "消息",
+      "contentPlaceholder": "请输入内容。",
+      "submit": "提交",
+      "required": "请输入邮箱和内容。",
+      "categoryRequired": "请选择分类。",
+      "loadFail": "无法加载屏幕。",
+      "submitFail": "无法提交。",
+      "successTitle": "已提交",
+      "successDesc": "你的咨询已提交。"
+    },
+    "list": {
+      "all": "全部",
+      "common": "常规",
+      "result": "结果",
+      "empty": "无结果。"
+    },
+    "policy": {
+      "title": "条款与政策",
+      "effectiveDate": "生效日期",
+      "summary": "摘要",
+      "download": "下载",
+      "downloadStart": "开始下载。",
+      "empty": "无法加载内容。",
+      "versions": "历史版本",
+      "behaviorInfoTitle": "行为数据收集与使用",
+      "behaviorInfoDesc": "我们只收集改善服务所需的最少信息。",
+      "userControlTitle": "用户选择",
+      "userControlDesc": "你可以在应用设置中更改个性化广告选项。",
+      "version": "项目",
+      "language": "语言",
+      "loadFail": "无法加载政策文档。",
+      "summaryEmpty": "暂无摘要。",
+      "downloadCancelledTitle": "下载已取消",
+      "downloadCancelled": "未选择保存位置。",
+      "downloadSuccessTitle": "下载完成",
+      "downloadSuccess": "政策文档已保存。",
+      "downloadFailTitle": "下载失败",
+      "downloadFail": "无法保存政策文档。",
+      "privacyTitle": "隐私政策",
+      "termsTitle": "CO·ONN 服务条款",
+      "marketingTitle": "营销信息接收同意"
+    },
+    "company": {
+      "ceo": "项目",
+      "regNum": "营业执照号",
+      "businessNum": "通信销售申报码",
+      "address": "地址",
+      "cs": "客户支持",
+      "host": "托管服务商"
+    }
+  },
+  "labs": {
+    "title": "实验室",
+    "features": "实验室功能",
+    "caption": "抢先体验新功能。",
+    "soon": "实验室即将推出。",
+    "subtitle": "抢先体验新功能。",
+    "empty_title": "暂无功能",
+    "empty_desc": "新功能上线前会先显示在这里。",
+    "note": "实验室功能在正式发布前可能会变更。"
+  },
+  "admin": {
+    "title": "管理员",
+    "console": "管理控制台"
+  },
+  "open_profiles": {
+    "title": "公开资料",
+    "subtitle": "管理公开聊天使用的资料。",
+    "header_title": "公开资料",
+    "fallback_name": "公开资料",
+    "default_badge": "默认",
+    "status_empty": "无状态消息",
+    "room": {
+      "fallback_title": "公开聊天",
+      "used_count": "使用中的公开聊天 {{count}} 个",
+      "empty": "没有正在使用的公开聊天。"
+    },
+    "empty": {
+      "title": "暂无公开资料",
+      "desc": "创建资料，在公开聊天中使用。"
+    },
+    "form": {
+      "create_title": "创建公开资料",
+      "edit_title": "编辑公开资料",
+      "nickname": "昵称",
+      "status_message": "状态消息",
+      "status_placeholder": "简短介绍自己。",
+      "default_profile": "默认公开资料",
+      "delete": "删除公开资料",
+      "pick_avatar": "选择资料照片"
+    },
+    "alert": {
+      "load_fail": "无法加载打开资料。",
+      "nickname_required": "请输入昵称。",
+      "create_fail": "创建失败",
+      "save_fail": "保存失败",
+      "delete_title": "要删除公开资料吗？",
+      "delete_used_desc": "公开聊天中正在使用的现有资料会保留。",
+      "delete_desc": "删除后的资料无法恢复。",
+      "delete_fail": "删除失败"
+    },
+    "toast": {
+      "created": "公开资料已创建。",
+      "saved": "已保存。",
+      "deleted": "已删除。",
+      "photo_applied": "照片已应用。"
+    }
+  }
+}

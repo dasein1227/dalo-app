@@ -1,0 +1,16 @@
+{
+  "common": "Lỗi",
+  "auth": {
+    "loginRequired": "Cần đăng nhập."
+  },
+  "unknown": "Đã xảy ra lỗi.",
+  "network": "Vui lòng kiểm tra kết nối mạng.",
+  "invalid_credentials": "Email hoặc mật khẩu không đúng.",
+  "oauth_cancelled": "Đăng nhập đã bị hủy.",
+  "provider_config": "Vui lòng kiểm tra cấu hình nhà cung cấp xác thực.",
+  "redirect_config": "Vui lòng kiểm tra cấu hình Redirect URL.",
+  "session_check_failed": "Không thể kiểm tra phiên.",
+  "sms_required": "Vui lòng nhập mã xác minh.",
+  "phone_format": "Nhập số điện thoại theo định dạng quốc tế (+8210…).",
+  "email_format": "Email không đúng định dạng."
+}

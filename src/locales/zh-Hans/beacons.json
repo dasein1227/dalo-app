@@ -1,0 +1,421 @@
+{
+  "create_title": "创建 Beacon",
+  "edit_title": "编辑 Beacon",
+  "detail_title": "Beacon 信息",
+  "members_title": "Beacon 管理",
+  "my_rooms_title": "我的 Beacon",
+  "join": "参与",
+  "enter": "进入",
+  "owner_tools": "房主工具",
+  "visibility": "公开范围",
+  "status_message": "状态消息",
+  "public_profile": "公开个人资料",
+  "current_members": "当前人数",
+  "age_range": "年龄段",
+  "memo": "备注",
+  "time_left": "剩余时间",
+  "common": {
+    "beacon": "Beacon",
+    "noName": "无名称",
+    "anonymous": "匿名用户",
+    "loading": "加载中…",
+    "done": "完成",
+    "confirm": "确认",
+    "cancel": "取消",
+    "save": "保存",
+    "submit": "发送",
+    "approve": "批准",
+    "reject": "拒绝",
+    "block": "屏蔽",
+    "kick": "移出",
+    "none": "无",
+    "unlimited": "不限"
+  },
+  "error": {
+    "invalidId": "ID 无效。",
+    "invalidAccess": "访问无效。",
+    "loginRequired": "需要登录。",
+    "locationPermission": "需要位置权限。",
+    "locationUnavailable": "无法确认当前位置。",
+    "locationLoadFail": "位置加载失败。",
+    "notFound": "找不到 Beacon。",
+    "detailNotFound": "找不到 Beacon 信息。",
+    "detailLoadFail": "无法加载 Beacon 信息。",
+    "operationFail": "操作未完成。"
+  },
+  "time": {
+    "am": "上午",
+    "pm": "下午",
+    "monthDay": "{{month}}月 {{day}}日",
+    "minute": "{{count}} 分钟",
+    "hour": "{{count}} 小时",
+    "hourMinute": "{{hour}} 小时 {{minute}} 分钟",
+    "remainEnded": "已结束",
+    "remainMinute": "剩余 {{count}} 分钟",
+    "remainHour": "剩余 {{count}} 小时",
+    "remainHourMinute": "剩余 {{hour}} 小时 {{minute}} 分钟",
+    "justNow": "刚刚",
+    "agoMinute": "{{count}} 分钟前",
+    "agoHour": "{{count}} 小时前",
+    "agoDay": "{{count}} 天前"
+  },
+  "unit": {
+    "people": "人",
+    "age": "岁",
+    "count": "个",
+    "times": "次",
+    "peopleCount": "{{count}} 人",
+    "ageCount": "{{count}} 岁",
+    "retryLeft": "剩余 {{count}} 次"
+  },
+  "tabs": {
+    "dm": "私聊",
+    "group": "群组",
+    "open": "开放",
+    "beacon": "Beacon"
+  },
+  "visibilityLabel": {
+    "public": "公开",
+    "friends": "好友可见",
+    "labels": "群组可见",
+    "custom": "自定义可见",
+    "publicCompact": "公开",
+    "friendsCompact": "好友可见",
+    "labelsCompact": "群组可见",
+    "customCompact": "自定义可见",
+    "publicExcludeFriends": "排除熟人"
+  },
+  "visibilityDesc": {
+    "public": "会向不特定多数展示。默认需批准入场。",
+    "friends": "仅好友可见。默认自由入场。",
+    "labels": "仅所选群组可见。默认自由入场。",
+    "custom": "手动指定好友和群组。默认自由入场。"
+  },
+  "gender": {
+    "any": "不限性别",
+    "male": "男性",
+    "female": "女性"
+  },
+  "myRooms": {
+    "headerTitle": "聊天",
+    "status": {
+      "pending": "待批准",
+      "joined": "{{visibility}} · 参与中",
+      "owner": "{{visibility}} · 剩余 {{minutes}} 分钟",
+      "host": "房主",
+      "waiting": "等待",
+      "member": "参与中"
+    },
+    "title": {
+      "mine": "我的 Beacon",
+      "fallback": "Beacon"
+    },
+    "empty": {
+      "title": "暂无对话。",
+      "beaconDesc": "我的 Beacon 和参与中的 Beacon 会显示在这里。"
+    },
+    "error": {
+      "loadFail": "列表加载失败。"
+    },
+    "alert": {
+      "routeCreate": "请确认 Beacon 创建页面。",
+      "routeChatCreate": "新聊天创建准备中。",
+      "routeBeaconSearch": "请确认 Beacon 搜索页面。",
+      "routeSearch": "请确认搜索页面。"
+    }
+  },
+  "form": {
+    "titlePlaceholder": "Beacon 目的",
+    "descPlaceholder": "输入说明或规则",
+    "durationMin": "30 分钟",
+    "durationMax": "4 小时",
+    "minuteSuffix": "分钟",
+    "locationSelectTitle": "好友公开位置",
+    "locationSelectHelper": "当前位置 200m 范围内",
+    "locationPickFailTitle": "无法选择位置",
+    "selectedAddress": "已选地址",
+    "locationEmpty": "没有选择位置。请打开地图。",
+    "locationShortPlaceholder": "大致位置",
+    "locationDetailPlaceholder": "详细位置",
+    "conditionsTitle": "参与条件",
+    "genderTitle": "性别",
+    "quotaTitle": "招募人数",
+    "quotaDesc": "0 人表示不限。可点按数字直接输入。",
+    "ageLimitTitle": "年龄限制",
+    "ageLimitDesc": "默认按你的年龄 ±10 岁。",
+    "ageNoLimit": "不限",
+    "ageMin": "最低年龄",
+    "ageMax": "最高年龄",
+    "maleQuota": "男性",
+    "femaleQuota": "女性",
+    "mixQuota": "不限性别",
+    "selectGroups": "公开群组",
+    "selectFriends": "公开好友",
+    "friendSearch": "搜索好友",
+    "emptyGroups": "暂无群组。",
+    "emptyFriends": "暂无好友。",
+    "protectionOff": "不保护",
+    "protectionOffAlt": "不保护",
+    "createButton": "创建 Beacon",
+    "saveButton": "保存",
+    "durationTitle": "持续时间",
+    "durationDesc": "到达指定时间后自动结束。",
+    "locationProtectionTitle": "位置保护",
+    "locationProtectionDesc": "会在设定范围内随机显示位置。",
+    "refreshLocation": "重新确认当前位置",
+    "meetingTitle": "这是什么聚会？",
+    "requireApprovalTitle": "需批准加入",
+    "requireApprovalDesc": "仅主持人批准的用户可以加入。",
+    "hideFromFriendsTitle": "对我的好友隐藏",
+    "hideFromFriendsDesc": "保持公开，但不向熟人显示。",
+    "selectedGroupsCount": "已选 {{count}} 个群组",
+    "selectedFriendsCount": "已选 {{count}} 位好友",
+    "friendLocationDesc": "仅向指定对象显示的位置说明。可在当前位置200米内选择。",
+    "locationPickTitle": "在地图中选择",
+    "locationPickHint": "所选地址会显示在下方。",
+    "friendLocationEmpty": "尚未选择位置。请用右侧按钮打开地图。",
+    "moveToCurrentLocation": "改为当前位置"
+  },
+  "create": {
+    "validation": {
+      "titleRequired": "请输入聚会名称。",
+      "titleMax": "聚会名称最多 80 个字符。",
+      "duration": "持续时间为 10–240 分钟。",
+      "ageRange": "请确认年龄范围。",
+      "locationRequired": "请确认当前位置。",
+      "labelsRequired": "请选择群组。",
+      "customRequired": "请选择好友或群组。"
+    },
+    "alert": {
+      "labelLoadFailTitle": "群组加载失败",
+      "labelLoadFail": "无法加载群组列表。",
+      "friendLoadFailTitle": "好友加载失败",
+      "friendLoadFail": "无法加载好友列表。",
+      "createFailTitle": "Beacon 创建失败",
+      "createFail": "发生错误。"
+    }
+  },
+  "edit": {
+    "validation": {
+      "titleRequired": "请输入房间标题。",
+      "titleMax": "房间标题最多 80 个字符。",
+      "duration": "持续时间为 10–240 分钟。",
+      "ageRange": "请确认年龄范围。",
+      "labelsRequired": "请选择群组。",
+      "customRequired": "请选择好友或群组。"
+    },
+    "toast": {
+      "moved": "已移动到当前位置。",
+      "moveFail": "无法移动位置。",
+      "saved": "已保存。",
+      "saveFail": "发生错误。"
+    }
+  },
+  "detail": {
+    "action": {
+      "ended": "招募结束",
+      "enter_chat": "进入聊天室",
+      "cancel_request": "取消请求",
+      "join_direct": "参与",
+      "request_retry": "重新请求",
+      "request_join": "请求参与",
+      "forbidden": "进入受限",
+      "full": "名额已满",
+      "closed": "无法参与"
+    },
+    "badge": {
+      "pending": "待批准",
+      "rejected": "已拒绝",
+      "approval": "需批准",
+      "free": "自由入场"
+    },
+    "empty": {
+      "deleted": "此 Beacon 不存在。",
+      "back": "返回"
+    },
+    "fallbackTitle": "未命名 Beacon",
+    "info": {
+      "status": "进行状态",
+      "capacity": "招募人数",
+      "audience": "公开对象",
+      "retry": "重新申请机会"
+    },
+    "location": {
+      "title": "聚会位置",
+      "visible": "参与前会提供详细位置。",
+      "hidden": "准确地址将在参与后于聊天室中共享。",
+      "openMap": "在地图中查看 ›"
+    },
+    "host": {
+      "settings": "Beacon 设置",
+      "settingsDesc": "修改房间标题、介绍和公开范围",
+      "members": "参与者管理",
+      "membersDesc": "查看成员并移出",
+      "close": "结束 Beacon",
+      "closeDesc": "关闭招募并结束聊天室"
+    },
+    "requests": {
+      "title": "参与等待",
+      "empty": "暂无等待中的请求。",
+      "messageTitle": "参与请求消息",
+      "messageDesc": "可给房主留言。选填。",
+      "placeholder": "例）我在附近。",
+      "send": "发送请求",
+      "sending": "发送中…",
+      "code": "代码 {{code}}",
+      "temperature": "温度 {{temp}}°",
+      "rejectionCount": "过往拒绝 {{count}} 次"
+    },
+    "alert": {
+      "editRoute": "请确认编辑页面。",
+      "membersRoute": "请确认成员管理页面。",
+      "loginTitle": "需要登录",
+      "loginDesc": "参与前需要登录。",
+      "chatNotFound": "找不到聊天室信息。",
+      "cancelTitle": "取消请求",
+      "cancelDesc": "要取消参与请求吗？",
+      "keep": "保留",
+      "cancelFailTitle": "取消失败",
+      "cancelFail": "请求取消失败。",
+      "fullTitle": "名额已满",
+      "fullDesc": "招募人数已满。",
+      "forbiddenTitle": "参与受限",
+      "forbiddenDesc": "无法参与此 Beacon。",
+      "endedTitle": "招募结束",
+      "endedDesc": "这是已结束的 Beacon。",
+      "unavailableTitle": "提示",
+      "unavailableDesc": "当前无法参与。",
+      "requestSentTitle": "请求完成",
+      "requestSentDesc": "请等待房主批准。",
+      "requestFailTitle": "发送失败",
+      "requestFail": "请求发送失败。",
+      "approveFailTitle": "批准失败",
+      "approveFail": "参与者批准失败。",
+      "rejectFailTitle": "拒绝失败",
+      "rejectFail": "参与请求拒绝失败。",
+      "closeTitle": "结束 Beacon",
+      "closeDesc": "要同时结束招募和聊天室吗？",
+      "closeAction": "结束",
+      "closeDoneTitle": "结束完成",
+      "closeDoneDesc": "Beacon 已结束。",
+      "closeFailTitle": "结束失败",
+      "closeFail": "Beacon 结束失败。"
+    }
+  },
+  "members": {
+    "role": {
+      "host": "房主",
+      "mod": "管理员",
+      "member": "参与者"
+    },
+    "tab": {
+      "members": "参与者",
+      "requests": "申请 {{count}}"
+    },
+    "meta": {
+      "joined": "参与 {{time}}",
+      "request": "请求 {{time}} · 过往拒绝 {{count}} 次"
+    },
+    "hero": {
+      "titleFallback": "Beacon",
+      "approval": "需批准",
+      "free": "自由入场"
+    },
+    "empty": {
+      "members": "还没有参与者。",
+      "requests": "暂无等待中的申请。"
+    },
+    "alert": {
+      "loadFailTitle": "加载失败",
+      "loadFail": "无法加载信息。",
+      "kickTitle": "移出参与者",
+      "kickDesc": "要移出 {{name}} 吗？",
+      "kickAction": "移出",
+      "alreadyHandled": "已处理或无法移出。",
+      "kickFailTitle": "失败",
+      "kickFail": "未能移出参与者。",
+      "blockTitle": "屏蔽参与者",
+      "blockDesc": "要屏蔽并移出 {{name}} 吗？\n被屏蔽的用户将不会再显示。",
+      "blockFail": "未能屏蔽参与者。",
+      "approveTitle": "批准参与",
+      "approveDesc": "要批准 {{name}} 参与吗？",
+      "approveFailTitle": "批准失败",
+      "approveFail": "批准失败。",
+      "rejectTitle": "拒绝参与",
+      "rejectDesc": "要拒绝 {{name}} 的参与请求吗？",
+      "rejectFailTitle": "拒绝失败",
+      "rejectFail": "拒绝失败。"
+    }
+  },
+  "main": {
+    "loadingMap": "地图加载中…",
+    "listButton": "列表",
+    "emptyRadius": "没有可显示的 Beacon。",
+    "card": {
+      "noTitle": "无标题",
+      "meta": "距离 {{distance}}m · 半径 {{radius}}m · {{entry}}",
+      "endsAfterMinute": "{{count}} 分钟后结束",
+      "endingSoon": "即将结束",
+      "always": "常驻"
+    },
+    "toast": {
+      "movedHere": "已更新到当前位置。"
+    },
+    "error": {
+      "loadFail": "无法加载附近 Beacon。",
+      "locationUnavailable": "无法确认位置。",
+      "noActiveBeacon": "没有活跃 Beacon。",
+      "moveFail": "位置更新失败。"
+    },
+    "accessibility": {
+      "detail": "查看 Beacon 详情",
+      "create": "创建新 Beacon"
+    }
+  },
+  "search": {
+    "title": "搜索",
+    "placeholder": "想找的聚会",
+    "distance": "距离",
+    "target": "对象",
+    "age": "年龄",
+    "quick": {
+      "friendsOnly": "仅好友",
+      "public": "公开",
+      "tenMin": "10 分钟",
+      "twenties": "20 多岁"
+    },
+    "visibility": {
+      "title": "公开范围",
+      "any": "全部",
+      "public": "公开",
+      "publicFiltered": "公开 · 排除好友",
+      "friends": "好友可见",
+      "labels": "群组",
+      "custom": "指定"
+    },
+    "gender": {
+      "title": "性别",
+      "any": "全部",
+      "male": "男性",
+      "female": "女性",
+      "other": "其他"
+    },
+    "distancePreset": {
+      "fiveMin": "5 分钟",
+      "tenMin": "10 分钟",
+      "twentyMin": "20 分钟",
+      "near": "附近"
+    },
+    "agePreset": {
+      "all": "全部",
+      "twenties": "20 多岁",
+      "thirties": "30 多岁",
+      "forties": "40 多岁",
+      "fiftyPlus": "50+"
+    },
+    "action": {
+      "reset": "重置",
+      "apply": "应用"
+    }
+  }
+}

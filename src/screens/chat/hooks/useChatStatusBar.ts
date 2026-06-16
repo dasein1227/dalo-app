@@ -9,6 +9,7 @@ export function useChatStatusBar(opts: { navigation: any; headerBg: string }) {
   const { navigation, headerBg } = opts;
 
   const headerOnColor = useMemo(() => getReadableOnColor(headerBg), [headerBg]);
+  
   const rnBarStyle = useMemo<'dark-content' | 'light-content'>(() => {
     return headerOnColor === '#0F172A' ? 'dark-content' : 'light-content';
   }, [headerOnColor]);
@@ -17,16 +18,9 @@ export function useChatStatusBar(opts: { navigation: any; headerBg: string }) {
     return rnBarStyle === 'dark-content' ? 'dark' : 'light';
   }, [rnBarStyle]);
 
-  const applyAndroidStatusBar = useCallback(() => {
-    if (Platform.OS !== 'android') return;
-    try {
-      RNStatusBar.setTranslucent(true);
-      RNStatusBar.setBackgroundColor('transparent', true);
-      RNStatusBar.setBarStyle(rnBarStyle, true);
-    } catch {}
-  }, [rnBarStyle]);
-
-  const applyNativeStackStatusBar = useCallback(() => {
+  // 🔥 최적화: Navigation 옵션과 Native 상태바 제어를 하나의 함수로 통합
+  const applyStatusBar = useCallback(() => {
+    // 1. React Navigation Native Stack 제어
     try {
       navigation?.setOptions?.({
         statusBarColor: 'transparent',
@@ -34,44 +28,34 @@ export function useChatStatusBar(opts: { navigation: any; headerBg: string }) {
         statusBarTranslucent: true,
       });
     } catch {}
-  }, [navigation, expoBarStyle]);
+
+    // 2. Android Native 직접 제어 (Navigation 제어가 씹히는 경우를 대비한 단일 방어 코드)
+    if (Platform.OS === 'android') {
+      try {
+        RNStatusBar.setTranslucent(true);
+        RNStatusBar.setBackgroundColor('transparent', true);
+        RNStatusBar.setBarStyle(rnBarStyle, true);
+      } catch {}
+    }
+  }, [navigation, expoBarStyle, rnBarStyle]);
 
   useFocusEffect(
     useCallback(() => {
-      applyNativeStackStatusBar();
-      applyAndroidStatusBar();
+      // 🔥 핵심 최적화: 샷건 방식(setTimeout 난사) 제거.
+      // 화면 전환(Transition) 애니메이션 프레임이 부드럽게 끝날 수 있도록
+      // requestAnimationFrame 하나만 사용하여 정확한 타이밍에 1회만 적용합니다.
+      const raf = requestAnimationFrame(() => {
+        applyStatusBar();
+      });
 
-      let t1: any = null;
-      let t2: any = null;
-
-      try {
-        requestAnimationFrame(() => {
-          applyNativeStackStatusBar();
-          applyAndroidStatusBar();
-        });
-      } catch {}
-
-      t1 = setTimeout(() => {
-        applyNativeStackStatusBar();
-        applyAndroidStatusBar();
-      }, 0);
-
-      t2 = setTimeout(() => {
-        applyNativeStackStatusBar();
-        applyAndroidStatusBar();
-      }, 60);
-
-      return () => {
-        if (t1) clearTimeout(t1);
-        if (t2) clearTimeout(t2);
-      };
-    }, [applyNativeStackStatusBar, applyAndroidStatusBar]),
+      return () => cancelAnimationFrame(raf);
+    }, [applyStatusBar]),
   );
 
+  // 헤더 배경색 등 테마가 동적으로 바뀌었을 때 즉각 반영
   useEffect(() => {
-    applyNativeStackStatusBar();
-    applyAndroidStatusBar();
-  }, [applyNativeStackStatusBar, applyAndroidStatusBar]);
+    applyStatusBar();
+  }, [applyStatusBar]);
 
   return { rnBarStyle, expoBarStyle };
 }

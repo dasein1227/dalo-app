@@ -1,0 +1,253 @@
+{
+  "title": "Arkadaşlar",
+  "requests": "Arkadaş istekleri",
+  "requests_empty": "Yeni arkadaş isteği yok.",
+  "requests_received": "Gelen istekler",
+  "requests_sent": "Gönderilen istekler",
+  "add_friend": "Arkadaş ekle",
+  "send_request": "Arkadaş isteği gönder",
+  "request_sent": "Arkadaş isteği gönderildi.",
+  "request_send_failed": "Arkadaş isteği gönderilemedi.",
+  "request_cancel": "İsteği iptal et",
+  "request_canceled": "Arkadaş isteği iptal edildi.",
+  "request_cancel_failed": "Arkadaş isteği iptal edilemedi.",
+  "accept": "Kabul et",
+  "decline": "Reddet",
+  "accepted": "Arkadaş isteği kabul edildi.",
+  "declined": "Arkadaş isteği reddedildi.",
+  "accept_failed": "Arkadaş isteği kabul edilemedi.",
+  "decline_failed": "Arkadaş isteği reddedilemedi.",
+  "remove_friend": "Arkadaşı sil",
+  "remove_friend_confirm": "Bu arkadaşı silmek istiyor musunuz?",
+  "remove_friend_done": "Arkadaş silindi.",
+  "remove_friend_failed": "Arkadaş silinemedi.",
+  "blocked": "Engellendi",
+  "block": "Engelle",
+  "unblock": "Engeli kaldır",
+  "block_done": "Engellendi.",
+  "unblock_done": "Engel kaldırıldı.",
+  "search_placeholder": "Takma ad, ID veya arkadaş kodu ara",
+  "code_placeholder": "Arkadaş kodu gir",
+  "already_friends": "Zaten arkadaşsınız.",
+  "already_requested": "Arkadaş isteği zaten gönderildi.",
+  "self_not_allowed": "Kendinize arkadaş isteği gönderemezsiniz.",
+  "hidden": "Gizli",
+  "favorite": "Favori",
+  "memo": "Not",
+  "alias": "Takma ad",
+  "group": {
+    "title": "Grup",
+    "manageTitle": "Arkadaş grupları",
+    "createTitle": "Yeni grup",
+    "createDesc": "Grup adını girin.",
+    "createPlaceholder": "Örn. iş arkadaşları, mahalle, çalışma grubu",
+    "createAction": "Oluştur",
+    "createFail": "Oluşturulamadı",
+    "editTitle": "Grup adını düzenle",
+    "editDesc": "Yeni adı girin.",
+    "editPlaceholder": "Grup adı",
+    "saveAction": "Kaydet",
+    "renameFail": "Düzenlenemedi",
+    "nameRequired": "Grup adını girin.",
+    "deleteTitle": "Grubu sil",
+    "deleteMessage": "“{{name}}” grubu silinsin mi?",
+    "emptyTitle": "Grup yok",
+    "emptyDesc": "Yeni bir grup oluşturun.",
+    "memberEmpty": "Bu grupta üye yok.",
+    "addTitle": "Arkadaş ekle",
+    "addSuccess": "Eklendi.",
+    "addFail": "Eklenemedi",
+    "addEmpty": "Eklenecek arkadaş yok.",
+    "removeSuccess": "Çıkarıldı.",
+    "removeFail": "Çıkarılamadı",
+    "memberCount": "{{count}} kişi"
+  },
+  "userFallback": "Kullanıcı",
+  "list": {
+    "favoriteFriendsCount": "Favoriler {{count}}",
+    "friendsCount": "Arkadaşlar {{count}}"
+  },
+  "tabs": {
+    "friends": "Arkadaşlar",
+    "groups": "Gruplar"
+  },
+  "search": {
+    "placeholder": "Arama terimi girin",
+    "friendPlaceholder": "Arkadaş adı veya ID ara",
+    "groupPlaceholder": "Grup veya katılımcı ara",
+    "namePlaceholder": "Ad ara",
+    "friendPickerPlaceholder": "Arkadaş ara",
+    "contactsPlaceholder": "Ad veya numara ara",
+    "waitTitle": "Giriş bekleniyor",
+    "waitCaption": "Aramak için bilgi girin.",
+    "emptyTitle": "Sonuç yok",
+    "emptyCaption": "Eşleşen kullanıcı yok.",
+    "contactEmptyTitle": "Kişi yok",
+    "contactEmptyCaption": "Koşullara uyan kişi yok.",
+    "groupNamePlaceholder": "Grup ara"
+  },
+  "action": {
+    "favoriteAdd": "Favorilere ekle",
+    "favoriteRemove": "Kaldır",
+    "manageFriend": "Arkadaşı yönet",
+    "manageGroup": "Grubu yönet",
+    "contact": "İletişim kur",
+    "create": "Oluştur",
+    "save": "Kaydet",
+    "add": "Ekle",
+    "remove": "Çıkar",
+    "select": "Seç",
+    "search": "Ara",
+    "processing": "İşleniyor",
+    "saving": "Kaydediliyor"
+  },
+  "alert": {
+    "notice": "Bilgi",
+    "fail": "Başarısız",
+    "loadFail": "Yüklenemedi",
+    "deleteFail": "Silinemedi",
+    "profileRouteMissing": "Profil ekranı bulunamadı.",
+    "chatRouteMissing": "Sohbet ekranı bulunamadı.",
+    "phoneMissing": "Telefon numarası yok.",
+    "phoneOpenFail": "Telefon uygulaması açılamıyor.",
+    "removeFriendTitle": "Arkadaşı sil",
+    "removeFriendMessage": "{{name}} silinsin mi?",
+    "blockTitle": "Engelle",
+    "blockMessage": "{{name}} engellensin mi?",
+    "blockFail": "Engellenemedi",
+    "friendEditRouteMissing": "Arkadaş yönetim ekranı bulunamadı."
+  },
+  "add": {
+    "title": "Arkadaş ekle",
+    "loginRequired": "Oturum açmanız gerekiyor.",
+    "contactSearch": "Kişilerde ara",
+    "userFallback": "Kullanıcı {{id}}",
+    "noName": "Adsız",
+    "myProfile": "Profilim",
+    "notSet": "Ayarlı değil",
+    "friendCodeLabel": "Arkadaş kodu",
+    "qrOfflineHint": "QR kod ile hızlıca bağlanabilirsiniz.",
+    "shareLink": "Bağlantı paylaş",
+    "scanQr": "QR tara",
+    "qrTitle": "Bağlantı kodum",
+    "qrDesc": "Karşı taraf taradığında\ndoğrudan bağlanır.",
+    "scanGuide": "Karşı tarafın QR kodunu tarayın.",
+    "contactsTitle": "Kişilerden bul",
+    "contactsDesc": "Adres defterinden seçip arayın.",
+    "mode": {
+      "coonnIdTitle": "CO·ONN ID",
+      "coonnIdHint": "Karşı tarafın herkese açık ID’sini girin.",
+      "coonnIdPlaceholder": "ID gir",
+      "friendCodeTitle": "Arkadaş kodu",
+      "friendCodeHint": "Arkadaş kodunu girin.",
+      "friendCodePlaceholder": "Arkadaş kodu gir",
+      "phoneTitle": "Kişiler",
+      "phoneHint": "Cep telefonu numarasıyla bulun.",
+      "phonePlaceholder": "Numara gir"
+    },
+    "result": {
+      "noPublicId": "Açık ID yok",
+      "friendCodeVerified": "Arkadaş kodu doğrulandı",
+      "friendCodeMatched": "Arkadaş kodu eşleşti",
+      "contact": "Kişi · {{phone}}",
+      "added": "Eklendi",
+      "limited": "Sınırlı",
+      "add": "Ekle"
+    },
+    "share": {
+      "myId": "ID’m",
+      "friendCode": "Arkadaş kodu",
+      "title": "CO·ONN bağlantısını paylaş",
+      "message": "[CO·ONN] Benimle bağlanın.{{idText}}{{codeText}}\n\nAşağıdaki bağlantıyla arkadaş ekleme ekranını açabilirsiniz.\n{{url}}"
+    },
+    "toast": {
+      "added": "Arkadaş olarak eklendi."
+    },
+    "alert": {
+      "permissionRequired": "İzin gerekli",
+      "cameraPermissionRequired": "Kamera izni gerekli.",
+      "contactsPermissionRequired": "Kişiler izni gerekli.",
+      "contactsLoadFail": "Kişiler yüklenemedi",
+      "searchFail": "Arama başarısız",
+      "addFail": "Eklenemedi"
+    },
+    "error": {
+      "invalidUser": "Geçersiz kullanıcı.",
+      "selfQr": "Bu sizin QR kodunuz.",
+      "userNotFound": "Kullanıcı bulunamadı.",
+      "invalidQr": "Geçersiz kod.",
+      "minLength": "En az {{count}} karakter girin."
+    },
+    "findTitle": "Yeni arkadaş bul",
+    "card": {
+      "idTitle": "ID ile bul",
+      "idDesc": "CO·ONN ID ara",
+      "codeTitle": "Kod ile bul",
+      "codeDesc": "Arkadaş kodu ara",
+      "contactsTitle": "Kişiler",
+      "contactsDesc": "Adres defteriyle"
+    },
+    "digitalCardTitle": "Kartım"
+  },
+  "communication": {
+    "noPhone": "Telefon numarası yok",
+    "phoneCall": "Normal arama",
+    "voiceCall": "Sesli arama",
+    "comingSoon": "Yakında"
+  },
+  "edit": {
+    "title": "Arkadaş ayarları",
+    "unknownUser": "Bilinmiyor",
+    "none": "Yok",
+    "field": {
+      "name": "Ad"
+    },
+    "placeholder": {
+      "alias": "Takma ad gir",
+      "memo": "Not gir"
+    },
+    "helper": {
+      "friendName": "Arkadaş adı · {{name}}",
+      "privateMemo": "Yalnızca size görünür."
+    },
+    "section": {
+      "groups": "Gruplar",
+      "security": "Güvenlik"
+    },
+    "state": {
+      "on": "Açık",
+      "off": "Kapalı",
+      "hidden": "Gizli",
+      "visible": "Görünür",
+      "blocked": "Engelli",
+      "unblocked": "Engelli değil"
+    },
+    "toast": {
+      "saved": "Kaydedildi."
+    },
+    "alert": {
+      "loadFail": "Yüklenemedi",
+      "saveFail": "Kaydedilemedi",
+      "removeFail": "Silinemedi",
+      "userLoadFail": "Kullanıcı yüklenemiyor.",
+      "blockedByPeer": "Karşı taraf sizi engelledi."
+    },
+    "remove": {
+      "title": "Arkadaşı sil",
+      "message": "{{name}} silinsin mi?"
+    },
+    "unsaved": {
+      "title": "Değişiklikler",
+      "message": "Kaydedilmemiş değişiklikler var.",
+      "discard": "Kaydetme"
+    },
+    "groups": {
+      "title": "Grupları yönet",
+      "subtitle": "Dahil edilecek grupları seçin.",
+      "selectedCount": "Seçili {{count}}",
+      "inGroup": "Şu anda dahil",
+      "addHint": "Eklemek için dokunun",
+      "emptySearch": "Başka bir adla arayın."
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "common": "錯誤",
+  "auth": {
+    "loginRequired": "需要登入。"
+  },
+  "unknown": "發生錯誤。",
+  "network": "請檢查網路連線。",
+  "invalid_credentials": "電子郵件或密碼不正確。",
+  "oauth_cancelled": "登入已取消。",
+  "provider_config": "請檢查驗證提供者設定。",
+  "redirect_config": "請檢查 Redirect URL 設定。",
+  "session_check_failed": "無法確認工作階段。",
+  "sms_required": "請輸入驗證碼。",
+  "phone_format": "電話號碼請使用國際格式（+8210…）。",
+  "email_format": "電子郵件格式不正確。"
+}

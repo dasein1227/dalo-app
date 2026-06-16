@@ -1,15 +1,16 @@
 // src/screens/chat/components/Search/ChatSearchHeader.tsx
 import React, { useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Pressable,
-  Platform,
-} from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { View, Text, TextInput, Pressable } from 'react-native';
 import { X, ChevronLeft } from 'lucide-react-native';
+
 import type { ChatTheme } from '@/screens/chat/theme/chatTheme';
+
+import {
+  CHAT_SEARCH_CONTROLS_METRICS,
+  chatSearchControlStyles as styles,
+  createChatSearchControlsTheme,
+} from './ChatSearchControls.theme';
 
 type SelectedMember = {
   id: string;
@@ -42,44 +43,62 @@ export default function ChatSearchHeader({
   onClearQ,
   onRemoveMember,
 }: Props) {
-  const placeholderColor = useMemo(
-    () => withAlpha(theme.headerText ?? '#111827', 0.45),
-    [theme.headerText],
-  );
+  const { t } = useTranslation();
+  const ui = useMemo(() => createChatSearchControlsTheme(theme), [theme]);
 
   return (
-    <View style={[styles.wrap, { backgroundColor: theme.headerBg, paddingTop: Math.max(insetsTop, 0) }]}>
-      <View style={styles.row}>
+    <View
+      style={[
+        styles.headerWrap,
+        {
+          backgroundColor: ui.headerBg,
+          borderBottomColor: ui.borderSoft,
+          paddingTop: Math.max(insetsTop, 0),
+        },
+      ]}
+    >
+      <View style={styles.headerRow}>
         <Pressable
           onPress={onClose}
-          hitSlop={10}
-          style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.7 }]}
+          hitSlop={CHAT_SEARCH_CONTROLS_METRICS.hitSlop}
+          style={({ pressed }) => [styles.iconButton, pressed && { backgroundColor: ui.pressedOnHeader }]}
+          accessibilityRole="button"
+          accessibilityLabel={t('chat:search.close')}
         >
-          <ChevronLeft size={22} color={theme.headerText} />
+          <ChevronLeft
+            size={CHAT_SEARCH_CONTROLS_METRICS.backIconSize}
+            color={ui.text}
+            strokeWidth={CHAT_SEARCH_CONTROLS_METRICS.backIconStroke}
+          />
         </Pressable>
 
         <View
           style={[
             styles.searchBox,
             {
-              backgroundColor: theme.inputFieldBg,
-              borderColor: withAlpha(theme.dateTimeLine ?? '#E5E7EB', 0.55),
+              backgroundColor: ui.searchBg,
+              borderColor: ui.border,
             },
           ]}
         >
-          {/* ✅ 선택된 발신자 칩: 닉네임만 (아바타 제거) */}
           {!!selectedMember && (
-            <View style={[styles.memberChip, { borderColor: withAlpha(theme.dateTimeLine ?? '#E5E7EB', 0.45) }]}>
-              <Text style={[styles.chipName, { color: theme.headerText }]} numberOfLines={1}>
+            <View style={[styles.memberChip, { borderColor: ui.borderSoft }]}> 
+              <Text style={[styles.chipName, { color: ui.text }]} numberOfLines={1} allowFontScaling={false}>
                 {selectedMember.name}
               </Text>
 
               <Pressable
                 onPress={onRemoveMember}
-                hitSlop={10}
-                style={({ pressed }) => [styles.chipX, pressed && { opacity: 0.7 }]}
+                hitSlop={CHAT_SEARCH_CONTROLS_METRICS.hitSlop}
+                style={({ pressed }) => [styles.chipCloseButton, pressed && { opacity: 0.7 }]}
+                accessibilityRole="button"
+                accessibilityLabel={t('chat:search.clearSender')}
               >
-                <X size={16} color={withAlpha(theme.headerText ?? '#111827', 0.85)} />
+                <X
+                  size={16}
+                  color={ui.clearIcon}
+                  strokeWidth={CHAT_SEARCH_CONTROLS_METRICS.actionIconStroke}
+                />
               </Pressable>
             </View>
           )}
@@ -87,107 +106,39 @@ export default function ChatSearchHeader({
           <TextInput
             value={q}
             onChangeText={onChangeQ}
-            placeholder="검색"
-            placeholderTextColor={placeholderColor}
-            style={[styles.input, { color: theme.headerText }]}
+            placeholder={t('chat:search.placeholder')}
+            placeholderTextColor={ui.placeholder}
+            style={[styles.input, { color: ui.text }]}
             autoCorrect={false}
             autoCapitalize="none"
             returnKeyType="search"
             clearButtonMode="never"
+            autoFocus
+            maxFontSizeMultiplier={1.5}
+            accessibilityLabel={t('chat:search.inputAccessibility')}
           />
 
           {!!q?.trim() && (
             <Pressable
               onPress={onClearQ}
-              hitSlop={10}
-              style={({ pressed }) => [styles.clearBtn, pressed && { opacity: 0.65 }]}
+              hitSlop={CHAT_SEARCH_CONTROLS_METRICS.hitSlop}
+              style={({ pressed }) => [styles.clearButton, pressed && { opacity: 0.65 }]}
+              accessibilityRole="button"
+              accessibilityLabel={t('chat:search.clearKeyword')}
             >
-              <X size={18} color={theme.headerText} />
+              <View style={[styles.clearButtonInner, { backgroundColor: ui.clearBg }]}> 
+                <X
+                  size={14}
+                  color={ui.text}
+                  strokeWidth={CHAT_SEARCH_CONTROLS_METRICS.actionIconStroke}
+                />
+              </View>
             </Pressable>
           )}
         </View>
 
-        <View style={{ width: 6 }} />
+        <View style={styles.rightSpacer} />
       </View>
     </View>
   );
 }
-
-function withAlpha(hex: string, alpha: number) {
-  const a = Math.max(0, Math.min(1, alpha));
-  const h = (hex || '').replace('#', '');
-  if (h.length !== 6) return hex;
-  const r = parseInt(h.slice(0, 2), 16);
-  const g = parseInt(h.slice(2, 4), 16);
-  const b = parseInt(h.slice(4, 6), 16);
-  return `rgba(${r},${g},${b},${a})`;
-}
-
-const styles = StyleSheet.create({
-  wrap: {
-    paddingHorizontal: 10,
-    paddingBottom: 10,
-    borderBottomWidth: 0,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingTop: Platform.select({ ios: 6, android: 4 }),
-  },
-  iconBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  searchBox: {
-    flex: 1,
-    minHeight: 40,
-    borderRadius: 14,
-    borderWidth: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    gap: 8,
-  },
-
-  memberChip: {
-    maxWidth: 180,
-    height: 28,
-    borderRadius: 999,
-    borderWidth: 1,
-    paddingLeft: 10,
-    paddingRight: 6,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  chipName: {
-    maxWidth: 140,
-    fontSize: 13,
-    fontWeight: '800',
-  },
-  chipX: {
-    width: 22,
-    height: 22,
-    borderRadius: 999,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  input: {
-    flex: 1,
-    fontSize: 15,
-    fontWeight: '600',
-    paddingVertical: Platform.select({ ios: 10, android: 8 }),
-  },
-  clearBtn: {
-    width: 30,
-    height: 30,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

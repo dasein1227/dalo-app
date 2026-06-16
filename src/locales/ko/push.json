@@ -1,0 +1,48 @@
+{
+  "channel": {
+    "social_name": "소셜",
+    "social_description": "친구 및 소셜 알림",
+    "chat_name": "채팅",
+    "chat_description": "채팅 메시지 및 대화 알림"
+  },
+  "summary": {
+    "social_title": "CO·ONN",
+    "social_body": "새 소셜 알림",
+    "chat_title": "CO·ONN",
+    "chat_body": "새 채팅 알림"
+  },
+  "actions": {
+    "read": "읽음",
+    "reply": "답장"
+  },
+  "common": {
+    "someone": "누군가",
+    "new_notification": "새 알림",
+    "new_notification_body": "새 알림이 도착했습니다.",
+    "new_message": "새 메시지"
+  },
+  "friend": {
+    "request_received_title": "친구 요청",
+    "request_received_subtitle": "{{actor}}",
+    "request_received_body": "{{actor}}님이 친구 요청을 보냈습니다"
+  },
+  "chat": {
+    "dm_title": "{{sender}}",
+    "dm_subtitle": "",
+    "dm_body_text": "{{message}}",
+    "dm_body_image": "사진을 보냈습니다",
+    "dm_body_video": "동영상을 보냈습니다",
+    "dm_body_audio": "음성메시지를 보냈습니다",
+    "dm_body_file": "파일을 보냈습니다",
+    "dm_body_map": "위치를 공유했습니다",
+    "group_title": "{{room}}",
+    "group_subtitle": "{{sender}}",
+    "group_body_text": "{{sender}}: {{message}}",
+    "group_body_image": "{{sender}}님이 사진을 보냈습니다",
+    "group_body_video": "{{sender}}님이 동영상을 보냈습니다",
+    "group_body_audio": "{{sender}}님이 음성메시지를 보냈습니다",
+    "group_body_file": "{{sender}}님이 파일을 보냈습니다",
+    "group_body_map": "{{sender}}님이 위치를 공유했습니다",
+    "reply_placeholder": "답장 입력…"
+  }
+}

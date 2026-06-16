@@ -1,0 +1,10 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "COONN",
+    "NSPhotoLibraryUsageDescription": "O acesso às fotos é usado para selecionar imagens de perfil, publicações e chat.",
+    "NSPhotoLibraryAddUsageDescription": "O acesso à fototeca é usado para salvar imagens e mídias no dispositivo.",
+    "NSLocationWhenInUseUsageDescription": "A localização é usada para publicações próximas, beacons e recursos baseados em distância.",
+    "NSCameraUsageDescription": "A câmera é usada para tirar fotos de perfil, publicações e chat.",
+    "NSMicrophoneUsageDescription": "O microfone é usado ao gravar vídeos."
+  }
+}

@@ -1,9 +1,9 @@
 // src/screens/chat/components/Header/ChatHeader.tsx
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
-  Image,
   Pressable,
   StyleSheet,
   TextInput,
@@ -14,77 +14,52 @@ import { useNavigation } from '@react-navigation/native';
 import {
   ChevronLeft,
   X,
-  Languages,
   Search,
+  Lock,
+  LockOpen,
   MoreHorizontal,
   SlidersHorizontal,
 } from 'lucide-react-native';
 
+
 import type { ChatTheme } from '@/screens/chat/theme/chatTheme';
 
-type RoomType = 'self' | 'dm' | 'personal' | 'group' | 'open' | 'beacon';
+type RoomType = 'self' | 'dm' | 'personal' | 'business_dm' | 'group' | 'open' | 'beacon';
 
 type Props = {
   avatarUrl?: string | null;
-  // ✅ theme injected from Chat.tsx
   theme: ChatTheme;
-
-  // 상위(Chat.tsx)에서 계산해서 내려주는 최종 제목
   title: string;
-
-  // 참여자 수
   participantCount: number;
-
-  // 자동 번역 상태
   autoTranslate: boolean;
-
-  // ✅ 헤더 배지에 표시할 "보낼 언어" 코드 (preferred_lang)
   myLang: string;
-
-  // 번역 ON/OFF 토글 (탭)
   onToggleTranslate: () => void;
-
-  // 번역 설정 팝업 열기 (롱프레스)
   onOpenTranslateSettings?: () => void;
-
-  // 검색 버튼 클릭 (일반모드에서 searchMode 진입 트리거)
   onPressSearch?: () => void;
-
-  // 옵션(더보기) 버튼 클릭
   onPressOptions?: () => void;
-
-  // 방 타입
+  onBack?: () => void;
+  secureEnabled?: boolean;
+  secureUnlocking?: boolean;
+  onToggleSecure?: () => void;
   roomType?: RoomType;
-
-  // =========================
-  // ✅ Kakao-style inline search mode
-  // =========================
   searchMode?: boolean;
-
   searchQuery?: string;
   onChangeSearchQuery?: (v: string) => void;
   onSubmitSearch?: () => void;
-
-  // chip labels (예: "원규", "2025-12-21")
   searchSenderLabel?: string;
   searchDateLabel?: string;
-
   onPressSearchSender?: () => void;
   onPressSearchDate?: () => void;
-
-  // search mode 종료 (X)
   onExitSearch?: () => void;
-
-  // =========================
-  // ✅ Advanced search (원문+번역 동시 검색)
-  // =========================
   advancedSearch?: boolean;
   onToggleAdvancedSearch?: () => void;
+  hasOptionsBadge?: boolean;
 };
 
 const HEADER_HEIGHT = 54;
 
 function hexToRgba(hex: string, alpha: number) {
+  'worklet';
   const h = String(hex ?? '')
     .replace('#', '')
     .trim();
@@ -99,17 +74,15 @@ function hexToRgba(hex: string, alpha: number) {
 export default function ChatHeader(props: Props) {
   const {
     theme,
-    avatarUrl,
     title,
     participantCount,
-    autoTranslate,
-    myLang,
-    onToggleTranslate,
-    onOpenTranslateSettings,
     onPressSearch,
     onPressOptions,
+    onBack,
+    secureEnabled = false,
+    secureUnlocking = false,
+    onToggleSecure,
     roomType,
-
     searchMode,
     searchQuery,
     onChangeSearchQuery,
@@ -119,14 +92,13 @@ export default function ChatHeader(props: Props) {
     onPressSearchSender,
     onPressSearchDate,
     onExitSearch,
-
     advancedSearch,
     onToggleAdvancedSearch,
   } = props;
 
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const insets = useSafeAreaInsets();
-
   const inputRef = React.useRef<TextInput | null>(null);
 
   React.useEffect(() => {
@@ -137,43 +109,13 @@ export default function ChatHeader(props: Props) {
     }
   }, [searchMode]);
 
-  const roomTypeLabel = React.useMemo(() => {
-    if (!roomType) return '';
-    switch (roomType) {
-      case 'self':
-        return '나와의 채팅';
-      case 'dm':
-        return '비지니스 채팅';
-      case 'personal':
-        return '1:1 채팅';
-      case 'group':
-        return '그룹 채팅';
-      case 'open':
-        return '오픈채팅';
-      case 'beacon':
-        return '비콘 채팅';
-      default:
-        return '';
-    }
-  }, [roomType]);
 
-  // ✅ theme-driven colors
   const headerBg = theme.headerBg;
   const titleColor = theme.opponentText;
   const subColor = theme.originalText;
   const divider = 'rgba(0,0,0,0.08)';
-
   const iconColor = theme.opponentText;
-  const translateOn = theme.translateOn;
 
-  const badgeBg = hexToRgba(headerBg, 0.92);
-  const badgeText = translateOn;
-
-  const badgeCode = React.useMemo(() => {
-    const s = String(myLang ?? '').trim();
-    if (!s) return '';
-    return s.toUpperCase();
-  }, [myLang]);
 
   const handleExitSearch = React.useCallback(() => {
     if (onExitSearch) return onExitSearch();
@@ -181,11 +123,23 @@ export default function ChatHeader(props: Props) {
   }, [navigation, onExitSearch]);
 
   const handleBack = React.useCallback(() => {
+    if (onBack) {
+      onBack();
+      return;
+    }
     navigation.goBack();
-  }, [navigation]);
+  }, [navigation, onBack]);
 
   const showSenderChip = !!(searchSenderLabel && searchSenderLabel.trim());
   const showDateChip = !!(searchDateLabel && searchDateLabel.trim());
+
+  const canShowParticipantCount =
+    roomType === 'group' || roomType === 'open' || roomType === 'beacon';
+  const showParticipantCount =
+    canShowParticipantCount &&
+    Number.isFinite(Number(participantCount)) &&
+    Number(participantCount) > 1;
+  const showSelfPill = roomType === 'self';
 
   return (
     <View style={[styles.wrap, { backgroundColor: headerBg, paddingTop: insets.top }]}>
@@ -244,12 +198,10 @@ export default function ChatHeader(props: Props) {
               ) : null}
 
               <TextInput
-                ref={(r) => {
-                  inputRef.current = r;
-                }}
+                ref={(r) => { inputRef.current = r; }}
                 value={searchQuery ?? ''}
                 onChangeText={(v) => onChangeSearchQuery?.(v)}
-                placeholder="대화내용 검색"
+                placeholder={t('chat:header.searchPlaceholder')}
                 placeholderTextColor={hexToRgba(titleColor, 0.55)}
                 style={[styles.searchInput, { color: titleColor }]}
                 returnKeyType="search"
@@ -259,17 +211,12 @@ export default function ChatHeader(props: Props) {
                 underlineColorAndroid="transparent"
               />
 
-              {/* ✅ 고급검색 토글 (원문+번역 동시) */}
               <Pressable
                 style={[
                   styles.advBtn,
                   {
-                    backgroundColor: advancedSearch
-                      ? hexToRgba('#000', 0.18)
-                      : 'transparent',
-                    borderColor: advancedSearch
-                      ? hexToRgba('#000', 0.12)
-                      : hexToRgba('#000', 0.10),
+                    backgroundColor: advancedSearch ? hexToRgba('#000', 0.18) : 'transparent',
+                    borderColor: advancedSearch ? hexToRgba('#000', 0.12) : hexToRgba('#000', 0.10),
                   },
                 ]}
                 onPress={onToggleAdvancedSearch}
@@ -281,54 +228,42 @@ export default function ChatHeader(props: Props) {
                   strokeWidth={2.6}
                 />
                 <Text
-                  style={[
-                    styles.advTxt,
-                    { color: advancedSearch ? titleColor : hexToRgba(titleColor, 0.72) },
-                  ]}
+                  style={[styles.advTxt, { color: advancedSearch ? titleColor : hexToRgba(titleColor, 0.72) }]}
                   numberOfLines={1}
                 >
-                  고급
+                  {t('chat:header.advanced')}
                 </Text>
               </Pressable>
 
-              <Pressable
-                style={styles.searchIconInBox}
-                onPress={() => onSubmitSearch?.()}
-                hitSlop={8}
-              >
+              <Pressable style={styles.searchIconInBox} onPress={() => onSubmitSearch?.()} hitSlop={8}>
                 <Search size={18} color={hexToRgba(iconColor, 0.8)} strokeWidth={2.6} />
               </Pressable>
             </View>
 
             <View style={styles.pickerRow}>
               <Pressable style={styles.pickerBtn} onPress={onPressSearchSender} hitSlop={6}>
-                <Text style={[styles.pickerTxt, { color: hexToRgba(titleColor, 0.78) }]}>
-                  보낸사람
-                </Text>
+                <Text style={[styles.pickerTxt, { color: hexToRgba(titleColor, 0.78) }]}>{t('chat:header.sender')}</Text>
               </Pressable>
-
               <View style={[styles.pickerDot, { backgroundColor: hexToRgba(titleColor, 0.25) }]} />
-
               <Pressable style={styles.pickerBtn} onPress={onPressSearchDate} hitSlop={6}>
-                <Text style={[styles.pickerTxt, { color: hexToRgba(titleColor, 0.78) }]}>
-                  날짜
-                </Text>
+                <Text style={[styles.pickerTxt, { color: hexToRgba(titleColor, 0.78) }]}>{t('chat:header.date')}</Text>
               </Pressable>
-
-              {/* roomTypeLabel 필요하면 여기 배치 가능 */}
-              {!!roomTypeLabel ? null : null}
             </View>
           </View>
         ) : (
           <View style={styles.titleWrap}>
             <View style={styles.titleRow}>
-              {!!avatarUrl && (
-                <Image source={{ uri: avatarUrl }} style={styles.avatar} resizeMode="cover" />
-              )}
               <Text style={[styles.title, { color: titleColor }]} numberOfLines={1}>
                 {title}
               </Text>
-              <Text style={[styles.memberCount, { color: subColor }]}>{participantCount}</Text>
+              {showSelfPill ? (
+                <View style={[styles.selfPill, { backgroundColor: hexToRgba(titleColor, 0.08) }]}>
+                  <Text style={[styles.selfPillText, { color: titleColor }]}>{t('chat:me')}</Text>
+                </View>
+              ) : null}
+              {showParticipantCount ? (
+                <Text style={[styles.memberCount, { color: subColor }]}>{participantCount}</Text>
+              ) : null}
             </View>
           </View>
         )}
@@ -338,33 +273,29 @@ export default function ChatHeader(props: Props) {
           <View style={styles.rightRowSearch} />
         ) : (
           <View style={styles.rightRow}>
-            <View style={{ position: 'relative' }}>
-              {autoTranslate && !!badgeCode && (
-                <View style={[styles.langBadgeGlass, { backgroundColor: badgeBg }]}>
-                  <Text
-                    style={[styles.langBadgeGlassTxt, { color: badgeText }]}
-                    numberOfLines={1}
-                    allowFontScaling={false}
-                  >
-                    {badgeCode}
-                  </Text>
-                </View>
-              )}
 
+            {onToggleSecure ? (
               <Pressable
-                style={styles.headerBtn}
-                onPress={onToggleTranslate}
-                onLongPress={onOpenTranslateSettings}
-                delayLongPress={250}
+                style={[
+                  styles.headerBtn,
+                  secureEnabled
+                    ? { backgroundColor: hexToRgba(iconColor, 0.08) }
+                    : null,
+                  secureUnlocking ? { opacity: 0.55 } : null,
+                ]}
+                onPress={onToggleSecure}
+                disabled={secureUnlocking}
                 hitSlop={8}
+                accessibilityRole="button"
+                accessibilityLabel={secureEnabled ? t('chat:secure.enabled') : t('chat:secure.disabled')}
               >
-                <Languages
-                  size={18}
-                  strokeWidth={2.6}
-                  color={autoTranslate ? translateOn : hexToRgba(iconColor, 0.55)}
-                />
+                {secureEnabled ? (
+                  <Lock size={18} color={iconColor} strokeWidth={2.45} />
+                ) : (
+                  <LockOpen size={18} color={hexToRgba(iconColor, 0.72)} strokeWidth={2.35} />
+                )}
               </Pressable>
-            </View>
+            ) : null}
 
             <Pressable style={styles.headerBtn} onPress={onPressSearch} hitSlop={8}>
               <Search size={18} color={iconColor} strokeWidth={2.6} />
@@ -395,18 +326,29 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
   },
-
   titleWrap: {
     flex: 1,
+    minWidth: 0,
     marginHorizontal: 4,
     justifyContent: 'center',
   },
-  titleRow: { flexDirection: 'row', alignItems: 'baseline' },
+  titleRow: { flexDirection: 'row', alignItems: 'center', minWidth: 0 },
 
-  avatar: { width: 28, height: 28, borderRadius: 14, marginRight: 8, backgroundColor: 'rgba(255,255,255,0.15)' },
-  title: { fontSize: 18, fontWeight: '800' },
-  memberCount: { marginLeft: 4, fontSize: 14, fontWeight: '700', opacity: 0.65 },
+  title: { flexShrink: 1, minWidth: 0, fontSize: 18, fontWeight: '800' },
+  selfPill: {
+    marginLeft: 6,
+    height: 20,
+    minWidth: 28,
+    paddingHorizontal: 8,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  selfPillText: { fontSize: 11, fontWeight: '900', includeFontPadding: false },
+  memberCount: { marginLeft: 4, fontSize: 14, fontWeight: '700', opacity: 0.65, flexShrink: 0 },
 
   rightRow: { flexDirection: 'row', alignItems: 'center', gap: 2 },
 
@@ -479,25 +421,4 @@ const styles = StyleSheet.create({
   pickerTxt: { fontSize: 12, fontWeight: '800', includeFontPadding: false },
   pickerDot: { width: 4, height: 4, borderRadius: 2, opacity: 0.9 },
   rightRowSearch: { width: 36 },
-
-  // Language badge
-  langBadgeGlass: {
-    position: 'absolute',
-    top: 2,
-    left: -10,
-    paddingHorizontal: 9,
-    paddingVertical: 2,
-    borderRadius: 999,
-    minWidth: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'flex-start',
-  },
-  langBadgeGlassTxt: {
-    fontSize: 10,
-    fontWeight: '800',
-    includeFontPadding: false,
-    textAlignVertical: 'center',
-    letterSpacing: 0.2,
-  },
 });

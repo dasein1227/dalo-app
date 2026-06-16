@@ -1,0 +1,14 @@
+{
+  "recent": "हाल के आइटम",
+  "select_photo": "फ़ोटो चुनें",
+  "max_select": "अधिकतम {{count}} फ़ोटो",
+  "processing_error": "प्रक्रिया पूरी नहीं हुई।",
+  "select_to_edit": "संपादित करने के लिए फ़ोटो चुनें।",
+  "video_edit_warning": "वीडियो संपादित नहीं किए जा सकते।",
+  "bundle_photos": "साथ भेजें",
+  "quality_settings": "गुणवत्ता",
+  "quality_original": "मूल",
+  "quality_standard": "सामान्य",
+  "quality_low": "कम डेटा",
+  "quality_high": "उच्च गुणवत्ता"
+}

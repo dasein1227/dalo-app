@@ -1,0 +1,253 @@
+{
+  "title": "Friends",
+  "requests": "Friend requests",
+  "requests_empty": "No new friend requests.",
+  "requests_received": "Received",
+  "requests_sent": "Sent",
+  "add_friend": "Add friend",
+  "send_request": "Send request",
+  "request_sent": "Friend request sent.",
+  "request_send_failed": "Couldn’t send friend request.",
+  "request_cancel": "Cancel request",
+  "request_canceled": "Friend request canceled.",
+  "request_cancel_failed": "Couldn’t cancel friend request.",
+  "accept": "Accept",
+  "decline": "Decline",
+  "accepted": "Friend request accepted.",
+  "declined": "Friend request declined.",
+  "accept_failed": "Couldn’t accept friend request.",
+  "decline_failed": "Couldn’t decline friend request.",
+  "remove_friend": "Remove friend",
+  "remove_friend_confirm": "Remove this friend?",
+  "remove_friend_done": "Friend removed.",
+  "remove_friend_failed": "Couldn’t remove friend.",
+  "blocked": "Blocked",
+  "block": "Block",
+  "unblock": "Unblock",
+  "block_done": "Blocked.",
+  "unblock_done": "Unblocked.",
+  "search_placeholder": "Search nickname, ID, or friend code",
+  "code_placeholder": "Enter friend code",
+  "already_friends": "Already friends.",
+  "already_requested": "Request already sent.",
+  "self_not_allowed": "You can’t send a request to yourself.",
+  "hidden": "Hidden",
+  "favorite": "Favorites",
+  "memo": "Memo",
+  "alias": "Alias",
+  "group": {
+    "title": "Groups",
+    "manageTitle": "Friend groups",
+    "createTitle": "New group",
+    "createDesc": "Enter a group name.",
+    "createPlaceholder": "e.g. Coworkers, neighbors, study",
+    "createAction": "Create",
+    "createFail": "Couldn’t create",
+    "editTitle": "Edit group name",
+    "editDesc": "Enter a new name.",
+    "editPlaceholder": "Group name",
+    "saveAction": "Save",
+    "renameFail": "Couldn’t rename",
+    "nameRequired": "Enter a group name.",
+    "deleteTitle": "Delete group",
+    "deleteMessage": "Delete “{{name}}” group?",
+    "emptyTitle": "No groups",
+    "emptyDesc": "Create a new group.",
+    "memberEmpty": "No group members.",
+    "addTitle": "Add friends",
+    "addSuccess": "Added.",
+    "addFail": "Couldn’t add",
+    "addEmpty": "No friends to add.",
+    "removeSuccess": "Removed.",
+    "removeFail": "Couldn’t remove",
+    "memberCount": "{{count}} members"
+  },
+  "userFallback": "User",
+  "list": {
+    "favoriteFriendsCount": "Favorites {{count}}",
+    "friendsCount": "Friends {{count}}"
+  },
+  "tabs": {
+    "friends": "Friends",
+    "groups": "Groups"
+  },
+  "search": {
+    "placeholder": "Search",
+    "friendPlaceholder": "Search name or ID",
+    "groupPlaceholder": "Search groups or members",
+    "namePlaceholder": "Search name",
+    "friendPickerPlaceholder": "Search friends",
+    "contactsPlaceholder": "Search name or number",
+    "waitTitle": "Waiting",
+    "waitCaption": "Enter details to search.",
+    "emptyTitle": "No results",
+    "emptyCaption": "No matching users.",
+    "contactEmptyTitle": "No contacts",
+    "contactEmptyCaption": "No matching contacts.",
+    "groupNamePlaceholder": "Search groups"
+  },
+  "action": {
+    "favoriteAdd": "Favorite",
+    "favoriteRemove": "Remove",
+    "manageFriend": "Manage friend",
+    "manageGroup": "Manage group",
+    "contact": "Contact",
+    "create": "Create",
+    "save": "Save",
+    "add": "Add",
+    "remove": "Remove",
+    "select": "Select",
+    "search": "Search",
+    "processing": "Processing",
+    "saving": "Saving"
+  },
+  "alert": {
+    "notice": "Notice",
+    "fail": "Failed",
+    "loadFail": "Couldn’t load",
+    "deleteFail": "Couldn’t delete",
+    "profileRouteMissing": "Profile screen not found.",
+    "chatRouteMissing": "Chat screen not found.",
+    "phoneMissing": "No phone number.",
+    "phoneOpenFail": "Couldn’t open phone app.",
+    "removeFriendTitle": "Remove friend",
+    "removeFriendMessage": "Remove {{name}}?",
+    "blockTitle": "Block",
+    "blockMessage": "Block {{name}}?",
+    "blockFail": "Couldn’t block",
+    "friendEditRouteMissing": "Friend management screen not found."
+  },
+  "add": {
+    "title": "Add friend",
+    "loginRequired": "Log in required.",
+    "contactSearch": "Find contacts",
+    "userFallback": "User {{id}}",
+    "noName": "No name",
+    "myProfile": "My profile",
+    "notSet": "Not set",
+    "friendCodeLabel": "Friend code",
+    "qrOfflineHint": "Connect directly with a QR code.",
+    "shareLink": "Share link",
+    "scanQr": "Scan QR",
+    "qrTitle": "My connection code",
+    "qrDesc": "Scan to connect\nright away.",
+    "scanGuide": "Scan the other person’s QR.",
+    "contactsTitle": "Find by contacts",
+    "contactsDesc": "Select from contacts to search.",
+    "mode": {
+      "coonnIdTitle": "CO·ONN ID",
+      "coonnIdHint": "Enter the other person’s public ID.",
+      "coonnIdPlaceholder": "Enter ID",
+      "friendCodeTitle": "Friend code",
+      "friendCodeHint": "Enter a friend code.",
+      "friendCodePlaceholder": "Enter friend code",
+      "phoneTitle": "Contact",
+      "phoneHint": "Find by mobile number.",
+      "phonePlaceholder": "Enter number"
+    },
+    "result": {
+      "noPublicId": "No public ID",
+      "friendCodeVerified": "Friend code verified",
+      "friendCodeMatched": "Friend code matched",
+      "contact": "Contact · {{phone}}",
+      "added": "Added",
+      "limited": "Limited",
+      "add": "Add"
+    },
+    "share": {
+      "myId": "My ID",
+      "friendCode": "Friend code",
+      "title": "Share CO·ONN link",
+      "message": "[CO·ONN] Connect with me.{{idText}}{{codeText}}\n\nOpen the link below to add me as a friend.\n{{url}}"
+    },
+    "toast": {
+      "added": "Added as friend."
+    },
+    "alert": {
+      "permissionRequired": "Permission required",
+      "cameraPermissionRequired": "Camera permission required.",
+      "contactsPermissionRequired": "Contacts permission required.",
+      "contactsLoadFail": "Couldn’t load contacts",
+      "searchFail": "Search failed",
+      "addFail": "Couldn’t add"
+    },
+    "error": {
+      "invalidUser": "Invalid user.",
+      "selfQr": "This is your QR.",
+      "userNotFound": "User not found.",
+      "invalidQr": "Invalid code.",
+      "minLength": "Enter at least {{count}} characters."
+    },
+    "findTitle": "Find friends",
+    "card": {
+      "idTitle": "Find by ID",
+      "idDesc": "Search CO·ONN ID",
+      "codeTitle": "Find by code",
+      "codeDesc": "Search friend code",
+      "contactsTitle": "Contacts",
+      "contactsDesc": "Based on contacts"
+    },
+    "digitalCardTitle": "My card"
+  },
+  "communication": {
+    "noPhone": "No phone number",
+    "phoneCall": "Phone call",
+    "voiceCall": "Voice call",
+    "comingSoon": "Coming soon"
+  },
+  "edit": {
+    "title": "Friend settings",
+    "unknownUser": "Unknown",
+    "none": "None",
+    "field": {
+      "name": "Name"
+    },
+    "placeholder": {
+      "alias": "Alias",
+      "memo": "Memo"
+    },
+    "helper": {
+      "friendName": "Friend name · {{name}}",
+      "privateMemo": "Visible only to you."
+    },
+    "section": {
+      "groups": "Groups",
+      "security": "Security"
+    },
+    "state": {
+      "on": "On",
+      "off": "Off",
+      "hidden": "Hidden",
+      "visible": "Visible",
+      "blocked": "Blocked",
+      "unblocked": "Not blocked"
+    },
+    "toast": {
+      "saved": "Saved."
+    },
+    "alert": {
+      "loadFail": "Couldn’t load",
+      "saveFail": "Couldn’t save",
+      "removeFail": "Couldn’t remove",
+      "userLoadFail": "Couldn’t load user.",
+      "blockedByPeer": "This user blocked you."
+    },
+    "remove": {
+      "title": "Remove friend",
+      "message": "Remove {{name}}?"
+    },
+    "unsaved": {
+      "title": "Unsaved changes",
+      "message": "You have unsaved changes.",
+      "discard": "Discard"
+    },
+    "groups": {
+      "title": "Manage groups",
+      "subtitle": "Select groups to include.",
+      "selectedCount": "Selected {{count}}",
+      "inGroup": "Included",
+      "addHint": "Tap to add",
+      "emptySearch": "Try another name."
+    }
+  }
+}

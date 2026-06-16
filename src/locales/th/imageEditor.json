@@ -1,0 +1,14 @@
+{
+  "title": "แก้ไขรูปภาพ",
+  "ratio_original": "ต้นฉบับ",
+  "ratio_free": "อิสระ",
+  "rotate": "หมุน",
+  "ratio": "อัตราส่วน",
+  "invert": "สลับแนว",
+  "orientation": "แนวภาพ",
+  "reset": "รีเซ็ต",
+  "error_load_title": "ข้อผิดพลาด",
+  "error_load_msg": "ไม่สามารถโหลดรูปภาพได้",
+  "error_save_title": "บันทึกไม่สำเร็จ",
+  "error_save_msg": "โปรดลองอีกครั้งในภายหลัง"
+}

@@ -1,0 +1,14 @@
+{
+  "recent": "Недавние",
+  "select_photo": "Выбрать фото",
+  "max_select": "До {{count}} фото",
+  "processing_error": "Не удалось обработать.",
+  "select_to_edit": "Выберите фото для редактирования.",
+  "video_edit_warning": "Видео нельзя редактировать.",
+  "bundle_photos": "Отправить пакетом",
+  "quality_settings": "Качество",
+  "quality_original": "Оригинал",
+  "quality_standard": "Стандарт",
+  "quality_low": "Экономия",
+  "quality_high": "Высокое"
+}

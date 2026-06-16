@@ -1,0 +1,35 @@
+{
+  "title": "Permessi",
+  "subtitle": "Consenti i permessi necessari.",
+  "location_title": "Posizione",
+  "location_desc": "Serve per mostrare mappe e beacon vicini.",
+  "notifications_title": "Notifiche (opzionale)",
+  "notifications_desc": "Ricevi inviti beacon, chat e avvisi.",
+  "allow_now": "Consenti ora",
+  "allowed": "Consentito",
+  "open_settings": "Apri impostazioni",
+  "continue_without_location": "Continua più tardi",
+  "background_location_title": "Posizione in background (opzionale)",
+  "background_location_desc": "Ricevi beacon e avvisi basati sulla posizione anche senza aprire l’app.",
+  "background_location_hint": "Può aumentare il consumo della batteria. Puoi modificarlo dalle impostazioni.",
+  "gallery": {
+    "title": "Accesso alle foto richiesto",
+    "description": "Serve il permesso per scegliere una foto."
+  },
+  "camera": {
+    "title": "Accesso alla fotocamera richiesto",
+    "description": "Serve il permesso per scattare foto."
+  },
+  "location": {
+    "title": "Accesso alla posizione richiesto",
+    "description": "Serve il permesso per rilevare la posizione attuale."
+  },
+  "notification": {
+    "title": "Permesso notifiche",
+    "description": "Serve il permesso per ricevere notifiche."
+  },
+  "action": {
+    "openSettings": "Apri impostazioni",
+    "notNow": "Più tardi"
+  }
+}

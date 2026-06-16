@@ -1,0 +1,48 @@
+{
+  "channel": {
+    "social_name": "โซเชียล",
+    "social_description": "การแจ้งเตือนเพื่อนและโซเชียล",
+    "chat_name": "แชท",
+    "chat_description": "ข้อความแชทและการแจ้งเตือนสนทนา"
+  },
+  "summary": {
+    "social_title": "CO·ONN",
+    "social_body": "มีการแจ้งเตือนโซเชียลใหม่",
+    "chat_title": "CO·ONN",
+    "chat_body": "มีแชทใหม่"
+  },
+  "actions": {
+    "read": "อ่านแล้ว",
+    "reply": "ตอบกลับ"
+  },
+  "common": {
+    "someone": "บางคน",
+    "new_notification": "การแจ้งเตือนใหม่",
+    "new_notification_body": "คุณมีการแจ้งเตือนใหม่",
+    "new_message": "ข้อความใหม่"
+  },
+  "friend": {
+    "request_received_title": "คำขอเป็นเพื่อน",
+    "request_received_subtitle": "{{actor}}",
+    "request_received_body": "{{actor}} ส่งคำขอเป็นเพื่อนถึงคุณ"
+  },
+  "chat": {
+    "dm_title": "{{sender}}",
+    "dm_subtitle": "",
+    "dm_body_text": "{{message}}",
+    "dm_body_image": "ส่งรูปภาพ",
+    "dm_body_video": "ส่งวิดีโอ",
+    "dm_body_audio": "ส่งข้อความเสียง",
+    "dm_body_file": "ส่งไฟล์",
+    "dm_body_map": "แชร์ตำแหน่ง",
+    "group_title": "{{room}}",
+    "group_subtitle": "{{sender}}",
+    "group_body_text": "{{sender}}: {{message}}",
+    "group_body_image": "{{sender}} ส่งรูปภาพ",
+    "group_body_video": "{{sender}} ส่งวิดีโอ",
+    "group_body_audio": "{{sender}} ส่งข้อความเสียง",
+    "group_body_file": "{{sender}} ส่งไฟล์",
+    "group_body_map": "{{sender}} แชร์ตำแหน่ง",
+    "reply_placeholder": "พิมพ์คำตอบ…"
+  }
+}

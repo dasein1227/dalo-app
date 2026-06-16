@@ -1,0 +1,10 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "COONN",
+    "NSPhotoLibraryUsageDescription": "照片存取用於選擇個人照片、貼文和聊天圖片。",
+    "NSPhotoLibraryAddUsageDescription": "照片圖庫存取用於將圖片和媒體儲存到裝置。",
+    "NSLocationWhenInUseUsageDescription": "位置用於附近貼文、Beacon 和距離相關功能。",
+    "NSCameraUsageDescription": "相機用於拍攝個人照片、貼文和聊天照片。",
+    "NSMicrophoneUsageDescription": "錄製影片時會使用麥克風。"
+  }
+}

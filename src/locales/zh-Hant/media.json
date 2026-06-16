@@ -1,0 +1,14 @@
+{
+  "recent": "最近項目",
+  "select_photo": "選擇照片",
+  "max_select": "最多 {{count}} 張",
+  "processing_error": "無法處理。",
+  "select_to_edit": "請選擇要編輯的照片。",
+  "video_edit_warning": "影片無法編輯。",
+  "bundle_photos": "合併傳送",
+  "quality_settings": "畫質",
+  "quality_original": "原始",
+  "quality_standard": "標準",
+  "quality_low": "低容量",
+  "quality_high": "高畫質"
+}

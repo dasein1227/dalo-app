@@ -1,6 +1,6 @@
-// src/hooks/useRooms.ts
+﻿// src/hooks/useRooms.ts
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../api/supabase';
+import { supabase } from '@/lib/supabase';
 import { haversineMeters } from '../utils/geo';
 
 type Room = {
@@ -17,7 +17,7 @@ export function useNearbyRooms(myLat?: number, myLng?: number, radiusM = 120) {
     queryKey: ['rooms', myLat, myLng, radiusM],
     enabled: !!myLat && !!myLng,
     queryFn: async () => {
-      // 최소 쿼리: 최근 공개된 방만 가져오고, 거리 필터는 클라에서 1차
+      // 理쒖냼 荑쇰━: 理쒓렐 怨듦컻??諛⑸쭔 媛?몄삤怨? 嫄곕━ ?꾪꽣???대씪?먯꽌 1李?
       const { data, error } = await supabase
         .from('rooms')
         .select('id,title,lat,lng,is_published,published_until')
@@ -36,3 +36,4 @@ export function useNearbyRooms(myLat?: number, myLng?: number, radiusM = 120) {
     staleTime: 5000,
   });
 }
+

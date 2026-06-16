@@ -1,7 +1,10 @@
+// src/screens/chat/components/Search/DatePickerSheet.tsx
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal, View, Text, StyleSheet, Pressable } from 'react-native';
-import { X, RotateCcw } from 'lucide-react-native';
+import { X, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react-native'; // ✅ 화살표 아이콘 추가
 import type { ChatTheme } from '@/screens/chat/theme/chatTheme';
+import { withAlpha } from '@/screens/chat/theme/utils/contrast'; // ✅ 1. 공통 withAlpha 유틸 임포트
 
 type DateRange = { from?: Date | null; to?: Date | null };
 
@@ -15,6 +18,7 @@ type Props = {
   onApply: (range: DateRange) => void;
 };
 
+// ... 날짜 계산 유틸 함수들 유지 ...
 function startOfDay(d: Date) {
   const x = new Date(d);
   x.setHours(0, 0, 0, 0);
@@ -31,22 +35,15 @@ function clampRange(r: DateRange): DateRange {
   return { from, to };
 }
 function formatDateK(d?: Date | null) {
-  if (!d) return '선택 안 함';
+  if (!d) return '';
   const x = startOfDay(d);
   const yy = x.getFullYear();
   const mm = String(x.getMonth() + 1).padStart(2, '0');
   const dd = String(x.getDate()).padStart(2, '0');
   return `${yy}.${mm}.${dd}`;
 }
-function withAlpha(hex: string, alpha: number) {
-  const a = Math.max(0, Math.min(1, alpha));
-  const h = (hex || '').replace('#', '');
-  if (h.length !== 6) return hex;
-  const r = parseInt(h.slice(0, 2), 16);
-  const g = parseInt(h.slice(2, 4), 16);
-  const b = parseInt(h.slice(4, 6), 16);
-  return `rgba(${r},${g},${b},${a})`;
-}
+
+// ❌ 로컬 withAlpha 함수 삭제
 
 function monthKey(d: Date) {
   return `${d.getFullYear()}-${d.getMonth() + 1}`;
@@ -85,9 +82,6 @@ function addMonths(d: Date, delta: number) {
   return x;
 }
 
-function kMonthTitle(d: Date) {
-  return `${d.getFullYear()}년 ${d.getMonth() + 1}월`;
-}
 
 type CalendarDialogProps = {
   visible: boolean;
@@ -99,6 +93,7 @@ type CalendarDialogProps = {
 };
 
 function CalendarDialog({ visible, onClose, theme, initialRange, onConfirm }: CalendarDialogProps) {
+  const { t } = useTranslation();
   const [range, setRange] = useState<DateRange>({ from: initialRange.from ?? null, to: initialRange.to ?? null });
   const [month, setMonth] = useState<Date>(() => {
     const base = initialRange.to ?? initialRange.from ?? new Date();
@@ -114,6 +109,18 @@ function CalendarDialog({ visible, onClose, theme, initialRange, onConfirm }: Ca
 
   const weeks = useMemo(() => getMonthMatrix(month), [month]);
   const mKey = useMemo(() => monthKey(month), [month]);
+  const weekdayLabels = useMemo(
+    () => [
+      t('chat:datePicker.weekday.sun'),
+      t('chat:datePicker.weekday.mon'),
+      t('chat:datePicker.weekday.tue'),
+      t('chat:datePicker.weekday.wed'),
+      t('chat:datePicker.weekday.thu'),
+      t('chat:datePicker.weekday.fri'),
+      t('chat:datePicker.weekday.sat'),
+    ],
+    [t]
+  );
 
   const pickDay = useCallback((d: Date) => {
     const day = startOfDay(d);
@@ -161,32 +168,33 @@ function CalendarDialog({ visible, onClose, theme, initialRange, onConfirm }: Ca
 
       <View style={[styles.dialogCard, { backgroundColor: cardBg, borderColor: line }]}>
         <View style={styles.dialogTop}>
-          <Pressable style={styles.iconBtn} onPress={onClose}>
+          <Pressable style={styles.iconBtn} onPress={onClose} hitSlop={15} accessibilityRole="button" accessibilityLabel={t('common:close')}>
             <X size={20} color={headerText} />
           </Pressable>
 
-          <Text style={[styles.dialogTitle, { color: headerText }]}>날짜 선택</Text>
+          <Text style={[styles.dialogTitle, { color: headerText }]} maxFontSizeMultiplier={1.2}>{t('chat:datePicker.title')}</Text>
 
-          <Pressable style={styles.iconBtn} onPress={clear}>
+          <Pressable style={styles.iconBtn} onPress={clear} hitSlop={15} accessibilityRole="button" accessibilityLabel={t('chat:datePicker.clear')}>
             <RotateCcw size={18} color={subText} />
           </Pressable>
         </View>
 
         <View style={styles.monthRow}>
-          <Pressable style={styles.monthArrow} onPress={() => setMonth((m) => addMonths(m, -1))}>
-            <Text style={[styles.monthArrowText, { color: headerText }]}>{'‹'}</Text>
+          {/* ✅ 2. 텍스트 대신 Lucide 아이콘 적용 및 터치 영역 확대 */}
+          <Pressable style={styles.monthArrow} hitSlop={15} onPress={() => setMonth((m) => addMonths(m, -1))} accessibilityRole="button" accessibilityLabel={t('chat:datePicker.prevMonth')}>
+            <ChevronLeft size={24} color={headerText} strokeWidth={2.5} />
           </Pressable>
 
-          <Text style={[styles.monthTitle, { color: headerText }]}>{kMonthTitle(month)}</Text>
+          <Text style={[styles.monthTitle, { color: headerText }]} maxFontSizeMultiplier={1.2}>{t('chat:datePicker.monthTitle', { year: month.getFullYear(), month: month.getMonth() + 1 })}</Text>
 
-          <Pressable style={styles.monthArrow} onPress={() => setMonth((m) => addMonths(m, +1))}>
-            <Text style={[styles.monthArrowText, { color: headerText }]}>{'›'}</Text>
+          <Pressable style={styles.monthArrow} hitSlop={15} onPress={() => setMonth((m) => addMonths(m, +1))} accessibilityRole="button" accessibilityLabel={t('chat:datePicker.nextMonth')}>
+            <ChevronRight size={24} color={headerText} strokeWidth={2.5} />
           </Pressable>
         </View>
 
         <View style={styles.weekRow}>
-          {['일', '월', '화', '수', '목', '금', '토'].map((w, idx) => (
-            <Text key={w} style={[styles.weekText, { color: idx === 0 ? '#EF4444' : idx === 6 ? primary : subText }]}>
+          {weekdayLabels.map((w, idx) => (
+            <Text key={w} style={[styles.weekText, { color: idx === 0 ? '#EF4444' : idx === 6 ? primary : subText }]} allowFontScaling={false}>
               {w}
             </Text>
           ))}
@@ -203,14 +211,19 @@ function CalendarDialog({ visible, onClose, theme, initialRange, onConfirm }: Ca
                 const selected = isStart || isEnd;
 
                 const baseTextColor = !inThisMonth ? faintText : headerText;
-                const weekendColor =
-                  di === 0 ? '#EF4444' : di === 6 ? primary : baseTextColor;
+                const weekendColor = di === 0 ? '#EF4444' : di === 6 ? primary : baseTextColor;
 
                 return (
                   <View key={`${wi}-${di}`} style={styles.cell}>
                     <View style={[styles.rangeStrip, { backgroundColor: inRange ? withAlpha(primary, 0.12) : 'transparent' }]} />
-                    <Pressable style={[styles.dayBtn, selected && { backgroundColor: primary }]} onPress={() => pickDay(d)}>
-                      <Text style={[styles.dayText, { color: selected ? '#fff' : weekendColor }]}>
+                    <Pressable 
+                      style={[styles.dayBtn, selected && { backgroundColor: primary }]} 
+                      onPress={() => pickDay(d)}
+                      accessibilityRole="button"
+                      accessibilityLabel={t('chat:datePicker.dayAccessibility', { day: d.getDate() })}
+                    >
+                      {/* ✅ 3. 시스템 폰트 과대 확대 방어 (UI 깨짐 원천 차단) */}
+                      <Text style={[styles.dayText, { color: selected ? '#fff' : weekendColor }]} allowFontScaling={false}>
                         {d.getDate()}
                       </Text>
                     </Pressable>
@@ -225,20 +238,20 @@ function CalendarDialog({ visible, onClose, theme, initialRange, onConfirm }: Ca
 
         <View style={styles.footer}>
           <View style={styles.footerLeft}>
-            <Text style={[styles.footerLabel, { color: subText }]}>선택</Text>
-            <Text style={[styles.footerValue, { color: headerText }]}>
-              {range.from ? formatDateK(range.from) : '선택 안 함'}
+            <Text style={[styles.footerLabel, { color: subText }]} maxFontSizeMultiplier={1.2}>{t('chat:datePicker.selected')}</Text>
+            <Text style={[styles.footerValue, { color: headerText }]} maxFontSizeMultiplier={1.2}>
+              {range.from ? formatDateK(range.from) : t('chat:datePicker.none')}
               {range.to ? ` ~ ${formatDateK(range.to)}` : ''}
             </Text>
           </View>
 
           <View style={styles.footerBtns}>
-            <Pressable style={[styles.footerBtn, { backgroundColor: withAlpha(theme.inputFieldBg ?? '#F3F4F6', 0.92) }]} onPress={onClose}>
-              <Text style={[styles.footerBtnText, { color: headerText }]}>취소</Text>
+            <Pressable style={[styles.footerBtn, { backgroundColor: withAlpha(theme.inputFieldBg ?? '#F3F4F6', 0.92) }]} onPress={onClose} hitSlop={10}>
+              <Text style={[styles.footerBtnText, { color: headerText }]} maxFontSizeMultiplier={1.2}>{t('common:cancel')}</Text>
             </Pressable>
 
-            <Pressable style={[styles.footerBtn, { backgroundColor: primary }]} onPress={confirm}>
-              <Text style={[styles.footerBtnText, { color: '#fff' }]}>확인</Text>
+            <Pressable style={[styles.footerBtn, { backgroundColor: primary }]} onPress={confirm} hitSlop={10}>
+              <Text style={[styles.footerBtnText, { color: '#fff' }]} maxFontSizeMultiplier={1.2}>{t('common:ok')}</Text>
             </Pressable>
           </View>
         </View>
@@ -308,7 +321,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  monthArrowText: { fontSize: 28, fontWeight: '400' },
   monthTitle: { fontSize: 18, fontWeight: '600' },
   weekRow: {
     paddingHorizontal: 10,

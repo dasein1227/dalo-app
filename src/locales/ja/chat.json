@@ -1,0 +1,1293 @@
+{
+  "title": "チャット",
+  "send": "送信",
+  "attach": "ファイル",
+  "gallery": "ギャラリー",
+  "invite": "招待",
+  "manage": "管理",
+  "members": "メンバー",
+  "placeholder": "メッセージを入力…",
+  "date": {
+    "today": "今日",
+    "yesterday": "昨日",
+    "separatorLabel": "{{year}}年{{month}}月{{day}}日 {{weekday}}曜日",
+    "floatingLabel": "{{year}}.{{month}}.{{day}} {{weekday}}"
+  },
+  "all": "すべて",
+  "and_others_n": "ほか",
+  "others_suffix": "ほか",
+  "anonymous": "匿名",
+  "message": "メッセージ",
+  "message_search": "メッセージ検索",
+  "message_send": "メッセージを送信",
+  "message_send_failed": "メッセージを送信できませんでした",
+  "message_delete_failed": "メッセージを削除できませんでした。",
+  "message_deleted": "メッセージを削除しました。",
+  "new_message_one": "新着メッセージ1件",
+  "new_messages_count": "新着メッセージ{{count}}件",
+  "chat_with_me": "自分とのチャット",
+  "self_badge": "自分",
+  "chat_room_title": "チャットルーム",
+  "one_to_one_chat": "1:1チャット",
+  "group_chat_title": "グループチャット",
+  "open_chat_title": "オープンチャット",
+  "beacon_chat_title": "ビーコンチャット",
+  "room_not_found": "ルーム情報がありません。",
+  "chat_room_not_found": "チャットルームが見つかりません。",
+  "conversation_partner": "相手",
+  "audio_send_failed": "音声を送信できませんでした",
+  "video": "動画",
+  "photo": "写真",
+  "file_label": "ファイル",
+  "open_file": "ファイルを開く",
+  "play_video": "動画を再生",
+  "voice_message": "ボイスメッセージ",
+  "share_location": "位置を共有",
+  "map_location_shared_title": "位置を共有",
+  "map_tap_to_open": "タップして地図を開きます。",
+  "cannot_open_map": "地図を開けませんでした。",
+  "no_coordinate_info": "座標情報なし",
+  "send_failed": "送信失敗",
+  "share": "共有",
+  "share_failed": "共有失敗",
+  "delete_failed": "削除失敗",
+  "upload_failed": "アップロード失敗",
+  "selection_mode": "選択モード",
+  "selection_mode_hint": "チャットを削除",
+  "selection_clear": "選択を解除",
+  "delete_dialog_title": "メッセージを削除",
+  "delete_dialog_desc": "削除方法を選択してください。",
+  "delete_for_everyone": "全員から削除",
+  "delete_hide_for_everyone": "全員から非表示",
+  "delete_for_me": "自分だけ削除",
+  "delete_for_me_hint": "選択したメッセージは自分側でのみ削除できます。",
+  "reply": "返信",
+  "reply_to_me": "自分のメッセージに返信",
+  "reply_to_user": "{{nickname}}に返信",
+  "msg_deleted_by_user": "{{nickname}}さんがメッセージを削除しました。",
+  "notice": "お知らせ",
+  "notice_coming_soon": "準備中です。",
+  "korean_label": "韓国料理",
+  "auto_translate_paid_only": "自動翻訳はStandardまたはPremiumで利用できます。",
+  "translation_paid_only": "翻訳は有料メンバー専用です。",
+  "premium_only": "Premium専用",
+  "premium_only_feature_hint": "Premiumで利用できます。",
+  "tone_neutral": "中立",
+  "tone_casual": "カジュアル",
+  "tone_formal": "丁寧",
+  "tone_business": "ビジネス",
+  "tone_playful": "遊び心",
+  "tone_change_premium_only": "トーン設定はPremiumで利用できます。",
+  "tone_premium_only_hint": "Premium翻訳でのみ適用されます。",
+  "login_required": "ログインが必要です。",
+  "no_permission_send_rls": "メッセージを送信する権限がありません。(RLS)\n",
+  "rls_help_chat_members": "→ chat_members に自分が含まれているか、chat_messages のポリシーを確認してください。",
+  "search_placeholder": "検索語を入力",
+  "search_result_count": "{{count}}件",
+  "show_original": "原文を見る",
+  "show_translation": "翻訳を見る",
+  "translating": "翻訳中…",
+  "input": {
+    "placeholder": "チャット入力欄",
+    "placeholderLong": "メッセージを入力…"
+  },
+  "hold_to_unlock": "長押しで入力ロック解除",
+  "error": {
+    "loginRequired": "ログインが必要です。",
+    "roomNotFound": "チャットルームが見つかりません。",
+    "createRoomTitle": "チャットルームを開けませんでした。",
+    "createRoomMessage": "しばらくしてからもう一度お試しください。"
+  },
+  "sheet": {
+    "moreActions": "その他の操作",
+    "media": "写真/動画",
+    "file": "ファイル",
+    "location": "位置を共有",
+    "inviteFriend": "友だちを招待",
+    "inviteLink": "招待リンク",
+    "translate": "翻訳"
+  },
+  "translate": {
+    "title": "翻訳",
+    "current_lang_prefix": "現在: {{code}}",
+    "tone_label": "トーン",
+    "toneNeutral": "中立",
+    "toneNeutralDesc": "自然な標準翻訳",
+    "toneCasual": "カジュアル",
+    "toneCasualDesc": "親しい会話向け",
+    "toneFormal": "丁寧",
+    "toneFormalDesc": "丁寧で礼儀ある表現",
+    "toneBusiness": "ビジネス",
+    "toneBusinessDesc": "仕事、メール、レポート向け",
+    "tonePlayful": "遊び心",
+    "tonePlayfulDesc": "軽い冗談やミーム向け"
+  },
+  "unknown": "不明",
+  "voice": "音声",
+  "list": {
+    "tab": {
+      "chat": "チャット",
+      "open": "営業中",
+      "beacon": "タブビーコン",
+      "business": "ビジネス"
+    },
+    "empty": {
+      "chatTitle": "チャットなし",
+      "chatSub": "友だちに話しかけてみましょう。",
+      "openTitle": "オープンチャットなし",
+      "openSub": "気になるテーマを探してみましょう。",
+      "beaconTitle": "参加中のビーコンなし",
+      "beaconSub": "近くのビーコンを探してみましょう。",
+      "businessTitle": "ビジネスチャットなし",
+      "businessSub": "相談履歴が表示されます。"
+    },
+    "leaveConfirmTitle": "チャットを退出しますか？",
+    "leaveConfirmMessage": "このチャットは一覧から消えます。",
+    "leaveConfirmAction": "退出"
+  },
+  "menu": {
+    "title": "チャットメニュー",
+    "joinedDate": "{{date}}に参加",
+    "media": "写真/動画",
+    "mediaEmpty": "最近のメディアがここに表示されます。",
+    "noticeSchedule": "お知らせと予定",
+    "me": "自分"
+  },
+  "membersScreen": {
+    "title": "メンバー",
+    "loading": "読み込み中…",
+    "empty": "メンバーなし",
+    "owner": "ホスト",
+    "participant": "参加者",
+    "remove": "削除",
+    "removeTitle": "削除",
+    "removeMessage": "{{name}}さんを削除しますか？",
+    "loadFail": "読み込めませんでした",
+    "noName": "名前なし"
+  },
+  "inviteScreen": {
+    "title": "友だちを招待",
+    "roomMissingTitle": "ルーム情報がありません",
+    "roomMissingMessage": "もう一度入ってからお試しください。",
+    "tryAgain": "しばらくしてからもう一度お試しください。",
+    "loadFailTitle": "友だち一覧を読み込めませんでした。",
+    "selectFriend": "友だちを選択してください。",
+    "selectForAdd": "追加する友だちを選択してください。",
+    "selectForNewGroup": "チャットを選択",
+    "addSuccessTitle": "友だちを追加しました。",
+    "addSuccessMessage": "{{count}}人を追加しました。",
+    "addFailTitle": "友だちを追加できませんでした。",
+    "createFailTitle": "グループチャットを作成できませんでした。",
+    "friendRowAdd": "このグループに追加",
+    "friendRowNewGroup": "新しいグループに含める",
+    "groupAddTitle": "グループに友だちを追加",
+    "newGroupTitle": "新しいグループチャット",
+    "groupAddDesc": "チャットを選択",
+    "newGroupDesc": "チャットを選択",
+    "loading": "友だちを読み込み中",
+    "emptyTitle": "招待できる友だちなし",
+    "emptyDesc": "すでに参加中の友だちは除外されます。",
+    "addCount": "{{count}}人を追加",
+    "makeGroupCount": "{{count}}人とグループ作成",
+    "noName": "名前なし",
+    "groupFallbackTitle": "グループチャット",
+    "groupTitleWithOthers": "{{names}} ほか{{count}}人"
+  },
+  "roomEdit": {
+    "title": "チャットルーム情報",
+    "nameLabel": "チャットルーム名",
+    "hidePhoto": "写真を非表示",
+    "hidePhotoDesc": "一覧ではデフォルト画像で表示します。",
+    "helperLine1": "設定した写真と名前は自分にだけ表示されます。",
+    "helperLine2": "相手には影響しません。",
+    "alertTitle": "お知らせ",
+    "unhideBeforeChange": "写真非表示を解除してから変更できます。",
+    "saveFail": "保存に失敗しました"
+  },
+  "roomData": {
+    "title": "データ管理",
+    "ratioTitle": "項目別データ",
+    "noMedia": "保存済みメディアなし",
+    "savedCount": "{{value}}件保存済み",
+    "deleteAllWithSize": "すべてのメディアを削除（{{size}}）",
+    "photoData": "写真データ",
+    "videoData": "動画データ",
+    "audioData": "音声データ",
+    "fileData": "ファイルデータ",
+    "storageCenter": "CO·ONNストレージ管理",
+    "loadFail": "データ情報を読み込めませんでした。",
+    "actionFail": "操作を完了できませんでした。",
+    "clear": {
+      "photoTitle": "写真データを削除",
+      "photoMessage": "チャットクリアを削除",
+      "photoSuccess": "写真データを削除しました。",
+      "videoTitle": "動画データを削除",
+      "videoMessage": "チャットクリアを削除",
+      "videoSuccess": "動画データを削除しました。",
+      "audioTitle": "チャットクリアを削除",
+      "audioMessage": "チャットクリアを削除",
+      "audioSuccess": "チャットクリアを削除",
+      "fileTitle": "ファイルデータを削除",
+      "fileMessage": "チャットクリアを削除",
+      "fileSuccess": "ファイルデータを削除しました。",
+      "allTitle": "すべてのメディアを削除",
+      "allMessage": "チャットクリアを削除",
+      "allSuccess": "メディアデータを削除しました。"
+    }
+  },
+  "collection": {
+    "title": "まとめ",
+    "count": "{{count}}件",
+    "total": "合計 {{value}}",
+    "tabs": {
+      "links": "リンク",
+      "schedules": "予定",
+      "bookmarks": "ブックマーク"
+    },
+    "empty": {
+      "media": "なしメディアなし",
+      "files": "ファイルなし",
+      "links": "リンクなし",
+      "notices": "お知らせなし",
+      "schedules": "予定なし",
+      "bookmarks": "ブックマークなし"
+    },
+    "noDate": "日付なし",
+    "tapToView": "タップして確認",
+    "bookmarkMissingMessage": "チャットが見つかりません。",
+    "scheduleEmptyBody": "予定の内容がありません。",
+    "secureRecovery": {
+      "completedBody": "過去のセキュリティキーを取り込みました。",
+      "rejectedBody": "過去のセキュリティキー要求が拒否されました。"
+    },
+    "scheduleStatus": {
+      "cancelled": "チャットキャンセル",
+      "completed": "完了",
+      "joined": "参加中",
+      "joinedOngoing": "参加中"
+    },
+    "section": {
+      "latestNotice": "最新のお知らせ",
+      "previousNotice": "過去のお知らせ",
+      "activeSchedules": "進行中/募集中",
+      "closedSchedules": "完了/キャンセル"
+    }
+  },
+  "settings": {
+    "title": "チャット設定",
+    "memberCount": "{{count}}人",
+    "startedAt": "{{date}}に開始",
+    "inputLock": "入力ロック",
+    "theme": {
+      "title": "チャットテーマ",
+      "default": "デフォルト",
+      "byRoomType": "ルーム種別基準"
+    },
+    "themePreview": {
+      "other": "いいね",
+      "mine": "了解"
+    },
+    "translation": {
+      "title": "翻訳設定"
+    },
+    "sound": {
+      "title": "通知音",
+      "default": "デフォルト",
+      "clear": "設定クリア",
+      "calm": "落ち着いた音",
+      "short": "短い音",
+      "soft": "やわらかい音",
+      "quiet": "静かな音",
+      "deep": "深い音",
+      "light": "ライト",
+      "mute": "ミュート"
+    },
+    "data": {
+      "section": "データ",
+      "manage": "データ管理"
+    },
+    "export": {
+      "title": "チャットを書き出し",
+      "message": "設定メッセージ",
+      "saveFile": "ファイル保存",
+      "share": "共有",
+      "saveSuccess": "ファイルとして保存しました。",
+      "shareSuccess": "共有画面を開きました。",
+      "saveCancelled": "チャット設定を保存",
+      "fail": "書き出しできませんでした。",
+      "deletedMessage": "[削除されたメッセージ]",
+      "secureExcluded": "[セキュリティメッセージ - 除外]",
+      "imageLabel": "[画像]",
+      "videoLabel": "[動画]",
+      "audioLabel": "[音声]",
+      "fileLabel": "[ファイル]",
+      "unknownSender": "不明",
+      "meSender": "自分",
+      "userSender": "ユーザー",
+      "fileTitle": "CO·ONNチャット書き出し",
+      "roomLine": "チャット: {{roomTitle}}",
+      "exportedAtLine": "書き出し日時: {{exportedAt}}",
+      "noteLocal": "※ このファイルは現在の端末に保存されたチャットを基準にしています。",
+      "noteText": "※ 自分のメッセージは原文、相手のメッセージは現在表示中の本文で書き出します。",
+      "noteSecure": "※ セキュリティモードの本文とキー情報は書き出しません。",
+      "noteGallery": "チャット設定を保存",
+      "attachmentLine": "- 添付: {{type}}{{fileNamePart}}{{mimePart}}",
+      "shareDialogTitle": "チャットを共有"
+    },
+    "leave": {
+      "title": "チャットルームを退出",
+      "action": "退出",
+      "rejectInvite": "招待を拒否して退出",
+      "reportAndLeave": "通報して退出",
+      "groupMessage": "ルームを退出するか、招待を拒否できます。",
+      "reportMessage": "このルームを退出または通報できます。",
+      "defaultMessage": "このチャットルームを退出しますか？一覧から消えます。",
+      "fail": "チャットルームを退出できませんでした。",
+      "selfBlocked": "自分とのチャットは退出できません。"
+    },
+    "secure": {
+      "section": "セキュリティキー",
+      "me": "自分",
+      "peer": "セキュリティ相手",
+      "authCancelled": "設定セキュリティ",
+      "decline": "拒否",
+      "newKey": "新しいセキュリティキーを作成",
+      "newKeyDesc": "設定セキュリティ",
+      "newKeyConfirmTitle": "設定セキュリティしますか？",
+      "newKeyConfirmMessage": "設定セキュリティ",
+      "create": "作成",
+      "newKeySuccessTitle": "新しいセキュリティキーを作成しました",
+      "newKeySuccessMessage": "今後はセキュリティキー epoch {{epoch}} で暗号化します。",
+      "newKeyFailTitle": "キー作成失敗",
+      "newKeyFail": "新しいセキュリティキーを作成できません。",
+      "historyRequest": "設定セキュリティ",
+      "historyRequestDesc": "設定セキュリティ",
+      "historyRequestConfirmTitle": "過去のセキュリティキーを要求しますか？",
+      "historyRequestConfirmMessage": "設定セキュリティ",
+      "request": "要求",
+      "historyRequestSuccessTitle": "リクエストしました",
+      "historyRequestSuccessMessage": "{{count}}人にリクエストしました。",
+      "historyRequestEmpty": "設定セキュリティなし",
+      "historyRequestFailTitle": "リクエスト失敗",
+      "historyRequestFail": "過去のセキュリティキーを要求できませんでした。",
+      "claimApproved": "承認済みキーを取り込む",
+      "claimApprovedDesc": "設定セキュリティを保存",
+      "claimSuccessTitle": "セキュリティキーを取り込みました",
+      "claimSuccessMessage": "保存 {{imported}}件 · 既存 {{skipped}}件{{conflictText}}",
+      "claimFailTitle": "取り込み失敗",
+      "claimFail": "承認済みセキュリティキーを取り込めませんでした。",
+      "incomingRequestTitle": "{{name}}さんから過去のセキュリティキー要求",
+      "shareApprovedDesc": "設定セキュリティ",
+      "historyShareConfirmTitle": "過去のセキュリティキーを共有しますか？",
+      "historyShareConfirmMessage": "{{name}}さんに過去のセキュリティキーを共有しますか？",
+      "historyShareSuccessTitle": "共有しました",
+      "historyShareSuccessMessage": "{{name}}さんに共有しました。",
+      "historyShareFailTitle": "共有失敗",
+      "historyShareFail": "過去のセキュリティキーを共有できませんでした。",
+      "historyRejectConfirmTitle": "リクエストを拒否しますか？",
+      "historyRejectConfirmMessage": "{{name}}さんのリクエストを拒否しますか？",
+      "rejectSuccessTitle": "拒否しました",
+      "rejectSuccessMessage": "{{name}}さんのリクエストを拒否しました。",
+      "rejectFailTitle": "拒否失敗",
+      "rejectFail": "過去のセキュリティキー要求を拒否できませんでした。",
+      "backupSection": "セキュリティキーバックアップ",
+      "backup": "セキュリティバックアップ",
+      "backupSummary": "バックアップ済み · {{rooms}}ルーム · {{keys}}キー",
+      "noBackup": "バックアップなし",
+      "backupConfirmTitle": "セキュリティキーをバックアップしますか？",
+      "backupCreateMessage": "設定セキュリティを保存",
+      "backupReplaceMessage": "設定セキュリティを保存",
+      "backupAction": "バックアップ",
+      "backupFailTitle": "バックアップ失敗",
+      "backupCreateFail": "セキュリティキーバックアップを作成できませんでした。",
+      "restore": "セキュリティ復元",
+      "restoreDesc": "設定セキュリティ",
+      "restoreMessage": "バックアップ作成時に受け取った復旧コードを入力してください。",
+      "restoreAction": "復元",
+      "restoreCodeRequired": "設定セキュリティ",
+      "restoreSuccessTitle": "復元完了",
+      "restoreSuccessMessage": "取り込み {{imported}}件 · 既存 {{skipped}}件{{conflictText}}",
+      "restoreFail": "セキュリティキーバックアップを復元できませんでした。",
+      "conflictText": " · 競合 {{conflicts}}件\n競合したキーは既存のローカルキーを保持しました。",
+      "conflictShort": " · 競合 {{conflicts}}件",
+      "recoveryCodeTitle": "設定セキュリティ",
+      "recoveryCodeMessage": "設定セキュリティ",
+      "copyRecoveryCode": "復旧コードをコピー",
+      "codeStored": "復旧コードを保存しました。",
+      "codeCopied": "復旧コードをコピーしました。",
+      "codeCopyFail": "コピーできませんでした。",
+      "codeConfirmRequired": "設定セキュリティを保存",
+      "deleteServerBackup": "サーバーバックアップを削除",
+      "deleteServerBackupDesc": "設定セキュリティを削除",
+      "backupDeleteConfirmTitle": "セキュリティキーバックアップを削除しますか？",
+      "backupDeleteConfirmMessage": "設定セキュリティを削除",
+      "backupDeleteSuccessTitle": "バックアップを削除しました",
+      "backupDeleteSuccessMessage": "設定セキュリティを削除",
+      "backupDeleteFailTitle": "バックアップ削除失敗",
+      "backupDeleteFail": "セキュリティキーバックアップを削除できませんでした。"
+    },
+    "openProfileEditAccessibility": "オープンチャット公開情報を編集"
+  },
+  "me": "自分",
+  "noticePromote": {
+    "unsupported": "お知らせにできません。",
+    "ownerOnly": "ホストのみお知らせにできます。",
+    "noPermission": "お知らせ権限がありません。",
+    "secureBlocked": "セキュリティメッセージはお知らせにできません。",
+    "systemBlocked": "システムメッセージはお知らせにできません。",
+    "deletedBlocked": "削除済みメッセージはお知らせにできません。",
+    "missingMessage": "メッセージを確認できません。"
+  },
+  "secure": {
+    "promptAuth": "セキュリティメッセージ送信のため認証してください。",
+    "on": "セキュリティモードON",
+    "off": "セキュリティモードOFF",
+    "readyFail": "チャットセキュリティできませんでした。",
+    "sendReadyFail": "チャットセキュリティできませんでした。",
+    "mediaUnsupported": "セキュリティモードでは現在対応していません。",
+    "fileUnsupported": "セキュリティモードではファイル送信に対応していません。",
+    "content": {
+      "image": "🔐 暗号化された画像",
+      "video": "🔐 暗号化された動画",
+      "audio": "内容音声",
+      "location": "🔐 暗号化された位置"
+    },
+    "enabled": "セキュリティモードON",
+    "disabled": "セキュリティモードOFF",
+    "lockedLabel": "🔐 暗号化されたメッセージ",
+    "prompt": {
+      "keyUse": "セキュリティメッセージキー使用のため認証してください。",
+      "deviceRegister": "セキュリティ端末登録のため認証してください。",
+      "backupCreate": "セキュリティキーのバックアップのため認証してください。",
+      "backupRestore": "セキュリティキー復元のため認証してください。",
+      "newRoomKey": "新しいセキュリティキー作成のため認証してください。",
+      "historyRequest": "過去キー要求のため認証してください。",
+      "historyShare": "過去キー共有のため認証してください。",
+      "historyReject": "過去キー要求の拒否のため認証してください。",
+      "historyClaim": "承認済み過去キーの取り込みのため認証してください。",
+      "decrypt": "セキュリティメッセージ表示のため認証してください。"
+    },
+    "error": {
+      "loginRequired": "ログインが必要です。",
+      "backupEmpty": "バックアップするセキュリティキーがありません。セキュリティメッセージ使用後に再試行してください。",
+      "backupMissing": "セキュリティエラーなし",
+      "backupWrongAccount": "セキュリティエラー",
+      "requesterDeviceMissing": "セキュリティエラーできませんでした。",
+      "noHistoryKeyToShare": "セキュリティエラーなし",
+      "parcelCreateFailed": "共有するセキュリティキーデータを作成できませんでした。"
+    }
+  },
+  "jump": {
+    "newMessage": "新着メッセージ",
+    "newMessageAccessibility": "新着メッセージへ移動",
+    "latestAccessibility": "最新メッセージへ移動"
+  },
+  "permission": {
+    "cameraTitle": "権限が必要です",
+    "cameraMessage": "カメラへのアクセス権限が必要です。",
+    "contactsTitle": "権限が必要です",
+    "contactsMessage": "連絡先へのアクセス権限が必要です。"
+  },
+  "filePick": {
+    "failTitle": "ファイル選択に失敗しました",
+    "failMessage": "ファイルを選択できませんでした。"
+  },
+  "newChat": {
+    "title": "新しいチャット",
+    "create": "作成",
+    "start": "開始",
+    "noName": "名前なし",
+    "selectPartnerRequired": "相手を選択してください。",
+    "openTitleRequired": "オープンチャット名を入力してください。",
+    "modeNormal": "通常",
+    "modeOpen": "営業中",
+    "openSectionTitle": "オープンチャットを作成",
+    "openNamePlaceholder": "オープンチャット名",
+    "openHelper": "チャットを選択",
+    "partnerSectionTitle": "相手を選択",
+    "groupTitlePlaceholder": "グループチャット名",
+    "searchNamePlaceholder": "名前を検索",
+    "emptyFriends": "友だちなし",
+    "userFallback": "ユーザー",
+    "privateChatTitle": "個人チャット",
+    "groupChatTitle": "グループチャット",
+    "openChatTitle": "オープンチャット",
+    "coverPhoto": "カバー写真",
+    "selectPhoto": "チャットを選択",
+    "openDescriptionPlaceholder": "ルーム説明",
+    "openTagsPlaceholder": "例: 近所、コーヒー、ランニング",
+    "searchVisible": "検索に表示",
+    "searchVisibleDesc": "ルーム名、説明、タグで検索されます。",
+    "groupModeTitle": "グループチャット",
+    "groupModeAutoDesc": "チャットを選択",
+    "groupModeSingleDesc": "チャットを選択"
+  },
+  "menuModal": {
+    "markRead": "既読にする",
+    "roomInfo": "チャットルーム情報",
+    "pin": "上部に固定",
+    "unpin": "固定を解除",
+    "mute": "ミュート",
+    "unmute": "通知をオン",
+    "leave": "退出",
+    "selfRoomTitle": "自分とのチャット"
+  },
+  "roomCard": {
+    "pending": "チャット保留",
+    "emptyMessage": "メッセージなし",
+    "messageFallback": "メッセージ",
+    "am": "午前",
+    "pm": "午後",
+    "date": "{{month}}月{{day}}日",
+    "preview": {
+      "image": "[写真]",
+      "video": "[動画]",
+      "audio": "[音声]",
+      "file": "[ファイル]",
+      "map": "[位置]",
+      "notice": "[お知らせ]"
+    }
+  },
+  "searchModal": {
+    "rooms": "チャットルーム",
+    "messages": "メッセージ",
+    "placeholder": "検索",
+    "emptyTitle": "検索",
+    "emptyDesc": "チャットルームとメッセージを検索します。",
+    "noResultTitle": "検索結果なし",
+    "noResultDesc": "別のキーワードで検索してください。",
+    "roomPrefix": "チャットルーム",
+    "visibleName": "表示名",
+    "messageSender": "送信者",
+    "filterNormal": "通常",
+    "filterOpen": "営業中",
+    "filterBeacon": "ビーコン",
+    "filterBusiness": "ビジネス",
+    "dateAll": "すべて",
+    "dateToday": "今日",
+    "date7d": "7日",
+    "date30d": "30日",
+    "tabChat": "チャット",
+    "tabParticipant": "メンバー",
+    "tabOpen": "オープンチャット",
+    "participants": "メンバー",
+    "openRooms": "オープンチャット",
+    "participantEmptyTitle": "メンバー検索",
+    "participantEmptyDesc": "チャットルーム内の表示名で検索します。",
+    "participantNoResultTitle": "メンバーなし",
+    "participantNoResultDesc": "別の名前で検索してください。",
+    "openEmptyTitle": "オープンチャット検索",
+    "openEmptyDesc": "ルーム名、説明、タグで検索します。",
+    "openNoResultTitle": "オープンチャットなし",
+    "openNoResultDesc": "別のキーワードで検索してください。",
+    "typeFilter": "種類",
+    "dateFilter": "日付",
+    "openJoined": "参加中",
+    "openPublic": "オープンチャット",
+    "participatingRoom": "参加中のルーム"
+  },
+  "location": {
+    "fallbackTitle": "位置",
+    "selectMapApp": "チャット位置を選択",
+    "openMapHint": "地図をタップして経路を表示"
+  },
+  "translationPanel": {
+    "title": "翻訳設定",
+    "subtitle": "このルームにのみ適用されます。",
+    "autoTranslate": {
+      "title": "チャットタイトル",
+      "desc": "チャット説明を選択"
+    },
+    "showTranslatedOnly": {
+      "title": "翻訳のみ",
+      "desc": "チャット説明"
+    },
+    "tier": {
+      "title": "プラン",
+      "desc": "翻訳品質を選択します。",
+      "upgrade": "アップグレード",
+      "options": {
+        "free": {
+          "label": "Basic",
+          "desc": "基本翻訳"
+        },
+        "mid": {
+          "label": "Standard",
+          "desc": "チャット説明"
+        },
+        "high": {
+          "label": "Premium",
+          "desc": "文脈とトーンを反映"
+        }
+      }
+    },
+    "tone": {
+      "title": "トーン",
+      "desc": "Premium専用トーン設定",
+      "disabled": "Premiumで利用できます。",
+      "options": {
+        "business": {
+          "label": "ビジネス",
+          "desc": "ビジネス説明"
+        },
+        "polite": {
+          "label": "丁寧",
+          "desc": "やわらかく礼儀あるトーン"
+        },
+        "casual": {
+          "label": "カジュアル",
+          "desc": "自然な日常表現"
+        },
+        "neutral": {
+          "label": "中立",
+          "desc": "意味を明確に伝える表現"
+        },
+        "creative": {
+          "label": "クリエイティブ",
+          "desc": "より豊かな表現"
+        }
+      }
+    },
+    "sendLang": {
+      "title": "送信言語",
+      "desc": "チャット説明",
+      "auto": "自動",
+      "autoDesc": "相手の言語に自動で合わせます。",
+      "autoPeerDesc": "現在の相手基準: {{label}}（{{code}}）",
+      "peerBase": "相手基準",
+      "peerDefault": "相手の標準"
+    },
+    "receiveLang": {
+      "title": "受信言語",
+      "desc": "チャット説明"
+    },
+    "status": {
+      "off": "オフ",
+      "on": "チャットオン",
+      "auto": "自動",
+      "receive": "受信",
+      "send": "送信",
+      "translatedOnly": "翻訳のみ"
+    },
+    "language": {
+      "EN": "英語",
+      "ES": "スペイン語",
+      "FR": "フランス語",
+      "DE": "ドイツ語",
+      "IT": "イタリア語",
+      "PT": "ポルトガル語",
+      "NL": "オランダ語",
+      "PL": "ポーランド語",
+      "RU": "ロシア語",
+      "JA": "日本語",
+      "KO": "韓国語",
+      "ZH": "中国語",
+      "TR": "トルコ語",
+      "SV": "スウェーデン語",
+      "ID": "インドネシア語",
+      "TH": "タイ語",
+      "UK": "ウクライナ語",
+      "RO": "ルーマニア語",
+      "CS": "チェコ語",
+      "DA": "デンマーク語",
+      "EL": "ギリシャ語",
+      "FI": "フィンランド語",
+      "HU": "ハンガリー語",
+      "SK": "スロバキア語",
+      "SL": "スロベニア語",
+      "BG": "ブルガリア語",
+      "ET": "エストニア語",
+      "LT": "リトアニア語",
+      "LV": "ラトビア語",
+      "AR": "アラビア語",
+      "ZH_HANS": "中国語（簡体字）",
+      "ZH_HANT": "中国語（繁体字）",
+      "VI": "ベトナム語",
+      "HI": "ヒンディー語",
+      "HE": "ヘブライ語"
+    }
+  },
+  "header": {
+    "searchPlaceholder": "チャット検索",
+    "advanced": "詳細",
+    "sender": "送信者",
+    "date": "日付"
+  },
+  "attachment": {
+    "photo": "写真",
+    "camera": "カメラ",
+    "call": "電話",
+    "pay": "送金",
+    "map": "地図",
+    "music": "音楽",
+    "file": "ファイル",
+    "cloud": "クラウド",
+    "contact": "連絡先",
+    "recentPhotos": "最近の写真",
+    "send": "送信",
+    "photoPermissionRequired": "写真へのアクセス権限が必要です。",
+    "openSettings": "設定を開く",
+    "callUnavailable": "チャットできませんでした。",
+    "phoneMissing": "登録された電話番号がありません。",
+    "phoneOpenFail": "電話を開始できませんでした。",
+    "voiceCallUnavailable": "チャットは準備中です。",
+    "contactEmpty": "共有できる連絡先情報がありません。",
+    "contactShareTitle": "連絡先",
+    "contactName": "名前",
+    "contactPhone": "電話番号",
+    "contactShareFail": "連絡先を共有できませんでした。",
+    "voiceMessage": "音声",
+    "capture": "キャプチャ",
+    "schedule": "予定"
+  },
+  "accessibility": {
+    "attachmentClose": "チャットアクセシビリティ",
+    "attachmentOpen": "チャットアクセシビリティ",
+    "messageInput": "メッセージ入力",
+    "sendMessage": "メッセージを送信",
+    "voiceMessage": "ボイスメッセージ"
+  },
+  "replyPreview": {
+    "peer": "チャット相手",
+    "replyTo": "{{name}}に返信",
+    "cancel": "返信をキャンセル"
+  },
+  "mediaKind": {
+    "image": "写真",
+    "video": "動画",
+    "audio": "ボイスメッセージ",
+    "file": "ファイル",
+    "map": "位置",
+    "notice": "お知らせ",
+    "text": "テキスト"
+  },
+  "deleteModal": {
+    "title": "削除",
+    "mine": "自分だけ削除",
+    "all": "全員から削除",
+    "moment": "チャットを削除",
+    "sectionTitle": "チャットを削除",
+    "selectTime": "チャットを削除",
+    "readBased": "読んだ後に削除",
+    "readAfterWithDelay": "既読後 +{{delay}}",
+    "afterDelete": "{{delay}}後に削除",
+    "unit": {
+      "hour": "時間",
+      "minute": "分",
+      "second": "秒"
+    },
+    "cancelTitle": "キャンセルしますか？",
+    "cancelDesc": "選択した設定は保存されません。",
+    "keepEditing": "編集を続ける",
+    "discard": "キャンセル"
+  },
+  "messageAction": {
+    "copy": "コピー",
+    "selectCopy": "チャットを選択",
+    "reply": "返信",
+    "share": "共有",
+    "toMe": "自分に",
+    "notice": "お知らせ",
+    "highlight": "ブックマーク",
+    "capture": "キャプチャ",
+    "delete": "削除",
+    "cancelMoment": "削除設定を取消",
+    "viewOriginalTranslation": "原文 / 翻訳",
+    "translateOther": "別の言語に翻訳",
+    "reactors": "リアクション",
+    "shareToMe": "自分に共有",
+    "unhighlight": "ブックマーク解除"
+  },
+  "moment": {
+    "title": "チャットタイトルを削除",
+    "cancel": "削除設定を取消",
+    "expiredMessage": "期限切れメッセージ"
+  },
+  "noticeBanner": {
+    "open": "チャットオープン",
+    "close": "お知らせを閉じる"
+  },
+  "newMessagePill": {
+    "label": "新着メッセージ{{count}}件",
+    "accessibility": "新着メッセージ{{count}}件を見る"
+  },
+  "search": {
+    "sender": "送信者",
+    "senderFilter": "チャット検索",
+    "dateFilter": "チャット検索",
+    "prevResult": "前の結果",
+    "nextResult": "次の結果",
+    "close": "検索を閉じる",
+    "clearSender": "送信者フィルターを解除",
+    "placeholder": "検索",
+    "inputAccessibility": "チャット検索",
+    "clearKeyword": "チャット検索",
+    "bookmarkFilter": "ブックマークフィルター"
+  },
+  "datePicker": {
+    "title": "チャットタイトルを選択",
+    "clear": "チャットクリア",
+    "prevMonth": "前の月",
+    "nextMonth": "次の月",
+    "monthTitle": "{{year}}年{{month}}月",
+    "weekday": {
+      "sun": "日",
+      "mon": "月",
+      "tue": "火",
+      "wed": "水",
+      "thu": "木",
+      "fri": "金",
+      "sat": "土"
+    },
+    "dayAccessibility": "{{day}}日",
+    "selected": "選択中",
+    "none": "なし"
+  },
+  "selection": {
+    "title": "削除",
+    "selectAll": "すべて選択",
+    "deleteCount": "{{count}}件を削除"
+  },
+  "noticeModel": {
+    "fallback": "メッセージを確認してください。",
+    "scheduleTitle": "予定",
+    "media": {
+      "image": "写真",
+      "video": "動画",
+      "audio": "ボイスメッセージ",
+      "file": "ファイル",
+      "map": "位置"
+    },
+    "secureRecovery": {
+      "requestCreated": {
+        "title": "チャットタイトル",
+        "body": "チャット本文"
+      },
+      "approved": {
+        "title": "チャットタイトル",
+        "body": "チャット本文"
+      },
+      "completed": {
+        "title": "完了タイトル",
+        "body": "過去メッセージを再び開けます。"
+      },
+      "rejected": {
+        "title": "チャットタイトル",
+        "body": "このリクエストでは過去メッセージを開けません。"
+      }
+    },
+    "scheduleTitleWithPrefix": "[予定] 予定",
+    "weekday": {
+      "sun": "日",
+      "mon": "月",
+      "tue": "火",
+      "wed": "水",
+      "thu": "木",
+      "fri": "金",
+      "sat": "土"
+    }
+  },
+  "messageItem": {
+    "noticeFallback": "お知らせメッセージです。",
+    "secureLinkFallback": "リンク",
+    "mapAddressFallback": "位置情報",
+    "secure": {
+      "genericTitle": "セキュリティ要求",
+      "genericBody": "セキュリティ要求の状態が更新されました。",
+      "fileFallback": "セキュリティファイル"
+    },
+    "tombstone": {
+      "deleted": "チャットを削除",
+      "expired": "期限切れのメッセージです。"
+    },
+    "longMessage": {
+      "viewAll": "すべて見る"
+    },
+    "action": {
+      "confirm": "OK"
+    }
+  },
+  "linkPreview": {
+    "link": "リンク",
+    "web": "Web",
+    "searchTitle": "{{query}}を検索",
+    "searchTitleWithProvider": "{{query}} · {{provider}}で検索",
+    "searchResult": "{{query}}の検索結果",
+    "searchResultWithProvider": "{{query}} · {{provider}}の検索結果",
+    "provider": {
+      "naver": "Naver",
+      "google": "Google",
+      "daum": "Daum"
+    }
+  },
+  "messageMeta": {
+    "deleteSuffix": "チャットを削除",
+    "cancelMoment": "チャットを削除"
+  },
+  "messageBody": {
+    "link": "リンク",
+    "secureMessage": "暗号化されたメッセージ",
+    "file": "ファイル",
+    "tapToOpen": "タップして開く",
+    "locationInfo": "位置情報",
+    "secureFile": "セキュリティファイル"
+  },
+  "replyBlock": {
+    "peer": "チャット相手",
+    "replyTo": "{{name}}に返信"
+  },
+  "voiceRecorder": {
+    "totalDuration": "合計 {{duration}}"
+  },
+  "actions": {
+    "momentCancelFailTitle": "チャット操作できませんでした。",
+    "tryAgain": "しばらくしてからもう一度お試しください。",
+    "deleteFailTitle": "削除失敗",
+    "missingServerMessage": "チャット操作できませんでした。",
+    "deleteNetworkFail": "チャット操作できませんでした。",
+    "momentSetFailTitle": "チャット操作できませんでした。",
+    "momentSetNetworkFail": "チャット操作できませんでした。",
+    "uploadFailTitle": "アップロード失敗",
+    "imageUploadFail": "チャット操作できませんでした。",
+    "errorTitle": "エラー",
+    "mediaSendFail": "チャット操作",
+    "voiceUploadFail": "チャット操作できませんでした。",
+    "fileUploadFail": "チャット操作できませんでした。"
+  },
+  "bridge": {
+    "messageNotFound": "チャットできませんでした。",
+    "editedImageSent": "編集した画像を送信しました。",
+    "editedImageSendFail": "チャットできませんでした。"
+  },
+  "capture": {
+    "title": "キャプチャタイトルを選択",
+    "desc": "メッセージ範囲を選択してください",
+    "exit": "キャプチャ終了",
+    "clear": "キャプチャクリア",
+    "share": "共有",
+    "save": "保存",
+    "shareCapture": "キャプチャを共有",
+    "saveCapture": "キャプチャを保存",
+    "anonymousOn": "チャットキャプチャ",
+    "anonymousOff": "チャットキャプチャ",
+    "anonymousUser": "ユーザー{{index}}",
+    "error": {
+      "secureBlocked": "セキュリティチャットはキャプチャできません。",
+      "messageNotFound": "メッセージが見つかりません。",
+      "areaNotFound": "キャプチャエラーが見つかりません。",
+      "selectedAreaNotFound": "キャプチャエラーが見つかりません。",
+      "areaCalcFailed": "領域を計算できませんでした。",
+      "outOfView": "キャプチャエラーを選択",
+      "imageCreateFailed": "キャプチャ画像を作成できませんでした。",
+      "emptySelection": "メッセージが選択されていません。",
+      "permissionRequired": "写真保存権限が必要です。",
+      "saveFailed": "保存できませんでした。",
+      "shareUnavailable": "キャプチャエラー",
+      "shareFailed": "共有できませんでした。"
+    },
+    "success": {
+      "saved": "キャプチャを保存しました。",
+      "savedPartial": "一部の範囲のみ保存しました。",
+      "savedVisibleOnly": "表示中の範囲のみ保存しました。"
+    },
+    "anonymousInitial": "チャットキャプチャ"
+  },
+  "schedule": {
+    "common": {
+      "title": "予定",
+      "fallbackTitle": "無題",
+      "roomFallback": "チャットルーム",
+      "participantFallback": "参加者",
+      "confirm": "OK",
+      "cancel": "キャンセル",
+      "close": "閉じる",
+      "delete": "削除",
+      "done": "完了",
+      "save": "保存",
+      "saving": "保存中",
+      "select": "選択",
+      "weekdays": {
+        "sun": "日",
+        "mon": "月",
+        "tue": "火",
+        "wed": "水",
+        "thu": "木",
+        "fri": "金",
+        "sat": "土"
+      },
+      "period": {
+        "am": "午前",
+        "pm": "午後"
+      },
+      "date": "{{month}}月{{day}}日（{{weekday}}）",
+      "compactDate": "{{month}}.{{day}} {{weekday}}",
+      "timeWithPeriod": "{{period}} {{hour}}:{{minute}}",
+      "participantCount": "参加者{{count}}人",
+      "participantCountShort": "参加{{count}}人",
+      "participantCountCompact": "参加{{count}}",
+      "openDetail": "{{title}}の詳細を見る"
+    },
+    "reminder": {
+      "off": "オフ",
+      "before30m": "30分前",
+      "before1h": "1時間前",
+      "before3h": "3時間前",
+      "before1d": "1日前",
+      "afterJoin": "参加後に設定できます"
+    },
+    "api": {
+      "messageTitle": "予定 · {{title}}",
+      "calendarDefaultTitle": "CO·ONN予定",
+      "calendarPlace": "場所: {{place}}",
+      "calendarAddress": "住所: {{address}}",
+      "calendarNoteFooter": "CO·ONN予定",
+      "notificationChannel": "予定",
+      "reminderTimeBody": "{{time}}に予定が始まります。",
+      "reminderSoonBody": "チャット予定は準備中です。",
+      "reminderTitle": "予定リマインダー"
+    },
+    "detail": {
+      "notFound": "予定が見つかりません。",
+      "cancelled": "詳細キャンセル",
+      "completed": "完了した予定",
+      "directions": "経路",
+      "notification": "通知",
+      "appPush": "アプリプッシュ",
+      "calendar": "カレンダー",
+      "syncCalendar": "マイカレンダーに同期",
+      "synced": "同期済み",
+      "notSynced": "未同期",
+      "join": "参加",
+      "leave": "キャンセル",
+      "noticeBadge": "お知らせ",
+      "noParticipants": "まだ参加者はいません。",
+      "moveToChat": "予定詳細",
+      "menu": {
+        "edit": "メニュー編集",
+        "cancel": "メニューキャンセル",
+        "complete": "メニュー完了"
+      },
+      "alert": {
+        "processFailTitle": "詳細通知できませんでした。",
+        "joinChangeFail": "詳細通知できませんでした。",
+        "participantSettingTitle": "詳細通知",
+        "promoteNotice": "詳細通知",
+        "removeNotice": "詳細通知",
+        "promoteNoticeMessage": "{{name}}さんを注目参加者として表示しますか？",
+        "removeNoticeMessage": "{{name}}さんの注目表示を解除しますか？",
+        "settingFailTitle": "詳細通知できませんでした。",
+        "participantSettingFail": "参加者設定を変更できませんでした。",
+        "reminderFailTitle": "詳細通知できませんでした。",
+        "calendarReminderFailTitle": "カレンダー通知に失敗しました",
+        "calendarSyncFailTitle": "カレンダー同期に失敗しました",
+        "calendarDeleteFailTitle": "カレンダー削除に失敗しました",
+        "cancelTitle": "予定をキャンセル",
+        "cancelMessage": "詳細通知",
+        "cancelAction": "予定をキャンセル",
+        "cancelFailTitle": "詳細通知できませんでした。",
+        "cancelFail": "予定をキャンセルできませんでした。",
+        "completeTitle": "予定を完了",
+        "completeMessage": "この予定を完了にしますか？\n完了した予定は下部に表示されます。",
+        "completeFailTitle": "詳細通知できませんでした。",
+        "completeFail": "予定を完了できませんでした。",
+        "calendarRemoveTitle": "詳細通知",
+        "calendarRemoveMessage": "詳細通知しますか？"
+      },
+      "error": {
+        "calendarPermissionDenied": "カレンダー権限が必要です。",
+        "calendarNotFound": "詳細エラーなし",
+        "invalidScheduleTime": "予定時刻を確認できませんでした。",
+        "calendarApiUnavailable": "詳細エラー",
+        "calendarDefault": "カレンダー操作を完了できませんでした。",
+        "notificationPermissionDenied": "通知権限が必要です。",
+        "reminderTimePast": "通知時刻が過ぎています。",
+        "reminderDefault": "通知を設定できませんでした。"
+      }
+    },
+    "editor": {
+      "createTitle": "予定編集",
+      "editTitle": "予定編集",
+      "titlePlaceholder": "タイトル",
+      "allDay": "終日",
+      "startDate": "開始日",
+      "endDate": "終了日",
+      "place": "場所",
+      "map": "地図",
+      "placeNamePlaceholder": "場所名",
+      "memoPlaceholder": "メモを入力",
+      "cancelledLocked": "予定編集",
+      "locationPickerTitle": "予定編集を選択",
+      "locationPickerHelper": "予定編集を選択",
+      "validation": {
+        "titleRequired": "タイトルを入力してください。",
+        "startInvalid": "予定編集",
+        "endInvalid": "予定編集",
+        "endBeforeStart": "終了時刻が開始時刻より前です。",
+        "roomMissing": "予定編集が見つかりません。"
+      }
+    },
+    "listScreen": {
+      "loadFail": "予定を読み込めませんでした。",
+      "roomMissing": "チャットルーム情報が見つかりません。",
+      "createAccessibility": "予定を作成",
+      "retry": "再試行",
+      "activeCount": "進行中 {{count}}件",
+      "summary": "このチャットルームで一緒に管理する予定です。",
+      "emptyTitle": "まだ予定がありません",
+      "emptyDesc": "一緒に見る予定を作成しましょう。",
+      "beaconUnavailableTitle": "ビーコンチャットでは予定を利用できません",
+      "beaconUnavailableDesc": "ビーコンチャットでは予定項目を表示しません。",
+      "create": "予定を作成",
+      "joined": "参加中",
+      "notJoined": "参加前",
+      "cancelled": "キャンセル済み",
+      "completed": "完了",
+      "past": "過去の予定"
+    },
+    "messageCard": {
+      "cancelled": "予定キャンセル",
+      "completed": "完了"
+    }
+  },
+  "openProfile": {
+    "common": {
+      "confirm": "OK",
+      "cancel": "キャンセル",
+      "save": "保存",
+      "delete": "削除",
+      "default": "デフォルト",
+      "user": "ユーザー",
+      "openChat": "オープンチャット",
+      "business": "ビジネス",
+      "openTalk": "オープンチャット",
+      "fallbackName": "オープンプロフィール",
+      "statusEmpty": "ステータスメッセージなし",
+      "selectPhoto": "チャットを選択",
+      "photoApplied": "写真を適用しました。",
+      "saved": "保存しました。",
+      "deleted": "削除しました。",
+      "tryAgain": "しばらくしてからもう一度お試しください。",
+      "notice": "お知らせ",
+      "actionFailed": "処理できませんでした。",
+      "saveFailed": "保存できませんでした。",
+      "profileSaveFailed": "プロフィールを保存できませんでした。"
+    },
+    "list": {
+      "title": "一覧タイトル",
+      "loadFailed": "オープンプロフィールを読み込めませんでした。",
+      "nicknameRequired": "ニックネームを入力してください。",
+      "createSuccess": "オープンプロフィールを作成しました。",
+      "createFailed": "作成失敗",
+      "saveFailed": "保存に失敗しました",
+      "deleteFailed": "削除失敗",
+      "deleteTitle": "オープンプロフィールを削除しますか？",
+      "deleteDescInUse": "チャット一覧",
+      "deleteDescDefault": "削除したプロフィールは再使用できません。",
+      "editAccessibility": "オープンプロフィールを編集",
+      "usedRoomsCount": "使用中のオープンチャット{{count}}件",
+      "usedRoomsEmpty": "使用中のオープンチャットはありません。",
+      "emptyTitle": "オープンプロフィールなし",
+      "emptyDesc": "チャット一覧"
+    },
+    "viewer": {
+      "action": {
+        "transferOwner": "オーナー委任",
+        "promoteManager": "ビューア操作",
+        "demoteManager": "ビューア操作",
+        "kick": "強制退室",
+        "block": "ブロック",
+        "unblock": "ブロック解除",
+        "release": "解除",
+        "delegate": "ビューア操作",
+        "appoint": "任命",
+        "changePhoto": "ビューア操作",
+        "showPhoto": "ビューア操作"
+      },
+      "confirm": {
+        "blockMessage": "ビューア確認しますか？",
+        "unblockMessage": "このユーザーのメッセージを再表示しますか？",
+        "transferOwnerMessage": "{{name}}さんにオーナーを委任しますか？",
+        "promoteManagerMessage": "{{name}}さんを副管理者にしますか？",
+        "demoteManagerMessage": "{{name}}さんの副管理者権限を解除しますか？",
+        "kickMessage": "{{name}}さんを強制退室させますか？強制退室されたユーザーは再入室できません。"
+      },
+      "accessibility": {
+        "save": "保存"
+      },
+      "placeholder": {
+        "status": "ステータスメッセージ"
+      }
+    },
+    "edit": {
+      "loadFailed": "オープンチャット情報を読み込めませんでした。",
+      "titleRequired": "ルーム名を入力してください。",
+      "saveFailed": "保存できませんでした。しばらくしてからもう一度お試しください。",
+      "categoryFallback": "オープンチャット",
+      "titlePlaceholder": "オープンチャット名",
+      "changePhoto": "チャット編集",
+      "descriptionPlaceholder": "チャット編集",
+      "tagsPlaceholder": "タグを入力 例: 近所、コーヒー、ランニング",
+      "publicTitle": "公開",
+      "publicDesc": "チャット編集",
+      "selectCover": "チャット編集を選択"
+    },
+    "gate": {
+      "loadFailed": "情報を読み込めませんでした。",
+      "joinFailed": "オープンプロフィールで入室できませんでした。しばらくしてからもう一度お試しください。",
+      "enterChat": "チャットに入る",
+      "startConsult": "相談を開始",
+      "selectProfileEnter": "チャットを選択",
+      "joinOpenChat": "オープンチャットに参加",
+      "openNow": "営業中",
+      "closed": "営業終了",
+      "participants": "参加者 {{count}}人",
+      "participantsWithMax": "参加者 {{count}}/{{max}}人",
+      "createdAt": "作成日 {{date}}",
+      "host": "ホスト",
+      "introEmpty": "チャットなし"
+    }
+  },
+  "userFallback": "ユーザー",
+  "room": {
+    "deletedReadonly": "チャットルームを削除",
+    "leftReadonly": "チャットルーム",
+    "kickedTitle": "チャットルーム",
+    "kickedMessage": "このチャットルームは利用できません。"
+  },
+  "toast": {
+    "selectCopySecureBlocked": "チャットトーストを選択",
+    "selectCopyUnsupported": "チャットトーストを選択",
+    "shareToSelfSuccess": "チャットトースト",
+    "shareSecureBlocked": "セキュリティメッセージは共有できません。",
+    "shareUnsupported": "このメッセージは共有できません。",
+    "shareSelfRoomUnavailable": "チャットトーストできませんでした。",
+    "shareFailed": "共有できませんでした。",
+    "noticeNoPermission": "チャットトーストが必要です。",
+    "copied": "コピーしました。"
+  },
+  "longMessage": {
+    "message": "メッセージ",
+    "translation": "翻訳",
+    "original": "原文"
+  },
+  "selectCopy": {
+    "titleFallback": "メッセージ",
+    "translated": "翻訳",
+    "original": "原文",
+    "hint": "チャットを選択",
+    "copied": "コピー済み",
+    "copyAll": "すべてコピー",
+    "empty": "選択できるテキストがありません"
+  },
+  "system": {
+    "notice": "チャット更新",
+    "memberJoined": "{{name}}が参加しました。",
+    "memberLeft": "{{name}}が退室しました。",
+    "memberKicked": "{{name}}が強制退室されました。",
+    "managerPromoted": "{{name}}が副管理者になりました。",
+    "managerDemoted": "{{name}}の副管理者権限が解除されました。",
+    "ownerTransferred": "{{name}}に管理者権限が移りました。",
+    "roomDeleted": "このチャットは削除されました。"
+  },
+  "cancel": "キャンセル"
+}

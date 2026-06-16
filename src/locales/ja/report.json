@@ -1,0 +1,28 @@
+{
+  "common": {
+    "title": "通報"
+  },
+  "reasonList": {
+    "title": "通報理由を選択",
+    "guide": "利用ガイド"
+  },
+  "reasonDetail": {
+    "submit": "送信",
+    "more": "詳しく見る",
+    "empty": "通報情報を読み込めませんでした。"
+  },
+  "guide": {
+    "title": "ガイド",
+    "empty": "ガイドを読み込めませんでした。"
+  },
+  "done": {
+    "title": "通報を受け付けました。",
+    "body": "確認後、必要な対応を行います。"
+  },
+  "alert": {
+    "loadFail": "読み込み失敗",
+    "info": "お知らせ",
+    "linkOpenFail": "リンクを開けませんでした。",
+    "submitFail": "送信失敗"
+  }
+}

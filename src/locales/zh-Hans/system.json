@@ -1,0 +1,27 @@
+{
+  "splash_loading": "正在准备启动…",
+  "offline": "当前离线。请检查网络。",
+  "not_found": "找不到页面。",
+  "notFound": {
+    "header": "页面不存在",
+    "title": "找不到页面",
+    "desc": "找不到请求的页面。请确认路径或信息。",
+    "retry": "重试",
+    "home": "回到首页",
+    "homeShort": "首页",
+    "previous": "返回上一页",
+    "quick": {
+      "friends": "好友",
+      "settings": "设置"
+    }
+  },
+  "offlineScreen": {
+    "header": "离线",
+    "title": "当前处于离线状态",
+    "desc": "请检查网络连接。\nWi‑Fi 或移动数据可能已关闭。",
+    "retry": "重试",
+    "check": "检查连接",
+    "openSettings": "打开设置",
+    "home": "回到首页"
+  }
+}

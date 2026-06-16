@@ -1,0 +1,35 @@
+{
+  "title": "権限設定",
+  "subtitle": "必要な権限を許可してください。",
+  "location_title": "位置情報の権限",
+  "location_desc": "周辺のビーコンと地図を表示するために必要です。",
+  "notifications_title": "通知権限（任意）",
+  "notifications_desc": "ビーコン招待、チャット、通知を受け取れます。",
+  "allow_now": "今すぐ許可",
+  "allowed": "許可済み",
+  "open_settings": "設定を開く",
+  "continue_without_location": "後で設定して続ける",
+  "background_location_title": "バックグラウンド位置情報（任意）",
+  "background_location_desc": "アプリを開いていなくても、周辺ビーコンや位置情報ベースの通知を受け取れます。",
+  "background_location_hint": "バッテリー消費が増える場合があります。設定でいつでも変更できます。",
+  "gallery": {
+    "title": "写真へのアクセスが必要です",
+    "description": "写真を選択するにはアクセス権限が必要です。"
+  },
+  "camera": {
+    "title": "カメラへのアクセスが必要です",
+    "description": "撮影するにはカメラ権限が必要です。"
+  },
+  "location": {
+    "title": "位置情報へのアクセスが必要です",
+    "description": "現在地を確認するには権限が必要です。"
+  },
+  "notification": {
+    "title": "通知権限",
+    "description": "通知を受け取るには権限が必要です。"
+  },
+  "action": {
+    "openSettings": "設定を開く",
+    "notNow": "後で"
+  }
+}

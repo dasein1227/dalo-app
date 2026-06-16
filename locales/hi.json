@@ -1,0 +1,10 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "COONN",
+    "NSPhotoLibraryUsageDescription": "फ़ोटो एक्सेस का उपयोग प्रोफ़ाइल, पोस्ट और चैट इमेज चुनने के लिए किया जाता है।",
+    "NSPhotoLibraryAddUsageDescription": "फ़ोटो लाइब्रेरी एक्सेस का उपयोग इमेज और मीडिया को डिवाइस पर सेव करने के लिए किया जाता है।",
+    "NSLocationWhenInUseUsageDescription": "स्थान का उपयोग आस-पास की पोस्ट, बीकन और दूरी-आधारित सुविधाओं के लिए किया जाता है।",
+    "NSCameraUsageDescription": "कैमरा प्रोफ़ाइल, पोस्ट और चैट फ़ोटो लेने के लिए उपयोग किया जाता है।",
+    "NSMicrophoneUsageDescription": "वीडियो रिकॉर्ड करते समय माइक्रोफ़ोन का उपयोग किया जाता है।"
+  }
+}

@@ -1,11 +1,4 @@
-// src/screens/profile/CreatePost.tsx
-
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useMemo,
-} from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -14,1876 +7,1570 @@ import {
   Pressable,
   ScrollView,
   TextInput,
-  Modal,
   Dimensions,
-  Alert,
   KeyboardAvoidingView,
+  Keyboard,
   Platform,
-  Animated,
-  PanResponder,
-  LayoutChangeEvent,
-  StatusBar,
   ActivityIndicator,
+  Modal,
   FlatList,
+  StatusBar,
+  Vibration,
+  DeviceEventEmitter,
+  useColorScheme,
 } from 'react-native';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-import * as ImagePicker from 'expo-image-picker';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { supabase } from '@/lib/supabase';
+import { uploadImageToR2 } from '@/lib/r2Upload';
 import {
   ChevronLeft,
   X,
-  Edit3,
   Plus,
   Check,
-  ChevronDown,
-  RotateCcw,
+  ChevronRight,
+  MapPin,
+  Users,
+  ShoppingBag,
   Search,
+  Ratio,
+  Edit3,
+  RectangleHorizontal,
+  RectangleVertical,
+  Store,
+  User,
 } from 'lucide-react-native';
-import { uploadImageToR2 } from '@/lib/r2Upload';
+
+import UniversalImageEditor from '@/components/UniversalImageEditor';
+import SimpleMediaPicker, { SimplePickedImage } from '@/components/SimpleMediaPicker';
+import CoonnAlert, { type CoonnAlertVariant } from '@/components/CoonnAlert';
+import CoonnFloatingToast from '@/components/feedback/CoonnFloatingToast';
+import { createCoonnFloatingToastTheme } from '@/components/feedback/CoonnFloatingToast.theme';
+import { useCoonnFloatingToast } from '@/components/feedback/useCoonnFloatingToast';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
+const THUMB_REORDER_SLOT = 86;
+const HAIRLINE = StyleSheet.hairlineWidth;
+const COONN_TEXT = '#111111';
+const COONN_MUTED = '#6B7280';
+const COONN_LINE = '#E7EAEF';
+const COONN_LINE_SOFT = '#F1F3F5';
+const COONN_SURFACE = '#F8F9FA';
+const COONN_ACCENT = '#111111';
 
-type VisibilityType = 'public' | 'friends' | 'followers' | 'private';
-
-const VISIBILITY_OPTIONS: { id: VisibilityType; label: string }[] = [
-  { id: 'public', label: '전체' },
-  { id: 'friends', label: '친구' },
-  { id: 'followers', label: '팔로워' },
-  { id: 'private', label: '나만' },
-];
+const POST_UPLOAD_EVENTS = {
+  START: 'postUpload:start',
+  PROGRESS: 'postUpload:progress',
+  DONE: 'postUpload:done',
+  ERROR: 'postUpload:error',
+} as const;
 
 type ImageItem = {
-  uri: string; // 원본
-  editedUri?: string; // 잘라낸 버전
+  id: string;
+  uri: string;
+  originalUri: string;
   width: number;
   height: number;
+  frameBaseUri?: string;
+  frameBaseWidth?: number;
+  frameBaseHeight?: number;
 };
 
-type RatioKey = 'original' | '1:1' | '3:4' | '9:16';
+type TaggedUser = { id: string; nickname: string; avatar_url: string | null; follow_id?: string };
+type BusinessTag = { id: string; name: string; thumbnail_url: string | null; shop_id?: string };
+type LocationTag = { lat: number; lng: number; address: string; name?: string };
 
-const RATIO_OPTIONS: { id: RatioKey; label: string }[] = [
-  { id: 'original', label: '원본' },
-  { id: '1:1', label: '1:1' },
-  { id: '3:4', label: '3:4' },
-  { id: '9:16', label: '9:16' },
-];
-
-// ===== 태그 관련 타입 =====
-type TaggedUser = {
-  id: string;
-  nickname: string | null;
-  follow_id: string | null;
-  avatar_url: string | null;
+type CreatePostAlertState = {
+  visible: boolean;
+  title: string;
+  message?: string;
+  variant?: CoonnAlertVariant;
+  confirmText?: string;
+  cancelText?: string;
+  singleButton?: boolean;
+  dismissOnBackdrop?: boolean;
+  onConfirm?: () => void | Promise<void>;
 };
 
-type LocationTag = {
-  name: string;
-  address?: string | null;
-  lat?: number | null;
-  lng?: number | null;
+const EMPTY_CREATE_POST_ALERT: CreatePostAlertState = {
+  visible: false,
+  title: '',
+  message: undefined,
+  variant: 'default',
+  confirmText: '확인',
+  cancelText: '취소',
+  singleButton: true,
+  dismissOnBackdrop: true,
 };
 
-type BusinessTag = {
-  id: string;
-  name: string;
-  shop_id: string | null;
-  thumbnail_url: string | null; // logo/main/hero 중 하나를 매핑해서 사용
-};
-
-type TagModalMode = 'person' | 'location' | 'business' | null;
-
-// FlatList 공용 유니온 타입
-type TagListItem = TaggedUser | LocationTag | BusinessTag;
-
-/**
- * caption에서 인스타 스타일 해시태그 추출
- * - 예: "오늘 #느끼함 #WorkFriendly" -> ["느끼함", "WorkFriendly"]
- * - DB 저장은 tag_text에 '#' 제외한 값으로 저장
- * - 중복 제거(대소문자 무시), 최대 20개, 태그 길이 60 제한
- */
 const extractHashtags = (text: string): string[] => {
   const src = (text ?? '').trim();
   if (!src) return [];
-
-  // 허용 문자: 한글/영문/숫자/언더스코어
   const re = /#([0-9A-Za-z가-힣_]+)/g;
-
   const out: string[] = [];
   let m: RegExpExecArray | null;
   while ((m = re.exec(src)) !== null) {
-    const raw = (m[1] ?? '').trim();
-    if (!raw) continue;
-
-    const tag = raw.length > 60 ? raw.slice(0, 60) : raw;
-    out.push(tag);
+    if (m[1]) out.push(m[1].slice(0, 60));
   }
-
-  const seen = new Set<string>();
-  const uniq: string[] = [];
-  for (const t of out) {
-    const key = t.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    uniq.push(t);
-  }
-
-  return uniq.slice(0, 20);
+  return [...new Set(out)].slice(0, 20);
 };
 
-export default function CreatePostScreen({ navigation }: any) {
-  const insets = useSafeAreaInsets();
+const getFrameBase = (item?: ImageItem | null) => ({
+  uri: item?.frameBaseUri || item?.uri || '',
+  width: Number(item?.frameBaseWidth || item?.width || 0),
+  height: Number(item?.frameBaseHeight || item?.height || 0),
+});
 
-  // ----------------------------
-  // 이미지 및 기본 상태
-  // ----------------------------
+const getEffectiveUploadRatio = (
+  ratio: number | null,
+  inverted: boolean,
+  firstImage?: ImageItem | null,
+): number | null => {
+  let resolvedRatio = ratio;
+
+  if (resolvedRatio == null && firstImage) {
+    const base = getFrameBase(firstImage);
+    if (Number.isFinite(base.width) && Number.isFinite(base.height) && base.width > 0 && base.height > 0) {
+      resolvedRatio = base.width / base.height;
+    }
+  }
+
+  if (resolvedRatio == null || !Number.isFinite(resolvedRatio) || resolvedRatio <= 0) return null;
+  return inverted ? 1 / resolvedRatio : resolvedRatio;
+};
+
+const cropSourceToRatio = async (
+  sourceUri: string,
+  sourceWidth: number,
+  sourceHeight: number,
+  targetRatio: number | null,
+) => {
+  if (
+    targetRatio == null ||
+    !Number.isFinite(targetRatio) ||
+    targetRatio <= 0 ||
+    !Number.isFinite(sourceWidth) ||
+    !Number.isFinite(sourceHeight) ||
+    sourceWidth <= 0 ||
+    sourceHeight <= 0
+  ) {
+    return { uri: sourceUri, width: sourceWidth, height: sourceHeight };
+  }
+
+  const sourceRatio = sourceWidth / sourceHeight;
+  if (Math.abs(sourceRatio - targetRatio) < 0.01) {
+    return { uri: sourceUri, width: sourceWidth, height: sourceHeight };
+  }
+
+  let cropWidth = sourceWidth;
+  let cropHeight = sourceHeight;
+  let originX = 0;
+  let originY = 0;
+
+  if (sourceRatio > targetRatio) {
+    cropWidth = Math.floor(sourceHeight * targetRatio);
+    originX = Math.floor((sourceWidth - cropWidth) / 2);
+  } else {
+    cropHeight = Math.floor(sourceWidth / targetRatio);
+    originY = Math.floor((sourceHeight - cropHeight) / 2);
+  }
+
+  cropWidth = Math.max(1, Math.min(sourceWidth, cropWidth));
+  cropHeight = Math.max(1, Math.min(sourceHeight, cropHeight));
+  originX = Math.max(0, Math.min(sourceWidth - cropWidth, originX));
+  originY = Math.max(0, Math.min(sourceHeight - cropHeight, originY));
+
+  return ImageManipulator.manipulateAsync(
+    sourceUri,
+    [
+      {
+        crop: {
+          originX,
+          originY,
+          width: cropWidth,
+          height: cropHeight,
+        },
+      },
+    ],
+    {
+      format: ImageManipulator.SaveFormat.JPEG,
+      compress: 0.92,
+    },
+  );
+};
+
+const cropImageItemToRatio = async (item: ImageItem, targetRatio: number | null): Promise<ImageItem> => {
+  const base = getFrameBase(item);
+  const result = await cropSourceToRatio(base.uri, base.width, base.height, targetRatio);
+
+  return {
+    ...item,
+    uri: result.uri,
+    width: result.width,
+    height: result.height,
+  };
+};
+
+const preparePostUploadImage = async (
+  item: ImageItem,
+  targetRatio: number | null,
+): Promise<ImageItem> => {
+  const result = await cropSourceToRatio(item.uri, item.width, item.height, targetRatio);
+  return {
+    ...item,
+    uri: result.uri,
+    width: result.width,
+    height: result.height,
+  };
+};
+
+export default function CreatePostScreen({ navigation, route }: any) {
+  const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+  const scrollRef = useRef<ScrollView>(null);
+  const inputLayoutYRef = useRef<Record<string, number>>({});
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const colorScheme = useColorScheme();
+  const { toast, showToast, hideToast } = useCoonnFloatingToast();
+  const routeParams = (route?.params ?? {}) as {
+    returnToPostCollectionViewer?: boolean;
+    openPostCollectionViewerAfterUpload?: boolean;
+    collectionTabId?: string | null;
+    collectionEntryTabId?: string | null;
+    collectionTitle?: string | null;
+    collectionSourcePostIds?: string[];
+    user_id?: string | null;
+  };
+  const shouldReturnToPostCollectionViewer = routeParams.returnToPostCollectionViewer === true;
+  const shouldOpenPostCollectionViewerAfterUpload = routeParams.openPostCollectionViewerAfterUpload === true;
+  const initialCollectionTabId =
+    typeof routeParams.collectionTabId === 'string' && routeParams.collectionTabId !== 'all'
+      ? routeParams.collectionTabId
+      : null;
+  const [alertState, setAlertState] = useState<CreatePostAlertState>(EMPTY_CREATE_POST_ALERT);
+  const isDark = colorScheme === 'dark';
+  const alertTheme = isDark ? 'coonn_dark' : 'coonn_light';
+  const toastTheme = createCoonnFloatingToastTheme({ isDark, surface: isDark ? 'rgba(18,18,18,0.96)' : 'rgba(255,255,255,0.96)' }, toast.tone);
+  const closeAlert = () => setAlertState((prev) => ({ ...prev, visible: false }));
+  const showInfoAlert = (title: string, message?: string, variant: CoonnAlertVariant = 'default') => {
+    setAlertState({
+      visible: true,
+      title,
+      message,
+      variant,
+      confirmText: t('common:ok', '확인'),
+      cancelText: t('common:cancel', '취소'),
+      singleButton: true,
+      dismissOnBackdrop: true,
+      onConfirm: closeAlert,
+    });
+  };
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (Platform.OS === 'ios') return undefined;
+
+    const showSub = Keyboard.addListener('keyboardDidShow', (event) => {
+      const nextHeight = Number(event?.endCoordinates?.height ?? 0);
+      setKeyboardHeight(Number.isFinite(nextHeight) ? Math.max(0, nextHeight) : 0);
+    });
+    const hideSub = Keyboard.addListener('keyboardDidHide', () => setKeyboardHeight(0));
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
+  const scrollToFocusedInput = useCallback((key: string) => {
+    const scroll = () => {
+      const y = inputLayoutYRef.current[key];
+      if (!Number.isFinite(y)) return;
+      scrollRef.current?.scrollTo({ y: Math.max(0, y - 96), animated: true });
+    };
+
+    requestAnimationFrame(scroll);
+    setTimeout(scroll, 260);
+  }, []);
+
   const [images, setImages] = useState<ImageItem[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
+  
+  // ✅ [수정] 초기값을 null로 두어, 첫 이미지 선택 시 그 비율을 따르도록 함
+  const [globalRatio, setGlobalRatio] = useState<number | null>(null); 
+  const [isGlobalInverted, setIsGlobalInverted] = useState(false);
+  const [showRatioPicker, setShowRatioPicker] = useState(false);
+  const [frameProcessing, setFrameProcessing] = useState(false);
+  const frameRequestIdRef = useRef(0);
+  const [isReordering, setIsReordering] = useState(false);
+  const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
+  const [dragTranslateX, setDragTranslateX] = useState(0);
+  const dragStartIndexRef = useRef<number | null>(null);
+  const dragStartPageXRef = useRef<number | null>(null);
+  const dragCurrentIndexRef = useRef<number | null>(null);
+  const dragJustEndedRef = useRef(false);
+  const dragResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [pickerVisible, setPickerVisible] = useState(false);
+  const [editorVisible, setEditorVisible] = useState(false);
 
   const [caption, setCaption] = useState('');
   const [link, setLink] = useState('');
-
+  
+  const [taggedUsers, setTaggedUsers] = useState<TaggedUser[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<LocationTag | null>(null);
+  const locationPickEventNameRef = useRef(
+    `createPost:locationPicked:${Date.now()}:${Math.random().toString(36).slice(2)}`,
+  );
+  const [selectedBusiness, setSelectedBusiness] = useState<BusinessTag | null>(null);
+  
+  const [visibility, setVisibility] = useState<string[]>(['public']); 
   const [allowComments, setAllowComments] = useState(true);
   const [allowShare, setAllowShare] = useState(true);
+  
+  const [tabs, setTabs] = useState<{ id: string; name: string }[]>([]);
+  const [selectedTab, setSelectedTab] = useState<string | null>(null);
 
-  const [visibility, setVisibility] =
-    useState<VisibilityType>('public');
+  const [tagModalType, setTagModalType] = useState<'person' | 'business' | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
 
-  // ----------------------------
-  // 비율 & 방향 (전체 이미지 공통)
-  // ----------------------------
-  const [selectedRatio, setSelectedRatio] =
-    useState<RatioKey>('3:4');
-  const [orientation, setOrientation] = useState<
-    'portrait' | 'landscape'
-  >('portrait');
-  const [flipOriginal, setFlipOriginal] = useState(false);
+  const RATIO_OPTIONS = [
+    { id: 'original', label: t('imageEditor:ratio_original'), value: null }, // 원본 (첫 장 기준)
+    { id: '1:1', label: '1:1', value: 1 },
+    { id: '4:5', label: '4:5', value: 0.8 },
+    { id: '3:4', label: '3:4', value: 0.75 },
+    { id: '9:16', label: '9:16', value: 0.5625 },
+  ];
 
-  const handleSelectRatio = (id: RatioKey) => {
-    setSelectedRatio(id);
-    if (id !== 'original') {
-      setFlipOriginal(false);
-    }
-  };
-
-  const toggleOrientation = () => {
-    if (selectedRatio === 'original') {
-      setFlipOriginal(prev => !prev);
-    } else {
-      setOrientation(prev =>
-        prev === 'portrait' ? 'landscape' : 'portrait',
-      );
-    }
-  };
-
-  // ----------------------------
-  // 탭 선택
-  // ----------------------------
-  const [tabs, setTabs] = useState<{ id: string; name: string }[]>(
-    [],
-  );
-  const [selectedTab, setSelectedTab] = useState<string | null>(
-    null,
-  );
-
-  const loadTabs = async () => {
-    const uid = (await supabase.auth.getUser()).data.user?.id;
-    if (!uid) return;
-
-    const { data, error } = await supabase
-      .from('profile_tabs')
-      .select('id, name')
-      .eq('user_id', uid)
-      .eq('is_hidden', false)
-      .order('sort_order', { ascending: true });
-
-    if (!error && data) {
-      setTabs(data);
-      if (data.length > 0 && !selectedTab) {
-        setSelectedTab(data[0].id);
-      }
-    }
-  };
+  const VISIBILITY_OPTIONS = [
+    { id: 'public', label: t('post:visibility.public') },
+    { id: 'friends', label: t('post:visibility.friends') },
+    { id: 'followers', label: t('post:visibility.followers') },
+    { id: 'private', label: t('post:visibility.private') },
+  ] as const;
 
   useEffect(() => {
+    if (images.length === 0) {
+      setPickerVisible(true);
+    }
     loadTabs();
   }, []);
 
-  // ----------------------------
-  // 이미지 선택
-  // ----------------------------
-  const pickImages = async () => {
-    const res = await ImagePicker.launchImageLibraryAsync({
-      allowsMultipleSelection: true,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.9,
+  useEffect(() => {
+    const subscription = DeviceEventEmitter.addListener(locationPickEventNameRef.current, (result: any) => {
+      const lat = Number(result?.lat);
+      const lng = Number(result?.lng);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+      const address = typeof result?.address === 'string' && result.address.trim()
+        ? result.address.trim()
+        : '';
+      const name = typeof result?.name === 'string' && result.name.trim()
+        ? result.name.trim()
+        : address;
+
+      setSelectedLocation({
+        lat,
+        lng,
+        address,
+        name,
+      });
     });
 
-    if (!res.canceled) {
-      const newImgs: ImageItem[] = res.assets.map(a => ({
-        uri: a.uri,
-        width: a.width ?? SCREEN_WIDTH,
-        height: a.height ?? SCREEN_WIDTH,
-      }));
-      setImages(prev => {
-        const merged = [...prev, ...newImgs];
-        if (prev.length === 0 && merged.length > 0) {
-          setSelectedIndex(0);
-        }
-        return merged;
-      });
+    return () => subscription.remove();
+  }, []);
+
+  const loadTabs = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data } = await supabase
+      .from('profile_tabs')
+      .select('id, name')
+      .eq('user_id', user.id)
+      .eq('is_hidden', false)
+      .order('sort_order', { ascending: true });
+
+    if (data && data.length > 0) {
+      setTabs(data);
+      const initialTab = initialCollectionTabId
+        ? data.find((tab: { id: string }) => String(tab.id) === String(initialCollectionTabId))
+        : null;
+      setSelectedTab(initialTab?.id ?? data[0].id);
     }
   };
 
-  const handleRemoveImage = (index: number) => {
+  const handleMediaSelect = async (picked: SimplePickedImage[]) => {
+    const newItems: ImageItem[] = picked.map(img => ({
+      id: Math.random().toString(36).substr(2, 9),
+      uri: img.uri,
+      originalUri: img.originalUri || img.uri,
+      width: img.width,
+      height: img.height,
+      frameBaseUri: img.uri,
+      frameBaseWidth: img.width,
+      frameBaseHeight: img.height,
+    }));
+
+    if (newItems.length === 0) return;
+
+    const firstForFrame = images[0] ?? newItems[0];
+    const targetRatio = getEffectiveUploadRatio(globalRatio, isGlobalInverted, firstForFrame);
+    const shouldApplyFrame = images.length > 0 || globalRatio !== null || isGlobalInverted;
+
+    let preparedItems = newItems;
+    if (shouldApplyFrame && targetRatio !== null) {
+      setFrameProcessing(true);
+      try {
+        preparedItems = await Promise.all(newItems.map(item => cropImageItemToRatio(item, targetRatio)));
+      } catch (e) {
+        console.error('[create-post:frame-new-images]', e);
+        showInfoAlert(t('common:error', '오류'), t('media:processing_error', '이미지를 처리하지 못했습니다.'), 'danger');
+      } finally {
+        setFrameProcessing(false);
+      }
+    }
+
+    setImages(prev => [...prev, ...preparedItems]);
+    if (images.length === 0) setActiveIndex(0);
+  };
+
+  const applyFrameToImages = async (nextRatio: number | null, nextInverted: boolean) => {
+    setGlobalRatio(nextRatio);
+    setIsGlobalInverted(nextInverted);
+    setShowRatioPicker(false);
+
+    if (images.length === 0) return;
+
+    const requestId = frameRequestIdRef.current + 1;
+    frameRequestIdRef.current = requestId;
+    const targetRatio = getEffectiveUploadRatio(nextRatio, nextInverted, images[0]);
+
+    if (targetRatio === null) return;
+
+    setFrameProcessing(true);
+    try {
+      const nextImages = await Promise.all(images.map(item => cropImageItemToRatio(item, targetRatio)));
+      if (frameRequestIdRef.current === requestId) {
+        setImages(nextImages);
+      }
+    } catch (e) {
+      console.error('[create-post:apply-frame]', e);
+      showInfoAlert(t('common:error', '오류'), t('media:processing_error', '이미지를 처리하지 못했습니다.'), 'danger');
+    } finally {
+      if (frameRequestIdRef.current === requestId) {
+        setFrameProcessing(false);
+      }
+    }
+  };
+
+  const finishThumbnailDrag = useCallback(() => {
+    dragStartIndexRef.current = null;
+    dragCurrentIndexRef.current = null;
+    dragStartPageXRef.current = null;
+    setDraggingIndex(null);
+    setDragTranslateX(0);
+    setIsReordering(false);
+
+    dragJustEndedRef.current = true;
+    if (dragResetTimerRef.current) clearTimeout(dragResetTimerRef.current);
+    dragResetTimerRef.current = setTimeout(() => {
+      dragJustEndedRef.current = false;
+      dragResetTimerRef.current = null;
+    }, 140);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (dragResetTimerRef.current) clearTimeout(dragResetTimerRef.current);
+    };
+  }, []);
+
+  const moveImage = useCallback((fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex) return;
+
     setImages(prev => {
-      const next = prev.filter((_, i) => i !== index);
-      if (next.length === 0) {
-        setSelectedIndex(0);
-      } else if (index >= next.length) {
-        setSelectedIndex(next.length - 1);
+      if (fromIndex < 0 || toIndex < 0 || fromIndex >= prev.length || toIndex >= prev.length) return prev;
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
+
+    setActiveIndex(prev => {
+      if (prev === fromIndex) return toIndex;
+      if (fromIndex < prev && prev <= toIndex) return prev - 1;
+      if (toIndex <= prev && prev < fromIndex) return prev + 1;
+      return prev;
+    });
+  }, []);
+
+  const beginThumbnailDrag = useCallback((index: number, pageX?: number | null) => {
+    if (images.length <= 1) return;
+
+    Vibration.vibrate(8);
+    dragStartIndexRef.current = index;
+    dragStartPageXRef.current = typeof pageX === 'number' ? pageX : null;
+    dragCurrentIndexRef.current = index;
+    setDraggingIndex(index);
+    setDragTranslateX(0);
+    setIsReordering(true);
+    setActiveIndex(index);
+    showToast({
+      message: t('post:create.reorder_dragging'),
+      tone: 'info',
+      showMark: true,
+    });
+  }, [images.length, showToast, t]);
+
+  const handleThumbnailTouchMove = useCallback((event: any) => {
+    const startIndex = dragStartIndexRef.current;
+    const currentIndex = dragCurrentIndexRef.current;
+    const pageX = event?.nativeEvent?.pageX;
+
+    if (startIndex === null || currentIndex === null || images.length <= 1 || typeof pageX !== 'number') return;
+
+    if (dragStartPageXRef.current === null) {
+      dragStartPageXRef.current = pageX;
+      return;
+    }
+
+    const dx = pageX - dragStartPageXRef.current;
+    setDragTranslateX(dx);
+
+    const offset = Math.round(dx / THUMB_REORDER_SLOT);
+    const targetIndex = Math.max(0, Math.min(images.length - 1, startIndex + offset));
+    if (targetIndex === currentIndex) return;
+
+    moveImage(currentIndex, targetIndex);
+    dragCurrentIndexRef.current = targetIndex;
+    setDraggingIndex(targetIndex);
+  }, [images.length, moveImage]);
+
+  const handleThumbnailTouchEnd = useCallback(() => {
+    if (dragStartIndexRef.current !== null) finishThumbnailDrag();
+  }, [finishThumbnailDrag]);
+
+  const getDragVisualOffset = useCallback((index: number) => {
+    const startIndex = dragStartIndexRef.current;
+    if (startIndex === null || draggingIndex !== index) return 0;
+    return dragTranslateX - ((index - startIndex) * THUMB_REORDER_SLOT);
+  }, [dragTranslateX, draggingIndex]);
+
+  const handleThumbnailPress = (index: number) => {
+    if (dragJustEndedRef.current) return;
+    if (isReordering) {
+      finishThumbnailDrag();
+      return;
+    }
+    setActiveIndex(index);
+  };
+
+  const handleThumbnailLongPress = (index: number, pageX?: number | null) => {
+    beginThumbnailDrag(index, pageX);
+  };
+
+  const removeImage = (index: number) => {
+    if (isReordering) finishThumbnailDrag();
+
+    const next = images.filter((_, i) => i !== index);
+    setImages(next);
+    if (index >= next.length) setActiveIndex(Math.max(0, next.length - 1));
+  };
+
+  const handleEditorSave = (uri: string, w: number, h: number) => {
+    setImages(prev => {
+      const next = [...prev];
+      if (next[activeIndex]) {
+        next[activeIndex] = {
+          ...next[activeIndex],
+          uri,
+          width: w,
+          height: h,
+          frameBaseUri: uri,
+          frameBaseWidth: w,
+          frameBaseHeight: h,
+        };
       }
       return next;
     });
+    setEditorVisible(false);
   };
 
-  const activeImage = images[selectedIndex];
-
-  const frameAspectRatio = useMemo(() => {
-    if (!activeImage) return 1;
-
-    if (selectedRatio === '1:1') return 1;
-
-    if (selectedRatio === '3:4') {
-      return orientation === 'portrait' ? 3 / 4 : 4 / 3;
-    }
-    if (selectedRatio === '9:16') {
-      return orientation === 'portrait' ? 9 / 16 : 16 / 9;
-    }
-
-    const base = activeImage.width / activeImage.height || 1;
-    return flipOriginal ? 1 / base : base;
-  }, [activeImage, selectedRatio, orientation, flipOriginal]);
-
-  // ----------------------------
-  // 에디터 (드래그 + 줌 + 크롭)
-  // ----------------------------
-  const [editorVisible, setEditorVisible] = useState(false);
-
-  const [frameSize, setFrameSize] = useState<{ w: number; h: number }>(
-    { w: 0, h: 0 },
-  );
-
-  const onFrameLayout = (e: LayoutChangeEvent) => {
-    const { width, height } = e.nativeEvent.layout;
-    setFrameSize({ w: width, h: height });
-  };
-
-  const translateX = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(0)).current;
-  const txRef = useRef(0);
-  const tyRef = useRef(0);
-
-  const [scaleState, setScaleState] = useState(1);
-  const scaleRef = useRef(1);
-  const baseScaleRef = useRef(1);
-  const minRelativeScaleRef = useRef(1);
-  const maxRelativeScaleRef = useRef(4);
-
-  const startTxRef = useRef(0);
-  const startTyRef = useRef(0);
-  const startScaleRef = useRef(1);
-  const startPinchDistanceRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (
-      !editorVisible ||
-      !activeImage ||
-      !frameSize.w ||
-      !frameSize.h
-    ) {
-      return;
-    }
-
-    const imgW = activeImage.width || 1;
-    const imgH = activeImage.height || 1;
-
-    const fit = Math.min(frameSize.w / imgW, frameSize.h / imgH);
-    baseScaleRef.current = fit;
-    scaleRef.current = 1;
-    setScaleState(1);
-    minRelativeScaleRef.current = 1;
-    maxRelativeScaleRef.current = 4;
-
-    const dispW = imgW * fit;
-    const dispH = imgH * fit;
-
-    const initialTx = (frameSize.w - dispW) / 2;
-    const initialTy = (frameSize.h - dispH) / 2;
-
-    txRef.current = initialTx;
-    tyRef.current = initialTy;
-    translateX.setValue(initialTx);
-    translateY.setValue(initialTy);
-  }, [
-    editorVisible,
-    activeImage,
-    frameSize.w,
-    frameSize.h,
-    translateX,
-    translateY,
-  ]);
-
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onMoveShouldSetPanResponder: () => true,
-        onStartShouldSetPanResponderCapture: () => true,
-        onMoveShouldSetPanResponderCapture: () => true,
-
-        onPanResponderGrant: () => {
-          startScaleRef.current = scaleRef.current;
-          startTxRef.current = txRef.current;
-          startTyRef.current = tyRef.current;
-          startPinchDistanceRef.current = null;
-        },
-
-        onPanResponderMove: (evt, gestureState) => {
-          if (!activeImage || !frameSize.w || !frameSize.h) return;
-
-          const touches = (evt.nativeEvent as any).touches ?? [];
-          const imgW = activeImage.width || 1;
-          const imgH = activeImage.height || 1;
-
-          let nextRelativeScale = scaleRef.current;
-          let nextTx = txRef.current;
-          let nextTy = tyRef.current;
-
-          if (touches.length >= 2) {
-            const [t1, t2] = touches;
-            const dx = t1.pageX - t2.pageX;
-            const dy = t1.pageY - t2.pageY;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (startPinchDistanceRef.current == null) {
-              startPinchDistanceRef.current = dist;
-            }
-
-            const ratio =
-              dist /
-              (startPinchDistanceRef.current || dist || 1);
-
-            nextRelativeScale = startScaleRef.current * ratio;
-
-            const minS = minRelativeScaleRef.current;
-            const maxS = maxRelativeScaleRef.current;
-            if (nextRelativeScale < minS) nextRelativeScale = minS;
-            if (nextRelativeScale > maxS) nextRelativeScale = maxS;
-
-            scaleRef.current = nextRelativeScale;
-            setScaleState(nextRelativeScale);
-          } else {
-            nextTx = startTxRef.current + gestureState.dx;
-            nextTy = startTyRef.current + gestureState.dy;
-          }
-
-          const baseScale = baseScaleRef.current;
-          const actualScale = baseScale * scaleRef.current;
-          const dispW = imgW * actualScale;
-          const dispH = imgH * actualScale;
-
-          let minTx = frameSize.w - dispW;
-          let maxTx = 0;
-          let minTy = frameSize.h - dispH;
-          let maxTy = 0;
-
-          if (dispW <= frameSize.w) {
-            const c = (frameSize.w - dispW) / 2;
-            minTx = c;
-            maxTx = c;
-          }
-          if (dispH <= frameSize.h) {
-            const c = (frameSize.h - dispH) / 2;
-            minTy = c;
-            maxTy = c;
-          }
-
-          if (touches.length < 2) {
-            nextTx = Math.min(maxTx, Math.max(minTx, nextTx));
-            nextTy = Math.min(maxTy, Math.max(minTy, nextTy));
-            txRef.current = nextTx;
-            tyRef.current = nextTy;
-            translateX.setValue(nextTx);
-            translateY.setValue(nextTy);
-          } else {
-            nextTx = Math.min(maxTx, Math.max(minTx, txRef.current));
-            nextTy = Math.min(maxTy, Math.max(minTy, tyRef.current));
-            txRef.current = nextTx;
-            tyRef.current = nextTy;
-            translateX.setValue(nextTx);
-            translateY.setValue(nextTy);
-          }
-        },
-
-        onPanResponderRelease: () => {
-          startPinchDistanceRef.current = null;
-        },
-        onPanResponderTerminationRequest: () => false,
-      }),
-    [activeImage, frameSize.w, frameSize.h, translateX, translateY],
-  );
-
-  const applyEditor = async () => {
-    if (!activeImage || !frameSize.w || !frameSize.h) {
-      setEditorVisible(false);
-      return;
-    }
-
-    try {
-      const imgW = activeImage.width || 1;
-      const imgH = activeImage.height || 1;
-
-      const baseScale = baseScaleRef.current;
-      const relativeScale = scaleRef.current;
-      const actualScale = baseScale * relativeScale;
-
-      const tx = txRef.current;
-      const ty = tyRef.current;
-
-      let originX = (0 - tx) / actualScale;
-      let originY = (0 - ty) / actualScale;
-      let cropWidth = frameSize.w / actualScale;
-      let cropHeight = frameSize.h / actualScale;
-
-      originX = Math.max(0, originX);
-      originY = Math.max(0, originY);
-      if (originX + cropWidth > imgW) {
-        cropWidth = imgW - originX;
+  const toggleVisibility = (optionId: string) => {
+    setVisibility(prev => {
+      if (optionId === 'public' || optionId === 'private') {
+        return [optionId];
       }
-      if (originY + cropHeight > imgH) {
-        cropHeight = imgH - originY;
-      }
-
-      const sourceUri = activeImage.uri;
-
-      const manipulated = await ImageManipulator.manipulateAsync(
-        sourceUri,
-        [
-          {
-            crop: {
-              originX,
-              originY,
-              width: cropWidth,
-              height: cropHeight,
-            },
-          },
-        ],
-        {
-          compress: 0.9,
-          format: ImageManipulator.SaveFormat.JPEG,
-        },
-      );
-
-      const updated = [...images];
-      updated[selectedIndex] = {
-        ...activeImage,
-        editedUri: manipulated.uri,
-      };
-      setImages(updated);
-    } catch (e: any) {
-      Alert.alert(
-        '편집 실패',
-        e?.message ?? '이미지 편집 중 문제가 발생했습니다.',
-      );
-    } finally {
-      setEditorVisible(false);
-    }
-  };
-
-  // ----------------------------
-  // 섹션 확장/축소 상태
-  // ----------------------------
-  const [openCaptionSection, setOpenCaptionSection] =
-    useState(true);
-  const [openLinkSection, setOpenLinkSection] = useState(true);
-  const [openTagSection, setOpenTagSection] = useState(true);
-  const [openVisibilitySection, setOpenVisibilitySection] =
-    useState(true);
-  const [openOptionSection, setOpenOptionSection] =
-    useState(true);
-
-  // ----------------------------
-  // 태그 상태
-  // ----------------------------
-  const [taggedUsers, setTaggedUsers] = useState<TaggedUser[]>([]);
-  const [selectedLocation, setSelectedLocation] =
-    useState<LocationTag | null>(null);
-  const [selectedBusiness, setSelectedBusiness] =
-    useState<BusinessTag | null>(null);
-
-  const [tagModalMode, setTagModalMode] =
-    useState<TagModalMode>(null);
-  const [tagModalVisible, setTagModalVisible] = useState(false);
-  const [tagSearch, setTagSearch] = useState('');
-  const [tagSearching, setTagSearching] = useState(false);
-
-  const [personResults, setPersonResults] = useState<TaggedUser[]>(
-    [],
-  );
-  const [locationResults, setLocationResults] = useState<
-    LocationTag[]
-  >([]);
-  const [businessResults, setBusinessResults] = useState<
-    BusinessTag[]
-  >([]);
-
-  const openPersonTagModal = () => {
-    setTagModalMode('person');
-    setTagSearch('');
-    setPersonResults([]);
-    setTagModalVisible(true);
-  };
-
-  const openLocationTagModal = () => {
-    setTagModalMode('location');
-    setTagSearch('');
-    setLocationResults([]);
-    setTagModalVisible(true);
-  };
-
-  const openBusinessTagModal = () => {
-    setTagModalMode('business');
-    setTagSearch('');
-    setBusinessResults([]);
-    setTagModalVisible(true);
-  };
-
-  const closeTagModal = () => {
-    setTagModalVisible(false);
-    setTagModalMode(null);
-    setTagSearch('');
-    setTagSearching(false);
-  };
-
-  const toggleTaggedUser = (user: TaggedUser) => {
-    setTaggedUsers(prev => {
-      const exists = prev.some(u => u.id === user.id);
-      if (exists) {
-        return prev.filter(u => u.id !== user.id);
-      }
-      return [...prev, user];
+      const newSet = new Set(prev.filter(v => v !== 'public' && v !== 'private'));
+      if (newSet.has(optionId)) newSet.delete(optionId);
+      else newSet.add(optionId);
+      return newSet.size > 0 ? Array.from(newSet) : ['public']; 
     });
   };
 
-  const runTagSearch = async (
-    mode: TagModalMode,
-    keyword: string,
-  ) => {
-    const q = keyword.trim();
-    if (!mode || !q) {
-      if (mode === 'person') setPersonResults([]);
-      if (mode === 'location') setLocationResults([]);
-      if (mode === 'business') setBusinessResults([]);
-      return;
-    }
-    setTagSearching(true);
-    try {
-      if (mode === 'person') {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('id, nickname, follow_id, avatar_url')
-          .or(
-            `nickname.ilike.%${q}%,follow_id.ilike.%${q}%`,
-          )
-          .limit(30);
-        if (error) {
-          console.error('person search error', error);
-        } else {
-          setPersonResults((data ?? []) as TaggedUser[]);
-        }
-      } else if (mode === 'business') {
-        const { data, error } = await supabase
-          .from('businesses')
-          // hero / logo / main 이미지 모두 가져와서 JS에서 thumbnail_url 로 매핑
-          .select(
-            'id, name, shop_id, logo_image_url, main_image_url, hero_image_url',
-          )
-          .or(`name.ilike.%${q}%,shop_id.ilike.%${q}%`)
-          .limit(30);
-        if (error) {
-          console.error('business search error', error);
-        } else {
-          const rows = (data ?? []) as any[];
-          const mapped: BusinessTag[] = rows.map(row => ({
-            id: row.id,
-            name: row.name,
-            shop_id: row.shop_id ?? null,
-            thumbnail_url:
-              row.logo_image_url ??
-              row.main_image_url ??
-              row.hero_image_url ??
-              null,
-          }));
-          setBusinessResults(mapped);
-        }
-      } else if (mode === 'location') {
-        const { data, error } = await supabase
-          .from('post_locations')
-          .select('name, address, lat, lng')
-          .ilike('name', `%${q}%`)
-          .limit(30);
-        if (error) {
-          console.error('location search error', error);
-        } else {
-          const seen = new Set<string>();
-          const unique: LocationTag[] = [];
-          (data ?? []).forEach((row: any) => {
-            const key = `${row.name}||${row.address ?? ''}`;
-            if (!seen.has(key)) {
-              seen.add(key);
-              unique.push({
-                name: row.name,
-                address: row.address,
-                lat: row.lat,
-                lng: row.lng,
-              });
-            }
-          });
-          setLocationResults(unique);
-        }
-      }
-    } finally {
-      setTagSearching(false);
+  const runSearch = async (q: string) => {
+    if (!q.trim()) { setSearchResults([]); return; }
+    
+    if (tagModalType === 'person') {
+       const { data } = await supabase
+         .from('profiles')
+         .select('id,nickname,avatar_url,follow_id')
+         .or(`nickname.ilike.%${q}%,follow_id.ilike.%${q}%`)
+         .limit(15);
+       
+       const mapped = (data || []).map((p: any) => ({
+         ...p,
+         thumbnail_url: p.avatar_url
+       }));
+       setSearchResults(mapped);
+    } else if (tagModalType === 'business') {
+       const { data } = await supabase
+         .from('businesses')
+         .select('id,name,logo_image_url,main_image_url,hero_image_url,shop_id')
+         .or(`name.ilike.%${q}%,shop_id.ilike.%${q}%`)
+         .limit(15);
+       
+       const mapped = (data || []).map((b: any) => ({
+         ...b,
+         thumbnail_url: b.logo_image_url ?? b.main_image_url ?? b.hero_image_url ?? null
+       }));
+       setSearchResults(mapped);
     }
   };
 
-  // ----------------------------
-  // 이미지 업로드 (R2)
-  // ----------------------------
-  const uploadImageForPost = async (
-    postId: string,
-    localUri: string,
-  ): Promise<string> => {
-    const manipulated = await ImageManipulator.manipulateAsync(
-      localUri,
-      [{ resize: { width: 1440 } }],
-      {
-        compress: 0.8,
-        format: ImageManipulator.SaveFormat.JPEG,
-      },
-    );
-
-    const resizedUri = manipulated.uri;
-    const fileName = `${Date.now()}.jpg`;
-    const path = `posts/${postId}/${fileName}`;
-
-    const publicUrl = await uploadImageToR2(
-      resizedUri,
-      path,
-      'image/jpeg',
-    );
-
-    return publicUrl;
+  const handleSearchResultSelect = (item: any) => {
+    if (tagModalType === 'person') {
+      setTaggedUsers(prev => {
+        const exists = prev.some(u => u.id === item.id);
+        if (exists) {
+          return prev.filter(u => u.id !== item.id);
+        } else {
+          return [...prev, { id: item.id, nickname: item.nickname, avatar_url: item.avatar_url, follow_id: item.follow_id }];
+        }
+      });
+    } else if (tagModalType === 'business') {
+      setSelectedBusiness({ 
+        id: item.id, 
+        name: item.name, 
+        thumbnail_url: item.thumbnail_url, 
+        shop_id: item.shop_id 
+      });
+      setTagModalType(null); 
+    }
   };
 
-  const uploadPost = async () => {
+  const closeTagModal = () => {
+    setTagModalType(null);
+    setSearchQuery('');
+    setSearchResults([]);
+  };
+
+  const handleUpload = async () => {
+    if (submitting) return;
     if (images.length === 0) {
-      Alert.alert('사진을 선택하세요.');
+      showToast({ message: t('post:create.min_image_alert'), tone: 'warning', showMark: true });
       return;
     }
+    setSubmitting(true);
 
-    const user = (await supabase.auth.getUser()).data.user;
-    if (!user) {
-      Alert.alert('로그인이 필요합니다.');
-      return;
-    }
-
-    const { data: post, error: postErr } = await supabase
-      .from('posts')
-      .insert({
-        user_id: user.id,
-        caption,
-        link,
-        tab_id: selectedTab,
-        visibility,
-        allow_comments: allowComments,
-        allow_share: allowShare,
-        business_id: selectedBusiness?.id ?? null,
-        business_name: selectedBusiness?.name ?? null,
-      })
-      .select()
-      .single();
-
-    if (postErr || !post) {
-      Alert.alert('업로드 실패', postErr?.message ?? '오류');
-      return;
-    }
-
-    // ============================
-    // [추가] caption 해시태그 → post_tags 저장
-    // ============================
     try {
-      const tags = extractHashtags(caption);
-      if (tags.length > 0) {
-        const rows = tags.map(t => ({
-          post_id: post.id,
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error(t('errors:auth.loginRequired'));
+
+      const { data: post, error } = await supabase
+        .from('posts')
+        .insert({
           user_id: user.id,
-          tag_text: t,
-        }));
+          caption,
+          link,
+          tab_id: selectedTab,
+          visibility: visibility.length === 1 ? visibility[0] : 'custom', 
+          allow_comments: allowComments,
+          allow_share: allowShare,
+          business_id: selectedBusiness?.id ?? null,
+          business_name: selectedBusiness?.name ?? null,
+          location_lat: selectedLocation?.lat ?? null,
+          location_lng: selectedLocation?.lng ?? null,
+          location_name: selectedLocation ? (selectedLocation.name || selectedLocation.address) : null,
+          address: selectedLocation?.address ?? null,
+        })
+        .select('id')
+        .single();
 
-        const { error: tagErr } = await supabase
-          .from('post_tags')
-          .insert(rows);
+      if (error || !post) throw error;
+      const postId = post.id;
 
-        // 태그 저장 실패는 게시물 업로드 전체를 막지 않음(상용화 안정성)
-        if (tagErr) {
-          console.error('post_tags insert error', tagErr);
-        }
+      DeviceEventEmitter.emit(POST_UPLOAD_EVENTS.START, { postId, total: images.length, caption });
+
+      if (shouldOpenPostCollectionViewerAfterUpload) {
+        const ownerId = typeof routeParams.user_id === 'string' && routeParams.user_id.trim()
+          ? routeParams.user_id
+          : user.id;
+        const sourcePostIds = Array.isArray(routeParams.collectionSourcePostIds)
+          ? routeParams.collectionSourcePostIds.map(String).filter(Boolean)
+          : [];
+        const nextSourcePostIds = [String(postId), ...sourcePostIds.filter((id) => id !== String(postId))];
+        const entryTabId =
+          typeof routeParams.collectionEntryTabId === 'string' && routeParams.collectionEntryTabId.trim()
+            ? routeParams.collectionEntryTabId
+            : initialCollectionTabId ?? 'all';
+
+        navigation.replace('PostCollectionViewer', {
+          user_id: ownerId,
+          mode: 'user',
+          collectionTitle:
+            typeof routeParams.collectionTitle === 'string' && routeParams.collectionTitle.trim()
+              ? routeParams.collectionTitle
+              : undefined,
+          entryTabId,
+          seedPostId: String(postId),
+          seedMediaIndex: 0,
+          sourcePostIds: nextSourcePostIds,
+          uploadPostId: String(postId),
+          postId: String(postId),
+          isUploading: true,
+          total: images.length,
+          uploadTotal: images.length,
+        });
+      } else if (shouldReturnToPostCollectionViewer && navigation.canGoBack?.()) {
+        navigation.goBack();
+      } else {
+        navigation.navigate('PostDetail', {
+          postId,
+          isUploading: true,
+          total: images.length,
+        });
       }
-    } catch (e) {
-      console.error('post_tags parse/insert failed', e);
-    }
 
-    try {
-      for (let i = 0; i < images.length; i++) {
-        const img = images[i];
-        const src = img.editedUri || img.uri;
+      const uploadTargetRatio = getEffectiveUploadRatio(globalRatio, isGlobalInverted, images[0]);
 
-        const publicUrl = await uploadImageForPost(post.id, src);
+      const uploadProcess = async () => {
+        const hashtags = extractHashtags(caption);
+        if (hashtags.length > 0) {
+          const { error: tagError } = await supabase
+            .from('post_tags')
+            .insert(hashtags.map(t => ({ post_id: postId, user_id: user.id, tag_text: t })));
+          if (tagError) throw tagError;
+        }
 
-        const { error: mediaErr } = await supabase
-          .from('post_media')
-          .insert({
-            post_id: post.id,
+        for (let i = 0; i < images.length; i++) {
+          const item = await preparePostUploadImage(images[i], uploadTargetRatio);
+          const fileName = `${Date.now()}_${i}.jpg`;
+          const path = `posts/${postId}/${fileName}`;
+          const publicUrl = await uploadImageToR2(item.uri, path, 'image/jpeg');
+
+          const { error: mediaError } = await supabase.from('post_media').insert({
+            post_id: postId,
             file_url: publicUrl,
             media_type: 'image',
             sort_order: i,
-            width: img.width,
-            height: img.height,
+            width: item.width,
+            height: item.height,
           });
+          if (mediaError) throw mediaError;
 
-        if (mediaErr) {
-          console.error('post_media insert error', mediaErr);
-          throw mediaErr;
+          DeviceEventEmitter.emit(POST_UPLOAD_EVENTS.PROGRESS, { postId, uploaded: i + 1, total: images.length });
         }
-      }
 
-      // 사람 태그 저장
-      if (taggedUsers.length > 0) {
-        const { error: tagErr } = await supabase
-          .from('post_tagged_users')
-          .insert(
-            taggedUsers.map(u => ({
-              post_id: post.id,
-              tagged_user_id: u.id,
-            })),
+        if (taggedUsers.length > 0) {
+          const { error: taggedUserError } = await supabase.from('post_tagged_users').insert(
+            taggedUsers.map(u => ({ post_id: postId, tagged_user_id: u.id }))
           );
-        if (tagErr) {
-          console.error('post_tagged_users error', tagErr);
-          throw tagErr;
+          if (taggedUserError) throw taggedUserError;
         }
-      }
 
-      // 위치 태그 저장
-      if (selectedLocation) {
-        const { error: locErr } = await supabase
-          .from('post_locations')
-          .insert({
-            post_id: post.id,
-            name: selectedLocation.name,
-            address: selectedLocation.address ?? null,
-            lat: selectedLocation.lat ?? null,
-            lng: selectedLocation.lng ?? null,
+        if (selectedLocation) {
+          const { error: locationError } = await supabase.from('post_locations').insert({
+            post_id: postId,
+            name: selectedLocation.name || selectedLocation.address,
+            address: selectedLocation.address,
+            lat: selectedLocation.lat,
+            lng: selectedLocation.lng,
           });
-        if (locErr) {
-          console.error('post_locations error', locErr);
-          throw locErr;
+          if (locationError) throw locationError;
         }
-      }
+        
+        DeviceEventEmitter.emit(POST_UPLOAD_EVENTS.DONE, { postId, total: images.length });
+      };
 
-      Alert.alert('게시 완료!');
-      navigation.goBack();
+      uploadProcess().catch(e => {
+        console.error('[post-upload:error]', e);
+        DeviceEventEmitter.emit(POST_UPLOAD_EVENTS.ERROR, {
+          postId,
+          message: e?.message ?? t('post:create.upload_error'),
+        });
+      });
+
     } catch (e: any) {
-      console.error(e);
-      Alert.alert(
-        '이미지/태그 업로드 실패',
-        e?.message ?? '일부 데이터를 업로드하지 못했습니다.',
-      );
+      showInfoAlert(t('post:upload.fail'), e?.message ?? String(e), 'danger');
+      setSubmitting(false);
     }
   };
 
-  const canUpload = images.length > 0;
-
-  const SectionHeader = ({
-    title,
-    open,
-    onToggle,
-  }: {
-    title: string;
-    open: boolean;
-    onToggle: () => void;
-  }) => (
-    <Pressable style={styles.sectionHeader} onPress={onToggle}>
-      <Text style={styles.label}>{title}</Text>
-      <ChevronDown
-        size={18}
-        color="#9CA3AF"
-        style={{
-          transform: [{ rotate: open ? '0deg' : '-90deg' }],
-        }}
-      />
-    </Pressable>
-  );
-
-  const hasImage = !!activeImage;
-
-  const tagSummaryText = () => {
-    const parts: string[] = [];
-    if (taggedUsers.length > 0)
-      parts.push(`사람 ${taggedUsers.length}명`);
-    if (selectedLocation)
-      parts.push(`위치 ${selectedLocation.name}`);
-    if (selectedBusiness)
-      parts.push(`비즈니스 ${selectedBusiness.name}`);
-    if (parts.length === 0) return '태그 없음';
-    return parts.join(' · ');
-  };
+  const activeImage = images[activeIndex];
+  
+  const appliedRatio = getEffectiveUploadRatio(globalRatio, isGlobalInverted, images[0]) ?? 1;
+  const containerHeight = SCREEN_WIDTH / appliedRatio;
+  const editorInitialRatio = globalRatio ?? (() => {
+    const base = getFrameBase(images[0]);
+    return base.width > 0 && base.height > 0 ? base.width / base.height : null;
+  })();
+  const androidKeyboardInset = Platform.OS === 'android'
+    ? Math.max(0, keyboardHeight - Math.max(insets.bottom, 0))
+    : 0;
+  const scrollBottomPadding = Math.max(insets.bottom, 0) + 120 + androidKeyboardInset;
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={insets.top + 48}
-      >
-        {/* HEADER */}
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
+        
         <View style={styles.header}>
-          <Pressable onPress={() => navigation.goBack()}>
-            <ChevronLeft size={22} color="#000" />
+          <Pressable onPress={() => navigation.goBack()} style={styles.headerBtn}>
+            <ChevronLeft size={26} color={COONN_TEXT} strokeWidth={1.8} />
           </Pressable>
-
-          <Text style={styles.headerTitle}>새 게시물</Text>
-
-          <Pressable
-            onPress={canUpload ? uploadPost : undefined}
-            disabled={!canUpload}
-          >
-            <Text
-              style={[
-                styles.uploadBtn,
-                { opacity: canUpload ? 1 : 0.3 },
-              ]}
-            >
-              올리기
-            </Text>
+          <Text style={styles.headerTitle}>{t('post:create.title')}</Text>
+          <Pressable onPress={handleUpload} disabled={submitting || images.length === 0} style={styles.headerBtn}>
+             {submitting ? (
+               <ActivityIndicator color={COONN_ACCENT} />
+             ) : (
+               <Text style={[styles.shareBtn, { opacity: images.length ? 1 : 0.3 }]}>{t('common:share')}</Text>
+             )}
           </Pressable>
         </View>
 
+        <KeyboardAvoidingView
+          style={styles.contentAvoider}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top + 54 : 0}
+        >
         <ScrollView
+          ref={scrollRef}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+          automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: scrollBottomPadding }]}
         >
-          {/* 큰 미리보기 */}
-          {hasImage && (
-            <View
-              style={[
-                styles.previewBox,
-                { aspectRatio: frameAspectRatio || 1 },
-              ]}
-            >
-              <Image
-                source={{
-                  uri: activeImage.editedUri || activeImage.uri,
-                }}
-                style={styles.previewImage}
-                resizeMode="cover"
-              />
-              <Pressable
-                style={styles.editBtn}
-                onPress={() => setEditorVisible(true)}
-              >
-                <Edit3 size={20} color="#fff" />
-              </Pressable>
-            </View>
-          )}
+          
+          <View style={[styles.previewWrapper, { height: containerHeight }]}>
+            {activeImage ? (
+              <View style={styles.imageBox}>
+                <Image
+                  source={{ uri: activeImage.uri }}
+                  style={styles.mainImage}
+                  resizeMode="cover"
+                />
 
-          {/* 비율 선택 + 회전 */}
-          {hasImage && (
-            <View style={styles.ratioBar}>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-              >
+                {frameProcessing && (
+                  <View style={styles.frameProcessingOverlay}>
+                    <ActivityIndicator color="#FFFFFF" />
+                  </View>
+                )}
+                
+                <Pressable style={styles.editBadge} onPress={() => setEditorVisible(true)} disabled={frameProcessing}>
+                  <Edit3 size={14} color="#FFF" />
+                  <Text style={styles.editBadgeTxt}>{t('common:edit')}</Text>
+                </Pressable>
+
+                <View style={styles.bottomLeftControls}>
+                  <Pressable
+                    style={[styles.controlBtn, frameProcessing && styles.controlBtnDisabled]}
+                    onPress={() => !frameProcessing && setShowRatioPicker(p => !p)}
+                    disabled={frameProcessing}
+                  >
+                    <Ratio size={18} color="#FFF" />
+                  </Pressable>
+                  
+                  <Pressable
+                    style={[styles.controlBtn, styles.controlBtnGap, frameProcessing && styles.controlBtnDisabled]}
+                    onPress={() => !frameProcessing && void applyFrameToImages(globalRatio, !isGlobalInverted)}
+                    disabled={frameProcessing}
+                  >
+                    {isGlobalInverted ? <RectangleVertical size={18} color="#FFF"/> : <RectangleHorizontal size={18} color="#FFF"/>}
+                  </Pressable>
+                </View>
+              </View>
+            ) : (
+              <Pressable style={styles.emptyBox} onPress={() => setPickerVisible(true)}>
+                <Plus size={40} color="#CCC" />
+                <Text style={styles.emptyText}>{t('post:create.add_photo')}</Text>
+              </Pressable>
+            )}
+
+            {showRatioPicker && (
+              <View style={styles.ratioPopup}>
                 {RATIO_OPTIONS.map(opt => (
                   <Pressable
                     key={opt.id}
-                    onPress={() => handleSelectRatio(opt.id)}
-                    style={[
-                      styles.ratioChip,
-                      selectedRatio === opt.id &&
-                        styles.ratioChipSelected,
-                    ]}
+                    style={[styles.ratioItem, globalRatio === opt.value && styles.ratioItemActive]}
+                    onPress={() => {
+                      void applyFrameToImages(opt.value, false);
+                    }}
                   >
-                    <Text
-                      style={[
-                        styles.ratioChipText,
-                        selectedRatio === opt.id &&
-                          styles.ratioChipTextSelected,
-                      ]}
-                    >
-                      {opt.label}
-                    </Text>
+                    <Text style={[styles.ratioTxt, globalRatio === opt.value && styles.ratioTxtActive]}>{opt.label}</Text>
                   </Pressable>
                 ))}
-
-                <Pressable
-                  style={styles.rotateBtn}
-                  onPress={toggleOrientation}
-                >
-                  <RotateCcw size={18} color="#111827" />
-                </Pressable>
-              </ScrollView>
-            </View>
-          )}
-
-          {/* 썸네일 */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.thumbsWrap}
-          >
-            {images.map((img, idx) => (
-              <View key={idx} style={styles.thumbWrapper}>
-                <Pressable
-                  onPress={() => setSelectedIndex(idx)}
-                  style={[
-                    styles.thumbItem,
-                    selectedIndex === idx &&
-                      styles.thumbSelected,
-                  ]}
-                >
-                  <Image
-                    source={{ uri: img.editedUri || img.uri }}
-                    style={styles.thumbImage}
-                  />
-                </Pressable>
-                <Pressable
-                  style={styles.thumbRemoveBtn}
-                  onPress={() => handleRemoveImage(idx)}
-                >
-                  <X size={14} color="#fff" />
-                </Pressable>
               </View>
-            ))}
+            )}
+          </View>
 
-            <Pressable style={styles.thumbAdd} onPress={pickImages}>
-              <Plus size={24} color="#888" />
-            </Pressable>
-          </ScrollView>
-
-          {/* 탭 선택 */}
-          <View style={[styles.section, { marginTop: 8 }]}>
-            <Text style={styles.label}>게시물 저장 탭</Text>
+          <View style={styles.thumbSection}>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              style={{ paddingVertical: 6 }}
+              scrollEnabled={!isReordering}
+              contentContainerStyle={styles.thumbContent}
             >
-              {tabs.map(tab => (
-                <Pressable
-                  key={tab.id}
-                  onPress={() => setSelectedTab(tab.id)}
-                  style={[
-                    styles.tabBtn,
-                    selectedTab === tab.id &&
-                      styles.tabBtnSelected,
-                  ]}
-                >
-                  <Text
+              {images.map((img, idx) => {
+                const isDragging = draggingIndex === idx;
+                return (
+                  <View
+                    key={img.id}
                     style={[
-                      styles.tabText,
-                      selectedTab === tab.id &&
-                        styles.tabTextSelected,
+                      styles.thumbItem,
+                      isDragging && styles.thumbItemDragging,
+                      isDragging && { transform: [{ translateX: getDragVisualOffset(idx) }] },
                     ]}
                   >
-                    {tab.name}
-                  </Text>
+                    <Pressable
+                      style={[
+                        styles.thumbWrap,
+                        activeIndex === idx && styles.thumbActive,
+                        isReordering && activeIndex === idx && styles.thumbReordering,
+                      ]}
+                      onPress={() => handleThumbnailPress(idx)}
+                      onLongPress={(event) => handleThumbnailLongPress(idx, event?.nativeEvent?.pageX)}
+                      delayLongPress={220}
+                      onTouchMove={handleThumbnailTouchMove}
+                      onTouchEnd={handleThumbnailTouchEnd}
+                      onTouchCancel={handleThumbnailTouchEnd}
+                    >
+                      <Image source={{ uri: img.uri }} style={styles.thumbImg} />
+                    </Pressable>
+                    <Pressable style={styles.deleteBtn} hitSlop={10} onPress={() => removeImage(idx)}>
+                      <View style={styles.deleteIconBg}>
+                        <X size={10} color="#FFF" />
+                      </View>
+                    </Pressable>
+                  </View>
+                );
+              })}
+              <View style={styles.addThumbItem}>
+                <Pressable style={styles.addThumbBtn} onPress={() => setPickerVisible(true)}>
+                  <Plus size={24} color={COONN_ACCENT} strokeWidth={1.8} />
                 </Pressable>
-              ))}
+              </View>
             </ScrollView>
-          </View>
-
-          {/* 내용 입력 */}
-          <View style={styles.section}>
-            <SectionHeader
-              title="내용 입력"
-              open={openCaptionSection}
-              onToggle={() =>
-                setOpenCaptionSection(prev => !prev)
-              }
-            />
-            {openCaptionSection && (
-              <TextInput
-                placeholder="문구를 입력하세요..."
-                placeholderTextColor="#aaa"
-                multiline
-                value={caption}
-                onChangeText={setCaption}
-                style={styles.captionInput}
-              />
-            )}
-          </View>
-
-          {/* 링크 */}
-          <View style={styles.section}>
-            <SectionHeader
-              title="링크"
-              open={openLinkSection}
-              onToggle={() =>
-                setOpenLinkSection(prev => !prev)
-              }
-            />
-            {openLinkSection && (
-              <TextInput
-                placeholder="URL 입력"
-                placeholderTextColor="#aaa"
-                value={link}
-                onChangeText={setLink}
-                style={styles.textInput}
-              />
-            )}
-          </View>
-
-          {/* 태그 */}
-          <View style={styles.section}>
-            <SectionHeader
-              title="태그"
-              open={openTagSection}
-              onToggle={() =>
-                setOpenTagSection(prev => !prev)
-              }
-            />
-            {openTagSection && (
-              <>
-                <Pressable
-                  style={styles.optionRow}
-                  onPress={openPersonTagModal}
-                >
-                  <Text style={styles.optionText}>
-                    사람 태그
-                    {taggedUsers.length > 0
-                      ? ` · ${taggedUsers.length}명`
-                      : ''}
-                  </Text>
-                </Pressable>
-                <Pressable
-                  style={styles.optionRow}
-                  onPress={openLocationTagModal}
-                >
-                  <Text style={styles.optionText}>
-                    위치 태그
-                    {selectedLocation
-                      ? ` · ${selectedLocation.name}`
-                      : ''}
-                  </Text>
-                </Pressable>
-                <Pressable
-                  style={styles.optionRow}
-                  onPress={openBusinessTagModal}
-                >
-                  <Text style={styles.optionText}>
-                    비즈니스 태그
-                    {selectedBusiness
-                      ? ` · ${selectedBusiness.name}`
-                      : ''}
-                  </Text>
-                </Pressable>
-
-                {/* 선택 요약 줄 */}
-                <View style={styles.tagSummaryBox}>
-                  <Text style={styles.tagSummaryText}>
-                    {tagSummaryText()}
-                  </Text>
-                </View>
-              </>
-            )}
-          </View>
-
-          {/* 공개 범위 */}
-          <View style={styles.section}>
-            <SectionHeader
-              title="공개 범위"
-              open={openVisibilitySection}
-              onToggle={() =>
-                setOpenVisibilitySection(prev => !prev)
-              }
-            />
-            {openVisibilitySection &&
-              VISIBILITY_OPTIONS.map(opt => (
-                <Pressable
-                  key={opt.id}
-                  style={styles.visibilityRow}
-                  onPress={() => setVisibility(opt.id)}
-                >
-                  <Text style={styles.optionText}>
-                    {opt.label}
-                  </Text>
-                  {visibility === opt.id && (
-                    <Check size={20} color="#000" />
-                  )}
-                </Pressable>
-              ))}
-          </View>
-
-          {/* 고급 설정 */}
-          <View style={[styles.section, { marginBottom: 24 }]}>
-            <SectionHeader
-              title="고급 설정"
-              open={openOptionSection}
-              onToggle={() =>
-                setOpenOptionSection(prev => !prev)
-              }
-            />
-            {openOptionSection && (
-              <>
-                <Pressable
-                  style={styles.visibilityRow}
-                  onPress={() =>
-                    setAllowComments(prev => !prev)
-                  }
-                >
-                  <Text style={styles.optionText}>댓글 허용</Text>
-                  <View
-                    style={[
-                      styles.toggle,
-                      allowComments && styles.toggleOn,
-                    ]}
-                  />
-                </Pressable>
-
-                <Pressable
-                  style={styles.visibilityRow}
-                  onPress={() => setAllowShare(prev => !prev)}
-                >
-                  <Text style={styles.optionText}>공유 허용</Text>
-                  <View
-                    style={[
-                      styles.toggle,
-                      allowShare && styles.toggleOn,
-                    ]}
-                  />
-                </Pressable>
-              </>
-            )}
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-
-      {/* 태그 검색 모달 (사람 / 위치 / 비즈니스 공용) */}
-      <Modal visible={tagModalVisible} animationType="slide">
-        <SafeAreaView style={styles.tagModalContainer}>
-          <View style={styles.tagModalHeader}>
-            <Pressable onPress={closeTagModal}>
-              <ChevronLeft size={22} color="#000" />
-            </Pressable>
-            <Text style={styles.tagModalTitle}>
-              {tagModalMode === 'person'
-                ? '사람 태그'
-                : tagModalMode === 'location'
-                ? '위치 태그'
-                : tagModalMode === 'business'
-                ? '비즈니스 태그'
-                : '태그'}
+            <Text style={styles.helpText}>
+              {isReordering
+                ? t('post:create.reorder_dragging')
+                : t('post:create.reorder_drag_help')}
             </Text>
-            <View style={{ width: 22 }} />
           </View>
 
-          <View style={styles.tagSearchRow}>
-            <Search
-              size={18}
-              color="#6B7280"
-              style={{ marginRight: 6 }}
-            />
-            <TextInput
-              value={tagSearch}
-              onChangeText={text => {
-                setTagSearch(text);
-                if (text.trim().length >= 1) {
-                  runTagSearch(tagModalMode, text);
-                } else {
-                  runTagSearch(tagModalMode, '');
-                }
-              }}
-              placeholder="검색어를 입력하세요"
-              placeholderTextColor="#9CA3AF"
-              style={styles.tagSearchInput}
-            />
-          </View>
+          <View style={styles.divider} />
 
-          {tagSearching && (
-            <ActivityIndicator
-              style={{ marginTop: 8 }}
-              size="small"
-            />
-          )}
-
-          <FlatList<TagListItem>
-            data={
-              (tagModalMode === 'person'
-                ? personResults
-                : tagModalMode === 'location'
-                ? locationResults
-                : tagModalMode === 'business'
-                ? businessResults
-                : []) as TagListItem[]
-            }
-            keyExtractor={(item, index) => {
-              const anyItem = item as any;
-              if (anyItem.id) return String(anyItem.id);
-              if (anyItem.name) return String(anyItem.name);
-              return String(index);
+          <TextInput
+            style={styles.captionInput}
+            placeholder={t('post:create.caption_placeholder')}
+            placeholderTextColor="#999"
+            multiline
+            value={caption}
+            onChangeText={setCaption}
+            onLayout={(event) => {
+              inputLayoutYRef.current.caption = event.nativeEvent.layout.y;
             }}
-            renderItem={({ item }) => {
-              if (tagModalMode === 'person') {
-                const u = item as TaggedUser;
-                const selected = taggedUsers.some(
-                  x => x.id === u.id,
-                );
-                return (
-                  <Pressable
-                    style={styles.tagListItem}
-                    onPress={() => toggleTaggedUser(u)}
-                  >
-                    <View style={styles.tagAvatar}>
-                      {u.avatar_url ? (
-                        <Image
-                          source={{ uri: u.avatar_url }}
-                          style={styles.tagAvatarImg}
-                        />
-                      ) : (
-                        <View style={styles.tagAvatarPlaceholder}>
-                          <Text style={styles.tagAvatarInitial}>
-                            {u.nickname
-                              ?.trim()
-                              ?.[0]
-                              ?.toUpperCase() ?? 'U'}
-                          </Text>
-                        </View>
-                      )}
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.tagMainText}>
-                        {u.nickname ?? '이름 없음'}
-                      </Text>
-                      {u.follow_id && (
-                        <Text style={styles.tagSubText}>
-                          @{u.follow_id}
-                        </Text>
-                      )}
-                    </View>
-                    {selected && (
-                      <Check size={20} color="#10B981" />
-                    )}
-                  </Pressable>
-                );
-              }
-
-              if (tagModalMode === 'business') {
-                const b = item as BusinessTag;
-                const selected =
-                  selectedBusiness?.id === b.id;
-                return (
-                  <Pressable
-                    style={styles.tagListItem}
-                    onPress={() => {
-                      setSelectedBusiness(b);
-                      closeTagModal();
-                    }}
-                  >
-                    <View style={styles.tagAvatar}>
-                      {b.thumbnail_url ? (
-                        <Image
-                          source={{ uri: b.thumbnail_url }}
-                          style={styles.tagAvatarImg}
-                        />
-                      ) : (
-                        <View style={styles.tagAvatarPlaceholder}>
-                          <Text style={styles.tagAvatarInitial}>
-                            {b.name?.trim()
-                              ?.[0]
-                              ?.toUpperCase() ?? 'B'}
-                          </Text>
-                        </View>
-                      )}
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.tagMainText}>
-                        {b.name}
-                      </Text>
-                      {b.shop_id && (
-                        <Text style={styles.tagSubText}>
-                          @{b.shop_id}
-                        </Text>
-                      )}
-                    </View>
-                    {selected && (
-                      <Check size={20} color="#10B981" />
-                    )}
-                  </Pressable>
-                );
-              }
-
-              if (tagModalMode === 'location') {
-                const l = item as LocationTag;
-                const selected =
-                  selectedLocation?.name === l.name &&
-                  selectedLocation?.address === l.address;
-                return (
-                  <Pressable
-                    style={styles.tagListItem}
-                    onPress={() => {
-                      setSelectedLocation(l);
-                      closeTagModal();
-                    }}
-                  >
-                    <View style={styles.tagLocationIcon}>
-                      <Text style={styles.tagLocationIconText}>
-                        위치
-                      </Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.tagMainText}>
-                        {l.name}
-                      </Text>
-                      {l.address && (
-                        <Text style={styles.tagSubText}>
-                          {l.address}
-                        </Text>
-                      )}
-                    </View>
-                    {selected && (
-                      <Check size={20} color="#10B981" />
-                    )}
-                  </Pressable>
-                );
-              }
-
-              return null;
-            }}
-            ListEmptyComponent={() =>
-              !tagSearching && tagSearch.trim().length > 0 ? (
-                <View style={styles.tagEmptyBox}>
-                  <Text style={styles.tagEmptyText}>
-                    검색 결과가 없습니다.
-                  </Text>
-                </View>
-              ) : null
-            }
+            onFocus={() => scrollToFocusedInput('caption')}
+            scrollEnabled={false}
           />
 
-          {tagModalMode === 'location' &&
-            tagSearch.trim().length > 0 && (
-              <Pressable
-                style={styles.tagNewLocationBtn}
-                onPress={() => {
-                  setSelectedLocation({
-                    name: tagSearch.trim(),
-                  });
-                  closeTagModal();
-                }}
-              >
-                <Text style={styles.tagNewLocationText}>
-                  “{tagSearch.trim()}” 새 위치로 사용
-                </Text>
-              </Pressable>
-            )}
+          <View style={styles.divider} />
+
+          <Pressable style={styles.menuItem} onPress={() => {
+            setSearchQuery('');
+            setSearchResults([]);
+            setTagModalType('person');
+          }}>
+             <View style={styles.iconBox}><Users size={20} color="#333"/></View>
+             <View style={{ flex: 1 }}>
+               <Text style={styles.menuText}>{t('post:create.tag_people')}</Text>
+               {taggedUsers.length > 0 && (
+                 <Text style={styles.menuSub}>{taggedUsers.length}{t('post:create.people_count_suffix')}</Text>
+               )}
+             </View>
+             <ChevronRight size={18} color="#CCC"/>
+          </Pressable>
+
+          <Pressable
+            style={styles.menuItem}
+            onPress={() => navigation.navigate('LocationPicker', {
+              returnEventName: locationPickEventNameRef.current,
+              initialLat: selectedLocation?.lat ?? null,
+              initialLng: selectedLocation?.lng ?? null,
+            })}
+          >
+             <View style={styles.iconBox}><MapPin size={20} color="#333"/></View>
+             <View style={{ flex: 1 }}>
+               <Text style={[styles.menuText, selectedLocation && {color: COONN_ACCENT, fontWeight: '600'}]}>
+                 {selectedLocation ? selectedLocation.name || selectedLocation.address : t('post:create.add_location')}
+               </Text>
+               {selectedLocation && (
+                 <Text style={styles.menuSub} numberOfLines={1}>{selectedLocation.address}</Text>
+               )}
+             </View>
+             {selectedLocation ? (
+               <Pressable onPress={() => setSelectedLocation(null)} hitSlop={10}>
+                 <X size={16} color="#999" />
+               </Pressable>
+             ) : (
+               <ChevronRight size={18} color="#CCC" />
+             )}
+          </Pressable>
+
+          <Pressable style={styles.menuItem} onPress={() => {
+            setSearchQuery('');
+            setSearchResults([]);
+            setTagModalType('business');
+          }}>
+             <View style={styles.iconBox}><ShoppingBag size={20} color="#333"/></View>
+             <View style={{ flex: 1 }}>
+               <Text style={[styles.menuText, selectedBusiness && {color: COONN_ACCENT, fontWeight: '600'}]}>
+                 {selectedBusiness ? selectedBusiness.name : t('post:create.business_partner')}
+               </Text>
+             </View>
+             {selectedBusiness ? (
+               <Pressable onPress={() => setSelectedBusiness(null)} hitSlop={10}>
+                 <X size={16} color="#999" />
+               </Pressable>
+             ) : (
+               <ChevronRight size={18} color="#CCC" />
+             )}
+          </Pressable>
+
+          <View style={styles.divider} />
+
+          <View style={styles.section}>
+             <Text style={styles.label}>{t('post:create.select_tab')}</Text>
+             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
+               {tabs.map(t => (
+                 <Pressable key={t.id} style={[styles.chip, selectedTab === t.id && styles.chipActive]} onPress={() => setSelectedTab(t.id)}>
+                   <Text style={[styles.chipTxt, selectedTab === t.id && styles.chipTxtActive]}>{t.name}</Text>
+                 </Pressable>
+               ))}
+             </ScrollView>
+          </View>
+          
+          <View style={styles.section}>
+             <Text style={styles.label}>{t('post:create.visibility_label')}</Text>
+             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+               {VISIBILITY_OPTIONS.map(opt => {
+                 const isSelected = visibility.includes(opt.id);
+                 return (
+                   <Pressable key={opt.id} style={[styles.visChip, isSelected && styles.visChipActive]} onPress={() => toggleVisibility(opt.id)}>
+                     <Text style={[styles.visText, isSelected && styles.visTextActive]}>{opt.label}</Text>
+                   </Pressable>
+                 );
+               })}
+             </ScrollView>
+          </View>
+          
+          <View style={styles.section}>
+             <View style={styles.settingRow}>
+                <Text style={styles.settingText}>{t('post:create.disable_comments')}</Text>
+                <Pressable onPress={() => setAllowComments(!allowComments)}>
+                  <View style={[styles.switchTrack, !allowComments && styles.switchActive]}>
+                    <View style={[styles.switchThumb, !allowComments && styles.switchThumbActive]} />
+                  </View>
+                </Pressable>
+             </View>
+             <View style={styles.settingRow}>
+                <Text style={styles.settingText}>{t('post:create.disable_share')}</Text>
+                <Pressable onPress={() => setAllowShare(!allowShare)}>
+                  <View style={[styles.switchTrack, !allowShare && styles.switchActive]}>
+                    <View style={[styles.switchThumb, !allowShare && styles.switchThumbActive]} />
+                  </View>
+                </Pressable>
+             </View>
+          </View>
+        </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+
+      <SimpleMediaPicker
+        visible={pickerVisible}
+        onClose={() => setPickerVisible(false)}
+        onSelect={handleMediaSelect}
+        maxSelect={10 - images.length}
+        themeColor={COONN_ACCENT}
+        imageProcessing="post"
+      />
+      
+      <UniversalImageEditor 
+        visible={editorVisible} 
+        sourceUri={activeImage?.uri || activeImage?.originalUri || ''} 
+        onClose={() => setEditorVisible(false)} 
+        onSave={handleEditorSave} 
+        initialRatio={editorInitialRatio} 
+        initialInverted={isGlobalInverted}
+        themeColor={COONN_ACCENT}
+      />
+
+      <Modal visible={!!tagModalType} animationType="slide" presentationStyle="pageSheet" onRequestClose={closeTagModal}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#FFF' }} edges={['top']}>
+           <View style={styles.modalHeader}>
+             <Pressable onPress={closeTagModal} style={{ padding: 8 }}>
+               <ChevronLeft size={26} color={COONN_TEXT} strokeWidth={1.8} />
+             </Pressable>
+             
+             <Text style={styles.modalTitle}>
+               {tagModalType === 'person' ? t('post:create.search_person') : t('post:create.search_business')}
+             </Text>
+             
+             <Pressable onPress={closeTagModal} style={{ padding: 8 }}>
+                <Text style={{ color: COONN_ACCENT, fontSize: 16, fontWeight: '600' }}>{t('common:ok')}</Text>
+             </Pressable>
+           </View>
+           
+           <View style={styles.modalSearch}>
+             <Search size={18} color="#999" />
+             <TextInput
+               style={{ flex: 1, marginLeft: 8, fontSize: 16 }}
+               placeholder={t('placeholders:search')}
+               value={searchQuery}
+               onChangeText={(t) => { setSearchQuery(t); runSearch(t); }}
+               autoFocus
+             />
+           </View>
+           
+           <FlatList 
+             data={searchResults}
+             keyExtractor={item => item.id}
+             renderItem={({ item }) => {
+               const isSelected = tagModalType === 'person' 
+                 ? taggedUsers.some(u => u.id === item.id)
+                 : false;
+
+               return (
+                 <Pressable style={styles.modalItem} onPress={() => handleSearchResultSelect(item)}>
+                   {item.thumbnail_url ? (
+                     <Image 
+                        source={{ uri: item.thumbnail_url }} 
+                        style={styles.resultImage} 
+                     />
+                   ) : (
+                     <View style={styles.resultPlaceholder}>
+                        {tagModalType === 'business' ? <Store size={20} color="#999"/> : <User size={20} color="#999"/>}
+                     </View>
+                   )}
+                   
+                   <View style={styles.resultTextContainer}>
+                     <Text style={{ fontSize: 16, fontWeight: '600', color: COONN_TEXT }}>{item.nickname || item.name}</Text>
+                     {(item.follow_id || item.shop_id) ? (
+                        <Text style={{ fontSize: 13, color: COONN_MUTED, marginTop: 2 }}>{item.follow_id || item.shop_id}</Text>
+                     ) : null}
+                   </View>
+                   
+                   {isSelected && <Check size={20} color="#007AFF" />}
+                 </Pressable>
+               );
+             }}
+           />
         </SafeAreaView>
       </Modal>
 
-      {/* 사진 편집 모달 */}
-      <Modal visible={editorVisible} animationType="slide">
-        <StatusBar
-          translucent={false}
-          backgroundColor="#fff"
-          barStyle="dark-content"
-        />
-        <SafeAreaView style={styles.editorContainer}>
-          <View style={styles.editorHeader}>
-            <Pressable onPress={() => setEditorVisible(false)}>
-              <X size={26} color="#000" />
-            </Pressable>
-            <Text style={styles.editorTitle}>사진 편집</Text>
-            <Pressable onPress={applyEditor}>
-              <Text style={styles.editorDone}>완료</Text>
-            </Pressable>
-          </View>
+      <CoonnFloatingToast
+        visible={toast.visible}
+        message={toast.message}
+        tone={toast.tone}
+        showMark={toast.showMark}
+        theme={toastTheme}
+        bottomOffset={Math.max(insets.bottom, 0) + 28}
+        onHidden={hideToast}
+      />
 
-          <View style={styles.editorBody}>
-            <View
-              style={[
-                styles.cropFrame,
-                { aspectRatio: frameAspectRatio || 1 },
-              ]}
-              onLayout={onFrameLayout}
-              {...panResponder.panHandlers}
-            >
-              {activeImage &&
-                frameSize.w > 0 &&
-                frameSize.h > 0 && (() => {
-                  const imgW = activeImage.width || 1;
-                  const imgH = activeImage.height || 1;
+      <CoonnAlert
+        visible={alertState.visible}
+        theme={alertTheme}
+        variant={alertState.variant ?? 'default'}
+        title={alertState.title}
+        message={alertState.message}
+        confirmText={alertState.confirmText ?? t('common:ok', '확인')}
+        cancelText={alertState.cancelText ?? t('common:cancel', '취소')}
+        onConfirm={alertState.onConfirm ?? closeAlert}
+        onCancel={closeAlert}
+        singleButton={alertState.singleButton}
+        dismissOnBackdrop={alertState.dismissOnBackdrop}
+        dismissOnBackButton={alertState.dismissOnBackdrop}
+      />
 
-                  const baseScale = baseScaleRef.current || 1;
-                  const rel = scaleState || 1;
-                  const actualScale = baseScale * rel;
-
-                  const dispW = imgW * actualScale;
-                  const dispH = imgH * actualScale;
-
-                  const commonStyle: any = {
-                    width: dispW,
-                    height: dispH,
-                    transform: [{ translateX }, { translateY }],
-                  };
-
-                  return (
-                    <>
-                      <Animated.Image
-                        source={{ uri: activeImage.uri }}
-                        style={commonStyle}
-                        resizeMode="cover"
-                        blurRadius={20}
-                      />
-
-                      <View
-                        pointerEvents="none"
-                        style={StyleSheet.absoluteFill}
-                      >
-                        <View
-                          style={{
-                            flex: 1,
-                            overflow: 'hidden',
-                          }}
-                        >
-                          <Animated.Image
-                            source={{ uri: activeImage.uri }}
-                            style={commonStyle}
-                            resizeMode="cover"
-                          />
-                        </View>
-                      </View>
-
-                      <View
-                        pointerEvents="none"
-                        style={styles.cropBorder}
-                      />
-
-                      <View
-                        pointerEvents="none"
-                        style={StyleSheet.absoluteFill}
-                      >
-                        <View
-                          style={[
-                            styles.gridLineVertical,
-                            { left: '33.333%' },
-                          ]}
-                        />
-                        <View
-                          style={[
-                            styles.gridLineVertical,
-                            { left: '66.666%' },
-                          ]}
-                        />
-                        <View
-                          style={[
-                            styles.gridLineHorizontal,
-                            { top: '33.333%' },
-                          ]}
-                        />
-                        <View
-                          style={[
-                            styles.gridLineHorizontal,
-                            { top: '66.666%' },
-                          ]}
-                        />
-                      </View>
-                    </>
-                  );
-                })()}
-            </View>
-          </View>
-        </SafeAreaView>
-      </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
 
-// ------------------------------
-// Styles
-// ------------------------------
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-
-  header: {
-    height: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    justifyContent: 'space-between',
+  container: { 
+    flex: 1, 
+    backgroundColor: '#FFF' 
   },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: '#000',
+  safeArea: { 
+    flex: 1, 
+    backgroundColor: '#FFF' 
   },
-  uploadBtn: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#007AFF',
+  contentAvoider: {
+    flex: 1,
   },
-
-  previewBox: {
-    width: '100%',
-    backgroundColor: '#000',
+  scrollContent: {
+    flexGrow: 1,
   },
-  previewImage: { width: '100%', height: '100%' },
-  editBtn: {
-    position: 'absolute',
-    bottom: 16,
-    right: 16,
-    padding: 10,
-    backgroundColor: '#0008',
-    borderRadius: 30,
+  header: { 
+    height: 54, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'space-between', 
+    paddingHorizontal: 14, 
+    borderBottomWidth: HAIRLINE, 
+    borderColor: COONN_LINE 
   },
-
-  ratioBar: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
+  headerBtn: { 
+    padding: 8 
   },
-  ratioChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    marginRight: 8,
+  headerTitle: { 
+    fontSize: 16, 
+    fontWeight: '700', 
+    color: COONN_TEXT 
   },
-  ratioChipSelected: {
-    backgroundColor: '#007AFF1A',
-    borderColor: '#007AFF',
+  shareBtn: { 
+    fontSize: 15, 
+    fontWeight: '700', 
+    color: COONN_ACCENT 
   },
-  ratioChipText: {
-    fontSize: 13,
-    color: '#111827',
+  previewWrapper: { 
+    width: SCREEN_WIDTH, 
+    backgroundColor: COONN_SURFACE, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    overflow: 'hidden' 
   },
-  ratioChipTextSelected: {
-    color: '#007AFF',
-    fontWeight: '600',
+  imageBox: { 
+    width: '100%', 
+    height: '100%' 
   },
-  rotateBtn: {
-    flexDirection: 'row',
+  mainImage: { 
+    width: '100%', 
+    height: '100%' 
+  },
+  editBadge: { 
+    position: 'absolute', 
+    bottom: 12, 
+    right: 12, 
+    backgroundColor: 'rgba(0,0,0,0.6)', 
+    borderRadius: 16, 
+    paddingHorizontal: 10, 
+    paddingVertical: 6, 
+    flexDirection: 'row', 
+    alignItems: 'center' 
+  },
+  editBadgeTxt: { 
+    color: '#FFF', 
+    fontSize: 12, 
+    fontWeight: '600', 
+    marginLeft: 4 
+  },
+  bottomLeftControls: { 
+    position: 'absolute', 
+    bottom: 12, 
+    left: 12, 
+    flexDirection: 'row' 
+  },
+  controlBtn: { 
+    width: 32, 
+    height: 32, 
+    borderRadius: 16, 
+    backgroundColor: 'rgba(0,0,0,0.58)', 
+    alignItems: 'center', 
+    justifyContent: 'center' 
+  },
+  controlBtnGap: {
+    marginLeft: 8,
+  },
+  controlBtnDisabled: {
+    opacity: 0.45,
+  },
+  frameProcessingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.18)',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    marginRight: 8,
   },
-
-  thumbsWrap: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    flexDirection: 'row',
+  ratioPopup: { 
+    position: 'absolute', 
+    bottom: 50, 
+    left: 12, 
+    backgroundColor: 'rgba(0,0,0,0.8)', 
+    borderRadius: 8, 
+    padding: 4 
   },
-  thumbWrapper: {
-    marginRight: 10,
+  ratioItem: { 
+    paddingVertical: 8, 
+    paddingHorizontal: 12, 
+    borderRadius: 6 
+  },
+  ratioItemActive: { 
+    backgroundColor: '#444' 
+  },
+  ratioTxt: { 
+    color: '#CCC', 
+    fontSize: 12 
+  },
+  ratioTxtActive: { 
+    color: '#FFF', 
+    fontWeight: '700' 
+  },
+  emptyBox: { 
+    height: 300, 
+    alignItems: 'center', 
+    justifyContent: 'center' 
+  },
+  emptyText: { 
+    marginTop: 10, 
+    color: COONN_MUTED, 
+    fontSize: 15 
+  },
+  thumbSection: { 
+    paddingVertical: 12, 
+    borderBottomWidth: HAIRLINE, 
+    borderColor: COONN_LINE 
+  },
+  thumbContent: { 
+    paddingHorizontal: 14, 
+    alignItems: 'center' 
   },
   thumbItem: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#eee',
+    marginRight: 12,
+    paddingTop: 10,
   },
-  thumbSelected: {
-    borderColor: '#007AFF',
-    borderWidth: 2,
+  thumbItemDragging: {
+    zIndex: 20,
+    elevation: 8,
   },
-  thumbImage: { width: '100%', height: '100%' },
-  thumbAdd: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    alignItems: 'center',
-    justifyContent: 'center',
+  addThumbItem: {
+    paddingTop: 10,
   },
-  thumbRemoveBtn: {
-    position: 'absolute',
-    top: -6,
-    right: -6,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: '#0008',
-    alignItems: 'center',
-    justifyContent: 'center',
+  thumbWrap: { 
+    marginRight: 10, 
+    borderRadius: 8, 
+    borderWidth: HAIRLINE, 
+    borderColor: COONN_LINE, 
+    position: 'relative' 
   },
-
-  section: { paddingHorizontal: 16, marginTop: 16 },
-
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 6,
+  thumbActive: { 
+    borderColor: COONN_TEXT, 
+    borderWidth: 2 
   },
-
-  label: { fontSize: 15, fontWeight: '600', color: '#111827' },
-
-  captionInput: {
-    minHeight: 80,
-    fontSize: 15,
-    color: '#000',
-    paddingVertical: 8,
+  thumbReordering: { 
+    opacity: 0.5, 
+    borderColor: '#E11D48', 
+    borderWidth: 2 
   },
-  textInput: {
-    fontSize: 15,
-    paddingVertical: 10,
-    color: '#000',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+  thumbImg: { 
+    width: 64, 
+    height: 64, 
+    borderRadius: 6 
   },
-
-  optionRow: {
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f4f4f4',
+  deleteBtn: { 
+    position: 'absolute', 
+    top: 2, 
+    right: -2, 
+    padding: 4, 
+    zIndex: 10 
   },
-  optionText: {
-    fontSize: 15,
-    color: '#000',
+  deleteIconBg: { 
+    width: 18, 
+    height: 18, 
+    borderRadius: 9, 
+    backgroundColor: '#E11D48', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    borderWidth: HAIRLINE, 
+    borderColor: '#FFF' 
   },
-
-  visibilityRow: {
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f4f4f4',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  addThumbBtn: { 
+    width: 64, 
+    height: 64, 
+    borderRadius: 8, 
+    borderWidth: HAIRLINE, 
+    borderColor: COONN_LINE, 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    backgroundColor: COONN_SURFACE 
   },
-
-  toggle: {
-    width: 40,
-    height: 22,
-    borderRadius: 14,
-    backgroundColor: '#D1D5DB',
+  helpText: { 
+    fontSize: 11, 
+    color: COONN_MUTED, 
+    textAlign: 'center', 
+    marginTop: 8 
   },
-  toggleOn: {
-    backgroundColor: '#007AFF',
+  captionInput: { 
+    fontSize: 16, 
+    color: COONN_TEXT, 
+    padding: 16, 
+    minHeight: 80, 
+    textAlignVertical: 'top' 
   },
-
-  // 탭 선택
-  tabBtn: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    marginRight: 8,
+  divider: { 
+    height: HAIRLINE, 
+    backgroundColor: COONN_LINE, 
+    marginVertical: 0 
   },
-  tabBtnSelected: {
-    backgroundColor: '#007AFF1A',
-    borderColor: '#007AFF',
+  menuItem: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    padding: 16, 
+    borderBottomWidth: HAIRLINE, 
+    borderColor: COONN_LINE_SOFT 
   },
-  tabText: { fontSize: 14, color: '#111' },
-  tabTextSelected: { color: '#007AFF', fontWeight: '600' },
-
-  // 태그 요약
-  tagSummaryBox: {
-    marginTop: 6,
-    paddingVertical: 6,
+  iconBox: { 
+    width: 28, 
+    alignItems: 'center', 
+    marginRight: 10 
   },
-  tagSummaryText: {
-    fontSize: 13,
-    color: '#6B7280',
+  menuText: { 
+    flex: 1, 
+    fontSize: 15, 
+    color: COONN_TEXT 
   },
-
-  // 태그 모달
-  tagModalContainer: {
-    flex: 1,
-    backgroundColor: '#fff',
+  menuSub: { 
+    fontSize: 13, 
+    color: COONN_MUTED, 
+    marginTop: 2 
   },
-  tagModalHeader: {
-    height: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+  section: { 
+    padding: 16 
   },
-  tagModalTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#111827',
+  label: { 
+    fontSize: 13, 
+    fontWeight: '700', 
+    color: COONN_MUTED, 
+    marginBottom: 8 
   },
-  tagSearchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+  chip: { 
+    paddingHorizontal: 12, 
+    paddingVertical: 6, 
+    borderRadius: 20, 
+    backgroundColor: COONN_LINE_SOFT, 
+    marginRight: 8, 
+    borderWidth: HAIRLINE, 
+    borderColor: COONN_LINE 
   },
-  tagSearchInput: {
-    flex: 1,
-    fontSize: 14,
-    paddingVertical: 6,
-    color: '#111827',
+  chipActive: { 
+    backgroundColor: COONN_TEXT, 
+    borderColor: COONN_TEXT 
   },
-  tagListItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+  chipTxt: { 
+    fontSize: 13, 
+    color: COONN_MUTED 
   },
-  tagAvatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    overflow: 'hidden',
-    marginRight: 10,
+  chipTxtActive: { 
+    color: '#FFF', 
+    fontWeight: '600' 
   },
-  tagAvatarImg: {
-    width: '100%',
-    height: '100%',
+  visChip: { 
+    paddingHorizontal: 10, 
+    paddingVertical: 5, 
+    borderRadius: 6, 
+    backgroundColor: COONN_LINE_SOFT, 
+    marginRight: 6 
   },
-  tagAvatarPlaceholder: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#E5E7EB',
+  visChipActive: { 
+    backgroundColor: COONN_LINE_SOFT 
   },
-  tagAvatarInitial: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#4B5563',
+  visText: { 
+    fontSize: 12, 
+    color: '#6B7280' 
   },
-  tagMainText: {
-    fontSize: 14,
-    color: '#111827',
-    fontWeight: '500',
+  visTextActive: { 
+    color: COONN_ACCENT, 
+    fontWeight: '600' 
   },
-  tagSubText: {
-    fontSize: 12,
-    color: '#6B7280',
-    marginTop: 2,
+  settingRow: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'space-between', 
+    marginBottom: 20 
   },
-  tagLocationIcon: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: '#F3F4F6',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
+  settingText: { 
+    fontSize: 15, 
+    color: COONN_TEXT 
   },
-  tagLocationIconText: {
-    fontSize: 10,
-    color: '#4B5563',
-    fontWeight: '700',
+  switchTrack: { 
+    width: 44, 
+    height: 26, 
+    borderRadius: 13, 
+    backgroundColor: '#E5E7EB', 
+    padding: 2 
   },
-  tagEmptyBox: {
-    paddingVertical: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+  switchActive: { 
+    backgroundColor: COONN_TEXT 
   },
-  tagEmptyText: {
-    fontSize: 13,
-    color: '#9CA3AF',
+  switchThumb: { 
+    width: 22, 
+    height: 22, 
+    borderRadius: 11, 
+    backgroundColor: '#FFF' 
   },
-  tagNewLocationBtn: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
+  switchThumbActive: { 
+    transform: [{ translateX: 18 }] 
   },
-  tagNewLocationText: {
-    fontSize: 14,
-    color: '#007AFF',
-    fontWeight: '600',
+  modalHeader: { 
+    padding: 12, 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    borderBottomWidth: HAIRLINE, 
+    borderColor: COONN_LINE 
   },
-
-  // 에디터
-  editorContainer: { flex: 1, backgroundColor: '#fff' },
-  editorHeader: {
-    height: 52,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    backgroundColor: '#fff',
-    elevation: 0,
-    shadowOpacity: 0,
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 0,
+  modalTitle: { 
+    fontSize: 16, 
+    fontWeight: '700', 
+    color: COONN_TEXT 
   },
-  editorTitle: { fontSize: 17, fontWeight: '600', color: '#000' },
-  editorDone: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#007AFF',
+  modalSearch: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    backgroundColor: COONN_LINE_SOFT, 
+    margin: 16, 
+    padding: 12, 
+    borderRadius: 10 
   },
-
-  editorBody: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#000',
-    zIndex: 0,
-    overflow: 'hidden',
+  modalItem: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    padding: 16, 
+    borderBottomWidth: HAIRLINE, 
+    borderColor: COONN_LINE_SOFT,
+    width: '100%' 
   },
-
-  cropFrame: {
-    width: '100%',
-    maxHeight: SCREEN_WIDTH * 1.3,
-    backgroundColor: 'transparent',
-    overflow: 'visible',
+  resultImage: { 
+    width: 44, 
+    height: 44, 
+    borderRadius: 22, 
+    backgroundColor: '#eee', 
+    marginRight: 12 
   },
-  cropBorder: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderWidth: 1,
-    borderColor: '#bdbdbd77',
+  resultPlaceholder: { 
+    width: 44, 
+    height: 44, 
+    borderRadius: 22, 
+    backgroundColor: '#F0F0F0', 
+    marginRight: 12, 
+    alignItems: 'center', 
+    justifyContent: 'center' 
   },
-
-  gridLineVertical: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    width: 1,
-    backgroundColor: 'rgba(255,255,255,0.7)',
-  },
-  gridLineHorizontal: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.7)',
+  resultTextContainer: { 
+    flex: 1, 
+    justifyContent: 'center' 
   },
 });

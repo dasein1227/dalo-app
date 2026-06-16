@@ -1,0 +1,141 @@
+﻿C:\dalo-app\src\lib\push\chatPushRuntime.ts:83: senderNickname: normalizeString(data.sender_nickname) || '상대방',
+C:\dalo-app\src\lib\profileCache.ts:13: // 수신 번역: 상대방이 보낸 메시지가 내 화면에 어떤 언어로 보일지
+C:\dalo-app\src\locales\ar\chat.json:301: "peer": "الطرف الآخر",
+C:\dalo-app\src\locales\ar\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\ar\chat.json:601: "peer": "الطرف الآخر",
+C:\dalo-app\src\locales\ar\chat.json:758: "peer": "الطرف الآخر",
+C:\dalo-app\src\locales\de\chat.json:301: "peer": "Gegenüber",
+C:\dalo-app\src\locales\de\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\de\chat.json:601: "peer": "Gegenüber",
+C:\dalo-app\src\locales\de\chat.json:758: "peer": "Gegenüber",
+C:\dalo-app\src\locales\en\chat.json:301: "peer": "Peer",
+C:\dalo-app\src\locales\en\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\en\chat.json:601: "peer": "Peer",
+C:\dalo-app\src\locales\en\chat.json:758: "peer": "Peer",
+C:\dalo-app\src\locales\es\chat.json:301: "peer": "Contacto",
+C:\dalo-app\src\locales\es\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\es\chat.json:601: "peer": "Contacto",
+C:\dalo-app\src\locales\es\chat.json:758: "peer": "Contacto",
+C:\dalo-app\src\locales\fr\chat.json:301: "peer": "Interlocuteur",
+C:\dalo-app\src\locales\fr\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\fr\chat.json:601: "peer": "Interlocuteur",
+C:\dalo-app\src\locales\fr\chat.json:758: "peer": "Interlocuteur",
+C:\dalo-app\src\locales\hi\chat.json:301: "peer": "दूसरा व्यक्ति",
+C:\dalo-app\src\locales\hi\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\hi\chat.json:601: "peer": "दूसरा व्यक्ति",
+C:\dalo-app\src\locales\hi\chat.json:758: "peer": "दूसरा व्यक्ति",
+C:\dalo-app\src\locales\id\chat.json:301: "peer": "Lawan bicara",
+C:\dalo-app\src\locales\id\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\id\chat.json:601: "peer": "Lawan bicara",
+C:\dalo-app\src\locales\id\chat.json:758: "peer": "Lawan bicara",
+C:\dalo-app\src\locales\it\chat.json:301: "peer": "Altro utente",
+C:\dalo-app\src\locales\it\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\it\chat.json:601: "peer": "Altro utente",
+C:\dalo-app\src\locales\it\chat.json:758: "peer": "Altro utente",
+C:\dalo-app\src\locales\ja\chat.json:301: "peer": "相手",
+C:\dalo-app\src\locales\ja\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\ja\chat.json:601: "peer": "相手",
+C:\dalo-app\src\locales\ja\chat.json:758: "peer": "相手",
+C:\dalo-app\src\locales\ko\chat.json:194: "helperLine2": "상대방에게는 영향을 주지 않습니다.",
+C:\dalo-app\src\locales\ko\chat.json:301: "peer": "상대방",
+C:\dalo-app\src\locales\ko\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\ko\chat.json:601: "peer": "상대방",
+C:\dalo-app\src\locales\ko\chat.json:758: "peer": "상대방",
+C:\dalo-app\src\locales\ko\friends.json:133: "qrDesc": "상대방이 스캔하면\n바로 연결됩니다.",
+C:\dalo-app\src\locales\ko\friends.json:134: "scanGuide": "상대방의 QR을 스캔하세요.",
+C:\dalo-app\src\locales\ko\friends.json:139: "coonnIdHint": "상대방의 공개 ID를 입력하세요.",
+C:\dalo-app\src\locales\pt\chat.json:301: "peer": "Contato",
+C:\dalo-app\src\locales\pt\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\pt\chat.json:601: "peer": "Contato",
+C:\dalo-app\src\locales\pt\chat.json:758: "peer": "Contato",
+C:\dalo-app\src\locales\ru\chat.json:301: "peer": "Собеседник",
+C:\dalo-app\src\locales\ru\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\ru\chat.json:601: "peer": "Собеседник",
+C:\dalo-app\src\locales\ru\chat.json:758: "peer": "Собеседник",
+C:\dalo-app\src\locales\th\chat.json:301: "peer": "อีกฝ่าย",
+C:\dalo-app\src\locales\th\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\th\chat.json:601: "peer": "อีกฝ่าย",
+C:\dalo-app\src\locales\th\chat.json:758: "peer": "อีกฝ่าย",
+C:\dalo-app\src\locales\tr\chat.json:301: "peer": "Karşı taraf",
+C:\dalo-app\src\locales\tr\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\tr\chat.json:601: "peer": "Karşı taraf",
+C:\dalo-app\src\locales\tr\chat.json:758: "peer": "Karşı taraf",
+C:\dalo-app\src\locales\vi\chat.json:301: "peer": "Đối phương",
+C:\dalo-app\src\locales\vi\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\vi\chat.json:601: "peer": "Đối phương",
+C:\dalo-app\src\locales\vi\chat.json:758: "peer": "Đối phương",
+C:\dalo-app\src\locales\zh-Hans\chat.json:301: "peer": "对方",
+C:\dalo-app\src\locales\zh-Hans\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\zh-Hans\chat.json:601: "peer": "对方",
+C:\dalo-app\src\locales\zh-Hans\chat.json:758: "peer": "对方",
+C:\dalo-app\src\locales\zh-Hant\chat.json:301: "peer": "對方",
+C:\dalo-app\src\locales\zh-Hant\chat.json:600: "replyPreview": {
+C:\dalo-app\src\locales\zh-Hant\chat.json:601: "peer": "對方",
+C:\dalo-app\src\locales\zh-Hant\chat.json:758: "peer": "對方",
+C:\dalo-app\src\screens\chat\components\InputBar\InputBar.tsx:8: import InputReplyPreview from './InputReplyPreview';
+C:\dalo-app\src\screens\chat\components\InputBar\InputBar.tsx:135: <InputReplyPreview
+C:\dalo-app\src\screens\chat\components\InputBar\InputBar3.tsx:8: import InputReplyPreview from './InputReplyPreview';
+C:\dalo-app\src\screens\chat\components\InputBar\InputBar3.tsx:164: <InputReplyPreview
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview.tsx:1: // src/screens/chat/components/InputBar/InputReplyPreview.tsx
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview.tsx:52: export default function InputReplyPreview({ replyTo, onCancel, theme }: Props) {
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview.tsx:56: const labelName = String(senderName || t('chat:replyPreview.peer'));
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview.tsx:89: const bg = theme.replyPreviewBg;
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview.tsx:116: {t('chat:replyPreview.replyTo', { name: labelName })}
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview.tsx:146: console.log('[reply-cancel-source] InputReplyPreview.closePress', {
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview.tsx:157: accessibilityLabel={t('chat:replyPreview.cancel')}
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview2.tsx:1: // src/screens/chat/components/InputBar/InputReplyPreview.tsx
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview2.tsx:52: export default function InputReplyPreview({ replyTo, onCancel, theme }: Props) {
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview2.tsx:56: const labelName = String(senderName || t('chat:replyPreview.peer'));
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview2.tsx:77: const bg = theme.replyPreviewBg;
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview2.tsx:104: {t('chat:replyPreview.replyTo', { name: labelName })}
+C:\dalo-app\src\screens\chat\components\InputBar\InputReplyPreview2.tsx:136: accessibilityLabel={t('chat:replyPreview.cancel')}
+C:\dalo-app\src\screens\chat\components\MessageList\hooks\useSenderIdentity.ts:321: '상대방'
+C:\dalo-app\src\screens\chat\components\MessageList\ui\ReplyBlock.tsx:5: import type { ReplyPreviewModel } from '../utils/resolveReplyPreview';
+C:\dalo-app\src\screens\chat\components\MessageList\ui\ReplyBlock.tsx:8: reply: ReplyPreviewModel;
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:32: export type ReplyPreviewModel = {
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:325: export function buildReplyPreviewModel(args: {
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:332: }): ReplyPreviewModel | null {
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:351: '상대방',
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview - 복사본.ts:437: senderName: senderName.trim() || '상대방',
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:32: export type ReplyPreviewModel = {
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:345: export function buildReplyPreviewModel(args: {
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:352: }): ReplyPreviewModel | null {
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:371: '상대방',
+C:\dalo-app\src\screens\chat\components\MessageList\utils\resolveReplyPreview.ts:457: senderName: senderName.trim() || '상대방',
+C:\dalo-app\src\screens\chat\components\MessageList\MessageItemView.tsx:25: import { buildReplyPreviewModel, resolveReplyRefForMessage } from './utils/resolveReplyPreview';
+C:\dalo-app\src\screens\chat\components\MessageList\MessageItemView.tsx:790: buildReplyPreviewModel({
+C:\dalo-app\src\screens\chat\components\MessageList\useMessageListRender.tsx:12: import { resolveReplyRefForMessage } from "./utils/resolveReplyPreview";
+C:\dalo-app\src\screens\chat\components\TranslationSettingsPanel.theme.ts:44: const surfaceRaised = base.inputFieldBg || base.replyPreviewBg || surface;
+C:\dalo-app\src\screens\chat\components\TranslationSettingsPanel.theme.ts:45: const surfaceSubtle = base.replyPreviewBg || base.inputBg || surfaceRaised;
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:51: replyPreviewBg: string;
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:163: replyPreviewBg: '#E4E9E0',
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:200: replyPreviewBg: '#E8EAED',
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:237: replyPreviewBg: '#E1E4E8',
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:274: replyPreviewBg: '#F1F3F4',
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:311: replyPreviewBg: '#EFE9DC',
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:348: replyPreviewBg: '#D6D6E0',
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:385: replyPreviewBg: '#F1F3F5',
+C:\dalo-app\src\screens\chat\theme\chatTheme.ts:422: replyPreviewBg: '#2C2C2E',
+C:\dalo-app\src\screens\chat\utils\chatHelpers.ts:196: export function deriveTextPairForReplyPreview(opts: {
+C:\dalo-app\src\screens\chat\Chat.tsx:99: deriveTextPairForReplyPreview,
+C:\dalo-app\src\screens\chat\Chat.tsx:2613: const pair = deriveTextPairForReplyPreview({ msg, meId: me });
+C:\dalo-app\src\screens\chat\Chat.tsx:3443: const pair = deriveTextPairForReplyPreview({ msg, meId: me });
+C:\dalo-app\src\screens\chat\ChatMenu.theme.ts:18: const surfaceSubtle = chatTheme.replyPreviewBg || chatTheme.inputBg || surface;
+C:\dalo-app\src\screens\chat\ChatMenu.theme.ts:19: const surfaceRaised = chatTheme.inputFieldBg || chatTheme.replyPreviewBg || surface;
+C:\dalo-app\src\screens\chat\ChatRoomData.theme.ts:23: const surfaceSubtle = chatTheme.replyPreviewBg || chatTheme.inputBg || surface;
+C:\dalo-app\src\screens\chat\ChatRoomData.theme.ts:24: const surfaceRaised = chatTheme.inputFieldBg || chatTheme.replyPreviewBg || surface;
+C:\dalo-app\src\screens\chat\ChatRoomEdit.theme.ts:17: const surfaceSubtle = chatTheme.replyPreviewBg || chatTheme.inputBg || surface;
+C:\dalo-app\src\screens\chat\ChatRoomEdit.theme.ts:18: const surfaceRaised = chatTheme.inputFieldBg || chatTheme.replyPreviewBg || surface;
+C:\dalo-app\src\screens\chat\ChatSetting.theme.ts:19: const surfaceSubtle = chatTheme.replyPreviewBg || chatTheme.inputBg || surface;
+C:\dalo-app\src\screens\chat\ChatSetting.theme.ts:20: const surfaceRaised = chatTheme.inputFieldBg || chatTheme.replyPreviewBg || surface;
+C:\dalo-app\src\screens\chat\ChatSetting.tsx:359: lines.push(chatStaticText('chat:settings.export.noteText', '※ 내 메시지는 원문 기준, 상대방 메시지는 현재 표시 본문 기준으로 내보냅니다.'));
+C:\dalo-app\src\screens\chat\Collection.theme.ts:19: const surfaceSubtle = chatTheme.replyPreviewBg || chatTheme.inputBg || surface;
+C:\dalo-app\src\screens\chat\Collection.theme.ts:20: const surfaceRaised = chatTheme.inputFieldBg || chatTheme.replyPreviewBg || surface;
+C:\dalo-app\src\screens\chat\Invite.theme.ts:21: const surfaceSubtle = chatTheme.replyPreviewBg || chatTheme.inputBg || surface;
+C:\dalo-app\src\screens\chat\Invite.theme.ts:22: const surfaceRaised = chatTheme.inputFieldBg || chatTheme.replyPreviewBg || surface;
+C:\dalo-app\src\screens\profile\FollowList.tsx:33: user_id: string; // 상대방 user_id
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:30: export type ReplyPreviewModel = {
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:303: export function buildReplyPreviewModel(args: {
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:310: }): ReplyPreviewModel | null {
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:329: chatText('replyPreview.unknownSender', '상대방'),
+C:\dalo-app\src\utils\chat\message\resolveReplyPreview.ts:407: senderName: senderName.trim() || chatText('replyPreview.unknownSender', '상대방'),

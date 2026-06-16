@@ -1,663 +1,1444 @@
-// src/screens/settings/AccountSettings.tsx
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Pressable,
   TextInput,
-  Alert,
   ActivityIndicator,
   ScrollView,
   Platform,
-  Switch,
+  StatusBar,
+  Animated,
+  KeyboardAvoidingView,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import { ChevronLeft, Info } from 'lucide-react-native';
+import { Image } from 'expo-image';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import {
+  ChevronLeft,
+  AtSign,
+  Hash,
+  Eye,
+  Smartphone,
+  Mail,
+  HelpCircle,
+  Camera,
+  X,
+  User,
+  Trash2,
+  LucideIcon
+} from 'lucide-react-native';
 import { supabase } from '@/lib/supabase';
 
-const ACCENT = '#FF5A7A';
-const HAIRLINE = '#ECEFF4';
-const BG = '#F7F8FA';
-const TEXT_MAIN = '#111827';
-const TEXT_MUTED = '#6B7280';
+import { useAppTheme } from '@/theme/useAppTheme';
+import { GlobalHeader, HeaderIconButton } from '@/components/GlobalHeader';
+import SafeScreen from '@/components/layout/SafeScreen';
+import CoonnAlert, { type CoonnAlertVariant } from '@/components/CoonnAlert';
+import CoonnFloatingToast from '@/components/feedback/CoonnFloatingToast';
+import { createCoonnFloatingToastTheme } from '@/components/feedback/CoonnFloatingToast.theme';
+import { useCoonnFloatingToast } from '@/components/feedback/useCoonnFloatingToast';
+import { createAccountSettingsTheme } from './AccountSettings.theme';
+import SimpleMediaPicker, { type SimplePickedImage } from '@/components/SimpleMediaPicker';
+import UniversalImageEditor from '@/components/UniversalImageEditor';
+import AccountWithdrawalNoticeModal from './components/AccountWithdrawalNoticeModal';
+import AccountWithdrawalSurveyModal from './components/AccountWithdrawalSurveyModal';
+import AccountWithdrawalConfirmModal from './components/AccountWithdrawalConfirmModal';
+import type { AccountWithdrawalPayload, AccountWithdrawalReasonOption } from './components/accountWithdrawal.types';
 
-type ProfileRow = {
-  id: string;
-  nickname: string | null;
-  follow_id?: string | null;
-  friend_code?: string | null;
-  phone_number?: string | null;
-  phone_verified?: boolean | null;
-  show_nickname_to_friends?: boolean | null;
-  is_business?: boolean | null;
+
+const ACCOUNT_PROFILE_SELECT =
+  'user_id, nickname, avatar_url, private_avatar_url, follow_id, friend_code, phone_number, phone_verified, show_nickname_to_friends' as const;
+
+type IdentifierStatus = 'none' | 'success' | 'duplicate' | 'invalid';
+
+type AccountAlertState = {
+  visible: boolean;
+  title: string;
+  message?: string;
+  variant: CoonnAlertVariant;
 };
 
+const EMPTY_ACCOUNT_ALERT: AccountAlertState = {
+  visible: false,
+  title: '',
+  message: undefined,
+  variant: 'default',
+};
+
+const IDENTIFIER_MIN_LENGTH = 3;
+const IDENTIFIER_MAX_LENGTH = 30;
+const IDENTIFIER_GUIDE_TEXT = `${IDENTIFIER_MIN_LENGTH}~${IDENTIFIER_MAX_LENGTH} · a-z, 0-9, _`;
+const IDENTIFIER_PATTERN = /^[a-z0-9_]{3,30}$/;
+const NICKNAME_MAX_LENGTH = 30;
+
+const uploadProfileImage = async (uri: string | null, userId: string) => {
+  if (!uri || !uri.startsWith('file://')) return uri;
+
+  const ext = uri.split('?')[0]?.split('#')[0]?.split('.').pop()?.toLowerCase() || 'jpg';
+  const safeExt = ext === 'jpeg' ? 'jpg' : ext.replace(/[^a-z0-9]/g, '') || 'jpg';
+  const contentType = safeExt === 'png'
+    ? 'image/png'
+    : safeExt === 'webp'
+      ? 'image/webp'
+      : safeExt === 'heic' || safeExt === 'heif'
+        ? 'image/heic'
+        : 'image/jpeg';
+  const fileName = `profiles/${userId}/avatar_${Date.now()}.${safeExt === 'heif' ? 'heic' : safeExt}`;
+
+  const formData = new FormData();
+  formData.append('file', {
+    uri,
+    name: fileName,
+    type: contentType,
+  } as any);
+
+  const { error } = await supabase.storage
+    .from('profile-images')
+    .upload(fileName, formData, {
+      cacheControl: '3600',
+      upsert: false,
+    });
+
+  if (error) throw error;
+
+  const { data } = supabase.storage
+    .from('profile-images')
+    .getPublicUrl(fileName);
+
+  return data.publicUrl;
+};
+
+
+const BouncyPressable = ({ onPress, style, children, disabled }: any) => {
+  const scaleValue = useRef(new Animated.Value(1)).current;
+
+  const onPressIn = () => {
+    Animated.spring(scaleValue, { toValue: 0.96, useNativeDriver: true, speed: 20, bounciness: 6 }).start();
+  };
+  const onPressOut = () => {
+    Animated.spring(scaleValue, { toValue: 1, useNativeDriver: true, speed: 20, bounciness: 6 }).start();
+  };
+
+  return (
+    <Pressable onPress={onPress} onPressIn={disabled ? undefined : onPressIn} onPressOut={disabled ? undefined : onPressOut} disabled={disabled}>
+      <Animated.View style={[style, { transform: [{ scale: scaleValue }] }]}>{children}</Animated.View>
+    </Pressable>
+  );
+};
+
+
+const CoonnSwitch = ({
+  value,
+  onValueChange,
+  colors,
+}: {
+  value: boolean;
+  onValueChange: (next: boolean) => void;
+  colors: any;
+}) => {
+  const trackBg = value ? colors.switchTrackOn : colors.switchTrackOff;
+  const trackBorder = value ? colors.switchTrackOnBorder : colors.switchTrackOffBorder;
+  const thumbBg = value ? colors.switchThumbOn : colors.switchThumbOff;
+
+  return (
+    <Pressable
+      accessibilityRole="switch"
+      accessibilityState={{ checked: value }}
+      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+      onPress={() => onValueChange(!value)}
+      style={[
+        styles.coonnSwitchTrack,
+        {
+          backgroundColor: trackBg,
+          borderColor: trackBorder,
+        },
+      ]}
+    >
+      <View
+        style={[
+          styles.coonnSwitchThumb,
+          value && styles.coonnSwitchThumbOn,
+          { backgroundColor: thumbBg },
+        ]}
+      />
+    </Pressable>
+  );
+};
+
+const InteractiveInput = React.memo(({
+  value,
+  onChangeText,
+  onBlur,
+  onCheckDuplicate,
+  checkDisabled,
+  checkLabel,
+  checkingLabel,
+  availableLabel,
+  duplicateLabel,
+  placeholder,
+  loading,
+  status,
+  colors,
+}: {
+  value: string;
+  onChangeText: (t: string) => void;
+  onBlur: () => void;
+  onCheckDuplicate: () => void;
+  checkDisabled: boolean;
+  checkLabel: string;
+  checkingLabel: string;
+  availableLabel: string;
+  duplicateLabel: string;
+  placeholder: string;
+  loading: boolean;
+  status: IdentifierStatus;
+  colors: any;
+}) => {
+  const [isFocused, setIsFocused] = useState(false);
+  const isSuccess = status === 'success';
+  const isDuplicate = status === 'duplicate';
+  const isInvalid = status === 'invalid';
+  const hasErrorState = isDuplicate || isInvalid;
+  const isBlocked = checkDisabled || loading || isSuccess;
+
+  const actionLabel = loading
+    ? checkingLabel
+    : isSuccess
+      ? availableLabel
+      : isDuplicate
+        ? duplicateLabel
+        : checkLabel;
+
+  return (
+    <View
+      style={[
+        styles.inputWrapper,
+        {
+          backgroundColor: colors.inputBg,
+          borderColor: colors.inputBorder,
+        },
+        isFocused && {
+          backgroundColor: colors.inputFocusedBg,
+          borderColor: colors.inputFocusedBorder,
+        },
+        isSuccess && {
+          borderColor: colors.inputSuccessBorder,
+        },
+        hasErrorState && {
+          backgroundColor: colors.inputErrorBg,
+          borderColor: colors.inputErrorBorder,
+        },
+      ]}
+    >
+      <TextInput
+        value={value}
+        onChangeText={onChangeText}
+        onBlur={() => {
+          setIsFocused(false);
+          onBlur();
+        }}
+        onFocus={() => setIsFocused(true)}
+        style={[styles.textInput, { color: colors.textPrimary }]}
+        placeholder={placeholder}
+        placeholderTextColor={colors.placeholder}
+        autoCapitalize="none"
+        autoCorrect={false}
+      />
+
+      <Pressable
+        onPress={onCheckDuplicate}
+        disabled={isBlocked}
+        hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}
+        style={({ pressed }) => [
+          styles.inputActionBtn,
+          {
+            backgroundColor: isSuccess
+              ? colors.inputActionSuccessBg
+              : isDuplicate
+                ? colors.inputActionDuplicateBg
+                : isBlocked
+                  ? colors.inputActionDisabledBg
+                  : colors.inputActionBg,
+            borderColor: isSuccess
+              ? colors.inputActionSuccessBorder
+              : isDuplicate
+                ? colors.inputActionDuplicateBorder
+                : isBlocked
+                  ? colors.inputActionDisabledBorder
+                  : colors.inputActionBorder,
+            opacity: pressed && !isBlocked ? 0.72 : 1,
+          },
+        ]}
+      >
+        <Text
+          numberOfLines={1}
+          style={[
+            styles.inputActionText,
+            {
+              color: isSuccess
+                ? colors.inputActionSuccessText
+                : isDuplicate
+                  ? colors.inputActionDuplicateText
+                  : isBlocked
+                    ? colors.inputActionDisabledText
+                    : colors.inputActionText,
+            },
+          ]}
+        >
+          {actionLabel}
+        </Text>
+      </Pressable>
+    </View>
+  );
+});
+
+const SectionIcon = ({ icon: Icon, colors }: { icon: LucideIcon, colors: any }) => (
+  <View
+    style={[
+      styles.miniIcon,
+      {
+        backgroundColor: colors.iconBoxBg,
+        borderColor: colors.iconBoxBorder,
+      },
+    ]}
+  >
+    <Icon size={17} color={colors.icon} strokeWidth={1.9} />
+  </View>
+);
+
 export default function AccountSettings() {
+  const { t, i18n } = useTranslation();
   const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
+  const appTheme = useAppTheme();
+  const colors = createAccountSettingsTheme(appTheme);
+  const isDark = Boolean((appTheme as any)?.isDark);
+  const alertTheme = isDark ? 'coonn_dark' : 'coonn_light';
 
   const [meId, setMeId] = useState<string>('');
-
-  const [nickname, setNickname] = useState('');
-
-  const [followId, setFollowId] = useState('');
-  const [originalFollowId, setOriginalFollowId] = useState('');
-  const [followIdError, setFollowIdError] = useState<string | null>(null);
-  const [checkingFollow, setCheckingFollow] = useState(false);
-
-  const [friendCode, setFriendCode] = useState('');
-  const [originalFriendCode, setOriginalFriendCode] = useState('');
-  const [friendCodeError, setFriendCodeError] = useState<string | null>(null);
-  const [checkingFriend, setCheckingFriend] = useState(false);
-
+  const [email, setEmail] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [phoneVerified, setPhoneVerified] = useState(false);
 
-  const [showNicknameToFriends, setShowNicknameToFriends] = useState(true);
-  const [originalShowNicknameToFriends, setOriginalShowNicknameToFriends] =
-    useState(true);
+  const [nickname, setNickname] = useState('');
+  const [originalNickname, setOriginalNickname] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [originalAvatarUrl, setOriginalAvatarUrl] = useState<string | null>(null);
+  const [pickerVisible, setPickerVisible] = useState(false);
+  const [editorVisible, setEditorVisible] = useState(false);
+  const [tempImageUri, setTempImageUri] = useState<string | null>(null);
 
-  const [isBusiness, setIsBusiness] = useState(false);
+  const [followId, setFollowId] = useState('');
+  const [originalFollowId, setOriginalFollowId] = useState('');
+  const [checkingFollow, setCheckingFollow] = useState(false);
+  const [followIdStatus, setFollowIdStatus] = useState<IdentifierStatus>('none');
+
+  const [friendCode, setFriendCode] = useState('');
+  const [originalFriendCode, setOriginalFriendCode] = useState('');
+  const [checkingFriend, setCheckingFriend] = useState(false);
+  const [friendCodeStatus, setFriendCodeStatus] = useState<IdentifierStatus>('none');
+
+  const [showNickname, setShowNickname] = useState(true);
+  const [originalShowNickname, setOriginalShowNickname] = useState(true);
 
   const [loading, setLoading] = useState(true);
+  const hasLoadedRef = useRef(false);
   const [saving, setSaving] = useState(false);
+  const [alertState, setAlertState] = useState<AccountAlertState>(EMPTY_ACCOUNT_ALERT);
+  const [withdrawalNoticeVisible, setWithdrawalNoticeVisible] = useState(false);
+  const [withdrawalSurveyVisible, setWithdrawalSurveyVisible] = useState(false);
+  const [withdrawalConfirmVisible, setWithdrawalConfirmVisible] = useState(false);
+  const [withdrawalReasons, setWithdrawalReasons] = useState<AccountWithdrawalReasonOption[]>([]);
+  const [withdrawalReasonsLoading, setWithdrawalReasonsLoading] = useState(false);
+  const [withdrawalPayload, setWithdrawalPayload] = useState<AccountWithdrawalPayload | null>(null);
+  const [withdrawing, setWithdrawing] = useState(false);
+  const { toast, showToast, hideToast } = useCoonnFloatingToast();
 
-  // ---------------------------------------------------------
-  // ⚡ VALIDATION
-  // ---------------------------------------------------------
+  const toastTheme = createCoonnFloatingToastTheme(
+    {
+      isDark,
+      surface: (colors as any).toastBg ?? colors.card,
+      textPrimary: (colors as any).toastText ?? colors.textPrimary,
+      border: (colors as any).toastBorder ?? colors.cardBorder,
+      accentColor: (colors as any).controlSelected ?? (colors as any).accent,
+      dangerColor: (colors as any).dangerText ?? undefined,
+      shadowColor: (colors as any).controlSelected ?? '#0A0A0A',
+    },
+    toast.tone,
+  );
 
-  const validateFollowId = (id: string): string | null => {
-    if (!id) return '아이디를 입력해 주세요.';
-    if (id.length < 2 || id.length > 20) return '아이디는 2~20자 사이여야 합니다.';
-    const allowed = /^[a-z0-9._\uAC00-\uD7A3]+$/;
-    if (!allowed.test(id)) return '영문, 숫자, 한글, ".", "_"만 사용할 수 있어요.';
-    if (/^[._]/.test(id) || /[._]$/.test(id))
-      return '아이디의 처음과 끝에는 ".", "_"를 사용할 수 없어요.';
-    if (/[._]{2,}|(\._|_\.)/.test(id))
-      return '특수문자를 연속해서 사용할 수 없어요.';
-    if (/\s/.test(id)) return '공백은 사용할 수 없어요.';
-    return null;
+  const withdrawalTone = {
+    cardBg: isDark ? 'rgba(128, 70, 70, 0.16)' : 'rgba(164, 80, 80, 0.075)',
+    cardBorder: isDark ? 'rgba(224, 150, 150, 0.24)' : 'rgba(164, 80, 80, 0.18)',
+    iconBg: isDark ? 'rgba(224, 150, 150, 0.15)' : 'rgba(164, 80, 80, 0.10)',
+    iconBorder: isDark ? 'rgba(224, 150, 150, 0.24)' : 'rgba(164, 80, 80, 0.16)',
+    icon: isDark ? '#E6AAA6' : '#A24F4F',
+    text: isDark ? '#E6AAA6' : '#944747',
+    subText: isDark ? 'rgba(230, 170, 166, 0.68)' : 'rgba(148, 71, 71, 0.64)',
   };
 
-  const validateFriendCode = (code: string): string | null => {
-    if (!code) return null;
-    if (code.length < 4 || code.length > 20)
-      return '친구 코드는 4~20자 사이여야 합니다.';
-    const regex = /^[a-z0-9_\uAC00-\uD7A3]+$/;
-    if (!regex.test(code)) return '영문 소문자, 숫자, 한글, "_"만 사용할 수 있어요.';
-    return null;
-  };
+  const showAlert = useCallback((next: Omit<AccountAlertState, 'visible'>) => {
+    setAlertState({
+      visible: true,
+      title: next.title,
+      message: next.message,
+      variant: next.variant,
+    });
+  }, []);
 
-  // ---------------------------------------------------------
-  // ⚡ LOAD PROFILE + 사업자 이중 체크
-  // ---------------------------------------------------------
+  const closeAlert = useCallback(() => {
+    setAlertState((prev) => ({ ...prev, visible: false }));
+  }, []);
+
+  const applyStatusBar = useCallback(() => {
+    try {
+      navigation.setOptions?.({
+        headerShown: false,
+        statusBarColor: 'transparent',
+        statusBarStyle: colors.navigationStatusBarStyle,
+        statusBarTranslucent: true,
+      });
+    } catch {}
+
+    if (Platform.OS === 'android') {
+      try {
+        StatusBar.setTranslucent(true);
+        StatusBar.setBackgroundColor('transparent');
+        StatusBar.setBarStyle(colors.statusBarStyle);
+      } catch {}
+    } else {
+      try { StatusBar.setBarStyle(colors.statusBarStyle); } catch {}
+    }
+  }, [navigation, colors.navigationStatusBarStyle, colors.statusBarStyle]);
+
+  useFocusEffect(
+    useCallback(() => {
+      applyStatusBar();
+      let t1: any, t2: any;
+      try { requestAnimationFrame(() => applyStatusBar()); } catch {}
+      t1 = setTimeout(() => applyStatusBar(), 0);
+      t2 = setTimeout(() => applyStatusBar(), 60);
+      return () => { if(t1) clearTimeout(t1); if(t2) clearTimeout(t2); };
+    }, [applyStatusBar])
+  );
+
+  useEffect(() => { applyStatusBar(); }, [applyStatusBar]);
 
   const load = useCallback(async () => {
     try {
-      setLoading(true);
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) throw new Error('로그인이 필요합니다.');
+      if (!hasLoadedRef.current) setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error(t('errors:auth.loginRequired'));
       setMeId(user.id);
+      setEmail(user.email ?? '');
 
-      // 1) 프로필 기본 정보
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(
-          'id, nickname, follow_id, friend_code, phone_number, phone_verified, show_nickname_to_friends, is_business'
-        )
-        .eq('id', user.id)
-        .maybeSingle();
-
+      const { data: row, error } = await supabase.from('profiles').select(ACCOUNT_PROFILE_SELECT).eq('user_id', user.id).maybeSingle();
       if (error) throw error;
 
-      const row = (data ?? null) as ProfileRow | null;
-
-      setNickname(row?.nickname ?? '');
-
-      const f = (row?.follow_id ?? '').toLowerCase();
-      setFollowId(f);
-      setOriginalFollowId(f);
-
-      const fc = (row?.friend_code ?? '').toLowerCase();
-      setFriendCode(fc);
-      setOriginalFriendCode(fc);
-
-      setPhoneNumber(row?.phone_number ?? null);
-      setPhoneVerified(!!row?.phone_verified);
-
-      const flag = row?.show_nickname_to_friends ?? true;
-      setShowNicknameToFriends(flag);
-      setOriginalShowNicknameToFriends(flag);
-
-      // 기본값: profiles.is_business
-      let bizFlag = row?.is_business ?? false;
-
-      // 2) business_registrations 에서 승인 여부 이중 체크
-      const { data: reg, error: regError } = await supabase
-        .from('business_registrations')
-        .select('status')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (!regError && reg?.status === 'approved') {
-        bizFlag = true;
+      if (row) {
+        const nextNickname = String(row.nickname ?? '').trim();
+        const nextAvatarUrl = (row.avatar_url ?? row.private_avatar_url ?? null) as string | null;
+        const fId = (row.follow_id ?? '').toLowerCase();
+        const fCode = (row.friend_code ?? '').toLowerCase();
+        setNickname(nextNickname); setOriginalNickname(nextNickname);
+        setAvatarUrl(nextAvatarUrl); setOriginalAvatarUrl(nextAvatarUrl);
+        setFollowId(fId); setOriginalFollowId(fId);
+        setFriendCode(fCode); setOriginalFriendCode(fCode);
+        setPhoneNumber(row.phone_number ?? null);
+        setPhoneVerified(!!row.phone_verified);
+        setShowNickname(row.show_nickname_to_friends ?? true);
+        setOriginalShowNickname(row.show_nickname_to_friends ?? true);
       }
-
-      setIsBusiness(bizFlag);
     } catch (e: any) {
-      Alert.alert('오류', e?.message ?? String(e));
+      showAlert({ title: t('common:error'), message: e?.message, variant: 'danger' });
     } finally {
+      hasLoadedRef.current = true;
       setLoading(false);
     }
+  }, [showAlert, t]);
+
+  useFocusEffect(
+    useCallback(() => {
+      void load();
+    }, [load]),
+  );
+
+  const openAvatarPicker = useCallback(() => {
+    if (saving) return;
+    setPickerVisible(true);
+  }, [saving]);
+
+  const handleAvatarSelect = useCallback((images: SimplePickedImage[]) => {
+    const selected = images[0];
+    if (!selected?.uri) return;
+    setTempImageUri(selected.uri);
+    setPickerVisible(false);
+    setTimeout(() => setEditorVisible(true), 180);
   }, []);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  const handleEditorSave = useCallback((uri: string, _width?: number, _height?: number) => {
+    setEditorVisible(false);
+    setTempImageUri(null);
+    setAvatarUrl(uri);
+  }, []);
 
-  // ---------------------------------------------------------
-  // ⚡ ID CHANGE
-  // ---------------------------------------------------------
+  const handleRemoveAvatar = useCallback(() => {
+    if (saving) return;
+    setAvatarUrl(null);
+  }, [saving]);
 
-  const handleChangeFollowId = (text: string) => {
-    const cleaned = text.startsWith('@') ? text.slice(1) : text;
-    const filtered = cleaned.replace(/[^a-zA-Z0-9._\uAC00-\uD7A3]/g, '');
-    const lowered = filtered.toLowerCase();
-    setFollowId(lowered);
-    setFollowIdError(validateFollowId(lowered));
-  };
+  const identifierPattern = IDENTIFIER_PATTERN;
 
-  const checkFollowId = useCallback(
-    async (id: string) => {
-      const basic = validateFollowId(id);
-      if (basic) return basic;
+  const normalizeIdentifier = useCallback((value: string) => value.trim().toLowerCase(), []);
 
-      try {
-        setCheckingFollow(true);
-        const { count } = await supabase
-          .from('profiles')
-          .select('id', { count: 'exact', head: true })
-          .eq('follow_id', id)
-          .neq('id', meId);
+  const getIdentifierErrorMessage = useCallback((field: 'follow_id' | 'friend_code') => {
+    return field === 'follow_id'
+      ? t('settings:account.error.invalid_id')
+      : t('settings:account.error.invalid_friend_code');
+  }, [t]);
 
-        if ((count ?? 0) > 0) return '이미 사용 중인 아이디입니다.';
-        return null;
-      } finally {
-        setCheckingFollow(false);
-      }
-    },
-    [meId]
-  );
+  const isChangedIdentifier = useCallback((field: 'follow_id' | 'friend_code', value: string) => {
+    const normalized = normalizeIdentifier(value);
+    const original = field === 'follow_id' ? originalFollowId : originalFriendCode;
+    return normalized !== original;
+  }, [normalizeIdentifier, originalFollowId, originalFriendCode]);
 
-  const handleBlurFollowId = async () => {
-    if (!followId || followId === originalFollowId) return;
-    const err = await checkFollowId(followId);
-    setFollowIdError(err);
-  };
+  const canRunDuplicateCheck = useCallback((field: 'follow_id' | 'friend_code', value: string) => {
+    void field;
+    const normalized = normalizeIdentifier(value);
+    return !!normalized;
+  }, [normalizeIdentifier]);
 
-  // ---------------------------------------------------------
-  // ⚡ FRIEND CODE CHANGE
-  // ---------------------------------------------------------
+  const checkDuplication = async (field: 'follow_id' | 'friend_code', value: string) => {
+    const trimmed = normalizeIdentifier(value);
+    const setStatus = field === 'follow_id' ? setFollowIdStatus : setFriendCodeStatus;
+    const setLoadingStatus = field === 'follow_id' ? setCheckingFollow : setCheckingFriend;
 
-  const handleChangeFriendCode = (text: string) => {
-    const noSpace = text.replace(/\s+/g, '').toLowerCase();
-    const filtered = noSpace.replace(/[^a-z0-9_\uAC00-\uD7A3]/g, '');
-    setFriendCode(filtered);
-    setFriendCodeError(validateFriendCode(filtered));
-  };
-
-  const checkFriendCode = useCallback(
-    async (code: string) => {
-      const basic = validateFriendCode(code);
-      if (basic) return basic;
-      if (!code) return null;
-
-      try {
-        setCheckingFriend(true);
-        const { count } = await supabase
-          .from('profiles')
-          .select('id', { count: 'exact', head: true })
-          .eq('friend_code', code)
-          .neq('id', meId);
-
-        if ((count ?? 0) > 0) return '이미 사용 중인 친구 코드입니다.';
-        return null;
-      } finally {
-        setCheckingFriend(false);
-      }
-    },
-    [meId]
-  );
-
-  const handleBlurFriendCode = async () => {
-    if (friendCode === originalFriendCode) return;
-    if (!friendCode) {
-      setFriendCodeError(null);
+    if (!trimmed) {
+      setStatus('none');
       return;
     }
-    const err = await checkFriendCode(friendCode);
-    setFriendCodeError(err);
+
+    if (!isChangedIdentifier(field, trimmed)) {
+      setStatus('success');
+      return;
+    }
+
+    if (!identifierPattern.test(trimmed)) {
+      setStatus('invalid');
+      showAlert({
+        title: t('settings:account.alert.check_required'),
+        message: getIdentifierErrorMessage(field),
+        variant: 'default',
+      });
+      return;
+    }
+
+    try {
+      setLoadingStatus(true);
+      const { data, error } = await supabase.rpc('check_profile_identifier_available', {
+        p_field: field,
+        p_value: trimmed,
+      });
+      if (error) throw error;
+      setStatus(data ? 'success' : 'duplicate');
+    } catch (e: any) {
+      setStatus('invalid');
+      showAlert({
+        title: t('common:error'),
+        message: e?.message || t('settings:account.error.check_failed'),
+        variant: 'danger',
+      });
+    } finally {
+      setLoadingStatus(false);
+    }
   };
 
-  // ---------------------------------------------------------
-  // ⚡ SAVE
-  // ---------------------------------------------------------
+  const getCurrentLocale = useCallback(() => {
+    const raw = String(i18n.language || 'en').replace('_', '-');
+    const lower = raw.toLowerCase();
+    if (lower === 'zh-cn' || lower === 'zh-hans') return 'zh-Hans';
+    if (lower === 'zh-tw' || lower === 'zh-hk' || lower === 'zh-mo' || lower === 'zh-hant') return 'zh-Hant';
+    return lower.split('-')[0] || 'en';
+  }, [i18n.language]);
+
+  const loadWithdrawalReasons = useCallback(async () => {
+    try {
+      setWithdrawalReasonsLoading(true);
+      const { data, error } = await supabase.rpc('get_account_withdrawal_reasons_v1', {
+        p_lang: getCurrentLocale(),
+      });
+      if (error) throw error;
+      const next = Array.isArray(data)
+        ? data.map((item: any) => ({
+            reasonCode: String(item.reason_code ?? ''),
+            label: String(item.label ?? ''),
+            sortOrder: Number(item.sort_order ?? 0),
+          })).filter((item) => item.reasonCode && item.label)
+        : [];
+      setWithdrawalReasons(next);
+    } catch (e: any) {
+      setWithdrawalReasons([]);
+      showAlert({
+        title: t('common:error'),
+        message: e?.message || t('settings:account.withdrawal.failed'),
+        variant: 'danger',
+      });
+    } finally {
+      setWithdrawalReasonsLoading(false);
+    }
+  }, [getCurrentLocale, showAlert, t]);
+
+  const openWithdrawalNotice = useCallback(() => {
+    if (saving || withdrawing) return;
+    setWithdrawalNoticeVisible(true);
+    void loadWithdrawalReasons();
+  }, [loadWithdrawalReasons, saving, withdrawing]);
+
+  const handleContinueWithdrawalNotice = useCallback(() => {
+    setWithdrawalNoticeVisible(false);
+    setWithdrawalSurveyVisible(true);
+  }, []);
+
+  const handleSubmitWithdrawalSurvey = useCallback((payload: AccountWithdrawalPayload) => {
+    setWithdrawalPayload(payload);
+    setWithdrawalSurveyVisible(false);
+    setWithdrawalConfirmVisible(true);
+  }, []);
+
+  const handleConfirmWithdrawal = useCallback(async () => {
+    if (!withdrawalPayload || withdrawing) return;
+    try {
+      setWithdrawing(true);
+      const { error } = await supabase.functions.invoke('account-withdrawal', {
+        body: {
+          reason_code: withdrawalPayload.reasonCode,
+          reason_text: withdrawalPayload.reasonText,
+          locale: getCurrentLocale(),
+          confirmed: true,
+        },
+      });
+      if (error) throw error;
+      setWithdrawalConfirmVisible(false);
+      setWithdrawalPayload(null);
+      showToast({
+        message: t('settings:account.withdrawal.completed'),
+        tone: 'success',
+        showMark: true,
+      });
+      await supabase.auth.signOut();
+    } catch (e: any) {
+      showAlert({
+        title: t('common:error'),
+        message: e?.message || t('settings:account.withdrawal.failed'),
+        variant: 'danger',
+      });
+    } finally {
+      setWithdrawing(false);
+    }
+  }, [getCurrentLocale, showAlert, showToast, t, withdrawalPayload, withdrawing]);
 
   const handleSave = async () => {
+    const normalizedNickname = nickname.trim();
+    const normalizedFollowId = normalizeIdentifier(followId);
+    const normalizedFriendCode = normalizeIdentifier(friendCode);
+
+    const followIdChanged = normalizedFollowId !== originalFollowId;
+    const friendCodeChanged = normalizedFriendCode !== originalFriendCode;
+
+    if (!normalizedNickname) {
+      showAlert({
+        title: t('settings:account.alert.check_required'),
+        message: t('settings:account.error.nickname_required', { defaultValue: '닉네임을 입력해주세요.' }),
+        variant: 'default',
+      });
+      return;
+    }
+
+    if (normalizedNickname.length > NICKNAME_MAX_LENGTH) {
+      showAlert({
+        title: t('settings:account.alert.check_required'),
+        message: t('settings:account.error.nickname_too_long', { defaultValue: '닉네임은 30자까지 입력할 수 있습니다.' }),
+        variant: 'default',
+      });
+      return;
+    }
+
+    if (normalizedFollowId && !identifierPattern.test(normalizedFollowId)) {
+      setFollowIdStatus('invalid');
+      showAlert({
+        title: t('settings:account.alert.check_required'),
+        message: getIdentifierErrorMessage('follow_id'),
+        variant: 'default',
+      });
+      return;
+    }
+
+    if (normalizedFriendCode && !identifierPattern.test(normalizedFriendCode)) {
+      setFriendCodeStatus('invalid');
+      showAlert({
+        title: t('settings:account.alert.check_required'),
+        message: getIdentifierErrorMessage('friend_code'),
+        variant: 'default',
+      });
+      return;
+    }
+
+    const followIdNeedsCheck = followIdChanged && !!normalizedFollowId && followIdStatus !== 'success';
+    const friendCodeNeedsCheck = friendCodeChanged && !!normalizedFriendCode && friendCodeStatus !== 'success';
+
+    if (followIdNeedsCheck || friendCodeNeedsCheck) {
+      showAlert({
+        title: t('settings:account.alert.check_required'),
+        message: t('settings:account.error.duplicate_check_required'),
+        variant: 'default',
+      });
+      return;
+    }
+
+    if (followIdStatus === 'duplicate' || friendCodeStatus === 'duplicate' || followIdStatus === 'invalid' || friendCodeStatus === 'invalid') {
+      showAlert({
+        title: t('settings:account.alert.check_required'),
+        message: t('settings:account.error.duplicate_check_retry'),
+        variant: 'default',
+      });
+      return;
+    }
+
+    if (!meId) return;
+
     try {
       setSaving(true);
-
-      const f = followId.trim().toLowerCase();
-      const fc = friendCode.trim().toLowerCase();
-
-      if (f !== originalFollowId) {
-        const e1 = validateFollowId(f);
-        if (e1) return Alert.alert('확인', e1);
-        const e2 = await checkFollowId(f);
-        if (e2) return Alert.alert('중복 확인', e2);
-      }
-
-      if (fc !== originalFriendCode) {
-        const e1 = validateFriendCode(fc);
-        if (e1) return Alert.alert('확인', e1);
-        const e2 = await checkFriendCode(fc);
-        if (e2) return Alert.alert('중복 확인', e2);
-      }
-
-      const payload: any = {
-        show_nickname_to_friends: showNicknameToFriends,
-      };
-
-      if (f !== originalFollowId) payload.follow_id = f;
-      if (fc !== originalFriendCode) payload.friend_code = fc || null;
-
-      const { error } = await supabase
-        .from('profiles')
-        .update(payload)
-        .eq('id', meId);
-
+      const finalAvatarUrl = await uploadProfileImage(avatarUrl, meId);
+      const { error } = await supabase.from('profiles').update({
+        nickname: normalizedNickname,
+        avatar_url: finalAvatarUrl,
+        follow_id: normalizedFollowId || null,
+        friend_code: normalizedFriendCode || null,
+        show_nickname_to_friends: showNickname,
+        updated_at: new Date(),
+      }).eq('user_id', meId);
       if (error) throw error;
 
-      setOriginalFollowId(f);
-      setOriginalFriendCode(fc);
-      setOriginalShowNicknameToFriends(showNicknameToFriends);
+      setNickname(normalizedNickname);
+      setOriginalNickname(normalizedNickname);
+      setAvatarUrl(finalAvatarUrl);
+      setOriginalAvatarUrl(finalAvatarUrl);
+      setOriginalFollowId(normalizedFollowId);
+      setOriginalFriendCode(normalizedFriendCode);
+      setOriginalShowNickname(showNickname);
+      setFollowIdStatus('none'); setFriendCodeStatus('none');
 
-      Alert.alert('저장 완료', '계정 정보가 저장되었습니다.');
+      showToast({
+        message: t('settings:account.alert.save_success_desc'),
+        tone: 'success',
+        showMark: true,
+      });
     } catch (e: any) {
-      Alert.alert('오류', e?.message ?? String(e));
+      if (e?.code === '23505') {
+        showAlert({
+          title: t('settings:account.alert.check_required'),
+          message: t('settings:account.error.duplicate_value_retry'),
+          variant: 'default',
+        });
+        return;
+      }
+      showAlert({ title: t('settings:account.alert.save_fail_title'), message: e?.message, variant: 'danger' });
     } finally {
       setSaving(false);
     }
   };
 
   const hasChanges =
-    followId !== originalFollowId ||
-    friendCode !== originalFriendCode ||
-    showNicknameToFriends !== originalShowNicknameToFriends;
+    nickname.trim() !== originalNickname ||
+    avatarUrl !== originalAvatarUrl ||
+    followId.trim().toLowerCase() !== originalFollowId ||
+    friendCode.trim().toLowerCase() !== originalFriendCode ||
+    showNickname !== originalShowNickname;
 
-  // ---------------------------------------------------------
-  // ⚡ LOADING
-  // ---------------------------------------------------------
+  const avatarInitial = (nickname.trim() || followId.trim() || 'C').slice(0, 1).toUpperCase();
 
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator />
-        <Text style={styles.loadingText}>불러오는 중…</Text>
-      </SafeAreaView>
-    );
-  }
-
-  // ---------------------------------------------------------
-  // ⚡ RENDER
-  // ---------------------------------------------------------
+  if (loading) return <View style={[styles.center, { backgroundColor: colors.background }]}><ActivityIndicator color={colors.accent} /></View>;
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.header}>
-        <Pressable
-          style={styles.headerLeft}
-          hitSlop={8}
-          onPress={() => navigation.goBack()}
+    <SafeScreen
+      backgroundColor={colors.background}
+      includeTopInset={false}
+      includeBottomInset
+      contentStyle={{ paddingLeft: insets.left, paddingRight: insets.right }}
+    >
+
+      <GlobalHeader
+        style={{
+          backgroundColor: colors.headerBg,
+          borderBottomColor: colors.headerBorder,
+        }}
+        titleComponent={
+          <View style={styles.headerTitleRow}>
+            <HeaderIconButton onPress={() => navigation.goBack()}>
+              <ChevronLeft size={22} color={colors.headerIcon} strokeWidth={1.9} />
+            </HeaderIconButton>
+            <Text style={[styles.accountHeaderTitle, { color: colors.headerText }]}>
+              {t('settings:account.header_title')}
+            </Text>
+          </View>
+        }
+      />
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={0}
+        style={styles.keyboardAvoid}
+      >
+        <ScrollView
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: 118 }]}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="always"
+          keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+          automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'}
         >
-          <ChevronLeft size={22} color={TEXT_MAIN} />
-        </Pressable>
 
-        <Text style={styles.headerTitle}>계정 정보</Text>
-
-        <View style={styles.headerRight}>
-          {isBusiness ? (
-            <Pressable
-              hitSlop={8}
-              style={styles.bizBtn}
-              onPress={() => navigation.navigate('BusinessUnregister')}
-            >
-              <Text style={styles.bizBtnDanger}>사업자 해지</Text>
-            </Pressable>
-          ) : (
-            <Pressable
-              hitSlop={8}
-              style={styles.bizBtn}
-              onPress={() => navigation.navigate('BusinessRegister')}
-            >
-              <Text style={styles.bizBtnText}>사업자 등록</Text>
-            </Pressable>
-          )}
-        </View>
-      </View>
-
-      {/* BODY */}
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* INTRO */}
-        <View style={styles.introBox}>
-          <Text style={styles.introTitle}>CO·ONN 아이디 & 친구 코드</Text>
-          <Text style={styles.introText}>
-            • @아이디는 공개 프로필과 팔로우에 사용돼요.{'\n'}
-            • 친구 코드는 내가 알려준 사람만 나에게 친구 요청을 보낼 수 있어요.
+          <Text style={[styles.sectionLabel, { color: colors.sectionTitle }]}>
+            {t('settings:account.section.profile', { defaultValue: '프로필' })}
           </Text>
-        </View>
+          <View style={[styles.cardGroup, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+            <View style={styles.profilePhotoArea}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t('settings:account.field.profile_photo', { defaultValue: '프로필 사진' })}
+                onPress={openAvatarPicker}
+                disabled={saving}
+                style={({ pressed }) => [
+                  styles.avatarButton,
+                  {
+                    borderColor: colors.profileAvatarBorder,
+                    backgroundColor: colors.profileAvatarBg,
+                    opacity: pressed && !saving ? 0.84 : 1,
+                  },
+                ]}
+              >
+                {avatarUrl ? (
+                  <Image source={{ uri: avatarUrl }} style={styles.avatarImage} contentFit="cover" />
+                ) : (
+                  <View style={[styles.avatarFallback, { backgroundColor: colors.profileAvatarBg }]}>
+                    {avatarInitial ? (
+                      <Text style={[styles.avatarInitial, { color: colors.profileAvatarText }]}>
+                        {avatarInitial}
+                      </Text>
+                    ) : (
+                      <User size={34} color={colors.profileAvatarText} strokeWidth={1.6} />
+                    )}
+                  </View>
+                )}
 
-        {/* FOLLOW ID */}
-        <View style={styles.card}>
-          <View style={styles.labelRow}>
-            <Text style={styles.label}>CO·ONN 아이디</Text>
-            <Pressable
-              style={styles.labelInfoBtn}
-              hitSlop={8}
-              onPress={() =>
-                Alert.alert(
-                  '아이디 규칙',
-                  [
-                    '• 사용 가능: 영문, 숫자, 한글, ".", "_"',
-                    '• 길이 2–20자',
-                    '• 특수문자 연속 불가',
-                    '• 시작/끝 특수문자 불가',
-                    '• 공백 없음',
-                  ].join('\n')
-                )
-              }
-            >
-              <Info size={18} color={TEXT_MUTED} />
-            </Pressable>
-          </View>
+                <View
+                  style={[
+                    styles.avatarCameraBadge,
+                    {
+                      backgroundColor: colors.cameraBadgeBg,
+                      borderColor: colors.cameraBadgeBorder,
+                    },
+                  ]}
+                >
+                  <Camera size={16} color={colors.cameraBadgeIcon} strokeWidth={2} />
+                </View>
+              </Pressable>
 
-          <View style={styles.inputRow}>
-            <Text style={styles.atSymbol}>@</Text>
-            <TextInput
-              value={followId}
-              onChangeText={handleChangeFollowId}
-              onBlur={handleBlurFollowId}
-              style={styles.textInput}
-              placeholder="아이디 입력"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-          </View>
+              {avatarUrl ? (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t('settings:account.action.remove_photo', { defaultValue: '사진 삭제' })}
+                  onPress={handleRemoveAvatar}
+                  disabled={saving}
+                  hitSlop={10}
+                  style={({ pressed }) => [
+                    styles.avatarRemoveButton,
+                    {
+                      backgroundColor: colors.avatarRemoveBg,
+                      borderColor: colors.avatarRemoveBorder,
+                      opacity: pressed && !saving ? 0.72 : 1,
+                    },
+                  ]}
+                >
+                  <X size={13} color={colors.avatarRemoveIcon} strokeWidth={2.4} />
+                </Pressable>
+              ) : null}
 
-          <View style={styles.helperRow}>
-            {checkingFollow && (
-              <Text style={styles.helperChecking}>중복 확인 중…</Text>
-            )}
-            {!checkingFollow && !followIdError && followId.length >= 2 && (
-              <Text style={styles.helperOk}>사용 가능</Text>
-            )}
-            {followIdError && (
-              <Text style={styles.helperError}>{followIdError}</Text>
-            )}
-          </View>
-        </View>
-
-        {/* FRIEND CODE */}
-        <View style={styles.card}>
-          <View style={styles.labelRow}>
-            <Text style={styles.label}>친구 코드</Text>
-            <Pressable
-              style={styles.labelInfoBtn}
-              hitSlop={8}
-              onPress={() =>
-                Alert.alert(
-                  '친구 코드 규칙',
-                  [
-                    '• 영문 소문자, 숫자, 한글, "_" 사용 가능',
-                    '• 길이 4–20자',
-                    '• 공백 없음',
-                  ].join('\n')
-                )
-              }
-            >
-              <Info size={18} color={TEXT_MUTED} />
-            </Pressable>
-          </View>
-
-          <View style={styles.inputRow}>
-            <TextInput
-              value={friendCode}
-              onChangeText={handleChangeFriendCode}
-              onBlur={handleBlurFriendCode}
-              style={styles.textInput}
-              placeholder="친구 코드 입력"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-          </View>
-
-          <View style={styles.helperRow}>
-            {checkingFriend && (
-              <Text style={styles.helperChecking}>중복 확인 중…</Text>
-            )}
-            {!checkingFriend &&
-              !friendCodeError &&
-              friendCode.length >= 4 && (
-                <Text style={styles.helperOk}>사용 가능</Text>
-              )}
-            {friendCodeError && (
-              <Text style={styles.helperError}>{friendCodeError}</Text>
-            )}
-          </View>
-        </View>
-
-        {/* NICKNAME */}
-        <View style={styles.card}>
-          <Text style={styles.subLabel}>현재 닉네임</Text>
-          <Text style={styles.subValue}>{nickname || '(설정되지 않음)'}</Text>
-          <Text style={styles.subHint}>프로필 편집에서 변경할 수 있어요.</Text>
-        </View>
-
-        {/* NICKNAME TOGGLE */}
-        <View style={styles.card}>
-          <View style={styles.toggleRow}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.subLabel}>친구에게 닉네임으로 표시</Text>
-              <Text style={styles.toggleDesc}>
-                끄면 모든 사람에게 @아이디로만 표시됩니다.
+              <Text style={[styles.profilePhotoCaption, { color: colors.textSecondary }]}>
+                {t('settings:account.action.change_photo', { defaultValue: '사진 변경' })}
               </Text>
             </View>
 
-            <Switch
-              value={showNicknameToFriends}
-              onValueChange={setShowNicknameToFriends}
-            />
+            <View style={[styles.divider, { backgroundColor: colors.divider }]} />
+
+            <View style={styles.fieldRow}>
+              <View style={styles.labelRowBetween}>
+                <Text style={[styles.labelLarge, { color: colors.textPrimary }]}>
+                  {t('settings:account.field.nickname', { defaultValue: '닉네임' })}
+                </Text>
+                <Text style={[styles.counterText, { color: colors.textMuted }]}>
+                  {nickname.length}/{NICKNAME_MAX_LENGTH}
+                </Text>
+              </View>
+
+              <View
+                style={[
+                  styles.simpleInputWrapper,
+                  {
+                    backgroundColor: colors.inputBg,
+                    borderColor: colors.inputBorder,
+                  },
+                ]}
+              >
+                <TextInput
+                  value={nickname}
+                  onChangeText={setNickname}
+                  style={[styles.textInput, { color: colors.textPrimary }]}
+                  placeholder={t('settings:account.placeholder.nickname', { defaultValue: '닉네임' })}
+                  placeholderTextColor={colors.placeholder}
+                  maxLength={NICKNAME_MAX_LENGTH}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType="done"
+                  editable={!saving}
+                />
+                {nickname.length > 0 ? (
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={t('common:clear', { defaultValue: 'Clear' })}
+                    onPress={() => setNickname('')}
+                    disabled={saving}
+                    hitSlop={10}
+                    style={styles.inputClearButton}
+                  >
+                    <View style={[styles.inputClearIconBg, { backgroundColor: colors.inputClearBg }]}>
+                      <X size={12} color={colors.inputClearIcon} strokeWidth={2.4} />
+                    </View>
+                  </Pressable>
+                ) : null}
+              </View>
+            </View>
           </View>
-        </View>
 
-        {/* PHONE NUMBER */}
-        <View style={styles.card}>
-          <Text style={styles.subLabel}>전화번호</Text>
+          <Text style={[styles.sectionLabel, { color: colors.sectionTitle }]}>{t('settings:account.section.contact')}</Text>
+          <View style={[styles.cardGroup, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+            <View style={styles.row}>
+              <View style={styles.rowLeft}>
+                <SectionIcon icon={Smartphone} colors={colors} />
+                <View>
+                  <Text style={[styles.label, { color: colors.textSecondary }]}>{t('settings:account.field.phone')}</Text>
+                  <Text style={[styles.value, { color: colors.textPrimary }]}>{phoneNumber || t('settings:account.value.not_registered')}</Text>
+                </View>
+              </View>
+              <BouncyPressable onPress={() => navigation.navigate('PhoneVerification', { entry: 'settings' })}>
+                <View style={[
+                  styles.badge,
+                  {
+                    backgroundColor: phoneVerified ? colors.successBg : colors.dangerBg,
+                  }
+                ]}>
+                  <Text style={[
+                    styles.badgeText,
+                    { color: phoneVerified ? colors.successText : colors.dangerText }
+                  ]}>
+                    {phoneVerified ? t('settings:account.badge.verified') : t('settings:account.badge.verify')}
+                  </Text>
+                </View>
+              </BouncyPressable>
+            </View>
+            <View style={[styles.divider, { backgroundColor: colors.divider }]} />
+            <View style={styles.row}>
+              <View style={styles.rowLeft}>
+                <SectionIcon icon={Mail} colors={colors} />
+                <View>
+                  <Text style={[styles.label, { color: colors.textSecondary }]}>{t('settings:account.field.email')}</Text>
+                  <Text style={[styles.value, { color: colors.textPrimary }]}>{email}</Text>
+                </View>
+              </View>
+            </View>
+          </View>
 
-          <Text style={styles.subValue}>
-            {phoneNumber
-              ? `${phoneNumber} ${phoneVerified ? '(인증됨)' : '(미인증)'}`
-              : '(미등록)'}
-          </Text>
+          <Text style={[styles.sectionLabel, { color: colors.sectionTitle }]}>{t('settings:account.section.identity')}</Text>
+          <View style={[styles.cardGroup, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+            <View style={styles.fieldRow}>
+              <View style={styles.labelRow}>
+                <SectionIcon icon={AtSign} colors={colors} />
+                <Text style={[styles.labelLarge, { color: colors.textPrimary }]}>{t('settings:account.field.id_label')}</Text>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Identifier rule"
+                  onPress={() => showAlert({
+                    title: 'CO·ONN ID',
+                    message: IDENTIFIER_GUIDE_TEXT,
+                    variant: 'default',
+                  })}
+                  hitSlop={10}
+                  style={styles.helpIconButton}
+                >
+                  <HelpCircle size={15} color={colors.textSecondary} strokeWidth={1.8} />
+                </Pressable>
+              </View>
+              <InteractiveInput
+                value={followId}
+                onChangeText={(next) => { setFollowId(next); setFollowIdStatus('none'); }}
+                onBlur={() => {}}
+                onCheckDuplicate={() => checkDuplication('follow_id', followId)}
+                checkDisabled={!canRunDuplicateCheck('follow_id', followId) || saving}
+                checkLabel={t('settings:account.action.check_duplicate_short')}
+                checkingLabel={t('settings:account.action.checking_short')}
+                availableLabel={t('settings:account.status.available_short')}
+                duplicateLabel={t('settings:account.status.duplicate_short')}
+                placeholder={t('settings:account.placeholder.id')}
+                loading={checkingFollow}
+                status={followIdStatus}
+                colors={colors}
+              />
+            </View>
 
-          <Pressable
-            style={styles.reverifyButton}
-            onPress={() => navigation.navigate('PhoneVerification')}
-          >
-            <Text style={styles.reverifyText}>
-              {phoneVerified ? '전화번호 재인증하기' : '전화번호 인증하기'}
-            </Text>
-          </Pressable>
-        </View>
+            <View style={[styles.divider, { backgroundColor: colors.divider }]} />
 
-        {/* SAVE */}
-        <View style={styles.footer}>
-          <Pressable
+            <View style={styles.fieldRow}>
+              <View style={styles.labelRow}>
+                <SectionIcon icon={Hash} colors={colors} />
+                <Text style={[styles.labelLarge, { color: colors.textPrimary }]}>{t('settings:account.field.friend_code')}</Text>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Identifier rule"
+                  onPress={() => showAlert({
+                    title: 'Friend code',
+                    message: IDENTIFIER_GUIDE_TEXT,
+                    variant: 'default',
+                  })}
+                  hitSlop={10}
+                  style={styles.helpIconButton}
+                >
+                  <HelpCircle size={15} color={colors.textSecondary} strokeWidth={1.8} />
+                </Pressable>
+              </View>
+              <InteractiveInput
+                value={friendCode}
+                onChangeText={(next) => { setFriendCode(next); setFriendCodeStatus('none'); }}
+                onBlur={() => {}}
+                onCheckDuplicate={() => checkDuplication('friend_code', friendCode)}
+                checkDisabled={!canRunDuplicateCheck('friend_code', friendCode) || saving}
+                checkLabel={t('settings:account.action.check_duplicate_short')}
+                checkingLabel={t('settings:account.action.checking_short')}
+                availableLabel={t('settings:account.status.available_short')}
+                duplicateLabel={t('settings:account.status.duplicate_short')}
+                placeholder={t('settings:account.placeholder.friend_code')}
+                loading={checkingFriend}
+                status={friendCodeStatus}
+                colors={colors}
+              />
+            </View>
+          </View>
+
+          <Text style={[styles.sectionLabel, { color: colors.sectionTitle }]}>{t('settings:account.section.visibility')}</Text>
+          <View style={[styles.cardGroup, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
+            <View style={styles.row}>
+              <View style={styles.rowLeft}>
+                <SectionIcon icon={Eye} colors={colors} />
+                <View style={{ flex: 1, paddingRight: 8 }}>
+                  <Text style={[styles.labelLarge, { color: colors.textPrimary }]}>{t('settings:account.field.show_nickname')}</Text>
+                  <Text style={[styles.subLabel, { color: colors.textSecondary }]}>{t('settings:account.help.show_nickname_desc')}</Text>
+                </View>
+              </View>
+              <CoonnSwitch
+                value={showNickname}
+                onValueChange={setShowNickname}
+                colors={colors}
+              />
+            </View>
+          </View>
+
+          <View
             style={[
-              styles.saveButton,
-              (!hasChanges ||
-                !!followIdError ||
-                !!friendCodeError ||
-                saving) &&
-                styles.saveButtonDisabled,
+              styles.cardGroup,
+              styles.withdrawalCard,
+              {
+                backgroundColor: withdrawalTone.cardBg,
+                borderColor: withdrawalTone.cardBorder,
+              },
             ]}
-            disabled={
-              !hasChanges || !!followIdError || !!friendCodeError || saving
-            }
-            onPress={handleSave}
           >
-            {saving ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.saveButtonText}>저장하기</Text>
-            )}
-          </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              onPress={openWithdrawalNotice}
+              disabled={saving || withdrawing}
+              style={({ pressed }) => [
+                styles.row,
+                { opacity: pressed && !saving && !withdrawing ? 0.76 : saving || withdrawing ? 0.54 : 1 },
+              ]}
+            >
+              <View style={styles.rowLeft}>
+                <View
+                  style={[
+                    styles.miniIcon,
+                    {
+                      backgroundColor: withdrawalTone.iconBg,
+                      borderColor: withdrawalTone.iconBorder,
+                    },
+                  ]}
+                >
+                  <Trash2 size={17} color={withdrawalTone.icon} strokeWidth={1.9} />
+                </View>
+                <View style={{ flex: 1, paddingRight: 8 }}>
+                  <Text style={[styles.labelLarge, { color: withdrawalTone.text }]}>
+                    {t('settings:account.withdrawal.entryTitle')}
+                  </Text>
+                  <Text style={[styles.subLabel, { color: withdrawalTone.subText }]}>
+                    {t('settings:account.withdrawal.entryDescription')}
+                  </Text>
+                </View>
+              </View>
+            </Pressable>
+          </View>
+
+        </ScrollView>
+
+        <View style={[styles.footer, { paddingBottom: 10, backgroundColor: colors.footerBg, borderTopColor: colors.footerBorder }]}>
+        <BouncyPressable
+          disabled={!hasChanges || saving}
+          onPress={handleSave}
+          style={[
+            styles.saveBtn,
+            { backgroundColor: (!hasChanges || saving) ? colors.saveDisabledBg : colors.controlSelected }
+          ]}
+        >
+          {saving ? (
+            <ActivityIndicator color={colors.controlSelectedText} />
+          ) : (
+            <Text
+              style={[
+                styles.saveBtnText,
+                { color: (!hasChanges || saving) ? colors.saveDisabledText : colors.controlSelectedText },
+              ]}
+            >
+              {t('settings:account.action.save')}
+            </Text>
+          )}
+        </BouncyPressable>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </KeyboardAvoidingView>
+
+      <SimpleMediaPicker
+        visible={pickerVisible}
+        onClose={() => setPickerVisible(false)}
+        onSelect={handleAvatarSelect}
+        maxSelect={1}
+        headerTitle={t('settings:account.picker.profile_photo', { defaultValue: '사진 선택' })}
+        themeColor={colors.controlSelected}
+      />
+
+      <UniversalImageEditor
+        visible={editorVisible}
+        sourceUri={tempImageUri || ''}
+        onClose={() => {
+          setEditorVisible(false);
+          setTempImageUri(null);
+        }}
+        onSave={handleEditorSave}
+        themeColor={colors.controlSelected}
+      />
+
+      <AccountWithdrawalNoticeModal
+        visible={withdrawalNoticeVisible}
+        loading={withdrawalReasonsLoading}
+        colors={colors}
+        onClose={() => setWithdrawalNoticeVisible(false)}
+        onContinue={handleContinueWithdrawalNotice}
+      />
+
+      <AccountWithdrawalSurveyModal
+        visible={withdrawalSurveyVisible}
+        reasons={withdrawalReasons}
+        loading={withdrawalReasonsLoading}
+        colors={colors}
+        onClose={() => setWithdrawalSurveyVisible(false)}
+        onSubmit={handleSubmitWithdrawalSurvey}
+      />
+
+      <AccountWithdrawalConfirmModal
+        visible={withdrawalConfirmVisible}
+        processing={withdrawing}
+        colors={colors}
+        onClose={() => {
+          if (!withdrawing) setWithdrawalConfirmVisible(false);
+        }}
+        onConfirm={handleConfirmWithdrawal}
+      />
+
+      <CoonnFloatingToast
+        visible={toast.visible}
+        message={toast.message}
+        tone={toast.tone}
+        showMark={toast.showMark}
+        theme={toastTheme}
+        bottomOffset={Math.max(insets.bottom, 10) + 82}
+        onHidden={hideToast}
+      />
+
+      <CoonnAlert
+        visible={alertState.visible}
+        theme={alertTheme}
+        variant={alertState.variant}
+        title={alertState.title}
+        message={alertState.message}
+        confirmText={t('common:ok')}
+        singleButton
+        dismissOnBackdrop
+        dismissOnBackButton
+        onConfirm={closeAlert}
+        onCancel={closeAlert}
+      />
+
+    </SafeScreen>
   );
 }
 
-// ---------------------------------------------------------
-// ⭐ STYLES
-// ---------------------------------------------------------
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: BG },
+  container: { flex: 1 },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  keyboardAvoid: { flex: 1 },
 
-  loadingContainer: {
-    flex: 1,
+  headerTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  accountHeaderTitle: { fontSize: 21, lineHeight: 27, fontWeight: '600' },
+
+  scrollContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 100 },
+
+
+  profilePhotoArea: {
+    alignItems: 'center',
     justifyContent: 'center',
-    alignItems: 'center',
+    paddingTop: 22,
+    paddingBottom: 18,
   },
-  loadingText: { marginTop: 8, color: TEXT_MUTED },
-
-  header: {
-    height: 54,
-    paddingHorizontal: 16,
-    paddingTop: Platform.select({ ios: 8, android: 4 }),
-    paddingBottom: 8,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: HAIRLINE,
-    backgroundColor: '#fff',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-
-  headerLeft: { width: 34, justifyContent: 'center' },
-  headerTitle: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: 17,
-    fontWeight: '700',
-    color: TEXT_MAIN,
-  },
-  headerRight: { width: 70, alignItems: 'flex-end' },
-
-  bizBtn: { paddingHorizontal: 6, paddingVertical: 2 },
-  bizBtnText: { fontSize: 12, fontWeight: '700', color: ACCENT },
-  bizBtnDanger: { fontSize: 12, fontWeight: '700', color: '#DC2626' },
-
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 40,
-  },
-
-  introBox: { marginBottom: 16 },
-  introTitle: { fontSize: 16, fontWeight: '800', color: TEXT_MAIN },
-  introText: { fontSize: 13, color: TEXT_MUTED, lineHeight: 20, marginTop: 4 },
-
-  card: {
-    backgroundColor: '#fff',
-    padding: 14,
-    borderRadius: 12,
+  avatarButton: {
+    width: 94,
+    height: 94,
+    borderRadius: 47,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: HAIRLINE,
-    marginBottom: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarImage: {
+    width: 94,
+    height: 94,
+    borderRadius: 47,
+  },
+  avatarFallback: {
+    width: 94,
+    height: 94,
+    borderRadius: 47,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarInitial: {
+    fontSize: 32,
+    lineHeight: 38,
+    fontWeight: '600',
+  },
+  avatarCameraBadge: {
+    position: 'absolute',
+    right: 0,
+    bottom: 2,
+    width: 31,
+    height: 31,
+    borderRadius: 15.5,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarRemoveButton: {
+    position: 'absolute',
+    top: 18,
+    right: '50%',
+    marginRight: -56,
+    width: 25,
+    height: 25,
+    borderRadius: 12.5,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profilePhotoCaption: {
+    marginTop: 10,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '500',
   },
 
-  labelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  sectionLabel: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '500',
     marginBottom: 8,
+    marginLeft: 4,
+    letterSpacing: 0.05,
   },
 
-  label: { fontSize: 14, fontWeight: '700', color: TEXT_MAIN },
+  cardGroup: {
+    borderRadius: 20,
+    marginBottom: 24,
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: 'hidden',
+  },
+  withdrawalCard: {
+    marginTop: 4,
+  },
 
-  labelInfoBtn: { paddingHorizontal: 4, paddingVertical: 2 },
-
-  inputRow: {
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    paddingHorizontal: 10,
-    paddingVertical: Platform.OS === 'ios' ? 8 : 4,
-    backgroundColor: '#F9FAFB',
+    justifyContent: 'space-between',
+    minHeight: 66,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+  },
+  rowLeft: { flexDirection: 'row', alignItems: 'center', flex: 1, gap: 14 },
+  miniIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 11,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
-  atSymbol: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: TEXT_MUTED,
-    marginRight: 4,
+  label: { fontSize: 12, lineHeight: 16, fontWeight: '500' },
+  value: { fontSize: 15, lineHeight: 20, fontWeight: '400', marginTop: 2 },
+  labelLarge: { fontSize: 15, lineHeight: 20, fontWeight: '500' },
+  subLabel: { fontSize: 12, lineHeight: 17, fontWeight: '400', marginTop: 2 },
+
+  badge: { paddingHorizontal: 9, paddingVertical: 5, borderRadius: 8 },
+  badgeText: { fontSize: 11, lineHeight: 14, fontWeight: '500' },
+
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    marginHorizontal: 16,
+  },
+
+  fieldRow: {
+    gap: 10,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+  },
+  labelRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 2 },
+  helpIconButton: {
+    marginLeft: -4,
+    padding: 2,
+  },
+
+
+  labelRowBetween: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    marginBottom: 2,
+  },
+  counterText: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '500',
+  },
+  simpleInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 15,
+    height: 50,
+    paddingLeft: 14,
+    paddingRight: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  inputClearButton: {
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 6,
+  },
+  inputClearIconBg: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 15,
+    height: 50,
+    paddingLeft: 14,
+    paddingRight: 8,
+    borderWidth: StyleSheet.hairlineWidth,
   },
 
   textInput: {
     flex: 1,
+    minWidth: 0,
     fontSize: 15,
-    color: TEXT_MAIN,
-    paddingVertical: Platform.OS === 'ios' ? 4 : 0,
+    lineHeight: 20,
+    fontWeight: '400',
+    paddingVertical: 0,
   },
-
-  helperRow: { minHeight: 18, marginTop: 4 },
-  helperChecking: { fontSize: 12, color: TEXT_MUTED },
-  helperOk: { fontSize: 12, color: '#16A34A', fontWeight: '700' },
-  helperError: { fontSize: 12, color: '#EF4444' },
-
-  subLabel: { fontSize: 13, fontWeight: '700', color: TEXT_MAIN },
-  subValue: { fontSize: 14, color: TEXT_MAIN, marginTop: 2 },
-  subHint: { fontSize: 12, color: TEXT_MUTED, marginTop: 4 },
-
-  toggleRow: { flexDirection: 'row', alignItems: 'center' },
-  toggleDesc: { fontSize: 12, color: TEXT_MUTED, marginTop: 4 },
-
-  reverifyButton: {
-    marginTop: 10,
-    paddingVertical: 10,
-    borderRadius: 999,
-    backgroundColor: '#111827',
+  inputActionBtn: {
+    minWidth: 46,
+    height: 29,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+    marginLeft: 8,
   },
-  reverifyText: { fontSize: 14, fontWeight: '700', color: '#fff' },
+  inputActionText: {
+    fontSize: 11,
+    lineHeight: 15,
+    fontWeight: '500',
+    letterSpacing: -0.1,
+  },
+  statusText: {
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: '500',
+    marginTop: 6,
+    marginLeft: 4,
+  },
 
-  footer: { marginTop: 8 },
-
-  saveButton: {
-    backgroundColor: ACCENT,
-    paddingVertical: 12,
-    borderRadius: 999,
+  footer: { paddingHorizontal: 16, paddingTop: 10, borderTopWidth: StyleSheet.hairlineWidth },
+  saveBtn: {
+    height: 52,
+    borderRadius: 16,
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  saveButtonDisabled: { backgroundColor: '#FCA5A5' },
-  saveButtonText: { color: '#fff', fontSize: 15, fontWeight: '800' },
+  saveBtnText: { fontSize: 15, lineHeight: 20, fontWeight: '600' },
+
+  coonnSwitchTrack: {
+    width: 44,
+    height: 26,
+    borderRadius: 13,
+    padding: 3,
+    borderWidth: StyleSheet.hairlineWidth,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
+  coonnSwitchThumb: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
+  },
+  coonnSwitchThumbOn: {
+    alignSelf: 'flex-end',
+  },
 });

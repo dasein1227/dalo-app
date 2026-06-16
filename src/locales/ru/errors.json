@@ -1,0 +1,16 @@
+{
+  "common": "Ошибка",
+  "auth": {
+    "loginRequired": "Требуется вход"
+  },
+  "unknown": "Произошла ошибка.",
+  "network": "Проверьте подключение к сети.",
+  "invalid_credentials": "Неверный email или пароль.",
+  "oauth_cancelled": "Вход отменён.",
+  "provider_config": "Проверьте настройки провайдера входа.",
+  "redirect_config": "Проверьте настройки Redirect URL.",
+  "session_check_failed": "Не удалось проверить сессию.",
+  "sms_required": "Введите код подтверждения.",
+  "phone_format": "Введите номер в международном формате (+8210…).",
+  "email_format": "Некорректный формат email."
+}

@@ -1,181 +1,209 @@
 // src/screens/business/BusinessRegister.tsx
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  Pressable,
-  Image,
-  Alert,
-  StatusBar,
-  Platform,
   ActivityIndicator,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import {
-  ChevronLeft,
+  AlertCircle,
   Camera,
+  CheckCircle2,
+  ChevronLeft,
   FileText,
-  User,
-  Phone,
   Building2,
+  Phone,
+  ShieldCheck,
+  User,
 } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { supabase } from '@/lib/supabase';
 
-const BG = '#F7F8FA';
-const CARD_BG = '#FFFFFF';
-const TEXT_MAIN = '#111827';
-const TEXT_MUTED = '#6B7280';
-const ACCENT = '#2563EB';
-const HAIRLINE = '#E5E7EB';
+import { supabase } from '@/lib/supabase';
+import { useAppTheme } from '@/theme/useAppTheme';
+import { useTranslation } from 'react-i18next';
+import { createBusinessOwnerTheme, type BusinessOwnerTheme } from './BusinessOwner.theme';
+import { GlobalHeader, HeaderIconButton } from '@/components/GlobalHeader';
+import SafeScreen from '@/components/layout/SafeScreen';
+import CoonnAlert, { type CoonnAlertVariant } from '@/components/CoonnAlert';
+import CoonnFloatingToast from '@/components/feedback/CoonnFloatingToast';
+import { useCoonnFloatingToast } from '@/components/feedback/useCoonnFloatingToast';
+
+type RegisterAlertState = {
+  visible: boolean;
+  title: string;
+  message?: string;
+  variant: CoonnAlertVariant;
+  singleButton: boolean;
+  confirmText: string;
+  cancelText: string;
+  onConfirm?: () => void | Promise<void>;
+};
+
+const EMPTY_REGISTER_ALERT: RegisterAlertState = {
+  visible: false,
+  title: '',
+  message: undefined,
+  variant: 'default',
+  singleButton: true,
+  confirmText: '',
+  cancelText: '',
+};
 
 export default function BusinessRegister() {
   const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
+  const appTheme = useAppTheme();
+  const ui = useMemo(() => createBusinessOwnerTheme(appTheme), [appTheme]);
+  const styles = useMemo(() => createStyles(ui), [ui]);
+  const { t } = useTranslation();
+  const { toast, showToast, hideToast } = useCoonnFloatingToast();
+  const [registerAlert, setRegisterAlert] = useState<RegisterAlertState>(EMPTY_REGISTER_ALERT);
+
+  const alertThemeName = useMemo<'coonn_light' | 'coonn_dark'>(
+    () => ((appTheme as any)?.isDark ? 'coonn_dark' : 'coonn_light'),
+    [appTheme],
+  );
+
+  const showRegisterToast = useCallback(
+    (message: string, tone: 'default' | 'success' | 'warning' | 'danger' = 'default', showMark = false) => {
+      const trimmed = String(message || '').trim();
+      if (!trimmed) return;
+      showToast({ message: trimmed, tone, showMark });
+    },
+    [showToast],
+  );
+
+  const closeRegisterAlert = useCallback(() => {
+    setRegisterAlert((prev) => ({ ...prev, visible: false, onConfirm: undefined }));
+  }, []);
+
+  const showRegisterAlert = useCallback((params: {
+    title: string;
+    message?: string;
+    variant?: CoonnAlertVariant;
+    singleButton?: boolean;
+    confirmText?: string;
+    cancelText?: string;
+    onConfirm?: () => void | Promise<void>;
+  }) => {
+    setRegisterAlert({
+      visible: true,
+      title: params.title,
+      message: params.message,
+      variant: params.variant ?? 'default',
+      singleButton: params.singleButton ?? true,
+      confirmText: params.confirmText ?? t('business:common.confirm'),
+      cancelText: params.cancelText ?? t('business:common.cancel'),
+      onConfirm: params.onConfirm,
+    });
+  }, [t]);
+
+  const handleRegisterAlertConfirm = useCallback(async () => {
+    const action = registerAlert.onConfirm;
+    closeRegisterAlert();
+    await action?.();
+  }, [closeRegisterAlert, registerAlert.onConfirm]);
 
   const [meId, setMeId] = useState<string>('');
-
-  // 입력 상태
-  const [licenseImgUri, setLicenseImgUri] = useState<string | null>(null); // 미리보기용 로컬 URI
-  const [licenseStoragePath, setLicenseStoragePath] = useState<string | null>(
-    null,
-  ); // Supabase Storage 상의 경로
-
+  const [licenseImgUri, setLicenseImgUri] = useState<string | null>(null);
+  const [licenseStoragePath, setLicenseStoragePath] = useState<string | null>(null);
   const [licenseNum, setLicenseNum] = useState('');
   const [storeName, setStoreName] = useState('');
   const [ownerName, setOwnerName] = useState('');
   const [contact, setContact] = useState('');
-
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // 유저 정보 가져오기
   const loadUser = useCallback(async () => {
     try {
       const {
         data: { user },
         error,
       } = await supabase.auth.getUser();
-      if (error || !user) {
-        throw new Error('로그인이 필요합니다.');
-      }
+
+      if (error || !user) throw new Error(t('business:register.loginRequired'));
       setMeId(user.id);
     } catch (e: any) {
-      Alert.alert('오류', e?.message ?? String(e));
-      navigation.goBack();
+      showRegisterAlert({
+        title: t('business:common.error'),
+        message: e?.message ?? String(e),
+        variant: 'danger',
+        singleButton: true,
+        onConfirm: () => navigation.goBack(),
+      });
     }
-  }, [navigation]);
+  }, [navigation, showRegisterAlert, t]);
 
   useEffect(() => {
     loadUser();
   }, [loadUser]);
 
-  // 사업자등록증 선택 + 업로드
   const handlePickLicense = async () => {
     try {
-      if (!meId) {
-        Alert.alert('오류', '유저 정보를 불러오지 못했습니다.');
-        return;
-      }
+      if (!meId) return;
 
-      const { status } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert(
-          '권한 필요',
-          '앨범 접근 권한이 필요합니다. 설정에서 권한을 허용해 주세요.',
-        );
+        showRegisterAlert({
+          title: t('business:register.permissionTitle'),
+          message: t('business:register.permissionDesc'),
+          singleButton: true,
+        });
         return;
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.9,
+        quality: 0.82,
       });
 
-      // 취소
-      if (result.canceled) {
-        return;
-      }
+      if (result.canceled) return;
 
       const asset = result.assets?.[0];
-      if (!asset || !asset.uri) {
-        Alert.alert('오류', '이미지를 선택하지 못했습니다.');
-        return;
-      }
+      if (!asset?.uri) return;
 
       setUploading(true);
-
       const uri = asset.uri;
-      const fileExt =
-        asset.fileName?.split('.').pop()?.toLowerCase() ?? 'jpg';
+      const fileExt = asset.fileName?.split('.').pop()?.toLowerCase() ?? 'jpg';
       const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `licenses/${meId}/${fileName}`;
+      const resp = await fetch(uri);
+      const blob = await resp.blob();
 
-      // React Native에서는 fetch(uri).arrayBuffer() 로 업로드
-      const resp: any = await fetch(uri as any);
-      const arrayBuffer: ArrayBuffer = await resp.arrayBuffer();
+      const { error } = await supabase.storage.from('business_licenses').upload(filePath, blob, {
+        upsert: true,
+        contentType: asset.mimeType ?? 'image/jpeg',
+      });
 
-      const { error: uploadError } = await supabase.storage
-        .from('business_licenses')
-        .upload(filePath, arrayBuffer, {
-          upsert: true,
-          contentType: asset.mimeType ?? 'image/jpeg',
-        });
+      if (error) throw error;
 
-      if (uploadError) {
-        console.log('upload license error:', uploadError);
-        Alert.alert(
-          '업로드 실패',
-          '사업자등록증 업로드 중 오류가 발생했습니다.',
-        );
-        return;
-      }
-
-      // 성공
       setLicenseImgUri(uri);
       setLicenseStoragePath(filePath);
-      Alert.alert('업로드 완료', '사업자등록증 이미지가 업로드되었습니다.');
-    } catch (e: any) {
-      console.log('pick license error', e);
-      Alert.alert('오류', e?.message ?? String(e));
+    } catch {
+      showRegisterToast(t('business:register.uploadFail'), 'danger');
     } finally {
       setUploading(false);
     }
   };
 
-  // 숫자 전용 필터 (사업자번호, 연락처)
-  const handleChangeLicenseNum = (text: string) => {
-    const onlyDigits = text.replace(/[^0-9]/g, '');
-    setLicenseNum(onlyDigits);
-  };
-
-  const handleChangeContact = (text: string) => {
-    const onlyDigits = text.replace(/[^0-9]/g, '');
-    setContact(onlyDigits);
-  };
-
-  // 제출
-  async function handleSubmit() {
-    if (!meId) {
-      Alert.alert('오류', '유저 정보를 불러오지 못했습니다.');
-      return;
-    }
-
+  const handleSubmit = async () => {
     if (!licenseStoragePath || !licenseImgUri) {
-      Alert.alert('필수 항목 누락', '사업자등록증 이미지를 업로드해 주세요.');
+      showRegisterToast(t('business:register.licenseRequired'), 'warning');
       return;
     }
 
     if (!licenseNum.trim() || !storeName.trim() || !ownerName.trim()) {
-      Alert.alert(
-        '필수 항목 누락',
-        '사업자등록번호, 상호명, 대표자 이름은 필수입니다.',
-      );
+      showRegisterToast(t('business:register.requiredFields'), 'warning');
       return;
     }
 
@@ -189,319 +217,388 @@ export default function BusinessRegister() {
         store_name: storeName.trim(),
         owner_name: ownerName.trim(),
         contact: contact.trim() || null,
+        status: 'pending',
       });
 
-      if (error) {
-        console.log('business_register insert error:', error);
-        throw error;
-      }
+      if (error) throw error;
 
-      Alert.alert(
-        '사업자 등록 신청 완료',
-        '관리자가 승인 후 비즈니스 기능을 사용할 수 있습니다.',
-        [
-          {
-            text: '확인',
-            onPress: () => navigation.goBack(),
-          },
-        ],
-      );
+      showRegisterAlert({
+        title: t('business:register.successTitle'),
+        message: t('business:register.successDesc'),
+        singleButton: true,
+        onConfirm: () => navigation.goBack(),
+      });
     } catch (e: any) {
-      Alert.alert('오류', e?.message ?? String(e));
+      showRegisterToast(e?.message ?? t('business:register.submitFail'), 'danger');
     } finally {
       setSubmitting(false);
     }
-  }
+  };
 
-  // 등록증 업로드 + 필수 필드 다 채워져야 활성화
-  const isValid =
-    !!licenseStoragePath &&
-    !!licenseNum.trim() &&
-    !!storeName.trim() &&
-    !!ownerName.trim();
+  const isValid = !!licenseStoragePath && !!licenseNum.trim() && !!storeName.trim() && !!ownerName.trim();
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="#FFFFFF"
-        translucent={false}
+    <SafeScreen
+      backgroundColor={ui.background}
+      includeTopInset={false}
+      includeBottomInset
+      contentStyle={{ paddingLeft: insets.left, paddingRight: insets.right }}
+    >
+      <GlobalHeader
+        style={{
+          backgroundColor: ui.headerBg,
+          borderBottomColor: ui.headerBorder,
+        }}
+        titleComponent={
+          <View style={styles.headerTitleRow}>
+            <HeaderIconButton onPress={() => navigation.goBack()}>
+              <ChevronLeft size={22} color={ui.headerIcon} strokeWidth={2.1} />
+            </HeaderIconButton>
+            <Text style={styles.headerTitle}>{t('business:register.title')}</Text>
+          </View>
+        }
       />
 
-      {/* 헤더 (BusinessUnregister 와 동일하게) */}
-      <View style={styles.header}>
-        <Pressable
-          style={styles.headerLeft}
-          onPress={() => navigation.goBack()}
-          hitSlop={10}
-        >
-          <ChevronLeft size={22} color={TEXT_MAIN} />
-        </Pressable>
-        <Text style={styles.headerTitle}>사업자 등록</Text>
-        <View style={styles.headerRight} />
-      </View>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.flex}>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+          <View style={styles.heroCard}>
+            <View style={styles.heroIconBox}>
+              <ShieldCheck size={22} color={ui.icon} strokeWidth={1.8} />
+            </View>
+            <Text style={styles.heroTitle}>{t('business:register.heroTitle')}</Text>
+            <Text style={styles.heroDesc}>{t('business:register.heroDesc')}</Text>
+          </View>
 
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={{ paddingBottom: 44 }}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* 등록증 업로드 */}
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>사업자등록증</Text>
-          <Text style={styles.sectionSubtitle}>
-            사업자등록증 원본 이미지를 업로드해주세요.
-          </Text>
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>{t('business:register.license')}</Text>
+              <Text style={styles.required}>{t('business:common.required')}</Text>
+            </View>
 
-          <Pressable
-            style={styles.licenseUploadBox}
-            onPress={uploading ? undefined : handlePickLicense}
-          >
-            {uploading ? (
-              <View style={styles.licensePlaceholder}>
-                <ActivityIndicator />
-                <Text style={styles.licenseText}>업로드 중…</Text>
-              </View>
-            ) : licenseImgUri ? (
-              <Image
-                source={{ uri: licenseImgUri }}
-                style={styles.licensePreview}
+            <Pressable style={({ pressed }) => [styles.uploadBox, licenseImgUri && styles.uploadBoxActive, pressed && styles.pressed]} onPress={uploading ? undefined : handlePickLicense}>
+              {uploading ? (
+                <View style={styles.uploadPlaceholder}>
+                  <ActivityIndicator color={ui.textPrimary} />
+                  <Text style={styles.uploadTitle}>{t('business:register.uploadingImage')}</Text>
+                  <Text style={styles.uploadDesc}>{t('business:register.wait')}</Text>
+                </View>
+              ) : licenseImgUri ? (
+                <>
+                  <Image source={{ uri: licenseImgUri }} style={styles.previewImage} resizeMode="cover" />
+                  <View style={styles.reuploadBadge}>
+                    <Camera size={14} color="#FFFFFF" strokeWidth={2} />
+                    <Text style={styles.reuploadText}>{t('business:register.pickAgain')}</Text>
+                  </View>
+                </>
+              ) : (
+                <View style={styles.uploadPlaceholder}>
+                  <View style={styles.iconCircle}>
+                    <Camera size={23} color={ui.icon} strokeWidth={1.8} />
+                  </View>
+                  <Text style={styles.uploadTitle}>{t('business:register.pickImage')}</Text>
+                  <Text style={styles.uploadDesc}>{t('business:register.licenseGuide')}</Text>
+                </View>
+              )}
+            </Pressable>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{t('business:register.businessInfo')}</Text>
+
+            <View style={styles.inputGroup}>
+              <FileText size={18} color={ui.iconMuted} strokeWidth={1.8} />
+              <TextInput
+                style={styles.input}
+                placeholder={t('business:register.licenseNum')}
+                placeholderTextColor={ui.textDisabled}
+                keyboardType="numeric"
+                value={licenseNum}
+                onChangeText={(t) => setLicenseNum(t.replace(/[^0-9]/g, ''))}
               />
-            ) : (
-              <View style={styles.licensePlaceholder}>
-                <Camera size={32} color={TEXT_MUTED} />
-                <Text style={styles.licenseText}>사업자등록증 업로드</Text>
-              </View>
-            )}
-          </Pressable>
+            </View>
 
-          <Text style={styles.noticeSmall}>
-            ※ 주민등록번호가 있을 경우 가려서 업로드해 주세요.
-          </Text>
-          {licenseStoragePath && (
-            <Text style={styles.noticeSmall}>• 업로드 완료됨</Text>
-          )}
-        </View>
+            <View style={styles.inputGroup}>
+              <Building2 size={18} color={ui.iconMuted} strokeWidth={1.8} />
+              <TextInput
+                style={styles.input}
+                placeholder={t('business:register.storeName')}
+                placeholderTextColor={ui.textDisabled}
+                value={storeName}
+                onChangeText={setStoreName}
+              />
+            </View>
 
-        {/* 사업자 기본 정보 */}
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>사업자 정보</Text>
+            <View style={styles.inputGroup}>
+              <User size={18} color={ui.iconMuted} strokeWidth={1.8} />
+              <TextInput
+                style={styles.input}
+                placeholder={t('business:register.ownerName')}
+                placeholderTextColor={ui.textDisabled}
+                value={ownerName}
+                onChangeText={setOwnerName}
+              />
+            </View>
 
-          {/* 사업자등록번호 */}
-          <View style={styles.inputRow}>
-            <FileText size={18} color={TEXT_MUTED} />
-            <TextInput
-              value={licenseNum}
-              onChangeText={handleChangeLicenseNum}
-              placeholder="사업자등록번호 (숫자만 입력)"
-              placeholderTextColor={TEXT_MUTED}
-              style={styles.input}
-              keyboardType="numeric"
-            />
+            <View style={styles.inputGroup}>
+              <Phone size={18} color={ui.iconMuted} strokeWidth={1.8} />
+              <TextInput
+                style={styles.input}
+                placeholder={t('business:register.contact')}
+                placeholderTextColor={ui.textDisabled}
+                keyboardType="phone-pad"
+                value={contact}
+                onChangeText={(t) => setContact(t.replace(/[^0-9]/g, ''))}
+              />
+            </View>
           </View>
 
-          {/* 상호명 */}
-          <View style={styles.inputRow}>
-            <Building2 size={18} color={TEXT_MUTED} />
-            <TextInput
-              value={storeName}
-              onChangeText={setStoreName}
-              placeholder="상호명"
-              placeholderTextColor={TEXT_MUTED}
-              style={styles.input}
-            />
+          <View style={styles.noticeBox}>
+            <View style={styles.noticeRow}>
+              <CheckCircle2 size={16} color={ui.info} strokeWidth={2} />
+              <Text style={styles.noticeText}>{t('business:register.reviewTime')}</Text>
+            </View>
+            <View style={styles.noticeRow}>
+              <AlertCircle size={16} color={ui.iconMuted} strokeWidth={2} />
+              <Text style={styles.noticeText}>{t('business:register.matchGuide')}</Text>
+            </View>
           </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
-          {/* 대표자명 */}
-          <View style={styles.inputRow}>
-            <User size={18} color={TEXT_MUTED} />
-            <TextInput
-              value={ownerName}
-              onChangeText={setOwnerName}
-              placeholder="대표자 이름"
-              placeholderTextColor={TEXT_MUTED}
-              style={styles.input}
-            />
-          </View>
-
-          {/* 연락처 */}
-          <View style={styles.inputRow}>
-            <Phone size={18} color={TEXT_MUTED} />
-            <TextInput
-              value={contact}
-              onChangeText={handleChangeContact}
-              placeholder="담당자 연락처 (선택)"
-              placeholderTextColor={TEXT_MUTED}
-              style={styles.input}
-              keyboardType="phone-pad"
-            />
-          </View>
-        </View>
-
-        {/* 안내 */}
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>안내 및 주의사항</Text>
-
-          <Text style={styles.noticeLine}>
-            • 제출한 정보는 CO·ONN 비즈니스 운영 인증을 위해서만 사용됩니다.
-          </Text>
-          <Text style={styles.noticeLine}>
-            • 승인까지 일정 시간이 소요될 수 있습니다.
-          </Text>
-          <Text style={styles.noticeLine}>
-            • 허위 제출 시 승인 거절 또는 계정 제재가 발생할 수 있습니다.
-          </Text>
-        </View>
-
-        {/* 제출 버튼 */}
+      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 10) + 12 }]}>
         <Pressable
-          style={[
-            styles.submitButton,
-            (!isValid || submitting) && styles.submitButtonDisabled,
-          ]}
-          onPress={submitting ? undefined : handleSubmit}
+          style={({ pressed }) => [styles.submitButton, (!isValid || submitting) && styles.submitButtonDisabled, pressed && isValid && !submitting && styles.pressed]}
+          onPress={handleSubmit}
           disabled={!isValid || submitting}
         >
-          {submitting ? (
-            <ActivityIndicator color="#FFFFFF" />
-          ) : (
-            <Text style={styles.submitText}>등록 신청하기</Text>
-          )}
+          {submitting ? <ActivityIndicator color={ui.primaryButtonText} /> : <Text style={[styles.submitButtonText, (!isValid || submitting) && styles.submitButtonTextDisabled]}>{t('business:register.submit')}</Text>}
         </Pressable>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+
+      <CoonnAlert
+        visible={registerAlert.visible}
+        theme={alertThemeName}
+        variant={registerAlert.variant}
+        title={registerAlert.title}
+        message={registerAlert.message}
+        confirmText={registerAlert.confirmText}
+        cancelText={registerAlert.cancelText}
+        singleButton={registerAlert.singleButton}
+        onConfirm={handleRegisterAlertConfirm}
+        onCancel={closeRegisterAlert}
+        dismissOnBackdrop={false}
+      />
+
+      <CoonnFloatingToast
+        visible={toast.visible}
+        message={toast.message}
+        tone={toast.tone}
+        showMark={toast.showMark}
+        bottomOffset={Math.max(insets.bottom + 28, 36)}
+        onHidden={hideToast}
+      />
+    </SafeScreen>
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-
-  header: {
-    height: 54,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: HAIRLINE,
-    paddingHorizontal: 14,
-    paddingLeft: 5,
-    paddingTop: Platform.select({ ios: 8, android: 4 }),
-    paddingBottom: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  headerLeft: {
-    width: 34,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: 17,
-    fontWeight: '600',
-    color: TEXT_MAIN,
-  },
-  headerRight: {
-    width: 34,
-  },
-
-  scroll: {
-    flex: 1,
-    backgroundColor: BG,
-  },
-
-  sectionCard: {
-    backgroundColor: CARD_BG,
-    padding: 16,
-    marginHorizontal: 14,
-    marginTop: 14,
-    borderRadius: 14,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: HAIRLINE,
-  },
-
-  sectionTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: TEXT_MAIN,
-    marginBottom: 8,
-  },
-  sectionSubtitle: {
-    fontSize: 12,
-    color: TEXT_MUTED,
-    marginBottom: 12,
-  },
-
-  /** 업로드 영역 */
-  licenseUploadBox: {
-    width: '100%',
-    height: 180,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: HAIRLINE,
-    backgroundColor: '#F3F4F6',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
-  licensePlaceholder: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  licenseText: {
-    marginTop: 6,
-    fontSize: 12,
-    color: TEXT_MUTED,
-  },
-  licensePreview: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-
-  inputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: HAIRLINE,
-    marginBottom: 4,
-  },
-  input: {
-    flex: 1,
-    marginLeft: 10,
-    fontSize: 14,
-    color: TEXT_MAIN,
-  },
-
-  noticeSmall: {
-    marginTop: 8,
-    fontSize: 11,
-    color: TEXT_MUTED,
-  },
-  noticeLine: {
-    fontSize: 13,
-    color: TEXT_MAIN,
-    marginBottom: 4,
-  },
-
-  submitButton: {
-    backgroundColor: ACCENT,
-    marginHorizontal: 14,
-    marginTop: 24,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  submitButtonDisabled: {
-    backgroundColor: '#9CA3AF',
-  },
-  submitText: {
-    color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '600',
-  },
-});
+function createStyles(ui: BusinessOwnerTheme) {
+  return StyleSheet.create({
+    flex: { flex: 1 },
+    pressed: { opacity: ui.pressedOpacity },
+    headerTitleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      minWidth: 0,
+      flex: 1,
+    },
+    headerTitle: {
+      fontSize: 17,
+      fontWeight: '700',
+      color: ui.textPrimary,
+      letterSpacing: -0.2,
+    },
+    scrollContent: {
+      paddingHorizontal: 16,
+      paddingTop: 18,
+      paddingBottom: 28,
+    },
+    heroCard: {
+      padding: 18,
+      borderRadius: ui.radius.container,
+      backgroundColor: ui.surface,
+      borderWidth: ui.hairline,
+      borderColor: ui.border,
+      marginBottom: 22,
+      ...ui.shadowSoft,
+    },
+    heroIconBox: {
+      width: 42,
+      height: 42,
+      borderRadius: 21,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: ui.control,
+      borderWidth: ui.hairline,
+      borderColor: ui.border,
+      marginBottom: 14,
+    },
+    heroTitle: {
+      fontSize: 22,
+      lineHeight: 28,
+      fontWeight: '800',
+      color: ui.textPrimary,
+      letterSpacing: -0.6,
+      marginBottom: 8,
+    },
+    heroDesc: {
+      fontSize: 14,
+      lineHeight: 21,
+      fontWeight: '500',
+      color: ui.textSecondary,
+    },
+    section: { marginBottom: 24 },
+    sectionHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 10,
+    },
+    sectionTitle: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: ui.textPrimary,
+      letterSpacing: -0.2,
+      marginBottom: 10,
+    },
+    required: {
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: ui.radius.pill,
+      overflow: 'hidden',
+      backgroundColor: ui.dangerSoft,
+      color: ui.danger,
+      fontSize: 11,
+      fontWeight: '700',
+    },
+    uploadBox: {
+      minHeight: 178,
+      borderRadius: ui.radius.container,
+      borderWidth: ui.hairline,
+      borderColor: ui.border,
+      borderStyle: 'dashed',
+      backgroundColor: ui.surfaceAlt,
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+    },
+    uploadBoxActive: {
+      borderStyle: 'solid',
+      backgroundColor: ui.surface,
+    },
+    uploadPlaceholder: { alignItems: 'center', paddingHorizontal: 22 },
+    iconCircle: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: ui.surface,
+      borderWidth: ui.hairline,
+      borderColor: ui.border,
+      marginBottom: 12,
+    },
+    uploadTitle: {
+      fontSize: 14,
+      fontWeight: '700',
+      color: ui.textPrimary,
+      marginTop: 8,
+      marginBottom: 4,
+    },
+    uploadDesc: {
+      fontSize: 12,
+      lineHeight: 18,
+      fontWeight: '500',
+      color: ui.textSecondary,
+      textAlign: 'center',
+    },
+    previewImage: { width: '100%', height: '100%' },
+    reuploadBadge: {
+      position: 'absolute',
+      right: 12,
+      bottom: 12,
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 10,
+      paddingVertical: 7,
+      borderRadius: ui.radius.pill,
+      backgroundColor: 'rgba(0, 0, 0, 0.62)',
+    },
+    reuploadText: {
+      marginLeft: 4,
+      color: '#FFFFFF',
+      fontSize: 12,
+      fontWeight: '700',
+    },
+    inputGroup: {
+      height: 52,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      paddingHorizontal: 14,
+      borderRadius: ui.radius.md,
+      borderWidth: ui.hairline,
+      borderColor: ui.border,
+      backgroundColor: ui.surface,
+      marginBottom: 10,
+    },
+    input: {
+      flex: 1,
+      paddingVertical: 0,
+      fontSize: 15,
+      fontWeight: '500',
+      color: ui.textPrimary,
+    },
+    noticeBox: {
+      padding: 15,
+      borderRadius: ui.radius.container,
+      borderWidth: ui.hairline,
+      borderColor: ui.borderSoft,
+      backgroundColor: ui.infoSoft,
+      gap: 9,
+    },
+    noticeRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: 8,
+    },
+    noticeText: {
+      flex: 1,
+      fontSize: 13,
+      lineHeight: 19,
+      fontWeight: '500',
+      color: ui.textSecondary,
+    },
+    footer: {
+      paddingHorizontal: 16,
+      paddingTop: 12,
+      backgroundColor: ui.background,
+      borderTopWidth: ui.hairline,
+      borderTopColor: ui.divider,
+    },
+    submitButton: {
+      height: 54,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: ui.radius.container,
+      backgroundColor: ui.primaryButtonBackground,
+    },
+    submitButtonDisabled: { backgroundColor: ui.disabledButtonBackground },
+    submitButtonText: {
+      fontSize: 16,
+      fontWeight: '800',
+      color: ui.primaryButtonText,
+      letterSpacing: -0.2,
+    },
+    submitButtonTextDisabled: { color: ui.disabledButtonText },
+  });
+}

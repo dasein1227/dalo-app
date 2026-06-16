@@ -1,18 +1,31 @@
 // src/screens/chat/components/Search/ChatSearchBar.tsx
-import React from 'react';
-import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
-import { ChevronUp, ChevronDown, User, Calendar } from 'lucide-react-native';
-import type { ChatTheme } from '@/screens/chat/theme/chatTheme';
+import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { View, Text, Pressable } from "react-native";
+import { ChevronUp, ChevronDown, User, Calendar, Bookmark } from "lucide-react-native";
+
+import type { ChatTheme } from "@/screens/chat/theme/chatTheme";
+
+import {
+  CHAT_SEARCH_CONTROLS_METRICS,
+  INLINE_SEARCH_BAR_HEIGHT,
+  chatSearchControlStyles as styles,
+  createChatSearchControlsTheme,
+} from "./ChatSearchControls.theme";
+
+export { INLINE_SEARCH_BAR_HEIGHT };
 
 type Props = {
   theme: ChatTheme;
 
-  countLabel: string; // e.g. "3/17" or "0"
+  countLabel: string;
   hasSenderFilter: boolean;
   hasDateFilter: boolean;
+  hasBookmarkFilter: boolean;
 
   onOpenSender: () => void;
   onOpenDate: () => void;
+  onToggleBookmark: () => void;
   onPrev: () => void;
   onNext: () => void;
 };
@@ -22,131 +35,143 @@ export default function ChatSearchBar({
   countLabel,
   hasSenderFilter,
   hasDateFilter,
+  hasBookmarkFilter,
   onOpenSender,
   onOpenDate,
+  onToggleBookmark,
   onPrev,
   onNext,
 }: Props) {
-  const iconColor = theme.headerText;
-  const active = theme.translateOn;
+  const { t } = useTranslation();
+  const ui = useMemo(() => createChatSearchControlsTheme(theme), [theme]);
 
   return (
-    <View style={[styles.wrap, { backgroundColor: theme.inputBg, borderTopColor: theme.dateTimeLine }]}>
-      {/* 발신자: 테두리/배경 없이 아이콘만 */}
+    <View
+      style={[
+        styles.inlineWrap,
+        { backgroundColor: ui.inlineBg, borderTopColor: ui.borderSoft },
+      ]}
+    >
       <Pressable
         onPress={onOpenSender}
-        style={({ pressed }) => [styles.iconOnlyBtn, pressed && { opacity: 0.65 }]}
-        hitSlop={10}
+        style={({ pressed }) => [
+          styles.inlineButton,
+          {
+            backgroundColor: hasSenderFilter
+              ? ui.activeBg
+              : pressed
+                ? ui.pressed
+                : "transparent",
+            borderColor: hasSenderFilter ? ui.activeBorder : "transparent",
+          },
+        ]}
+        hitSlop={CHAT_SEARCH_CONTROLS_METRICS.hitSlop}
+        accessibilityRole="button"
+        accessibilityLabel={t('chat:search.senderFilter')}
+        accessibilityState={{ selected: hasSenderFilter }}
       >
-        <User size={18} color={hasSenderFilter ? active : iconColor} />
+        <User
+          size={CHAT_SEARCH_CONTROLS_METRICS.filterIconSize}
+          color={hasSenderFilter ? ui.active : ui.text}
+          strokeWidth={hasSenderFilter ? 2.5 : 2}
+        />
       </Pressable>
 
-      {/* 날짜: 테두리/배경 없이 아이콘만 */}
       <Pressable
         onPress={onOpenDate}
-        style={({ pressed }) => [styles.iconOnlyBtn, pressed && { opacity: 0.65 }]}
-        hitSlop={10}
+        style={({ pressed }) => [
+          styles.inlineButton,
+          {
+            backgroundColor: hasDateFilter
+              ? ui.activeBg
+              : pressed
+                ? ui.pressed
+                : "transparent",
+            borderColor: hasDateFilter ? ui.activeBorder : "transparent",
+          },
+        ]}
+        hitSlop={CHAT_SEARCH_CONTROLS_METRICS.hitSlop}
+        accessibilityRole="button"
+        accessibilityLabel={t('chat:search.dateFilter')}
+        accessibilityState={{ selected: hasDateFilter }}
       >
-        <Calendar size={18} color={hasDateFilter ? active : iconColor} />
+        <Calendar
+          size={CHAT_SEARCH_CONTROLS_METRICS.filterIconSize}
+          color={hasDateFilter ? ui.active : ui.text}
+          strokeWidth={hasDateFilter ? 2.5 : 2}
+        />
       </Pressable>
 
-      {/* 인덱스: 가운데 정렬(화면 중앙) */}
+      <Pressable
+        onPress={onToggleBookmark}
+        style={({ pressed }) => [
+          styles.inlineButton,
+          {
+            backgroundColor: hasBookmarkFilter
+              ? ui.activeBg
+              : pressed
+                ? ui.pressed
+                : "transparent",
+            borderColor: hasBookmarkFilter ? ui.activeBorder : "transparent",
+          },
+        ]}
+        hitSlop={CHAT_SEARCH_CONTROLS_METRICS.hitSlop}
+        accessibilityRole="button"
+        accessibilityLabel={t('chat:search.bookmarkFilter')}
+        accessibilityState={{ selected: hasBookmarkFilter }}
+      >
+        <Bookmark
+          size={CHAT_SEARCH_CONTROLS_METRICS.filterIconSize}
+          color={hasBookmarkFilter ? ui.active : ui.text}
+          strokeWidth={hasBookmarkFilter ? 2.5 : 2}
+        />
+      </Pressable>
+
       <View pointerEvents="none" style={styles.centerOverlay}>
-        <Text style={[styles.countCenter, { color: theme.headerText }]} numberOfLines={1}>
+        <Text
+          style={[styles.countText, { color: ui.text }]}
+          numberOfLines={1}
+          allowFontScaling={false}
+        >
           {countLabel}
         </Text>
       </View>
 
-      {/* 우측 끝: 위/아래 네비 (기능 반대였던 것 수정) */}
-      <View style={styles.right}>
-        {/* ✅ 위 버튼 = NEXT */}
+      <View style={styles.inlineRight}>
         <Pressable
           onPress={onNext}
           style={({ pressed }) => [
-            styles.navBtn,
-            { backgroundColor: pressed ? withAlpha(theme.inputFieldBg, 0.8) : 'transparent' },
+            styles.inlineButton,
+            { backgroundColor: pressed ? ui.pressed : "transparent" },
           ]}
-          hitSlop={10}
+          hitSlop={CHAT_SEARCH_CONTROLS_METRICS.hitSlop}
+          accessibilityRole="button"
+          accessibilityLabel={t('chat:search.prevResult')}
         >
-          <ChevronUp size={20} color={iconColor} />
+          <ChevronUp
+            size={CHAT_SEARCH_CONTROLS_METRICS.navIconSize}
+            color={ui.text}
+            strokeWidth={CHAT_SEARCH_CONTROLS_METRICS.actionIconStroke}
+          />
         </Pressable>
 
-        {/* ✅ 아래 버튼 = PREV */}
         <Pressable
           onPress={onPrev}
           style={({ pressed }) => [
-            styles.navBtn,
-            { backgroundColor: pressed ? withAlpha(theme.inputFieldBg, 0.8) : 'transparent' },
+            styles.inlineButton,
+            { backgroundColor: pressed ? ui.pressed : "transparent" },
           ]}
-          hitSlop={10}
+          hitSlop={CHAT_SEARCH_CONTROLS_METRICS.hitSlop}
+          accessibilityRole="button"
+          accessibilityLabel={t('chat:search.nextResult')}
         >
-          <ChevronDown size={20} color={iconColor} />
+          <ChevronDown
+            size={CHAT_SEARCH_CONTROLS_METRICS.navIconSize}
+            color={ui.text}
+            strokeWidth={CHAT_SEARCH_CONTROLS_METRICS.actionIconStroke}
+          />
         </Pressable>
       </View>
     </View>
   );
 }
-
-function withAlpha(hex: string, alpha: number) {
-  const a = Math.max(0, Math.min(1, alpha));
-  const h = (hex || '').replace('#', '');
-  if (h.length !== 6) return hex;
-  const r = parseInt(h.slice(0, 2), 16);
-  const g = parseInt(h.slice(2, 4), 16);
-  const b = parseInt(h.slice(4, 6), 16);
-  return `rgba(${r},${g},${b},${a})`;
-}
-
-const styles = StyleSheet.create({
-  wrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    gap: 10,
-    position: 'relative',
-  },
-
-  // ✅ 테두리/배경 없이 아이콘만 (터치 영역은 유지)
-  iconOnlyBtn: {
-    width: 36,
-    height: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-  },
-
-  right: {
-    marginLeft: 'auto',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-
-  // ✅ 가운데 고정 오버레이 (좌/우 요소와 무관하게 중앙)
-  centerOverlay: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 90, // 좌/우 버튼 영역 침범 방지
-  },
-
-  countCenter: {
-    fontSize: 13,
-    fontWeight: '700',
-    opacity: 0.92,
-    textAlign: 'center',
-  },
-
-  navBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

@@ -1,0 +1,16 @@
+{
+  "common": "Error",
+  "auth": {
+    "loginRequired": "Log in required."
+  },
+  "unknown": "Something went wrong.",
+  "network": "Check your network connection.",
+  "invalid_credentials": "Email or password is incorrect.",
+  "oauth_cancelled": "Login canceled.",
+  "provider_config": "Check auth provider settings.",
+  "redirect_config": "Check Redirect URL settings.",
+  "session_check_failed": "Couldn’t check session.",
+  "sms_required": "Enter the verification code.",
+  "phone_format": "Enter your phone number in international format (+8210…).",
+  "email_format": "Enter a valid email address."
+}
